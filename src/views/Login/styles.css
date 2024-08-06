@@ -1,0 +1,58 @@
+.grupo-button-login
+{
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 10px;
+}
+.confirmarlogin{
+    margin-left: 220px; 
+}
+.login 
+{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+.login h2 
+{
+    color: aliceblue;
+}
+.container-login 
+{
+    height: auto;
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+    padding: 10px;
+    background: rgb(20, 96, 172);
+    border-radius: 15px;
+}
+.err 
+{
+    padding: 5px 10px;
+    color: aliceblue;
+    background: crimson;
+    width: 90%;
+    border-radius: 15px;
+}
+.button-login
+{
+    background: none;
+    border: none;
+    padding: 7px 15px;
+    cursor: pointer;
+    color: aliceblue;
+    border-radius: 15px;
+    margin-bottom: 10px;
+}
+.main-title
+{
+    color:aliceblue;
+}
+.title-1
+{
+    color:aliceblue;
+}

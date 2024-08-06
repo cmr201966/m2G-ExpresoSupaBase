@@ -1,0 +1,277 @@
+.container-negocio {
+    height: auto;
+    width: 345px;
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+    padding: 5px;
+    background: rgb(20, 96, 172);
+    border-radius: 15px;
+    margin-bottom: 15px;
+}
+.select-negocio-2{
+    width: 230px;
+    height: 25px;
+    margin-left: 30px;
+    margin-top: 10px;
+}
+.selectn{
+    width: 230px;
+    height: 25px;
+}
+.select-provincia-negocio{
+    margin-left: 26px;
+    width: 240px;
+    height: 30px;
+}   
+.select-municipio-negocio{
+    margin-left: 22px;
+    width: 240px;
+    height: 30px;
+}
+.select-6{
+    width: 240px;
+    margin-left: 41px;
+}
+.select-7{
+    margin-left: 9px;
+    width: 240px;
+}
+.input-area-negocio{
+    color: aliceblue;
+    margin-top: 3px;
+}
+.input-area99{
+    display: flex;
+    margin-bottom: 10px;
+}
+.input-hora-1{
+    width: 50px;
+    margin-left: 99px;
+}
+.input-hora-2{
+    width: 50px;
+    margin-left: 119px;
+}
+.input-hora-3{
+    width: 50px;
+    margin-left: 84px;
+    margin-bottom: 10px;}
+.input-hora-4{
+    width: 50px;
+    margin-left: 120px;
+}
+.input-negocio-98{
+    margin-left: 63px;
+    width: 232px;
+}
+.input-negocio-p{
+    margin-left: 34px;
+    width: 233px;
+    height: 25px;;
+}
+.input-negocio-1{
+    margin-left: 51px;
+    width: 233px;
+    height: 25px;;
+    margin-top: 2px;
+}    
+.input-negocio-3{
+    margin-left: 163px;
+    width: 242px;
+}
+.input-negocio-4{
+    width: 233px;
+    height: 25px;;
+    margin-top: 2px;
+}
+.input-negocio-5{
+    margin-left: 6px;
+    width: 233px;
+    height: 25px;;
+    margin-top: 2px;
+}
+.input-negocio-6{
+    margin-left: 22px;
+    width: 233px;
+    height: 25px;;
+    margin-top: 2px;
+}
+.input-negocio-7{
+    margin-left: 39px;
+    width: 233px;
+    height: 25px;;
+    margin-top: 2px;
+}
+.input-negocio-8{
+    margin-left: 40px;
+    width: 233px;
+    height: 25px;;
+    margin-top: 2px;
+}
+.input-negocio-9{
+    margin-right: 3px;
+}
+.input-negocio-10{
+    margin-right: 17px;
+    height: 25px;;
+}
+.input-negocio-2-1{
+    margin-left: 168px;
+}
+.input-negocio-2-2{
+    margin-left: 88px;
+    margin-top: 4px;
+    width: 210px;
+}
+.input-negocio-2-3{
+    margin-left: 74px;
+    width: 210px;
+}
+.label-2-1{
+    margin-left: 111px;
+    margin-top: 5px;
+    background-color: aliceblue;
+    width: 178px;
+    border-radius: 15px;
+    border: none;
+    cursor: pointer;
+    padding: 5px;
+    font-size: 14px;
+}
+.label-img{
+    color:aliceblue;
+}
+.label-negocio-2{
+    color:aliceblue;
+    margin-right: 56px;
+}
+.label-1-1
+{
+    color:aliceblue;
+}
+.label-1-9
+{
+   color:aliceblue;
+   margin-right: 10px;
+   
+}
+.label-hora-1{
+    color:aliceblue;
+    margin-left: 154px;
+}
+.label-hora-2{
+    color:aliceblue;
+    margin-left: 132px;
+}
+.label-hora-3{
+    color:aliceblue;
+    margin-left: 149px;
+    margin-right: 5px;
+}
+.label-hora-4{
+    color:aliceblue;
+    margin-left: 30px;
+    margin-right: 9px;
+}
+.label-otro{
+    color: aliceblue;
+    margin-left: 50px;
+}
+.img-negocio{
+    height: 280px;
+    width: 247px;
+    object-fit: cover;
+}
+.img-class
+{
+    display: flex;
+    width: 100%;
+    justify-content: flex-start;
+    margin-top: 10px;
+}
+.cbhorarios
+{
+    margin-left: 50px;
+}
+.input-area-negocios-1 
+{
+    display: flex;
+}
+.input-area-negocios-1 label 
+{
+    color: aliceblue;
+    margin-right: 6px;
+    margin-top: 3px;
+}
+.label-vista-negocio-1-1
+{
+    color:aliceblue;
+    margin-left: 10px;
+}
+.modal-negocios
+{
+    display: flex;
+    align-items:baseline;
+    justify-content:flex-start;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 226px;
+    left: 20px;
+    color:aliceblue;
+}    
+.h1-cabeza-negocios
+{
+    margin-top: 18px;
+}
+.h3-1-cabeza
+{
+   color: aliceblue;
+   margin-left: 4px;
+   margin-top: 13px;  
+}
+.h3-2-cabeza
+{
+  color:aqua;
+  margin-left: 4px;
+}
+.h3-1-cabeza-negocios
+{
+  color: aliceblue;
+  margin-left: 4px;
+  margin-top: 21px;
+}
+.negocio-button
+{
+    background: none;
+    border: none;   
+    cursor: pointer;
+    color: aliceblue;
+    border-radius: 15px;
+    height: 30px;
+    width: 55px;
+    margin-right: 10px;
+    margin-bottom: 10px;
+}
+.negocio-grupo-button
+{
+    display: flex;
+    justify-content: flex-start;
+    width: 100%;
+    margin-top: 15px;
+    gap: 15px;
+}
+
+.input-area-foto-producto{
+    display: flex;
+    flex-direction: row;
+    margin-top: 5px;
+    width: 100%;
+    align-items: center;
+}
+
+.input-catnegocios-99{
+    margin-right: 55px;
+
+}

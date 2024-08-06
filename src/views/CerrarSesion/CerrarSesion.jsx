@@ -1,0 +1,36 @@
+// components
+// 
+import { useNavigate } from "react-router-dom"
+
+// styles
+import "./styles.css";
+import { useEffect, useState } from "react";
+
+
+const Cerrarsesion = () => {
+    const navigate = useNavigate();
+    async function init() 
+    {
+        sessionStorage.removeItem("user");
+        sessionStorage.removeItem("usernombre");
+        sessionStorage.removeItem("tipouser");
+        sessionStorage.removeItem("celular");
+        sessionStorage.removeItem("fijo");
+        sessionStorage.removeItem("email");
+        sessionStorage.removeItem("dpostal");
+        sessionStorage.removeItem("desc");
+        navigate("/");
+    }
+
+    useEffect(() => {
+        init()
+    }, [])
+    return (
+        <>
+        </>
+    );
+
+
+};
+
+export default Cerrarsesion;

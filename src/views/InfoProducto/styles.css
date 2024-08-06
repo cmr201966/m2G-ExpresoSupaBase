@@ -1,0 +1,54 @@
+.main-info-producto {
+  width: calc(100vw - 52px);
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+  gap: 20px;  
+}
+
+.perfil-info-producto {
+  display: flex;
+  margin-bottom: 20px;
+  gap:30px;
+  justify-content: space-between;
+}
+
+.img-class-info-producto img {
+  border-radius: 50%; /* Para hacer la imagen circular */
+}
+
+.product-info {
+  width: 100%;
+  color: white;
+}
+.mapa{
+  position: relative;
+  height: 100vh;
+}
+
+.parrafo {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+}
+
+p {
+  margin: 1px;
+}
+
+.img-info-producto
+{
+    height: 230px;
+    width: 230px;
+    object-fit: cover;
+ }
+ .offon-info-producto{
+  border-radius: 100%;
+  background:white;
+  border: none;
+  color:red;
+  position: absolute;
+  z-index: 10;
+  right: 0;
+}

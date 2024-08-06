@@ -1,0 +1,99 @@
+// components
+import Navbar from "../../components/Navbar/Navbar"
+import Tippy from "@tippyjs/react";
+// layouts
+import Hero from "../../layouts/Hero/Hero";
+// 
+//import { Link } from "react-router-dom"
+// styles
+import "./styles.css";
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { Link } from "react-router-dom"
+import Modal from "../../components/Modal/Modal";
+import ChatDialogo from "../../components/ChatDialogo/ChatDialogo";
+import IconButton from "@mui/material/IconButton";
+import ArrowBack from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom"
+
+
+const Acercade = () => {
+  const [contenidofoto, setContenidofoto] = useState();
+  const [showchat, setShowchat] = useState(false);
+  const [chatuser, setChatuser] = useState("root");
+  const [chatnombre, setChatnombre] = useState("Destodo");
+  const [indexChat, setIndexChat] = useState(0);
+  const parsedParams = {}
+  const navigate = useNavigate();
+
+  async function contenidofile(file) 
+  {
+    const resultado = await axios.post(
+      "http://localhost:3001/getjpg-file",
+      { file },
+      {}
+    );
+    if (resultado.data.length !== 0 && resultado.error === undefined) {
+       setContenidofoto(resultado.data);
+    }
+  }
+function init()
+{
+  contenidofile("./galerias/app_images/destodo/logo.jpg");
+}
+
+useEffect(() => {
+  init()
+}, [])
+
+  return (
+    <div>
+      <Navbar
+        links={[
+          { label: "Inicio", to: "/",tooltips: "Ir a la página principal" },
+          { label: sessionStorage.getItem("user") === null ? "Iniciar sesión" : "Cerrar sesión", to: sessionStorage.getItem("user") === null ? "/login" : "/cerrarsesion", tooltips: sessionStorage.getItem("user") === null ? "Abrir sesión" : "/Cerrar la sesión de " + sessionStorage.getItem("usernombre") },
+          { label: "Registrarse", to: "/registrarse?inserta=true", tooltips: "Crear una cuenta de usuario" },
+          { label: "Acerca de", to: "/Acercade", tooltips: "Acerca de Destodo" },
+        ]}
+      />
+      <Hero>
+        <div className="cabeza">
+            {parsedParams.nivel === 0 ? "" :
+              <IconButton color="primary" onClick={() => {
+                navigate(`/?naturaleza=${sessionStorage.getItem("naturaleza")}&owner=${sessionStorage.getItem("idowner")}&nivel=${sessionStorage.getItem("nivel")}`);
+              }}>
+                <ArrowBack />
+              </IconButton>
+            }
+
+            <h3 className="acercade-title">M2G-Destodo</h3>
+        </div>
+        <div className="acercade">
+          <div className="logo-acerca">
+            <Link to="/">
+               <Tippy content="Inicio" >
+                  <img className="logo-acerca-img" src={contenidofoto} />
+               </Tippy>
+            </Link>
+            <h3>Acerca de</h3>
+          </div>
+          <p1>M2G-Destodo Versión 1.0</p1>
+          <p1>Desarrollado por M2G Software.</p1>
+          <p1>Celular: (53)52675359 Fijo: (53)22657241 </p1>
+          <p1>Email: cmr201966@gmail.com </p1>
+          <p1>WhatsApp: 5352675359 </p1>
+          <p1>Santiago de Cuba.</p1>
+{/*          {sessionStorage.getItem("user")!==null?
+             <button className="acercade-button" onClick={()=>setShowchat(!showchat)}>CHAT: Destodo</button>:""
+          } */}
+          <p1>Todos los derechos reservados. 2024</p1>
+        </div>
+        {showchat===true?
+          <ChatDialogo user={chatuser} nombre={chatnombre} indexChat={indexChat} />
+        :""}
+      </Hero>
+    </div>
+  );
+};
+
+export default Acercade;

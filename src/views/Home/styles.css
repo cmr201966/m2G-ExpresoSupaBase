@@ -1,0 +1,75 @@
+.span-button {
+  cursor: pointer;
+}
+.cmodal {
+  overflow: auto;
+  position: relative important;
+}
+
+.h1-1-cabeza-home {
+  margin-top: 12px !important;
+}
+.h1-cabeza-home {
+  margin-top: 14px;
+}
+.h3-1-cabeza-home {
+  color: aliceblue;
+  margin-left: 4px;
+}
+.h3-2-cabeza-home {
+  color: aqua;
+  margin-left: 4px;
+}
+
+.link-image {
+  flex: 1;
+  min-width: 110px;
+  height: 110px;
+  padding: 10px;
+  background-color: #383838;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
+  border-radius: 15px;
+}
+
+.link-image-span {
+  color: white;
+  font-size: smaller;
+}
+
+.link-image-img {
+  width: 120px;
+  height: 120px;
+  border-radius: 15px;
+}
+
+.modal-home {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  position: fixed;
+  top: 249px;
+  left: 6px;
+  color: aliceblue;
+}
+.check-ubicacion-provincia {
+  margin-left: 32px !important;
+  color: aliceblue !important;
+}
+.select-ubicacion-provincia {
+  margin-left: 11px !important;
+  width: 200px;
+}
+.select-ubicacion-municipio {
+  margin-left: 5px !important;
+  width: 200px;
+}
+.select-ubicacion-poblado {
+  margin-left: 17px !important;
+  width: 200px;
+}
+.select-ubicacion-reparto {
+  margin-left: 19px !important;
+  width: 200px;
+}

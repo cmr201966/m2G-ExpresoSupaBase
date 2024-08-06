@@ -1,0 +1,234 @@
+
+.container-registrarse {
+    height: auto;
+    width: 333px;
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+    padding: 10px;
+    background: rgb(20, 96, 172);
+    border-radius: 15px;
+}
+
+.grupo-button-registrarse {
+    display: flex;
+    flex-direction: row;
+    margin-top: 10px;
+  }
+
+.label-grupo {
+    display: flex;
+    flex-direction: column;
+    color: whitesmoke;
+    margin-left: 130px;
+    margin-top: 15px;
+    margin-bottom: 10px;
+}
+.input-area-registrarse-plan label {
+    color: aliceblue;
+    margin-right: 75px;
+  }
+.input-area-registrarse-provincia label {
+    color: aliceblue;
+    margin-right: 47px;
+  }
+.input-area-registrarse-municipio label {
+    color: aliceblue;
+    margin-right: 43px;
+  }
+.input-area-registrarse input {
+    background: none;
+    border: none;
+    padding: 7px 15px;
+    color: aliceblue;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+  }
+  .input-area-registrarse {
+    color: aliceblue;
+    display: flex;
+    justify-content: flex-end;
+    margin-top: 5px;
+    margin-bottom: 5px;
+  }
+.registrarse h2 {
+    color: aliceblue;
+}
+
+.registrarse-button {
+    background: none;
+    border: none;
+    padding: 7px 15px;
+    cursor: pointer;
+    color: aliceblue;
+    border-radius: 15px;
+}
+
+.input-cp {
+    display: flex;
+    margin: 10px 10px 10px 0;
+    margin-left: 170px;
+}    
+.cp {
+    width: 12px !important;
+    justify-content: center !important;
+    color: aliceblue;
+    margin-right: 10px;
+}
+
+.lseguridad {
+    color: aliceblue;
+    background-color: crimson;
+    font-weight: bold;
+    width: 295px;
+    margin-top: 10px;
+}
+
+.label-pin {
+    display: flex;
+    flex-direction: row;
+    justify-content: left;
+    align-items: left;
+    color: whitesmoke;
+    margin-top: 5px;
+
+}
+.label-comprobacion{
+    margin-right: 20px;
+}
+.label-pin-1{
+    margin-left: 125px;
+}
+.label-aster {
+    margin-left: 10px;
+}
+.input-area-foto-registrarse{
+    display: flex;
+    width: 100%;
+    justify-content: flex-start;
+    align-items: center;
+    margin-top: 5px;
+}
+.label-2-registrarse{
+    color:aliceblue;
+    margin-right: 80px;
+}
+
+.label-2-1-registrarse{
+    background-color: white;
+    color: black;
+    cursor: pointer;
+    border-radius: 15px;
+    border: none;
+    padding: 5px;
+    font-size: 13px;
+    height: 20px;
+}
+.label-vista-registrase-1-1{
+    color:aliceblue;
+    width: 82px;
+    margin-top: 3px;
+    margin-left: 8px;
+  }
+  .img-registrarse{
+    height: 280px;
+    width: 247px;
+    margin-left: 98px;
+    margin-top: 4px;
+    object-fit: cover;
+ }
+ .select-registrarse-plan{
+    width: 210px;
+    border: none;
+    padding: 7px 15px;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+    margin-top: 5px;
+}
+ .select-registrarse-prov{
+    width: 210px;
+    border: none;
+    padding: 7px 15px;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+    margin-bottom: 5px;
+}
+.select-registrarse-munic{
+    width: 210px;   
+    border: none;
+    padding: 7px 15px;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+    margin-bottom: 5px;
+}
+.select-registrarse-poblado{
+    width: 210px;    
+    border: none;
+    padding: 7px 15px;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+    margin-bottom: 5px;
+}
+.select-registrarse-reparto{
+    width: 210px;    
+    border: none;
+    padding: 7px 15px;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+    margin-bottom: 5px;
+}
+.mlc{
+    margin-right: 0px;
+}
+.cup{
+    margin-right: 2px;
+}
+.usuario{
+    margin-right: 53px;
+}
+.email{
+    margin-right: 68px;
+}
+.celular{
+    margin-right: 56px;
+}
+.pw{
+    margin-right: 2px;
+}
+.rpw{
+    margin-right: 27px;
+}
+.nombre{
+    margin-right: 52px;
+}
+.ci{
+    margin-right: 85px;
+}
+.fijo{
+    margin-right: 53px;
+}
+.sede{
+    margin-right: 32px;
+}
+.desc{
+    margin-right: 16px;
+}
+.registrarse-cabeza
+{
+    color:aliceblue;
+}
+.registrarse-cabeza-1
+{
+    color:aliceblue;
+    margin-top:23px;
+}
+.resultado-registrarse
+{
+    background-color: chartreuse;
+    color: black;
+    margin-left: 120px;
+    margin-top: 5px;
+}
+.confirmar{
+    margin-left: 195px;
+}

@@ -1,0 +1,216 @@
+.h1-productos-cabeza {
+  margin-top: 8px !important;
+}
+
+.h3-1-productos-cabeza {
+  color: aliceblue;
+  margin-left: 4px;
+}
+
+.mapa-cardrow {
+  height: 400px;
+  padding: 10px;
+}
+
+.modal-productos {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  position: fixed;
+  top: 150px;
+  left: 6px;
+  color: aliceblue;
+  overflow: auto;
+}
+
+.label-filter-title {
+  margin-left: 11px;
+  color: aliceblue;
+}
+
+.cbox-negocioproducto {
+  margin-left: 32px;
+  color: aliceblue;
+}
+
+.check-ubicacion-provincia {
+  margin-left: 32px;
+  color: aliceblue;
+}
+
+.h1-cabeza-productos {
+  color: aliceblue;
+}
+
+.h3-cabeza-productos-1 {
+  color: aliceblue;
+  margin-top: 22px;
+}
+
+.button-filtrar-1 {
+  border: none;
+  cursor: pointer;
+  color: aliceblue;
+  border-radius: 15px;
+  height: 30px;
+  width: 80px;
+  color: aliceblue !important;
+  background: dodgerblue !important;
+  margin-left: 80px;
+  margin-bottom: 15px;
+}
+
+.button-filtrar-2 {
+  border: none;
+  cursor: pointer;
+  color: aliceblue;
+  border-radius: 15px;
+  height: 30px;
+  width: 90px;
+  color: aliceblue !important;
+  background: dodgerblue !important;
+  margin-left: 10px;
+}
+
+.button-filtrar-3 {
+  border: none;
+  cursor: pointer;
+  color: aliceblue;
+  border-radius: 15px;
+  height: 30px;
+  width: 80px;
+  color: aliceblue !important;
+  background: dodgerblue !important;
+  margin-left: 10px;
+}
+
+.grupo-button-filtrar {
+  width: 100%;
+  display: flex;
+}
+
+.atributos {
+  margin-left: 15px;
+  color: aliceblue;
+}
+
+.cbox-negocioproducto {
+  margin-left: 32px;
+  color: aliceblue;
+}
+
+.check-ubi {
+  color: aliceblue;
+}
+
+.input-precio {
+  height: 13px;
+  margin-left: 34px;
+  width: 185px;
+}
+
+.input-talla {
+  height: 13px;
+  margin-left: 48px;
+  width: 185px;
+}
+
+.input-tamano {
+  height: 13px;
+  width: 185px;
+  margin-left: 23px;
+}
+
+.select-marca {
+  margin-left: 35px;
+  width: 210px;
+}
+
+.select-modelo {
+  margin-left: 23px;
+  width: 210px;
+}
+
+.select-color {
+  margin-left: 40px;
+  width: 210px;
+}
+
+.select-provincia {
+  width: 210px;
+  margin-left: 10px;
+}
+
+.select-municipio {
+  width: 210px;
+  margin-left: 5px;
+}
+
+.select-ciudadpoblado {
+  width: 210px;
+  margin-left: 17px;
+}
+
+.select-reparto {
+  width: 210px;
+  margin-left: 20px;
+}
+
+.select-tnegocio {
+  width: 185px;
+  margin-left: 5px;
+}
+
+.select-negocio {
+  width: 185px;
+  margin-left: 34px;
+}
+
+.select-cproducto {
+  width: 185px;
+  margin-left: 26px;
+}
+
+.select-productos {
+  width: 185px;
+  margin-left: 30px;
+}
+
+.product-flex {
+/*  display: flex;
+  gap: 10px;
+  width: 100%;
+  flex-wrap: wrap;
+*/
+display: grid;
+grid-template-columns: repeat(
+  auto-fill,
+  minmax(250px, 1fr)
+);
+gap: 20px 10px;
+padding: 15px;
+}
+
+.select-naturaleza-prod {
+  margin-left: 30px;
+  width: 200px;
+}
+
+.parrafo_label{
+  color: aquamarine;
+}
+.parrafo_texto1{
+  margin-left: 11px;
+  color: rgb(255, 255, 255);
+}
+.parrafo_texto2{
+  margin-left: 5px;
+  color: rgb(255, 255, 255);
+}
+.parrafo_texto3{
+  margin-left: 8px;
+  color: rgb(255, 255, 255);
+}
+.input-desc{
+  height: 30px;
+}

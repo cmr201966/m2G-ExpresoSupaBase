@@ -1,0 +1,142 @@
+.cabeza-chat {
+  display: flex;
+}
+.h4-1-cabeza {
+  margin-top: 22px;
+}
+
+.chat-lista-row {
+  display: flex;
+  margin-top: 3px;
+}
+.chat-lista-row-border {
+  display: flex;
+  margin-top: 3px;
+  border: 2px solid black;
+}
+.barra-titulo {
+  display: flex;
+  margin-top: 3px;
+}
+.img-titulo-chat {
+  object-fit: cover;
+  width: 40px;
+  height: 40px;
+  border-radius: 100px;
+}
+.elemento-lista-chat {
+  margin-bottom: 10px;
+  object-fit: cover;
+  width: 40px;
+  height: 40px;
+  border-radius: 100px;
+}
+.elemento-nombre-chat {
+  margin-left: 5px;
+  margin-top: 8px;
+}
+.chat-buscar-texto {
+  background: none;
+  border: none;
+  padding: 7px 15px;
+  color: aliceblue;
+  border-radius: 15px;
+  border: 1px solid aliceblue;
+  margin-top: 20px;
+  width: 250px;
+}
+.chat-buscar {
+  margin-bottom: 12px;
+}
+.label-chat-title {
+  margin-bottom: 10px;
+  font-family: Arial;
+  font-size: larger;
+}
+
+.modal-chat {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  position: fixed;
+  top: 249px;
+  left: 6px;
+  color: aliceblue;
+  width: 360px;
+}
+.modal-chat-opciones {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  position: fixed;
+  top: 249px;
+  left: 200px;
+  color: aliceblue;
+}
+
+.modal-chat-contenido {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  position: fixed;
+  top: 249px;
+  left: 6px;
+  color: aliceblue;
+}
+
+.chat-msgs {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  height: calc(100% - 112px);
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.chat-msgs-out {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  color: blue;
+  font: bold;
+}
+.chat-msgs-in {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  color: rgb(211, 211, 241);
+  font: bold;
+}
+.label-radio {
+  color: aliceblue !important;
+}
+.label-chat-head {
+  display: flex;
+}
+.elemento-nombre-chat {
+  color: aliceblue;
+}
+.label-chat-title {
+  color: aliceblue;
+}
+.label-chat-title-2 {
+  color: aliceblue;
+  font-size: small;
+  margin-top: 1px;
+}
+.cabeza {
+  color: aliceblue;
+}
+.radio-buttons-group {
+  margin-left: 30px;
+}
+.texto-buscar {
+  color: aliceblue !important;
+}
+.label-1-radio {
+  color: aliceblue !important;
+}
+.label-2-radio {
+  margin-left: 10px;
+  margin-top: 10px;
+  color: aliceblue;
+}

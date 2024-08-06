@@ -1,0 +1,39 @@
+.main {
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 20px;  
+}
+
+.perfil-info-producto {
+  display: flex;
+  margin-bottom: 20px;
+  gap:30px;
+  justify-content: space-between;
+}
+
+.img-class-info-producto img {
+  border-radius: 50%; /* Para hacer la imagen circular */
+}
+
+.product-info {
+  width: 100%;
+  color: white;
+}
+
+.parrafo {
+  display: flex;
+  flex-direction: row;
+  margin-bottom: 10px;
+}
+
+p {
+  margin: 1px;
+}
+
+.img-info-producto
+{
+    height: 230px;
+    width: 230px;
+    object-fit: cover;
+ }

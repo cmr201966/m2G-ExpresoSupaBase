@@ -1,0 +1,220 @@
+import Tippy from "@tippyjs/react";
+// components
+import Navbar from "../../components/Navbar/Navbar"
+import Hero from "../../layouts/Hero/Hero";
+import IconButton from "@mui/material/IconButton"
+import Close from "@mui/icons-material/Close";
+import ArrowBack from "@mui/icons-material/ArrowBack";
+import { useNavigate } from "react-router-dom";
+import { useEffect, useState } from "react";
+import axios from "axios";
+
+import ComGalerias from "../../components/ComGalerias/ComGalerias";
+import Map from "../../components/Map/MapBox";
+import MapIcon from "@mui/icons-material/Map";
+import { useLocation } from "react-router-dom";
+
+// styles
+import "./styles.css";
+import { Paragliding } from "@mui/icons-material";
+
+
+const InfoProducto = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const parsedParams = {}
+  const [desctmp, setdesctmp]=useState("Galerias");
+  const [showMap, setShowMap] = useState(false);
+  // Estados para la posición GPS del mapa
+  const [lng, setLng] = useState(-75.829090519);
+  const [lat, setLat] = useState(20.0217583);
+  const [zoom, setZoom] = useState(15.50);
+  const [contenidofoto, setContenidofoto] = useState();
+  const [idproducto, setIdproducto]=useState("");
+  const [negocio, setNegocio]=useState("");
+  const [producto, setProducto]=useState("");
+  const [precio, setPrecio]=useState("");
+  const [fecha, setFecha]=useState("");
+  const [hora, setHora]=useState("");
+//  const [rutatmp, setRutatmp]=useState("");
+//  const [perfil, setPerfil]=useState("");
+  const [inicio, setInicio]=useState(true);
+  const [gps, setGps]=useState(true);
+  
+
+  const onChangeMap = (which, value) => {
+    if (which === "lng") return setLng(value);
+    return setLat(value);
+  };
+
+
+  const lngLatSelected = (point, lngLat) => {
+    setLng(lngLat.lng);
+    setLat(lngLat.lat);
+  };
+
+  async function init(){
+    const result = await axios.post(
+      "http://localhost:3001/get-info-producto",
+      { idproducto: parsedParams.idproducto }, 
+      {}
+    );
+    if (result.data.length !== 0 && result.error === undefined) {
+       setIdproducto(parsedParams.idproducto);
+       setNegocio(result.data[0].negocio);
+       setProducto(result.data[0].producto);
+       setPrecio(result.data[0].precio);
+       setFecha(result.data[0].fecha);
+       setHora(result.data[0].hora);
+       setGps(result.data[0].gpsSN);
+       setLat(result.data[0].latitud);
+       setLng(result.data[0].longitud);
+
+    }
+
+    const resultado = await axios.post(
+    "http://localhost:3001/getjpg-file",
+//    { file: "./galerias/app_images/productos" + "/" + parsedParams.idproducto + "/" + parsedParams.idproducto + ".jpg" }, 
+    { file: "./galerias/app_images/productos" + "/" + parsedParams.idproducto + "/foto-1.jpg" }, 
+    {}
+  );
+  if (resultado.data.length !== 0 && resultado.error === undefined) {
+    setContenidofoto(resultado.data);
+  }
+  setInicio(false);
+}
+
+useEffect(() => {
+  const localParams = location.search.substring(1).split("&");
+  localParams.forEach((item, i) => {
+    const [paramName, paramValue] = item.split("=");
+    parsedParams[paramName] = paramValue;
+  });
+}, [location]);
+
+
+useEffect(() => {
+  init()
+}, [])
+
+
+  return (
+    <div>
+      <Navbar
+        links={[
+          { label: "Inicio", to: "/",tooltips: "Ir a la página principal" },
+          { label: sessionStorage.getItem("user") === null ? "Iniciar sesión" : "Cerrar sesión", to: sessionStorage.getItem("user") === null ? "/login" : "/cerrarsesion", tooltips: sessionStorage.getItem("user") === null ? "Abrir sesión" : "/Cerrar la sesión de " + sessionStorage.getItem("usernombre") },
+          { label: "Registrarse", to: "/registrarse?inserta=true", tooltips: "Crear una cuenta de usuario" },
+          { label: "Acerca de", to: "/Acercade", tooltips: "Acerca de Destodo" },
+        ]}
+      />
+      <Hero>
+      <div className="cabeza">
+         <IconButton color="primary" onClick={() => 
+          {
+             navigate(`/?naturaleza=${sessionStorage.getItem("naturaleza")}&owner=${sessionStorage.getItem("idowner")}&nivel=${sessionStorage.getItem("nivel")}`);
+          }}>
+             <ArrowBack />
+            </IconButton>
+        <h3 className="main-title">M2G-Destodo</h3>
+        <h4 className="registrarse-cabeza-1"> - Informacion del producto</h4>
+        </div>
+
+        <main className="main-info-producto">
+
+
+        {showMap!==true?
+            <>
+
+          <section className="perfil-info-producto">
+
+             <div className="img-class-info-producto">
+                  <img className="img-info-producto" src={contenidofoto} alt="Imagen del producto" />
+             </div> 
+
+             <div className="product-info">
+                 <div className="parrafo">
+                     <p>
+                        Negocio:
+                     </p>
+                     <p>
+                       {negocio}
+                     </p>
+                 </div>
+                 <div className="parrafo">
+                     <p>
+                       Producto:
+                     </p>                    
+                     <p>
+                       {producto}
+                     </p>
+                 </div>
+
+                 {precio!==0?
+                 <div className="parrafo">
+                     <p>
+                       Precio:
+                     </p>
+                     <p>
+                       {precio}
+                     </p>
+                 </div>:""}
+                 {fecha!=="undefined"?
+                 <div className="parrafo">
+                     <p>
+                        Fecha:
+                     </p>
+                     <p>
+                        {fecha}
+                     </p>   
+                 </div>:""}
+
+                 {hora!=="undefined"?
+                 <div className="parrafo">
+                     <p>
+                        Hora:
+                     </p>
+                     <p>
+                        {hora}
+                     </p>
+                  </div>:""}   
+              </div>
+          </section>
+
+          </>:""}
+
+            {inicio===false && showMap!==true?
+                <section className="galeria">
+                   <ComGalerias rutatmp={"productos/" + idproducto} desctmp={desctmp} perfil={idproducto} deQuien="del producto" />
+                </section>:""
+            }
+
+          {gps===1 && showMap===true?
+          <section className="mapa">
+            {showMap===true?
+               <Tippy content={`Cerrar mapa`}>
+                      <button className="offon-info-producto" onClick={()=>setShowMap(!showMap)}>
+                          <Close />
+                      </button>
+               </Tippy>:""}
+
+             <Map sx={{ height: "100%", width: "100%" }} onMapClick={lngLatSelected} remoteshowMap={showMap} lat={lat} lng={lng} point={{ lat, lng }} onChange={onChangeMap} remoteZoom={zoom} /> 
+          </section>:""
+          }
+
+          {gps===1 && showMap!==true?
+              <Tippy content="Ubicar al cliente en el mapa" >
+                     <button type="button" className="negocio-button primary" onClick={() => setShowMap(!showMap)}>
+                          <MapIcon />
+                     </button>
+              </Tippy>:""
+                       }
+
+        </main>
+
+      </Hero>
+    </div>
+  );
+};
+
+export default InfoProducto;

@@ -1,0 +1,286 @@
+body 
+{
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen',
+    'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue',
+    sans-serif;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: dodgerblue;
+  background-color: rgb(128, 128, 247) !important;
+}
+code 
+{
+  font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
+    monospace;
+}
+.card-container 
+{
+  width: 100wv;
+  display: flex;
+  flex-direction: column;
+}
+.cerrar-button
+{
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;  
+  position: absolute;
+  right: 3px;
+  top: 3px;  
+}
+.cerrar 
+{
+  background: none;
+  border: none;
+  color: crimson;
+  font-weight: bold;
+  transition: all 500ms ease;
+  padding: 5px;
+  border-radius: 15px;
+  cursor: pointer;
+  font-size:x-large;
+
+}
+.cerrar:hover 
+{
+  background: cyan;
+}
+.main-modal 
+{
+/*  display: flex;*/
+/*  align-items: center;*/
+/*  justify-content: center;*/
+/*  flex-direction: column;*/
+  color: aliceblue;
+
+}
+.primary 
+{
+  color: aliceblue !important;
+  background: dodgerblue !important;
+}
+.primary:hover 
+{
+  background: rgb(52, 153, 253);
+}
+.ghost 
+{
+  border: 1px solid aliceblue;
+}
+.ghost:hover 
+{
+  background: dodgerblue;
+}
+
+.hero label 
+{
+  justify-content: center;
+}
+
+.hero input 
+{
+  justify-content: right;
+}
+.input-area 
+{
+  display: flex;
+  justify-content: flex-end;
+  margin: 10px 10px 10px 0;
+  align-items: center;
+}
+.input-area input 
+{
+  background: none;
+  border: none;
+  padding: 7px 15px;
+  color: aliceblue;
+  border-radius: 15px;
+  border: 1px solid aliceblue;
+}
+.input-area label 
+{
+  color: aliceblue;
+  margin-right: 10px;
+  width: 100px;
+}
+.grupo-button 
+{
+  width: 100%;
+  height: 100%;
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+.button 
+{
+  background: none;
+  border: none;
+  padding: 7px 15px;
+  cursor: pointer;
+  color: aliceblue;
+  border-radius: 15px;
+}
+.cabeza
+{
+  display:flex;
+/*  flex-wrap: wrap;  */
+  align-items: center;
+}
+.h1-cabeza
+{
+  margin-top: 18px;
+}
+.h3-1-cabeza
+{
+  color: aliceblue;
+  margin-left: 4px;
+}
+.h3-2-cabeza
+{
+  color:aqua;
+  margin-left: 4px;
+}
+.input-area1 select 
+{
+  background: none;
+  border: none;
+  padding: 7px 15px;
+  border-radius: 15px;
+  border: 1px solid aliceblue;
+}
+.select
+{
+  width: 200px;
+  margin-left: 15px;
+}
+input[type="file"]
+{
+  display: none;
+}
+
+/*Clases de cardrow*/
+
+.button-row {
+  display: flex;
+  width: 100%;
+  gap: 40px;
+  justify-content: space-evenly;
+/*  align-items: flex-start;
+  width: 100%;*/
+  padding-left: 5px;
+}
+
+.button-row button svg {
+  width: 20px;
+}
+.new {
+  width: 25px !important;
+  border-radius: 25px !important;
+}
+
+.button-row button {
+  background: none;
+  border: none;
+  color: rgb(242 245 247);
+  cursor: pointer;
+  border-radius: 100%;
+  width: 30px;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 2px;
+}
+
+.card-texts {
+  flex: 1;
+  gap: 5px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.card-texts h5 {
+  color: rgb(87, 110, 129);
+}
+
+.card-texts p {
+  color: #bdb;
+}
+.modal-cardrow {
+  display: flex;
+  align-items: baseline;
+  justify-content: flex-start;
+  width: 100vw;
+  height: 100vh;
+  position: fixed;
+  top: 30px;
+  left: 4px;
+  color: aliceblue;
+  overflow: auto;
+}
+.card-selec-border {
+  border: 2px solid aliceblue;
+}
+.card-selec {
+  border: none;
+}
+.label-card-row {
+  margin-top: 15px;
+  color:aquamarine;
+}
+.label-card-row1 {
+  margin-top: 15px;
+  margin-left: 8px;
+}
+.label-datos-producto {
+  color: aquamarine;
+}
+.label-datos-producto1 {
+  color: rgb(255,255,255);
+  margin-left: 5px;
+}
+.menu-opciones {
+  display: flex;
+  margin-bottom: 10px;
+}
+.input-area-row {
+  display: flex;
+  justify-content: flex-start;
+  margin: 10px 10px 10px 0;
+}
+.label-cantidad {
+  margin-left: 210px;
+}
+.label-precio {
+  margin-left: 20px;
+}
+.precio-cantidad-row {
+  width: 90px;
+  justify-content: space-between;
+  display: flex;
+  padding: 0 15px;
+}
+.title-opciones {
+  margin-bottom: 10px;
+}
+
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  flex-direction: column;
+}
+
+.gap {
+  gap: 10px;
+}
+
+.padding {
+  width: 100%;
+  font-size: 12px;
+  padding-left: 5px;
+}

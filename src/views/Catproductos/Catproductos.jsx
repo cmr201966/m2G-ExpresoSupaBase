@@ -1,0 +1,1129 @@
+//import FormGroup from '@mui/material/FormGroup';
+//import FormControlLabel from '@mui/material/FormControlLabel';
+import Checkbox from "@mui/material/Checkbox";
+import CollectionsIcon from "@mui/icons-material/Collections";
+import { Box, CircularProgress } from "@mui/material";
+import MapIcon from "@mui/icons-material/Map";
+import ComGalerias from "../../components/ComGalerias/ComGalerias";
+import Map from "../../components/Map/MapBox";
+
+// images
+import ocupado from "../../assets/images/ocupado.png";
+import libre from "../../assets/images/libre.png";
+
+import Tippy from "@tippyjs/react";
+import { Link } from "react-router-dom";
+import Modal from "../../components/Modal/Modal";
+import { useParams } from "react-router-dom";
+// components
+import Navbar from "../../components/Navbar/Navbar";
+// layouts
+import Hero from "../../layouts/Hero/Hero";
+//
+import { useNavigate } from "react-router-dom";
+// styles
+import "./styles.css";
+// @mui/material
+import { IconButton } from "@mui/material";
+import ArrowBack from "@mui/icons-material/ArrowBack";
+import Check from "@mui/icons-material/Check";
+import Add from "@mui/icons-material/Add";
+import Delete from "@mui/icons-material/Delete";
+import Close from "@mui/icons-material/Close";
+import Edit from "@mui/icons-material/Edit";
+
+import { useEffect, useState } from "react";
+import axios from "axios";
+import { useLocation } from "react-router-dom";
+//import styledEngineSc from "@mui/styled-engine-sc";
+
+const CatProductos = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+  const parsedParams = {};
+  const [tuser, setTuser] = useState(sessionStorage.getItem("user"));
+  const [show, setShow] = useState(false);
+  const [show1, setShow1] = useState(false);
+  const [showGalerias, setShowGalerias] = useState(false);
+  const [showMap, setShowMap] = useState(false);
+  const [contenidofoto, setContenidofoto] = useState();
+  const [contenido, setContenido] = useState("");
+  const [arraynegocios, setArraynegocios] = useState([]);
+  const [arraytnegocios, setArraytnegocios] = useState([]);
+  const [arrayproductos, setArrayproductos] = useState([]);
+  const arraynoproductos = [
+    { idproducto: 99999999, marca: 999999, desc: "Desconocido" },
+  ];
+  const arraynonegocios = [
+    { keycategorianegocio: 999999, idnegocio: 999999, desc: "Desconocido" },
+  ];
+  const [arraynaturaleza, setArraynaturaleza] = useState([]);
+  const arraynonaturaleza = [{ idnaturaleza: 8, desc: "Desconocida" }];
+  const [naturaleza, setNaturaleza] = useState(0);
+  const [thora, setThora] = useState("");
+  const [tfecha, setTfecha] = useState("");
+  const [latitud, setLatitud] = useState(0);
+  const [longitud, setLongitud] = useState(0);
+  const [foto, setFoto] = useState();
+  const [nombrefoto, setNombrefoto] = useState("");
+  const [descripcion, setDescripcion] = useState("");
+  const [negocio, setNegocio] = useState(0);
+  const [nombrecorto, setNombrecorto] = useState("");
+  const [precio, setPrecio] = useState(0);
+  const [producto, setProducto] = useState(0);
+  const [tnegocio, setTnegocio] = useState(0);
+  const [cbprecio, setCbprecio] = useState(true);
+  const [cbvista, setCbvista] = useState(false);
+  const [domicilio, setDomicilio] = useState(false);
+  const [cbdomicilio, setCbdomicilio] = useState(true);
+  const [cbgps, setCbgps] = useState(false);
+  const [nombrecortofoto, setNombrecortofoto] = useState("");
+  const [inicia, setInicia] = useState(true);
+  const [agregarsn, setAgregarsn] = useState(false);
+  const [editarsn, setEditarsn] = useState(false);
+  const [eliminarsn, setEliminarsn] = useState(false);
+  const [zoom, setZoom] = useState(15.5);
+
+  //Estados para recuperar los datos del producto
+
+  const [negociot, setNegociot] = useState("");
+  const [naturalezat, setNaturalezat] = useState("");
+  const [productot, setProductot] = useState("");
+  const [nombrecortot, setNombrecortot] = useState("");
+  const [descripciont, setDescripciont] = useState("");
+  const [preciot, setPreciot] = useState("");
+  const [domiciliot, setDomiciliot] = useState("");
+  const [cbdomiciliot, setCbdomiciliot] = useState(false);
+  const [cbpreciot, setCbpreciot] = useState(false);
+  const [tfechat, setTfechat] = useState(false);
+  const [thorat, setThorat] = useState(false);
+  const [gpst, setGpst] = useState(false);
+  const [fecha, setFecha] = useState("");
+  const [nivel, setNivel] = useState(9999);
+  const [idowner, setIdowner] = useState(9999);
+  const [naturaleza1, setNaturaleza1] = useState(9999);
+
+  async function init() {
+    sessionStorage.setItem("filtro", "");
+    setShow(true);
+    setNivel(parsedParams.nivel);
+    setNaturaleza1(parsedParams.naturaleza);
+    setIdowner(parsedParams.idowner);
+
+    //
+    // Naturaleza
+    //
+    const resultnaturaleza = await axios.post(
+      "http://localhost:3001/getnaturaleza",
+      { naturaleza: "", admin: false },
+      {}
+    );
+    if (resultnaturaleza.data.error || resultnaturaleza.data.length === 0) {
+      setArraynaturaleza(arraynonaturaleza);
+      setNaturaleza(arraynonaturaleza[0].idnaturaleza);
+    } else {
+      setArraynaturaleza(resultnaturaleza.data);
+      setNaturaleza(resultnaturaleza.data[0].idnaturaleza);
+    }
+    //
+    // Tipos de negocios
+    //
+    let ttarraytnegocios;
+    const resulttnegocios = await axios.post(
+      "http://localhost:3001/gettnegociosuser",
+      { lista: [91, 61, 62, 63, 86, 60, 90, 91, 92, 53, 4] },
+      {}
+    );
+    if (resulttnegocios.data.error || resulttnegocios.data.length === 0) {
+      setArraytnegocios(arraynonegocios);
+      ttarraytnegocios = arraynonegocios;
+    } else {
+      setArraytnegocios(resulttnegocios.data);
+      ttarraytnegocios = resulttnegocios.data;
+    }
+    setTnegocio(0);
+    //
+    // Negocios de un tipo y que pertenescan a un dueño
+    //
+    const resultnegocios = await axios.post(
+      "http://localhost:3001/getnegociosusercategoria",
+      {
+        user: tuser,
+        categorianegocio: ttarraytnegocios[0].keycategorianegocio,
+      },
+      {}
+    );
+    setNegocio(0);
+    if (resultnegocios.data.error || resultnegocios.data.length === 0) {
+      //
+      // No encontro ningun negocio para este usuario
+      //
+      setArraynegocios(arraynonegocios);
+      setArrayproductos(arraynoproductos);
+    } else {
+      //
+      // se encontraron negocios de este tipo
+      // buscar los horarios del primer negocio
+      //
+      setArraynegocios(resultnegocios.data);
+      //
+      // Productos de este negocio
+      //
+      const resultproductos = await axios.post(
+        "http://localhost:3001/getproductos-categoria",
+        { negocio: resultnegocios.data[0].negocio },
+        {}
+      );
+      let tproducto = 0;
+      if (resultproductos.data.error || resultproductos.data.length === 0) {
+        setArrayproductos(arraynoproductos);
+        recuperardatosproducto(arraynoproductos, 0);
+        tproducto = arraynoproductos[0].idproducto;
+      } else {
+        setArrayproductos(resultproductos.data);
+        recuperardatosproducto(resultproductos.data, 0);
+        tproducto = resultproductos.data[0].idproducto;
+        const resultado = await axios.post(
+          "http://localhost:3001/getjpg-file",
+          {
+            file:
+              "./galerias/app_images/productos/" +
+              resultproductos.data[0].idproducto +
+              "/" +
+              "foto-1.jpg",
+          },
+          //          { foto: resultproductos.data[0].idproducto, folder: "productos" },
+          {}
+        );
+        if (resultado.data.length !== 0) {
+          setContenidofoto(resultado.data);
+          setNombrefoto(resultproductos.data[0].idproducto);
+        } else {
+          setNombrefoto("");
+        }
+        const rnaturaleza = await axios.post(
+          "http://localhost:3001/getnaturaleza-producto",
+          { producto: resultproductos.data[0].idproducto },
+          {}
+        );
+        if (rnaturaleza.data.length !== 0) {
+          setNaturalezat(rnaturaleza.data[0].naturaleza);
+        }
+      }
+      setProducto(0);
+    }
+    setInicia(false);
+    setShow(false);
+  } //init
+
+  async function handleselect(e) {
+    switch (e.target.id) {
+      case "tnegocio":
+        setTnegocio(e.target.value);
+        const resultnegocios = await axios.post(
+          "http://localhost:3001/getnegociosusercategoria",
+          {
+            user: tuser,
+            categorianegocio:
+              arraytnegocios[e.target.value].keycategorianegocio,
+          },
+          {}
+        );
+        if (resultnegocios.data.error || resultnegocios.data.length === 0) {
+          // No encontro ningun negocio para este usuario
+          setArraynegocios(arraynonegocios);
+          setArrayproductos(arraynoproductos);
+        } else {
+          setArraynegocios(resultnegocios.data);
+
+          // Categorias de producto de un negocio
+          const resultproductos = await axios.post(
+            "http://localhost:3001/getproductos-categoria",
+            { negocio: resultnegocios.data[0].negocio },
+            {}
+          );
+          if (resultproductos.data.error || resultproductos.data.length === 0) {
+            setArrayproductos(arraynoproductos);
+            recuperardatosproducto(arraynoproductos, 0);
+          } else {
+            // get la naturaleza de este producto
+            const rnaturaleza = await axios.post(
+              "http://localhost:3001/getnaturaleza-producto",
+              { producto: resultproductos.data[0].idproducto },
+              {}
+            );
+            if (rnaturaleza.data.length !== 0) {
+              setNaturalezat(rnaturaleza.data[0].naturaleza);
+            }
+
+            setArrayproductos(resultproductos.data);
+            recuperardatosproducto(resultproductos.data, 0);
+            //restaurarmenut(tcategorias, 0, resultproductos.data, 0, topciones);
+            const resultado = await axios.post(
+              "http://localhost:3001/getjpg-file",
+              {
+                file:
+                  "./galerias/app_images/productos" +
+                  "/" +
+                  resultproductos.data[0].idproducto +
+                  "/foto-1.jpg",
+              },
+              {}
+            );
+            if (resultado.data.length !== 0) {
+              setContenidofoto(resultado.data);
+              setNombrefoto(resultproductos.data[0].idproducto);
+            } else {
+              setNombrefoto("");
+            }
+          }
+          setNegocio(0);
+          setProducto(0);
+        }
+        break;
+
+      case "negocio":
+        setNegocio(e.target.value);
+        let tcategorias = [];
+
+        const resultproductos = await axios.post(
+          "http://localhost:3001/getproductos-categoria",
+          { negocio: arraynegocios[e.target.value].negocio },
+          {}
+        );
+        if (resultproductos.data.error || resultproductos.data.length === 0) {
+          setArrayproductos(arraynoproductos);
+          recuperardatosproducto(arraynoproductos, 0);
+        } else {
+          // get la naturaleza de este producto
+          const rnaturaleza = await axios.post(
+            "http://localhost:3001/getnaturaleza-producto",
+            { producto: resultproductos.data[0].idproducto },
+            {}
+          );
+          if (rnaturaleza.data.length !== 0) {
+            setNaturalezat(rnaturaleza.data[0].naturaleza);
+          }
+          setArrayproductos(resultproductos.data);
+          recuperardatosproducto(resultproductos.data, 0);
+          const resultado = await axios.post(
+            "http://localhost:3001/getjpg-file",
+            {
+              file:
+                "./galerias/app_images/productos" +
+                "/" +
+                resultproductos.data[0].idproducto +
+                "/foto-1.jpg",
+            },
+            {}
+          );
+          if (resultado.data.length !== 0) {
+            setContenidofoto(resultado.data);
+            setNombrefoto(resultproductos.data[0].idproducto);
+          } else {
+            setNombrefoto("");
+          }
+        }
+        setProducto(0);
+
+        break;
+
+      case "producto":
+        setProducto(e.target.value);
+        // get la naturaleza de este producto
+        const rnaturaleza = await axios.post(
+          "http://localhost:3001/getnaturaleza-producto",
+          { producto: arrayproductos[e.target.value].idproducto },
+          {}
+        );
+        if (rnaturaleza.data.length !== 0) {
+          setNaturalezat(rnaturaleza.data[0].naturaleza);
+        }
+        // recuperar los valores del producto activo
+        // para que pueda ser modificado
+        recuperardatosproducto(arrayproductos, e.target.value);
+
+        const resultado = await axios.post(
+          "http://localhost:3001/getjpg-file",
+          {
+            file:
+              "./galerias/app_images/productos" +
+              "/" +
+              arrayproductos[e.target.value].idproducto +
+              "/foto-1.jpg",
+          },
+          {}
+        );
+        if (resultado.data.length !== 0) {
+          setContenidofoto(resultado.data);
+          setNombrefoto(arrayproductos[e.target.value].idproducto);
+        } else {
+          setNombrefoto("");
+        }
+        break;
+
+      case "naturaleza":
+        setNaturaleza(e.target.value);
+        break;
+    }
+  }
+
+  // Estados para la posición GPS del mapa
+  const [lng, setLng] = useState(-75.829090519);
+  const [lat, setLat] = useState(20.0217583);
+
+  const onChangeMap = (which, value) => {
+    if (which === "lng") return setLng(value);
+    return setLat(value);
+  };
+
+  const lngLatSelected = (point, lngLat) => {
+    setLng(lngLat.lng);
+    setLat(lngLat.lat);
+  };
+
+  function handleInput(e) {
+    switch (e.target.id) {
+      case "nombrecorto":
+        setNombrecorto(e.target.value);
+        break;
+      case "descripcion":
+        setDescripcion(e.target.value);
+        break;
+      case "precio":
+        setPrecio(e.target.value);
+        break;
+      case "tfecha":
+        setTfecha(e.target.value);
+        break;
+      case "cbgps":
+        setCbgps(e.target.checked);
+        break;
+      case "thora":
+        setThora(e.target.value);
+        break;
+      case "fecha":
+        setFecha(e.target.value);
+        break;
+      case "domicilio":
+        setDomicilio(e.target.checked);
+        break;
+      case "cbprecio":
+        setCbprecio(e.target.checked);
+        break;
+      case "cbdomicilio":
+        setCbdomicilio(e.target.checked);
+        break;
+      case "vista":
+        setCbvista(e.target.checked);
+        break;
+      default:
+        break;
+    }
+  }
+  function iniciadatosgenerales() {
+    setTfecha("");
+    setThora("");
+    setNombrefoto("");
+    setNombrecorto("");
+    setDescripcion("");
+    setPrecio(0);
+  }
+
+  useEffect(() => {
+    const localParams = location.search.substring(1).split("&");
+    localParams.forEach((item) => {
+      const [paramName, paramValue] = item.split("=");
+      parsedParams[paramName] = paramValue;
+    });
+  }, [location]);
+
+  function recuperardatosproducto(data, i) {
+    setNegociot(i);
+    setProductot(data[i].idproducto);
+    setNombrecortot(data[i].nick);
+    setDescripciont(data[i].desc);
+    setPreciot(data[i].precio);
+    setTfechat(data[i].fecha);
+    setThorat(data[i].hora);
+    setDomiciliot(data[i].domicilio);
+    setCbdomiciliot(data[i].domicilioSN);
+    setCbpreciot(data[i].precioSN);
+    setGpst(data[i].gpsSN === 1 ? true : false);
+    setCbgps(data[i].gpsSN === 1 ? true : false);
+  }
+  function restaurardatosproductos() {
+    //setNegocio(negociot);
+    setNombrefoto(productot);
+    setNombrecorto(nombrecortot);
+    setDescripcion(descripciont);
+    setNaturaleza(naturalezat);
+    setPrecio(preciot);
+    setCbprecio(cbpreciot);
+    setDomicilio(domiciliot);
+    setCbdomicilio(cbdomiciliot);
+    setTfecha(tfechat);
+    setThora(thorat);
+    setCbgps(gpst);
+  }
+
+  const onPhotoChange = (e) => {
+    const file = e.target.files[0];
+    setNombrefoto(e.target.value);
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target.result;
+      setContenidofoto(content);
+    };
+    reader.readAsDataURL(file);
+    setCbvista(true);
+  };
+
+  async function confirmar() {
+    const result = await axios.post(
+      "http://localhost:3001/setproducto",
+      {
+        user: tuser,
+        producto: arrayproductos[producto].idproducto,
+        negocio: arraynegocios[negocio].negocio,
+        nick: nombrecorto,
+        contenidofoto,
+        desc: descripcion,
+        precio,
+        cbprecio: cbprecio === true ? 1 : 0,
+        domicilio: domicilio === true ? 1 : 0,
+        cbdomicilio: cbdomicilio === true ? 1 : 0,
+        naturaleza,
+        agregar: agregarsn ? true : false,
+        editar: editarsn ? true : false,
+        fecha,
+        thora,
+        tfecha,
+        gps: cbgps === true ? 1 : 0,
+        latitud: lat,
+        longitud: lng,
+      },
+      {}
+    );
+    if (result.data.error) {
+      setContenido(result.data.error);
+      setShow1(true);
+      return;
+    }
+    if (agregarsn) {
+      var productot = result.data.productot;
+      arrayproductos.push({
+        user: tuser,
+        idproducto: productot,
+        negocio: arraynegocios[negocio].negocio,
+        foto: nombrecortofoto,
+        nick: nombrecorto,
+        desc: descripcion,
+        precio,
+        domicilio,
+        cbdomicilio,
+        cbprecio,
+        agregar: agregarsn ? true : false,
+        editar: editarsn ? true : false,
+      });
+    } else {
+      let tarrayproductos = [];
+      tarrayproductos.push({
+        user: tuser,
+        idproducto: productot,
+        negocio: arraynegocios[negocio].negocio,
+        foto: nombrecortofoto,
+        nick: nombrecorto,
+        desc: descripcion,
+        precio,
+        domicilio,
+        cbdomicilio,
+        cbprecio,
+        agregar: agregarsn ? true : false,
+        editar: editarsn ? true : false,
+      });
+      recuperardatosproducto(tarrayproductos, 0);
+      var productot = arrayproductos[producto].idproducto;
+    }
+    //
+    setContenido(
+      "El producto '" + descripcion + "' se registró correctamente."
+    );
+    setShow1(true);
+    setAgregarsn(false);
+    setEditarsn(false);
+  } //confirma
+
+  function editar() {
+    restaurardatosproductos();
+    setEditarsn(true);
+  }
+
+  function agregar() {
+    iniciadatosgenerales();
+    setAgregarsn(true);
+    //setMarca(2);
+  }
+
+  const eliminar = () => {
+    setEliminarsn(true);
+    setContenido(
+      "¿Está seguro que desea eliminar a " + arrayproductos[producto].desc + "?"
+    );
+    setShow1(true);
+  };
+
+  async function sino() {
+    await axios.post(
+      "http://localhost:3001/delproducto",
+      { producto: arrayproductos[producto].idproducto },
+      {}
+    );
+    // refrescar la lista despues de eliminada la categoria
+    //arraycategoriasproductos.splice(borrar, 1);
+    iniciadatosgenerales();
+    setShow1(false);
+    setEliminarsn(false);
+  }
+
+  function tcancelar() {
+    setAgregarsn(false);
+    setEditarsn(false);
+    setEliminarsn(false);
+    setDescripcion("");
+    setShowGalerias(false);
+    setShowMap(false);
+  }
+  const onModalClose = () => {
+    setShow(false);
+  };
+
+  const onModalClose1 = () => {
+    setShow1(false);
+  };
+
+  useEffect(() => {
+    init();
+  }, []);
+
+  return (
+    <>
+     <Modal
+        visible={show1}
+        onClose={onModalClose1}
+        className="cmodal wmodal"
+        classContainer="modal-catalogo-productos"
+      >
+        <div className="cerrar-button">
+          <button className="cerrar" onClick={onModalClose1}>
+            X
+          </button>
+        </div>
+        <div className="main-modal">
+          <label>{contenido}</label>
+          {eliminarsn ? (
+            <>
+              <button className="si" onClick={sino}>
+                Si
+              </button>
+              <button className="no" onClick={onModalClose1}>
+                No
+              </button>
+            </>
+          ) : (
+            ""
+          )}
+        </div>
+      </Modal>
+      <div>
+        <Navbar
+          links={[
+            { label: "Inicio", to: "/", tooltips: "Ir a la página principal" },
+            {
+              label:
+                sessionStorage.getItem("user") === null
+                  ? "Iniciar sesión"
+                  : "Cerrar sesión",
+              to:
+                sessionStorage.getItem("user") === null
+                  ? "/login"
+                  : "/cerrarsesion",
+              tooltips:
+                sessionStorage.getItem("user") === null
+                  ? "Abrir sesión"
+                  : "/Cerrar la sesión de " +
+                    sessionStorage.getItem("usernombre"),
+            },
+            {
+              label: "Registrarse",
+              to: "/registrarse?inserta=true",
+              tooltips: "Crear una cuenta de usuario",
+            },
+            {
+              label: "Acerca de",
+              to: "/Acercade",
+              tooltips: "Acerca de M2G-Destodo",
+            },
+          ]}
+        />
+        <Hero>
+          <div className="cabeza">
+            <IconButton
+              color="primary"
+              onClick={() => {
+                navigate(
+                  `/?naturaleza=${naturaleza1}&idowner=${idowner}&nivel=${nivel}`
+                );
+              }}
+            >
+              <ArrowBack />
+            </IconButton>
+            <h3 className="h1-cabeza">DesTodo</h3>
+            <h4 className="h3-1-catproductos-cabeza">
+              {" "}
+              - Catálogo de Productos
+            </h4>
+          </div>
+          {show ? (
+            <Box
+              sx={{
+                width: "100%",
+                height: "300px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CircularProgress color="checkbox" />
+            </Box>
+          ) : null}
+          {inicia === false ? (
+            <>
+              <div className="catalogo-producto">
+{showMap!==true?
+                <>
+                <div className="container-producto-select">
+
+
+                  <div className="input-area1-producto">
+                    <label className="label-datos-catproducto">
+                      Tipo de Negocio:{" "}
+                    </label>
+                    <select
+                      className="selecttn-prod"
+                      id="tnegocio"
+                      onChange={handleselect}
+                      value={tnegocio}
+                      disabled={agregarsn || editarsn}
+                    >
+                      {arraytnegocios.map((item, i) => {
+                        return (
+                          <option key={i} value={i}>
+                            {item.desc}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+
+
+                  <div className="input-area1-producto">
+                    <label className="label-datos-catproducto">Negocio: </label>
+                    <select
+                      className="selectne-prod"
+                      id="negocio"
+                      onChange={handleselect}
+                      value={negocio}
+                      disabled={agregarsn || editarsn}
+                    >
+                      {arraynegocios.map((item, i) => {
+                        return (
+                          <option key={i} value={i}>
+                            {item.desc}
+                          </option>
+                        );
+                      })}
+                    </select>
+                  </div>
+
+
+
+                  {agregarsn === false ? (
+                    <div className="input-area1-producto">
+                      <label className="label-datos-catproducto">
+                        Producto:{" "}
+                      </label>
+                      <select
+                        className="selectpro-prod"
+                        id="producto"
+                        onChange={handleselect}
+                        value={producto}
+                        disabled={agregarsn || editarsn}
+                      >
+                        {arrayproductos.map((item, i) => {
+                          return (
+                            <option key={i} value={i}>
+                              {item.desc}
+                            </option>
+                          );
+                        })}
+                      </select>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+
+                </div>
+
+
+                </>:""}
+
+
+{showMap!==true?
+<>
+                
+                {agregarsn || editarsn ? (
+                  <>
+                    <div className="container-producto-datos">
+                      {agregarsn === false ? (
+                        <label className="label-datos-catproducto">
+                          DATOS{" "}
+                        </label>
+                      ) : (
+                        <label className="label-datos-catproducto">
+                          DATOS DEL NUEVO PRODUCTO{" "}
+                        </label>
+                      )}
+                      <div className="input-area1-producto">
+                        <label className="label-datos-catproducto">
+                          *Nombre:{" "}
+                        </label>
+                        <input
+                          className="input-cataproducto-1"
+                          id="nombrecorto"
+                          value={nombrecorto}
+                          onChange={handleInput}
+                          type="text"
+                          required
+                        />
+                      </div>
+                      <div className="input-area2">
+                        <label className="label-datos-catproducto">
+                          *Descripción:
+                        </label>
+                        <input
+                          className="input-cataproducto-2"
+                          id="descripcion"
+                          value={descripcion}
+                          onChange={handleInput}
+                          type="text"
+                          required
+                        />
+                      </div>
+                      <div className="input-area1-producto">
+                        <label className="label-datos-naturaleza">
+                          Naturaleza:{" "}
+                        </label>
+                        <select
+                          className="select-naturaleza-producto"
+                          id="naturaleza"
+                          onChange={handleselect}
+                          value={naturaleza}
+                        >
+                          {arraynaturaleza.map((item, i) => {
+                            return (
+                              <option key={i} value={item.idnaturaleza}>
+                                {item.desc}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </div>
+
+                      <div className="input-area2">
+                        <label className="label-datos-catproducto">
+                          Fecha:
+                        </label>
+                        <input
+                          className="input-cataproducto-20"
+                          id="tfecha"
+                          value={tfecha}
+                          onChange={handleInput}
+                          type="text"
+                          required
+                        />
+                      </div>
+                      <div className="input-area2">
+                        <label className="label-datos-catproducto">Hora:</label>
+                        <input
+                          className="input-cataproducto-21"
+                          id="thora"
+                          value={thora}
+                          onChange={handleInput}
+                          type="text"
+                          required
+                        />
+                      </div>
+{/*                      {cbprecio ? (*/}
+                        <div className="input-area4">
+                          <label className="label-datos-catproducto">
+                            Precio:
+                          </label>
+                          <input
+                            className="input-cataproducto-4"
+                            id="precio"
+                            value={precio}
+                            onChange={handleInput}
+                            type="text"
+                            required
+                          />
+                        </div>
+{/*                      ) : (
+                        ""
+                      )}*/}
+{/*                      {cbdomicilio ? (*/}
+                        <div className="input-area4">
+                          <label className="label-datos-catproducto input-cataproducto-12">
+                            Domicilio:
+                          </label>
+                          <Checkbox
+                            sx={{ padding: 0 }}
+                            id="domicilio"
+                            color="checkbox"
+                            defaultChecked
+                            checked={domicilio}
+                            onClick={handleInput}
+                          />
+                        </div>
+{/*                      ) : (
+                        ""
+                      )}*/}
+
+                      <div className="input-area4">
+                         <label className="label-datos-catproducto input-cataproducto-99">
+                               GPS:
+                          </label>
+                          <Checkbox
+                            id="cbgps"
+                            color="checkbox"
+                            defaultChecked
+                            checked={cbgps}
+                            onClick={handleInput}
+                          />
+                      </div>
+
+                      <div className="input-area-foto-prod">
+                        <label className="label-2-prod">Foto:</label>
+                        <label className="label-2-1-prod">
+                          <input
+                            id="foto"
+                            value={foto}
+                            onChange={onPhotoChange}
+                            type="file"
+                            required
+                            multiple
+                          />
+                          Añadir foto
+                        </label>
+                        {nombrefoto !== "" ? (
+                          <div className="check-vista-1">
+                            <label className="label-vista-productos-1-1">
+                              Vista previa
+                            </label>
+                            <Checkbox
+                              className="cbox-vista"
+                              id="vista"
+                              color="checkbox"
+                              defaultChecked
+                              checked={cbvista}
+                              onClick={handleInput}
+                            />
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                      {nombrefoto !== "" && cbvista ? (
+                        <div className="img-class">
+                          <img className="img-producto" src={contenidofoto} />
+                        </div>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </>
+                ) : (
+                  ""
+                )}
+
+
+</>:""}
+
+
+                <div className="producto-grupo-button">
+                  {agregarsn === false && editarsn === false ? (
+                    <Tippy content="Añadir Producto">
+                      <button
+                        type="button"
+                        className="producto-button primary"
+                        onClick={agregar}
+                      >
+                        <Add />
+                      </button>
+                    </Tippy>
+                  ) : (
+                    ""
+                  )}
+                  {arrayproductos[producto].desc !== "Desconocido" ? (
+                    <>
+                      {agregarsn === false && editarsn === false ? (
+                        <Tippy content="Clic para editar el producto">
+                          <button
+                            type="button"
+                            className="producto-button primary"
+                            disabled={arrayproductos[0].desc === "Desconocido"}
+                            onClick={editar}
+                          >
+                            <Edit />
+                          </button>
+                        </Tippy>
+                      ) : (
+                        ""
+                      )}
+
+                      {agregarsn === false && editarsn === false ? (
+                        <Tippy content="Clic para eliminar el producto">
+                          <button
+                            type="button"
+                            className="producto-button primary"
+                            disabled={arrayproductos[0].desc === "Desconocido"}
+                            onClick={eliminar}
+                          >
+                            <Delete />
+                          </button>
+                        </Tippy>
+                      ) : (
+                        ""
+                      )}
+
+                      {inicia === false && (agregarsn || editarsn) && showMap!==true ? (
+                        <Tippy content={`Galeria de fotos del producto`}>
+                          <button
+                            type="button"
+                            className="producto-button primary"
+                            onClick={() => setShowGalerias(!showGalerias)}
+                          >
+                            <CollectionsIcon />
+                          </button>
+                        </Tippy>
+                      ) : (
+                        ""
+                      )}
+
+                      {cbgps === true &&
+                      inicia === false &&
+                      (agregarsn || editarsn) ? (
+                        <Tippy content="Ubicar el producto en el mapa">
+                          <button
+                            type="button"
+                            className="negocio-button primary"
+                            onClick={() => setShowMap(!showMap)}
+                          >
+                            <MapIcon />
+                          </button>
+                        </Tippy>
+                      ) : (
+                        ""
+                      )}
+                    </>
+                  ) : (
+                    ""
+                  )}
+
+                  {(agregarsn || editarsn) ? (
+                    <Tippy
+                      content={
+                        nombrecorto.length !== 0 && descripcion.length !== 0
+                          ? "Registrar el producto"
+                          : "Complete los datos necesarios"
+                      }
+                    >
+                      <button
+                        type="button"
+                        className="producto-button primary"
+                        onClick={
+                          nombrecorto.length !== 0 && descripcion.length !== 0
+                            ? confirmar
+                            : ""
+                        }
+                      >
+                        <Check />
+                      </button>
+                    </Tippy>
+                  ) : (
+                    ""
+                  )}
+
+                  {agregarsn || editarsn ? (
+                    <Tippy content="Cancelar, agregar ó editar producto">
+                      <button
+                        type="button"
+                        className="producto-button primary"
+                        onClick={tcancelar}
+                      >
+                        <Close />
+                      </button>
+                    </Tippy>
+                  ) : (
+                    ""
+                  )}
+                </div>
+
+                {inicia === false &&
+                showGalerias === true &&
+                showMap === false ? (
+                  <ComGalerias
+                    deQuien={arrayproductos[producto].desc}
+                    rutatmp={"productos/" + arrayproductos[producto].idproducto}
+                    perfil={arrayproductos[producto].idproducto}
+                    permiso={true}
+                    botonCerrar={false}
+                  />
+                ) : (
+                  ""
+                )}
+
+                {showMap === true &&
+                showGalerias === false &&
+                cbgps === true ? (
+                  <>                 
+                    <Map
+                      points={[{ lat: 20.02314837166425
+                        , lng: -75.8309214225784, image: ocupado }, { lat: 20.021973605945064, lng: -75.83050215359418, image: libre }]}
+
+                      sx={{ height: "100%", width: "100%" }}
+                      onMapClick={lngLatSelected}
+                      remoteshowMap={showMap}
+                      lat={lat}
+                      lng={lng}
+                      point={{ lat, lng }}
+                      onChange={onChangeMap}
+                      remoteZoom={zoom}
+                    />
+                  </>
+                ) : (
+                  ""
+                )}
+              </div>
+            </>
+          ) : (
+            ""
+          )}
+        </Hero>
+      </div>
+    </>
+  );
+};
+
+export default CatProductos;
