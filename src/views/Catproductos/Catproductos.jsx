@@ -1098,11 +1098,7 @@ const CatProductos = () => {
                 showGalerias === false &&
                 cbgps === true ? (
                   <>                 
-                    <Map
-                      points={[{ lat: 20.02314837166425
-                        , lng: -75.8309214225784, image: ocupado }, { lat: 20.021973605945064, lng: -75.83050215359418, image: libre }]}
-
-                      sx={{ height: "100%", width: "100%" }}
+                    <Map sx={{ height: "100%", width: "100%" }}
                       onMapClick={lngLatSelected}
                       remoteshowMap={showMap}
                       lat={lat}
