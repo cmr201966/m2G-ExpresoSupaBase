@@ -7,6 +7,7 @@ import Close from "@mui/icons-material/Close";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import libre from "../../assets/images/libre.png";
 import axios from "axios";
 
 import ComGalerias from "../../components/ComGalerias/ComGalerias";
@@ -40,6 +41,8 @@ const InfoProducto = () => {
 //  const [perfil, setPerfil]=useState("");
   const [inicio, setInicio]=useState(true);
   const [gps, setGps]=useState(true);
+  const [puntos, setPuntos]=useState([]);
+  const [naturaleza1, setNaturaleza1]=useState(0);
   
 
   const onChangeMap = (which, value) => {
@@ -54,6 +57,8 @@ const InfoProducto = () => {
   };
 
   async function init(){
+        
+    setNaturaleza1(parsedParams.naturaleza)
     const result = await axios.post(
       "http://localhost:3001/get-info-producto",
       { idproducto: parsedParams.idproducto }, 
@@ -71,6 +76,19 @@ const InfoProducto = () => {
        setLng(result.data[0].longitud);
 
     }
+
+    const resultgps = await axios.post(
+      "http://localhost:3001/get-pares-gps-naturaleza",
+      { naturaleza: parsedParams.naturaleza }, 
+      {}
+    );
+    let paresGps=[];
+    resultgps.data.forEach((item) => {
+         paresGps.push({lat: item.latitud, lng: item.longitud, image: libre})
+     setPuntos(paresGps);
+    });
+
+
 
     const resultado = await axios.post(
     "http://localhost:3001/getjpg-file",
@@ -112,7 +130,8 @@ useEffect(() => {
       <div className="cabeza">
          <IconButton color="primary" onClick={() => 
           {
-             navigate(`/?naturaleza=${sessionStorage.getItem("naturaleza")}&owner=${sessionStorage.getItem("idowner")}&nivel=${sessionStorage.getItem("nivel")}`);
+//             navigate(`/?naturaleza=${sessionStorage.getItem("naturaleza")}&owner=${sessionStorage.getItem("idowner")}&nivel=${sessionStorage.getItem("nivel")}`);
+             navigate(-1);
           }}>
              <ArrowBack />
             </IconButton>
@@ -197,8 +216,11 @@ useEffect(() => {
                           <Close />
                       </button>
                </Tippy>:""}
-
-             <Map sx={{ height: "100%", width: "100%" }} onMapClick={lngLatSelected} remoteshowMap={showMap} lat={lat} lng={lng} point={{ lat, lng }} onChange={onChangeMap} remoteZoom={zoom} /> 
+             {naturaleza1==="44"?
+                <Map points={puntos} sx={{ height: "100%", width: "100%" }} onMapClick={lngLatSelected} remoteshowMap={showMap} lat={lat} lng={lng} point={{ lat, lng }} onChange={onChangeMap} remoteZoom={zoom} />
+                :
+                <Map sx={{ height: "100%", width: "100%" }} onMapClick={lngLatSelected} remoteshowMap={showMap} lat={lat} lng={lng} point={{ lat, lng }} onChange={onChangeMap} remoteZoom={zoom} />
+             }
           </section>:""
           }
 
