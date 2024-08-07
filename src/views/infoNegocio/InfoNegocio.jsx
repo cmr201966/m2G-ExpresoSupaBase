@@ -112,7 +112,8 @@ useEffect(() => {
       <div className="cabeza">
          <IconButton color="primary" onClick={() => 
           {
-             navigate(`/?naturaleza=${sessionStorage.getItem("naturaleza")}&owner=${sessionStorage.getItem("idowner")}&nivel=${sessionStorage.getItem("nivel")}`);
+//             navigate(`/?naturaleza=${sessionStorage.getItem("naturaleza")}&owner=${sessionStorage.getItem("idowner")}&nivel=${sessionStorage.getItem("nivel")}`);
+             navigate(-1);
           }}>
              <ArrowBack />
             </IconButton>
