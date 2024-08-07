@@ -1261,7 +1261,7 @@ const Productos = () => {
 
   function verproducto(i) {
     //setShowproducto(true);
-    navigate(`/infoproducto?idproducto=${result[i].keyproducto}`);
+    navigate(`/infoproducto?idproducto=${result[i].keyproducto}&naturaleza=${naturaleza1}`);
   }
 
   function vernegocio(i) {
