@@ -136,8 +136,6 @@ const Map = (props) => {
   useEffect(() => {
     if (localLng !== lng) setLocalLng(lng);
     if (localLat !== lat) setLocalLat(lat);
-    console.log(lng);
-    console.log(lat);
     if (map && map.current) {
       map.current
         .getSource("single-point")
