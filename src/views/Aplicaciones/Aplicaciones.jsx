@@ -78,6 +78,7 @@ const Aplicaciones = () => {
     }
     else 
     {
+      console.log(result.data);
       setArrayAplicaciones(result.data);
       setAplicacion(0);
       recuperardatosproducto(result.data, 0);

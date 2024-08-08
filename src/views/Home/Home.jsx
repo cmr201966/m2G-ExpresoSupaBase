@@ -51,9 +51,12 @@ const Home = () => {
   if (parsedParams.nivel === undefined || parsedParams.idowner === undefined || parsedParams.nivel==="0") 
     {
       setNivel(0);
+      console.log(sessionStorage.getItem("user"));
+      console.log(sessionStorage.getItem("tipouser"));
       result1 = await axios.post(
+
         "http://localhost:3001/getapps",
-        {
+        {          
           login: sessionStorage.getItem("user") === null ? false : true,
           user: sessionStorage.getItem("user")===null?"":sessionStorage.getItem("user"),
         },

@@ -6,6 +6,7 @@ import Modal from "../../components/Modal/Modal";
 import Hero from "../../layouts/Hero/Hero";
 // @mui/icons-material
 //import CollectionsIcon from "@mui/icons-material/Collections";
+import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import Check from "@mui/icons-material/Check";
 import FilterAltOff from "@mui/icons-material/FilterAltOff";
@@ -13,8 +14,10 @@ import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
 import { Box, CircularProgress } from "@mui/material";
 import Tippy from "@tippyjs/react";
-import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import { useNavigate } from "react-router-dom";
+import Close from "@mui/icons-material/Close";
+import Map from "../../components/Map/MapBox";
+import libre from "../../assets/images/libre.png";
 
 // Otros
 import { useEffect, useState } from "react";
@@ -30,6 +33,7 @@ import "./styles.css";
 const Productos = () => {
   const navigate = useNavigate();
   const [mapLoading, setMapLoading] = useState(true);
+  const [puntos, setPuntos]=useState([]);
   const { filterState, setFilterState } = useFilter();
   const location = useLocation();
   const parsedParams = {};
@@ -48,20 +52,10 @@ const Productos = () => {
   const [botones, setBotones] = useState(false);
   const [contenido, setContenido] = useState("");
   const [contenidofoto, setContenidofoto] = useState([]);
-  const [arraymenuopciones, setArraymenuopciones] = useState([]);
-  const [chatuser, setChatuser] = useState("");
-  const [showGalerias, setShowGalerias] = useState(false);
-  const [showchat, setShowchat] = useState(false);
-  const [rutatmp, setRutatmp] = useState("");
-  // Variables del CHAT
-  const [chatnombre, setChatnombre] = useState("");
-  const [indexChat, setIndexChat] = useState(0);
-  const [dueño, setDueño] = useState("");
-  const [desctmp, setDesctmp] = useState("");
-  const handleShowGaleries = () => {
-    setShowGalerias(false);
-  };
-
+  const [mascerca, setMascerca] = useState();
+  const [idproductot, setIdproductot] = useState();
+  const [items, setItems] = useState([]);
+  
   let users =
     sessionStorage.getItem("user") === null
       ? ""
@@ -107,8 +101,6 @@ const Productos = () => {
   const [precio, setPrecio] = useState("");
   const [cbubicacion, setCbubicacion] = useState(false);
   const [cbproducto, setCbproducto] = useState(false);
-  const [cbcproducto, setCbcproducto] = useState(false);
-  const [cproducto, setCproducto] = useState("");
   const [cbnegocio, setCbnegocio] = useState(false);
   const [cbtnegocio, setCbtnegocio] = useState(false);
   const [cbmunicipio, setCbmunicipio] = useState(false);
@@ -128,14 +120,12 @@ const Productos = () => {
   const [cbabiertosn, setCbabiertosn] = useState(false);
   const [domicilio, setDomicilio] = useState(0);
   const [abierto, setAbierto] = useState(0);
-  const [tinicia, setTinicia] = useState(false);
-  const [importe, setImporte] = useState(0);
   const [naturaleza1, setNaturaleza1] = useState(0);
   const [idowner, setIdowner] = useState(0);
 
   // Estados para la posición GPS del mapa
-  const [zoom, setZoom] = useState(15.5);
-  const [showMap, setShowMap] = useState(true);
+  const [zoom, setZoom] = useState(12.00);
+  const [showMap, setShowMap] = useState(false);
 
   // Estados para la posición GPS del mapa
   const [lng, setLng] = useState(-75.829090519);
@@ -470,7 +460,7 @@ const Productos = () => {
   async function init_filtrar() {
     setInicia(true);
     setShow1(true);
-    
+
 //  setNaturaleza(0);
 
     // Tipos de Negocios
@@ -517,7 +507,6 @@ const Productos = () => {
       }
     }
     setNegocio(0);
-
     //**************************************************/
     // Productos del primer negocio                     /
     //**************************************************/
@@ -592,6 +581,16 @@ const Productos = () => {
     setShow(filterState.show);
     setInicia(false);
   }
+
+  const lngLatSelected = (point, lngLat) => {
+    setLng(lngLat.lng);
+    setLat(lngLat.lat);
+  };
+
+  const onChangeMap = (which, value) => {
+    if (which === "lng") return setLng(value);
+    return setLat(value);
+  };
 
   function handleInput(e) {
     switch (e.target.id) {
@@ -1218,6 +1217,24 @@ const Productos = () => {
     init1();
   }
   //
+  async function paresGps(){
+    console.log("SI", naturaleza1);
+    const resultgps = await axios.post(
+      "http://localhost:3001/get-pares-gps-naturaleza",
+      { naturaleza: naturaleza1 }, 
+      {}
+    );
+    let paresgps=[];
+    let itemst=[];
+    console.log(resultgps.data);
+    resultgps.data.forEach((item) => {
+         paresgps.push({lat: item.latitud, lng: item.longitud, image: libre});
+         itemst.push(item.idproducto);
+     setPuntos(paresgps);
+     setItems(itemst);
+    });
+
+  }
   //
   function init() {
     setNivel(parsedParams.nivel);
@@ -1357,6 +1374,7 @@ const Productos = () => {
 //          photo: "./galerias/app_images/productos/" + item.keyproducto + "/" + item.keyproducto + ".jpg",
 //          reserva: item.reserva,
           user: item.iduser,
+          tipouser: item.tipouser,
 //          latitud: item.latitud,
 //          longitud: item.longitud,
 //          Precio: item.precio,
@@ -1391,7 +1409,6 @@ const Productos = () => {
     for (let i = 0; i < newResult.length; i += 1) {
       const resultado = await axios.post(
         "http://localhost:3001/getjpg-file",
-        //       { file: "./galerias/app_images/productos/" + result1.data[i].keyproducto + "/" + result1.data[i].keyproducto + ".jpg",i},
         { file: newResult[i].photo, i },
         {}
       );
@@ -1401,12 +1418,72 @@ const Productos = () => {
     }
 
     sessionStorage.setItem("carditem", 0);
+    const resultgps = await axios.post(
+      "http://localhost:3001/get-pares-gps-naturaleza",
+      { naturaleza: parsedParams.naturaleza }, 
+      {}
+    );
+    let paresgps=[];
+    let itemst=[];
+    console.log(resultgps.data);
+    resultgps.data.forEach((item) => {
+         paresgps.push({lat: item.latitud, lng: item.longitud, image: libre})
+         itemst.push(item.idproducto);
+     setPuntos(paresgps);
+     setItems(itemst);
+    });
+
     setInicia(false);
     setShow1(false);
   }
 
   function onModalClose9() {
   }
+ 
+  const calcularDistanciaEntreDosCoordenadas = (lat1, lon1, lat2, lon2) => {
+    // Convertir todas las coordenadas a radianes
+    lat1 = gradosARadianes(lat1);
+    lon1 = gradosARadianes(lon1);
+    lat2 = gradosARadianes(lat2);
+    lon2 = gradosARadianes(lon2);
+    // Aplicar fórmula
+    const RADIO_TIERRA_EN_KILOMETROS = 6371;
+    let diferenciaEntreLongitudes = (lon2 - lon1);
+    let diferenciaEntreLatitudes = (lat2 - lat1);
+    let a = Math.pow(Math.sin(diferenciaEntreLatitudes / 2.0), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(diferenciaEntreLongitudes / 2.0), 2);
+    let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return RADIO_TIERRA_EN_KILOMETROS * c;
+};
+
+const gradosARadianes = (grados) => {
+    return grados * Math.PI / 180;
+};
+
+
+const distanciaEnKilometros = (latitud1, longitud1, latitud2, longitud2)=>{
+  return calcularDistanciaEntreDosCoordenadas(latitud1, longitud1, latitud2, longitud2);
+}
+
+useEffect(() => {
+  let tt=0;
+  if (puntos.length!==0){
+    let menor=999999;
+    let esta=0;
+    puntos.forEach((item, i)=>{
+      esta=distanciaEnKilometros(lat, lng, item.lat, item.lng).toFixed(2);
+      if (esta<menor){
+        menor=esta
+        setIdproductot(items[i]);
+        tt=items[i];
+      }     
+    });
+    setMascerca(menor);
+    console.log(items);
+    console.log(tt);
+  }
+}, [lng]);
+
+
   function onModalClose() {
     setFilterState({ type: "set", newvalue: false });
   }
@@ -1527,38 +1604,6 @@ const Productos = () => {
                 ""
               )}
 
-{/*
-              <div>
-                <Checkbox
-                  className="cbox-naturaleza"
-                  id="cbnaturaleza"
-                  color="checkbox"
-                  defaultChecked
-                  checked={cbnaturaleza}
-                  onClick={handleInput}
-                />
-                <label className="check-naturaleza">Naturaleza</label>
-                {cbnaturaleza ? (
-                  <select
-                    className="select-naturaleza-prod"
-                    id="naturaleza"
-                    onChange={handleInput}
-                    value={naturaleza}
-                  >
-                    {arraynaturalezas.map((item, i) => {
-                      return (
-                        <option key={i} value={i}>
-                          {item.desc}
-                        </option>
-                      );
-                    })}
-                  </select>
-                ) : (
-                  ""
-                )}
-
-              </div>
-*/}
               <div>
                 <Checkbox
                   className="cbox-negocio-producto"
@@ -1876,7 +1921,7 @@ const Productos = () => {
           nivel={1}
         />
         <Hero>
-          <div className={"cabeza"}>
+          <div className={"productos-cabeza"}>
               <IconButton
                 color="primary"
                 onClick={() => {
@@ -1893,45 +1938,50 @@ const Productos = () => {
               {" "}
               - {nombre.replaceAll("%20"," ")} - ({cantidadproductos})
             </h4>
+
+              <Tippy content="Ordenar" >
+                     <button type="button" className="car negocio-button primary" onClick={() => setShowMap(!showMap)}>
+                          <ShoppingCartOutlinedIcon />
+                     </button>
+              </Tippy>
+
+
           </div>
+
           {show1 ? <Box sx={{ width: "100%", height: "300px", display: "flex", alignItems: "center", justifyContent: "center" }}><CircularProgress color="checkbox" /></Box> : null}
+
           <div className="product-flex">
-            {inicia === false ? (
+            {inicia === false && showMap!==true ? (
               result.map((item, i) => (
-                <CardRow user={sessionStorage.getItem("user")} mapLoading={mapLoading} noproducto={noproducto} onMapClick={() => { setLat(item.latitud); setLng(item.longitud); setShowrow3(true) }} verproducto={verproducto} vernegocio={vernegocio} key={i} i={i} selectcard={selectcard} contenidofoto={contenidofoto[i]} item={item} />
+                <CardRow tipouser={sessionStorage.getItem("tipouser")} user={sessionStorage.getItem("user")} mapLoading={mapLoading} noproducto={noproducto} onMapClick={() => { setLat(item.latitud); setLng(item.longitud); setShowrow3(true) }} verproducto={verproducto} vernegocio={vernegocio} paresGps={paresGps} key={i} i={i} selectcard={selectcard} contenidofoto={contenidofoto[i]} item={item} />
               ))
             ) : (
               ""
             )}
+          </div>
+
+          <div className="result"> 
+            {showMap===true?
+            <>
+               {idproductot}{" : "}{mascerca}{" Kms"}
+            </>:""
+            }
+          </div>
+
+          <div className="mapa-productos">
+             {showMap===true?
+                 <>
+                 <Tippy content={`Cerrar mapa`}>
+                     <button className="offon-info-producto" onClick={()=>setShowMap(!showMap)}>
+                         <Close />
+                     </button>
+                 </Tippy>
+                     <Map points={puntos} sx={{ height: "600px", width: "100%" }} onMapClick={lngLatSelected} remoteshowMap={showMap} lat={lat} lng={lng}  point={{lat, lng}} onChange={onChangeMap} remoteZoom={zoom} />
+                 </>:""
+            }
 
           </div>
 
-          {showGalerias === true && showchat === false ?
-            <div>
-              <ComGalerias
-                rutatmp={rutatmp}
-                perfil={result[Number(sessionStorage.getItem("carditem"))].keyproducto + ".jpg"}
-                permiso={dueño === users}
-                fixed
-                handleShowGaleries={handleShowGaleries}
-                botonCerrar={true}
-              />
-            </div>
-            :
-            ""
-          }
-          {showchat === true && showGalerias === false ?
-            {/*            <div>
-              <ChatDialogo
-                user={result[Number(sessionStorage.getItem("carditem"))].xxxChat}
-                nombre={result[Number(sessionStorage.getItem("carditem"))].xxxNombre}
-                indexChat={indexChat}
-                fixed
-              />
-            </div>
-*/}
-            : ""
-          }
 
         </Hero>
       </div>

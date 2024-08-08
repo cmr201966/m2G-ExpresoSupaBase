@@ -18,7 +18,7 @@ import axios from "axios";
 const Login = () => {
   const navegar = useNavigate();
   const [user, setUser] = useState("");
-  const [password, setPassword] = useState();
+  const [password, setPassword] = useState("");
   const [resultado, setResultado] = useState("");
 
 async function verificauser(user)

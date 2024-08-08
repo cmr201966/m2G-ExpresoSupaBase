@@ -143,13 +143,21 @@ const CatNegocios = () => {
       { },
       {}
     );
-    console.log(resulcategoriasnegocios.data);
+    console.log(resulcategoriasnegocios.data.length);
+    if (resulcategoriasnegocios.data.length===0){
+      setShow(false);
+        setContenido("Agregue primero aplicaciones a la plataforma")
+        setShow1(true);
+        return
+    }
+
     setArraycategoriasnegocios(resulcategoriasnegocios.data);
 
     //Recuperar los negocios de esta categoria
     const resultnegocios = await axios.post(
       "http://localhost:3001/getallnegocios",
-      { categorianegocio: resulcategoriasnegocios.data[0].categorianegocio, user: sessionStorage.getItem("user") },
+//      { categorianegocio: resulcategoriasnegocios.data[0].categorianegocio, user: sessionStorage.getItem("user") },
+      { categorianegocio: resulcategoriasnegocios.data[0].categorianegocio, user: "" },
       {}
     );
     if (resultnegocios.data.error || resultnegocios.data.length === 0) {
@@ -329,10 +337,12 @@ const CatNegocios = () => {
         // recuperar los negocios de esta categoria
         const resultnegocio = await axios.post(
           "http://localhost:3001/getallnegocios",
-          { categorianegocio: arraycategoriasnegocios[e.target.value].categorianegocio, user: sessionStorage.getItem("user") },
+          { categorianegocio: arraycategoriasnegocios[e.target.value].categorianegocio, user: "" },
+//          { categorianegocio: arraycategoriasnegocios[e.target.value].categorianegocio, user: sessionStorage.getItem("user") },
           {}
         );
         const data = resultnegocio.data;
+        console.log(data);
         if (data.error || data.length === 0) {
           setArraynegocios(arraynonegocios);
         }

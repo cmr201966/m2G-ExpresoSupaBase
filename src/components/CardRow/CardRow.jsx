@@ -10,9 +10,10 @@ import axios from "axios";
 import "./styles.css";
 
 const CardRow = (props) => {
-  const { user, mapLoading, noproducto, i, item, selectcard, contenidofoto, verproducto, vernegocio, onMapClick } = props
+  const { tipouser, user, mapLoading, noproducto, i, item, selectcard, contenidofoto, verproducto, vernegocio, paresGps, onMapClick } = props
 //  const [ocupado, setOcupado]=useState(item.ocupado===1?true:false);
   const [ocupado, setOcupado]=useState(item.ocupado);
+
 
   async function powerSettings(){
     if (user!=="" && user!==null && user!==undefined){
@@ -24,6 +25,7 @@ const CardRow = (props) => {
       { idproducto: item.keyproducto, ocupado: ocupado===0?1:0 },
       {}
     );
+    paresGps();
 
   }
 ``
@@ -37,7 +39,7 @@ const CardRow = (props) => {
       <div className="card-image">
         <img src={contenidofoto} alt="Imagen" />
         <Tippy content={`Libre/Ocupado`}>
-           <button className={`${ocupado===0?"card-image-onoff":"card-image-offon"}`} onClick={powerSettings}>
+           <button className={`${ocupado===0?"card-image-onoff":"card-image-offon"}`}  disabled={tipouser===0?true:false} onClick={powerSettings}>
              <PowerSettingsNewIcon />
            </button>
         </Tippy>

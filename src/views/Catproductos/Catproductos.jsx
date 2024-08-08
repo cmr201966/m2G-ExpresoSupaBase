@@ -7,10 +7,6 @@ import MapIcon from "@mui/icons-material/Map";
 import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Map from "../../components/Map/MapBox";
 
-// images
-import ocupado from "../../assets/images/ocupado.png";
-import libre from "../../assets/images/libre.png";
-
 import Tippy from "@tippyjs/react";
 import { Link } from "react-router-dom";
 import Modal from "../../components/Modal/Modal";
@@ -62,8 +58,8 @@ const CatProductos = () => {
   const [naturaleza, setNaturaleza] = useState(0);
   const [thora, setThora] = useState("");
   const [tfecha, setTfecha] = useState("");
-  const [latitud, setLatitud] = useState(0);
-  const [longitud, setLongitud] = useState(0);
+  const [latt, setLatt] = useState(0);
+  const [lngt, setLngt] = useState(0);
   const [foto, setFoto] = useState();
   const [nombrefoto, setNombrefoto] = useState("");
   const [descripcion, setDescripcion] = useState("");
@@ -72,10 +68,8 @@ const CatProductos = () => {
   const [precio, setPrecio] = useState(0);
   const [producto, setProducto] = useState(0);
   const [tnegocio, setTnegocio] = useState(0);
-  const [cbprecio, setCbprecio] = useState(true);
   const [cbvista, setCbvista] = useState(false);
   const [domicilio, setDomicilio] = useState(false);
-  const [cbdomicilio, setCbdomicilio] = useState(true);
   const [cbgps, setCbgps] = useState(false);
   const [nombrecortofoto, setNombrecortofoto] = useState("");
   const [inicia, setInicia] = useState(true);
@@ -93,8 +87,6 @@ const CatProductos = () => {
   const [descripciont, setDescripciont] = useState("");
   const [preciot, setPreciot] = useState("");
   const [domiciliot, setDomiciliot] = useState("");
-  const [cbdomiciliot, setCbdomiciliot] = useState(false);
-  const [cbpreciot, setCbpreciot] = useState(false);
   const [tfechat, setTfechat] = useState(false);
   const [thorat, setThorat] = useState(false);
   const [gpst, setGpst] = useState(false);
@@ -148,7 +140,8 @@ const CatProductos = () => {
     const resultnegocios = await axios.post(
       "http://localhost:3001/getnegociosusercategoria",
       {
-        user: tuser,
+        user: "",
+//        user: tuser,
         categorianegocio: ttarraytnegocios[0].keycategorianegocio,
       },
       {}
@@ -223,7 +216,8 @@ const CatProductos = () => {
         const resultnegocios = await axios.post(
           "http://localhost:3001/getnegociosusercategoria",
           {
-            user: tuser,
+            user: "",
+//            user: tuser,
             categorianegocio:
               arraytnegocios[e.target.value].keycategorianegocio,
           },
@@ -408,12 +402,6 @@ const CatProductos = () => {
       case "domicilio":
         setDomicilio(e.target.checked);
         break;
-      case "cbprecio":
-        setCbprecio(e.target.checked);
-        break;
-      case "cbdomicilio":
-        setCbdomicilio(e.target.checked);
-        break;
       case "vista":
         setCbvista(e.target.checked);
         break;
@@ -439,6 +427,7 @@ const CatProductos = () => {
   }, [location]);
 
   function recuperardatosproducto(data, i) {
+    console.log(i, data);
     setNegociot(i);
     setProductot(data[i].idproducto);
     setNombrecortot(data[i].nick);
@@ -446,11 +435,11 @@ const CatProductos = () => {
     setPreciot(data[i].precio);
     setTfechat(data[i].fecha);
     setThorat(data[i].hora);
-    setDomiciliot(data[i].domicilio);
-    setCbdomiciliot(data[i].domicilioSN);
-    setCbpreciot(data[i].precioSN);
+    setDomiciliot(data[i].domicilio===0?false:true);
     setGpst(data[i].gpsSN === 1 ? true : false);
     setCbgps(data[i].gpsSN === 1 ? true : false);
+    setLatt(data[i].latitud);
+    setLngt(data[i].longitud);
   }
   function restaurardatosproductos() {
     //setNegocio(negociot);
@@ -459,12 +448,12 @@ const CatProductos = () => {
     setDescripcion(descripciont);
     setNaturaleza(naturalezat);
     setPrecio(preciot);
-    setCbprecio(cbpreciot);
     setDomicilio(domiciliot);
-    setCbdomicilio(cbdomiciliot);
     setTfecha(tfechat);
     setThora(thorat);
     setCbgps(gpst);
+    setLat(latt)
+    setLng(lngt)
   }
 
   const onPhotoChange = (e) => {
@@ -481,6 +470,7 @@ const CatProductos = () => {
   };
 
   async function confirmar() {
+    console.log(domicilio);
     const result = await axios.post(
       "http://localhost:3001/setproducto",
       {
@@ -491,9 +481,7 @@ const CatProductos = () => {
         contenidofoto,
         desc: descripcion,
         precio,
-        cbprecio: cbprecio === true ? 1 : 0,
         domicilio: domicilio === true ? 1 : 0,
-        cbdomicilio: cbdomicilio === true ? 1 : 0,
         naturaleza,
         agregar: agregarsn ? true : false,
         editar: editarsn ? true : false,
@@ -521,9 +509,8 @@ const CatProductos = () => {
         nick: nombrecorto,
         desc: descripcion,
         precio,
-        domicilio,
-        cbdomicilio,
-        cbprecio,
+        domicilio: domicilio===true?1:0,
+        gps:cbgps===true?1:0,
         agregar: agregarsn ? true : false,
         editar: editarsn ? true : false,
       });
@@ -537,20 +524,21 @@ const CatProductos = () => {
         nick: nombrecorto,
         desc: descripcion,
         precio,
-        domicilio,
-        cbdomicilio,
-        cbprecio,
+        domicilio: domicilio===true?1:0,
+        gps:cbgps===true?1:0,
         agregar: agregarsn ? true : false,
         editar: editarsn ? true : false,
       });
+
       recuperardatosproducto(tarrayproductos, 0);
-      var productot = arrayproductos[producto].idproducto;
+      productot = arrayproductos[producto].idproducto;
     }
     //
     setContenido(
       "El producto '" + descripcion + "' se registró correctamente."
     );
     setShow1(true);
+    setShowMap(false);
     setAgregarsn(false);
     setEditarsn(false);
   } //confirma
@@ -701,7 +689,7 @@ const CatProductos = () => {
           {inicia === false ? (
             <>
               <div className="catalogo-producto">
-{showMap!==true?
+             {showMap!==true?
                 <>
                 <div className="container-producto-select">
 
@@ -724,7 +712,7 @@ const CatProductos = () => {
                           </option>
                         );
                       })}
-                    </select>
+                    </select>  
                   </div>
 
 

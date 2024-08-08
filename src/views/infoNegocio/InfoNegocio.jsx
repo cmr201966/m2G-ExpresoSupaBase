@@ -75,7 +75,7 @@ const InfoNegocio = () => {
 
     const resultado = await axios.post(
     "http://localhost:3001/getjpg-file",
-    { file: "./galerias/app_images/negocios" + "/" + parsedParams.idnegocio + "/" + parsedParams.idnegocio + ".jpg" }, 
+    { file: "./galerias/app_images/negocios" + "/" + parsedParams.idnegocio + "/foto-1.jpg" }, 
     {}
   );
   if (resultado.data.length !== 0 && resultado.error === undefined) {
@@ -112,7 +112,6 @@ useEffect(() => {
       <div className="cabeza">
          <IconButton color="primary" onClick={() => 
           {
-//             navigate(`/?naturaleza=${sessionStorage.getItem("naturaleza")}&owner=${sessionStorage.getItem("idowner")}&nivel=${sessionStorage.getItem("nivel")}`);
              navigate(-1);
           }}>
              <ArrowBack />

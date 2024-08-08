@@ -3,21 +3,19 @@ import Tippy from "@tippyjs/react";
 import Navbar from "../../components/Navbar/Navbar"
 import Hero from "../../layouts/Hero/Hero";
 import IconButton from "@mui/material/IconButton"
-import Close from "@mui/icons-material/Close";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import libre from "../../assets/images/libre.png";
 import axios from "axios";
 
 import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Map from "../../components/Map/MapBox";
-import MapIcon from "@mui/icons-material/Map";
 import { useLocation } from "react-router-dom";
 
 // styles
 import "./styles.css";
-import { Paragliding } from "@mui/icons-material";
+import libre from "../../assets/images/libre.png";
+import off from "../../assets/images/ocupado.png";
 
 
 const InfoProducto = () => {
@@ -25,24 +23,24 @@ const InfoProducto = () => {
   const location = useLocation();
   const parsedParams = {}
   const [desctmp, setdesctmp]=useState("Galerias");
-  const [showMap, setShowMap] = useState(false);
+  const [showMap, setShowMap] = useState(true);
   // Estados para la posición GPS del mapa
   const [lng, setLng] = useState(-75.829090519);
   const [lat, setLat] = useState(20.0217583);
-  const [zoom, setZoom] = useState(15.50);
+  const [zoom, setZoom] = useState(12.50);
   const [contenidofoto, setContenidofoto] = useState();
   const [idproducto, setIdproducto]=useState("");
   const [negocio, setNegocio]=useState("");
   const [producto, setProducto]=useState("");
   const [precio, setPrecio]=useState("");
+  const [ocupado, setOcupado]=useState(9);
   const [fecha, setFecha]=useState("");
   const [hora, setHora]=useState("");
-//  const [rutatmp, setRutatmp]=useState("");
-//  const [perfil, setPerfil]=useState("");
   const [inicio, setInicio]=useState(true);
   const [gps, setGps]=useState(true);
   const [puntos, setPuntos]=useState([]);
   const [naturaleza1, setNaturaleza1]=useState(0);
+  const [distancia, setDistancia]=useState(0);
   
 
   const onChangeMap = (which, value) => {
@@ -50,11 +48,41 @@ const InfoProducto = () => {
     return setLat(value);
   };
 
-
   const lngLatSelected = (point, lngLat) => {
     setLng(lngLat.lng);
     setLat(lngLat.lat);
   };
+
+  const calcularDistanciaEntreDosCoordenadas = (lat1, lon1, lat2, lon2) => {
+    // Convertir todas las coordenadas a radianes
+    lat1 = gradosARadianes(lat1);
+    lon1 = gradosARadianes(lon1);
+    lat2 = gradosARadianes(lat2);
+    lon2 = gradosARadianes(lon2);
+    // Aplicar fórmula
+    const RADIO_TIERRA_EN_KILOMETROS = 6371;
+    let diferenciaEntreLongitudes = (lon2 - lon1);
+    let diferenciaEntreLatitudes = (lat2 - lat1);
+    let a = Math.pow(Math.sin(diferenciaEntreLatitudes / 2.0), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(diferenciaEntreLongitudes / 2.0), 2);
+    let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+    return RADIO_TIERRA_EN_KILOMETROS * c;
+};
+
+const gradosARadianes = (grados) => {
+    return grados * Math.PI / 180;
+};
+
+
+const distanciaEnKilometros = (latitud1, longitud1, latitud2, longitud2)=>{
+  return calcularDistanciaEntreDosCoordenadas(latitud1, longitud1, latitud2, longitud2);
+}
+
+useEffect(() => {
+  if (puntos.length!==0){
+    setDistancia(distanciaEnKilometros(lat, lng, puntos[0].lat, puntos[0].lng).toFixed(2));
+  }
+}, [lng]);
+
 
   async function init(){
         
@@ -69,26 +97,25 @@ const InfoProducto = () => {
        setNegocio(result.data[0].negocio);
        setProducto(result.data[0].producto);
        setPrecio(result.data[0].precio);
+       setOcupado(result.data[0].ocupado);
        setFecha(result.data[0].fecha);
        setHora(result.data[0].hora);
        setGps(result.data[0].gpsSN);
-       setLat(result.data[0].latitud);
-       setLng(result.data[0].longitud);
+       //setLat(result.data[0].latitud);
+       //setLng(result.data[0].longitud);
 
     }
 
     const resultgps = await axios.post(
-      "http://localhost:3001/get-pares-gps-naturaleza",
-      { naturaleza: parsedParams.naturaleza }, 
+      "http://localhost:3001/get-pares-gps-naturaleza-new",
+      { naturaleza: parsedParams.naturaleza, idproducto: parsedParams.idproducto}, 
       {}
     );
     let paresGps=[];
     resultgps.data.forEach((item) => {
-         paresGps.push({lat: item.latitud, lng: item.longitud, image: libre})
+         paresGps.push({lat: item.latitud, lng: item.longitud, image: item.ocupado===0?libre:off})
      setPuntos(paresGps);
     });
-
-
 
     const resultado = await axios.post(
     "http://localhost:3001/getjpg-file",
@@ -130,19 +157,19 @@ useEffect(() => {
       <div className="cabeza">
          <IconButton color="primary" onClick={() => 
           {
-//             navigate(`/?naturaleza=${sessionStorage.getItem("naturaleza")}&owner=${sessionStorage.getItem("idowner")}&nivel=${sessionStorage.getItem("nivel")}`);
              navigate(-1);
           }}>
              <ArrowBack />
             </IconButton>
         <h3 className="main-title">M2G-Destodo</h3>
         <h4 className="registrarse-cabeza-1"> - Informacion del producto</h4>
+
         </div>
 
         <main className="main-info-producto">
 
 
-        {showMap!==true?
+        {showMap===true?
             <>
 
           <section className="perfil-info-producto">
@@ -202,7 +229,7 @@ useEffect(() => {
 
           </>:""}
 
-            {inicio===false && showMap!==true?
+            {inicio===false && showMap===true?
                 <section className="galeria">
                    <ComGalerias rutatmp={"productos/" + idproducto} desctmp={desctmp} perfil={idproducto} deQuien="del producto" />
                 </section>:""
@@ -210,27 +237,18 @@ useEffect(() => {
 
           {gps===1 && showMap===true?
           <section className="mapa">
-            {showMap===true?
-               <Tippy content={`Cerrar mapa`}>
-                      <button className="offon-info-producto" onClick={()=>setShowMap(!showMap)}>
-                          <Close />
-                      </button>
-               </Tippy>:""}
-             {naturaleza1==="44"?
-                <Map points={puntos} sx={{ height: "100%", width: "100%" }} onMapClick={lngLatSelected} remoteshowMap={showMap} lat={lat} lng={lng} point={{ lat, lng }} onChange={onChangeMap} remoteZoom={zoom} />
-                :
-                <Map sx={{ height: "100%", width: "100%" }} onMapClick={lngLatSelected} remoteshowMap={showMap} lat={lat} lng={lng} point={{ lat, lng }} onChange={onChangeMap} remoteZoom={zoom} />
-             }
+                 <div className="parrafo">
+                     <p>
+                        Distancia:
+                     </p>
+                     <p>
+                        {distancia}{" KMS"}
+                     </p>   
+                 </div>
+             <Map points={puntos} sx={{ height: "600px", width: "100%" }} onMapClick={lngLatSelected} remoteshowMap={showMap} lat={lat} lng={lng} point={{lat, lng}} onChange={onChangeMap} remoteZoom={zoom} />:
+
           </section>:""
           }
-
-          {gps===1 && showMap!==true?
-              <Tippy content="Ubicar al cliente en el mapa" >
-                     <button type="button" className="negocio-button primary" onClick={() => setShowMap(!showMap)}>
-                          <MapIcon />
-                     </button>
-              </Tippy>:""
-                       }
 
         </main>
 

@@ -214,3 +214,22 @@ padding: 15px;
 .input-desc{
   height: 30px;
 }
+
+.productos-cabeza
+{
+  display:flex;
+  width: 100%;
+  align-items: center;
+}
+.car{
+  margin-left: 12px;
+  margin-top: 10px;
+}
+.mapa-productos{
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+}
+.result{
+  margin-left: 10px;
+}
