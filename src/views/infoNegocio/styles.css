@@ -13,7 +13,8 @@
 }
 
 .img-class-info-producto img {
-  border-radius: 50%; /* Para hacer la imagen circular */
+  /* Para hacer la imagen circular */
+  /*border-radius: 50%; */
 }
 
 .product-info {
@@ -24,7 +25,7 @@
 .parrafo {
   display: flex;
   flex-direction: row;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
 }
 
 p {

@@ -13,12 +13,13 @@ import noProduct from "../../assets/images/no-product.jpg";
 const Popup = loadable(() => import("./Externals/Popup"));
 
 function PlacePopup({ setPopupInfo, popupInfo }) {
-  const { longitude, latitude, image, name, urlName } = popupInfo;
+  const { lng, lat, info } = popupInfo;
   return (
     <Popup
       className={css({
         ".mapboxgl-popup-content": {
           backgroundColor: "#191919 ",
+          padding: 0,
         },
         ".mapboxgl-popup-tip": {
           borderBottomColor: "#191919 !important",
@@ -31,35 +32,16 @@ function PlacePopup({ setPopupInfo, popupInfo }) {
         },
       })}
       anchor="top"
-      longitude={Number(longitude)}
-      latitude={Number(latitude)}
+      longitude={Number(lng)}
+      latitude={Number(lat)}
       onClose={() => setPopupInfo(null)}
       maxWidth="25vw"
     >
-      <Link to={`/watch/${urlName}`}>
-        <div
-          className={`flex justify-between items-center px-2 bg-dark-background2 rounded-2xl ${css(
-            {
-              width: "200px",
-              height: "120px",
-            }
-          )}`}
-        >
-          <div className={css({ display: "flex", flexDirection: "column" })}>
-            <div className={css({ flex: "1 0 auto" })}>
-              <p className="font-bold text-white">{name ? name : ""}</p>
-            </div>
-          </div>
-          <img
-            className={`${css({
-              width: "100px",
-              height: "100px",
-            })} object-cover rounded-circle`}
-            src={image?.url ?? noProduct}
-            alt={name}
-          />
+      <div className={css({ display: "flex", flexDirection: "column" })}>
+        <div className={css({ flex: "1 0 auto", padding: "15px 30px" })}>
+          <p className={css({ color: "white" })}>{info ?? ""}</p>
         </div>
-      </Link>
+      </div>
     </Popup>
   );
 }

@@ -5,7 +5,6 @@ import Modal from "../../components/Modal/Modal";
 //import Map from "../../components/Map/MapBox";
 import Hero from "../../layouts/Hero/Hero";
 // @mui/icons-material
-//import CollectionsIcon from "@mui/icons-material/Collections";
 import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import Check from "@mui/icons-material/Check";
@@ -41,8 +40,6 @@ const Productos = () => {
   const [nivel, setNivel] = useState(0);
   const [noproducto, setNoproducto] = useState(false);
   const [showrow3, setShowrow3] = useState(false);
-  const [showproducto, setShowproducto] = useState(false);
-  const [shownegocio, setShownegocio] = useState(false);
   const [result, setResult] = useState([]);
   const [cantidadproductos, setCantidadproductos] = useState(0);
   const [nombre, setNombre] = useState("");
@@ -53,7 +50,7 @@ const Productos = () => {
   const [contenido, setContenido] = useState("");
   const [contenidofoto, setContenidofoto] = useState([]);
   const [mascerca, setMascerca] = useState();
-  const [idproductot, setIdproductot] = useState();
+  const [productot, setProductot] = useState();
   const [items, setItems] = useState([]);
   
   let users =
@@ -122,6 +119,9 @@ const Productos = () => {
   const [abierto, setAbierto] = useState(0);
   const [naturaleza1, setNaturaleza1] = useState(0);
   const [idowner, setIdowner] = useState(0);
+  const [tarifa, setTarifa] = useState(0);
+  const [costoDomicilio, setCostoDomicilio] = useState(0);
+  const [index, setIndex] = useState(0);
 
   // Estados para la posición GPS del mapa
   const [zoom, setZoom] = useState(12.00);
@@ -1218,7 +1218,6 @@ const Productos = () => {
   }
   //
   async function paresGps(){
-    console.log("SI", naturaleza1);
     const resultgps = await axios.post(
       "http://localhost:3001/get-pares-gps-naturaleza",
       { naturaleza: naturaleza1 }, 
@@ -1228,8 +1227,8 @@ const Productos = () => {
     let itemst=[];
     console.log(resultgps.data);
     resultgps.data.forEach((item) => {
-         paresgps.push({lat: item.latitud, lng: item.longitud, image: libre});
-         itemst.push(item.idproducto);
+         paresgps.push({lat: item.latitud, lng: item.longitud, image: libre, info: item.nombre});
+         itemst.push({idproducto: item.idproducto, tarifa: item.tarifa, costoDomicilio: item.costoDomicilio});
      setPuntos(paresgps);
      setItems(itemst);
     });
@@ -1237,6 +1236,7 @@ const Productos = () => {
   }
   //
   function init() {
+    console.log("33");
     setNivel(parsedParams.nivel);
     setNaturaleza1(parsedParams.naturaleza);
     setIdowner(parsedParams.idowner==="undefined"?parsedParams.owner:parsedParams.idowner);
@@ -1264,7 +1264,9 @@ const Productos = () => {
     sessionStorage.setItem("nivel", parsedParams.nivel);
     
     init_filtrar();
+    console.log("11")
     init1();
+    console.log("22")
   }
 
   function callchat() {
@@ -1297,6 +1299,7 @@ const Productos = () => {
   }
 
   async function init1() {
+    console.log("0");
     setShow1(true);
     setInicia(true);
     //
@@ -1327,6 +1330,7 @@ const Productos = () => {
     }
     //poner en cooki todos los parametros y pasar las cookis no los param,
     //pasar la condicion del filtro
+    console.log("0.1")
     const result1 = await axios.post(
       "http://localhost:3001/getproductos",
       {
@@ -1339,6 +1343,7 @@ const Productos = () => {
       },
       {}
     );
+    console.log("0.2")
     const newResult = [];
     //let keyproducto = 0;
     if (result1.data.error || result1.data.length === 0) {
@@ -1359,8 +1364,10 @@ const Productos = () => {
       });
       setResult(newResult);
       setNoproducto(true);
+      console.log("1");
     }
     else {
+      console.log("2");
       setNoproducto(false);
       result1.data.forEach((item, i) => {
         const obj = {
@@ -1375,6 +1382,9 @@ const Productos = () => {
 //          reserva: item.reserva,
           user: item.iduser,
           tipouser: item.tipouser,
+          ocupado: item.ocupado,
+          tarifa: item.tarifa,
+          costoDomicilio: item.costoDomicilio
 //          latitud: item.latitud,
 //          longitud: item.longitud,
 //          Precio: item.precio,
@@ -1390,7 +1400,6 @@ const Productos = () => {
           xxxSede: item.Dirección,
           xxxChat: item.dueño,
           menuSN: item.menuSN,*/
-          ocupado: item.ocupado,
         }
         if (result1.data[0].idnaturaleza === 62) {
           obj.Habilidades = item.adicional
@@ -1403,6 +1412,7 @@ const Productos = () => {
       setCantidadproductos(result1.data.length);
       setResult(newResult);
     }
+    console.log("3");
 
     // Obtener el contenido de la foto de perfil
     contenidofoto.splice(0, contenidofoto.length);
@@ -1417,6 +1427,7 @@ const Productos = () => {
       }
     }
 
+    console.log("4");
     sessionStorage.setItem("carditem", 0);
     const resultgps = await axios.post(
       "http://localhost:3001/get-pares-gps-naturaleza",
@@ -1427,11 +1438,12 @@ const Productos = () => {
     let itemst=[];
     console.log(resultgps.data);
     resultgps.data.forEach((item) => {
-         paresgps.push({lat: item.latitud, lng: item.longitud, image: libre})
-         itemst.push(item.idproducto);
+         paresgps.push({lat: item.latitud, lng: item.longitud, image: libre, info: item.nombre})
+         itemst.push({idproducto: item.idproducto, tarifa: item.tarifa, costoDomicilio: item.costoDomicilio});
      setPuntos(paresgps);
      setItems(itemst);
     });
+    console.log("5");
 
     setInicia(false);
     setShow1(false);
@@ -1465,7 +1477,6 @@ const distanciaEnKilometros = (latitud1, longitud1, latitud2, longitud2)=>{
 }
 
 useEffect(() => {
-  let tt=0;
   if (puntos.length!==0){
     let menor=999999;
     let esta=0;
@@ -1473,13 +1484,11 @@ useEffect(() => {
       esta=distanciaEnKilometros(lat, lng, item.lat, item.lng).toFixed(2);
       if (esta<menor){
         menor=esta
-        setIdproductot(items[i]);
-        tt=items[i];
+        setProductot(puntos[i].info);
+        setIndex(i);
       }     
     });
     setMascerca(menor);
-    console.log(items);
-    console.log(tt);
   }
 }, [lng]);
 
@@ -1939,7 +1948,7 @@ useEffect(() => {
               - {nombre.replaceAll("%20"," ")} - ({cantidadproductos})
             </h4>
 
-              <Tippy content="Ordenar" >
+              <Tippy content="Ordenar el más cerca" >
                      <button type="button" className="car negocio-button primary" onClick={() => setShowMap(!showMap)}>
                           <ShoppingCartOutlinedIcon />
                      </button>
@@ -1950,20 +1959,18 @@ useEffect(() => {
 
           {show1 ? <Box sx={{ width: "100%", height: "300px", display: "flex", alignItems: "center", justifyContent: "center" }}><CircularProgress color="checkbox" /></Box> : null}
 
-          <div className="product-flex">
-            {inicia === false && showMap!==true ? (
-              result.map((item, i) => (
-                <CardRow tipouser={sessionStorage.getItem("tipouser")} user={sessionStorage.getItem("user")} mapLoading={mapLoading} noproducto={noproducto} onMapClick={() => { setLat(item.latitud); setLng(item.longitud); setShowrow3(true) }} verproducto={verproducto} vernegocio={vernegocio} paresGps={paresGps} key={i} i={i} selectcard={selectcard} contenidofoto={contenidofoto[i]} item={item} />
-              ))
-            ) : (
-              ""
-            )}
-          </div>
-
+            {inicia === false && showMap!==true ? 
+             <div className="product-flex">
+                 {result.map((item, i) => (
+                    <CardRow tipouser={sessionStorage.getItem("tipouser")} user={sessionStorage.getItem("user")} mapLoading={mapLoading} noproducto={noproducto} onMapClick={() => { setLat(item.latitud); setLng(item.longitud); setShowrow3(true) }} verproducto={verproducto} vernegocio={vernegocio} paresGps={paresGps} key={i} i={i} selectcard={selectcard} contenidofoto={contenidofoto[i]} item={item} />
+                  ))}
+             </div>:""
+            }
+ 
           <div className="result"> 
-            {showMap===true?
+          {showMap===true && mascerca>0?
             <>
-               {idproductot}{" : "}{mascerca}{" Kms"}
+               {productot}{" esta a "}{mascerca}{" Kms "}{" precio: "}{((mascerca*items[index].tarifa)+items[index].costoDomicilio).toFixed(2)}
             </>:""
             }
           </div>

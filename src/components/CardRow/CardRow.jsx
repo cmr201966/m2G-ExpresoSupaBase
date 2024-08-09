@@ -1,7 +1,5 @@
 import Tippy from "@tippyjs/react";
-import MapIcon from "@mui/icons-material/Map";
 import InfoIcon from "@mui/icons-material/Info";
-import { CircularProgress } from "@mui/material"
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import { useState } from "react";
 import axios from "axios";
@@ -11,7 +9,6 @@ import "./styles.css";
 
 const CardRow = (props) => {
   const { tipouser, user, mapLoading, noproducto, i, item, selectcard, contenidofoto, verproducto, vernegocio, paresGps, onMapClick } = props
-//  const [ocupado, setOcupado]=useState(item.ocupado===1?true:false);
   const [ocupado, setOcupado]=useState(item.ocupado);
 
 
@@ -62,7 +59,7 @@ const CardRow = (props) => {
       {
         noproducto === false ? (
           <>
-            <Tippy content={`Más datos del producto`}>
+            <Tippy content={`${ocupado===0?"Datos del producto y ordenar":"Datos del producto"}`}>
               <button onClick={() => verproducto(i, item)}>
                 <InfoIcon /> <span>Producto</span>
               </button>
