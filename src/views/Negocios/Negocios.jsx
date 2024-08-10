@@ -57,12 +57,14 @@ const CatNegocios = () => {
   const [municipio, setMunicipio] = useState(0);
   const [tmunicipio, setTmunicipio] = useState([]);
   const [arraycategoriasnegocios, setArraycategoriasnegocios] = useState([]);
-  const arraycategoriasnegocios1 = [{ categorianegocio: 91, desc: "Compra/Venta" }, 
-    { categorianegocio: 61, desc: "Fiestas" }, { categorianegocio: 62, desc: "Eventos" },
-    { categorianegocio: 63, desc: "Cursos" }, { categorianegocio: 60, desc: "Empleos" },
-    { categorianegocio: 86, desc: "Bolsa de Empleos" }, { categorianegocio: 90, desc: "Taxis" }, 
-    { categorianegocio: 92, desc: "Moto taxi" }, { categorianegocio: 12, desc: "Alquilar" },
-    { categorianegocio: 53, desc: "Software" }, { categorianegocio: 4, desc: "Restaurantes" }];
+  const arraycategoriasnegocios1 = [
+//    { categorianegocio: 91, desc: "Compra/Venta" }, 
+//    { categorianegocio: 61, desc: "Fiestas" }, { categorianegocio: 62, desc: "Eventos" },
+//    { categorianegocio: 63, desc: "Cursos" }, { categorianegocio: 60, desc: "Empleos" },
+//    { categorianegocio: 86, desc: "Bolsa de Empleos" }, { categorianegocio: 90, desc: "Taxis" }, 
+    { categorianegocio: 90, desc: "Taxi ligero" }, 
+    { categorianegocio: 92, desc: "Moto taxi" }]
+//    { categorianegocio: 53, desc: "Software" }, { categorianegocio: 4, desc: "Restaurantes" }];
   const [descripcionadicional, setDescripcionadicional] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const arraydesconocido = [{ provincia: 99, municipio: 99, desc: "Desconocido" }];
@@ -143,16 +145,16 @@ const CatNegocios = () => {
       { },
       {}
     );
-    console.log(resulcategoriasnegocios.data.length);
     if (resulcategoriasnegocios.data.length===0){
-      setShow(false);
-        setContenido("Agregue primero aplicaciones a la plataforma")
-        setShow1(true);
-        return
+       setShow(false);
+       setContenido("Agregue primero aplicaciones a la plataforma")
+       setShow1(true);
+       return
     }
 
-    setArraycategoriasnegocios(resulcategoriasnegocios.data);
-
+//    setArraycategoriasnegocios(resulcategoriasnegocios.data);
+    setArraycategoriasnegocios(arraycategoriasnegocios1);
+    
     //Recuperar los negocios de esta categoria
     const resultnegocios = await axios.post(
       "http://localhost:3001/getallnegocios",
@@ -650,7 +652,7 @@ const CatNegocios = () => {
             <h3 className="h2-cabeza-negocios">Destodo</h3>
             <h4 className="h3-1-cabeza-negocios"> - Negocios</h4>
           </div>
-          {show ? <Box sx={{ width: "100%", height: "300px", display: "flex", alignItems: "center", justifyContent: "center" }}><CircularProgress color="checkbox" /></Box> : null}
+          {show ? <Box sx={{ width: "100%", height: "500px", display: "flex", alignItems: "center", justifyContent: "center" }}><CircularProgress color="checkbox" /></Box> : null}
           {inicia === false ?
             <>
               <div className="negocio">
@@ -866,7 +868,7 @@ const CatNegocios = () => {
                   {showMap === true && showchat === false && showGalerias === false && cbgps===true ?
                   <>
 
-                    <Map sx={{ height: "400px", width: "100%" }} onMapClick={lngLatSelected} remoteshowMap={showMap} lat={lat} lng={lng} point={{ lat, lng }} onChange={onChangeMap} remoteZoom={zoom} /></> : ""
+                    <Map sx={{ height: "800px", width: "100%" }} onMapClick={lngLatSelected} remoteshowMap={showMap} lat={lat} lng={lng} point={{ lat, lng }} onChange={onChangeMap} remoteZoom={zoom} /></> : ""
                   }
 
                 </div>

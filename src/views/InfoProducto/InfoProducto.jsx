@@ -16,6 +16,7 @@ import { useLocation } from "react-router-dom";
 
 // styles
 import "./styles.css";
+import marker from "../../assets/images/custom_marker.png";
 import libre from "../../assets/images/libre.png";
 import off from "../../assets/images/ocupado.png";
 
@@ -44,6 +45,7 @@ const InfoProducto = () => {
   const [distancia, setDistancia] = useState(0);
   const [tarifa, setTarifa] = useState(1);
   const [domicilio, setDomicilio] = useState(50);
+  const [puntosState, setPuntosState] = useState(0);
 
   async function init() {
     setNaturaleza1(parsedParams.naturaleza);
@@ -53,7 +55,6 @@ const InfoProducto = () => {
       {}
     );
     if (result.data.length !== 0 && result.error === undefined) {
-      console.log(result.data);
       setIdproducto(parsedParams.idproducto);
       setNegocio(result.data[0].negocio);
       setProducto(result.data[0].producto);
@@ -110,6 +111,16 @@ const InfoProducto = () => {
   const lngLatSelected = (point, lngLat) => {
     setLng(lngLat.lng);
     setLat(lngLat.lat);
+    if (puntosState===0 || puntosState===1){
+       setPuntosState(puntosState+1);
+       let info= puntosState===0?"Origen":"Destino";
+       setPuntos([...puntos,{lat: lngLat.lat, lng: lngLat.lng, image: marker, info: info}])
+    }
+    if (puntosState===2){
+      setPuntosState(1);
+      puntos.splice(puntos.length-2,2);
+      setPuntos([...puntos,{lat: lngLat.lat, lng: lngLat.lng, image: marker, info: "Origen"}])
+    }
   };
 
   const calcularDistanciaEntreDosCoordenadas = (lat1, lon1, lat2, lon2) => {
@@ -307,7 +318,6 @@ const InfoProducto = () => {
                 remoteshowMap={showMap}
                 lat={lat}
                 lng={lng}
-                point={{ lat, lng }}
                 onChange={onChangeMap}
                 remoteZoom={zoom}
               />
@@ -316,7 +326,8 @@ const InfoProducto = () => {
           ) : (
             ""
           )}
-
+{/*                point={{ lat, lng }} 
+*/}
           {inicio === false && showMap === true ? (
             <section className="galeria">
               <ComGalerias

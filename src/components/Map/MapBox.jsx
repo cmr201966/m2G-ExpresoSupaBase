@@ -51,7 +51,6 @@ function MapBox({
   const [longitude, setLongitude] = useState(-75.829090519 ?? lng);
   const [latitude, setLatitude] = useState(20.0217583 ?? lat);
   const [localMarker, setLocalMarker] = useState(null);
-  
   const flyToPoint = useCallback((longitude, latitude, zoom) => {
     map?.current?.flyTo({
       center: [longitude, latitude],

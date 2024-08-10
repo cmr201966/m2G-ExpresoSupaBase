@@ -20,6 +20,8 @@ import { useNavigate } from "react-router-dom";
 // styles
 import "./styles.css";
 // @mui/material
+import TextField from "@mui/material/TextField";
+import Autocomplete from "@mui/material/Autocomplete";
 import { IconButton } from "@mui/material";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import Check from "@mui/icons-material/Check";
@@ -66,7 +68,7 @@ const CatProductos = () => {
   const [negocio, setNegocio] = useState(0);
   const [nombrecorto, setNombrecorto] = useState("");
   const [precio, setPrecio] = useState(0);
-  const [producto, setProducto] = useState(0);
+  const [producto, setProducto] = useState(null);
   const [tnegocio, setTnegocio] = useState(0);
   const [cbvista, setCbvista] = useState(false);
   const [domicilio, setDomicilio] = useState(false);
@@ -107,7 +109,7 @@ const CatProductos = () => {
     //
     const resultnaturaleza = await axios.post(
       "http://localhost:3001/getnaturaleza",
-      { naturaleza: "", admin: false },
+      { naturaleza: "", admin: false, lista: [90, 92] },
       {}
     );
     if (resultnaturaleza.data.error || resultnaturaleza.data.length === 0) {
@@ -123,7 +125,7 @@ const CatProductos = () => {
     let ttarraytnegocios;
     const resulttnegocios = await axios.post(
       "http://localhost:3001/gettnegociosuser",
-      { lista: [91, 61, 62, 63, 86, 60, 90, 91, 92, 53, 4] },
+      { lista: [90, 92] },
       {}
     );
     if (resulttnegocios.data.error || resulttnegocios.data.length === 0) {
@@ -141,7 +143,7 @@ const CatProductos = () => {
       "http://localhost:3001/getnegociosusercategoria",
       {
         user: "",
-//        user: tuser,
+        //        user: tuser,
         categorianegocio: ttarraytnegocios[0].keycategorianegocio,
       },
       {}
@@ -172,7 +174,10 @@ const CatProductos = () => {
         setArrayproductos(arraynoproductos);
         recuperardatosproducto(arraynoproductos, 0);
         tproducto = arraynoproductos[0].idproducto;
+        setProducto(null);
       } else {
+        const [primero] = resultproductos.data;
+        setProducto({ label: primero.desc, value: 0 });
         setArrayproductos(resultproductos.data);
         recuperardatosproducto(resultproductos.data, 0);
         tproducto = resultproductos.data[0].idproducto;
@@ -203,11 +208,44 @@ const CatProductos = () => {
           setNaturalezat(rnaturaleza.data[0].naturaleza);
         }
       }
-      setProducto(0);
     }
     setInicia(false);
     setShow(false);
   } //init
+
+  const handleProducto = async (_, value) => {
+    setProducto(value);
+    // get la naturaleza de este producto
+    const rnaturaleza = await axios.post(
+      "http://localhost:3001/getnaturaleza-producto",
+      { producto: arrayproductos[value?.value].idproducto },
+      {}
+    );
+    if (rnaturaleza.data.length !== 0) {
+      setNaturalezat(rnaturaleza.data[0].naturaleza);
+    }
+    // recuperar los valores del producto activo
+    // para que pueda ser modificado
+    recuperardatosproducto(arrayproductos, value?.value);
+
+    const resultado = await axios.post(
+      "http://localhost:3001/getjpg-file",
+      {
+        file:
+          "./galerias/app_images/productos" +
+          "/" +
+          arrayproductos[value?.value].idproducto +
+          "/foto-1.jpg",
+      },
+      {}
+    );
+    if (resultado.data.length !== 0) {
+      setContenidofoto(resultado.data);
+      setNombrefoto(arrayproductos[value?.value].idproducto);
+    } else {
+      setNombrefoto("");
+    }
+  };
 
   async function handleselect(e) {
     switch (e.target.id) {
@@ -217,7 +255,7 @@ const CatProductos = () => {
           "http://localhost:3001/getnegociosusercategoria",
           {
             user: "",
-//            user: tuser,
+            //            user: tuser,
             categorianegocio:
               arraytnegocios[e.target.value].keycategorianegocio,
           },
@@ -272,7 +310,7 @@ const CatProductos = () => {
             }
           }
           setNegocio(0);
-          setProducto(0);
+          setProducto(null);
         }
         break;
 
@@ -318,42 +356,11 @@ const CatProductos = () => {
             setNombrefoto("");
           }
         }
-        setProducto(0);
+        setProducto(null);
 
         break;
 
       case "producto":
-        setProducto(e.target.value);
-        // get la naturaleza de este producto
-        const rnaturaleza = await axios.post(
-          "http://localhost:3001/getnaturaleza-producto",
-          { producto: arrayproductos[e.target.value].idproducto },
-          {}
-        );
-        if (rnaturaleza.data.length !== 0) {
-          setNaturalezat(rnaturaleza.data[0].naturaleza);
-        }
-        // recuperar los valores del producto activo
-        // para que pueda ser modificado
-        recuperardatosproducto(arrayproductos, e.target.value);
-
-        const resultado = await axios.post(
-          "http://localhost:3001/getjpg-file",
-          {
-            file:
-              "./galerias/app_images/productos" +
-              "/" +
-              arrayproductos[e.target.value].idproducto +
-              "/foto-1.jpg",
-          },
-          {}
-        );
-        if (resultado.data.length !== 0) {
-          setContenidofoto(resultado.data);
-          setNombrefoto(arrayproductos[e.target.value].idproducto);
-        } else {
-          setNombrefoto("");
-        }
         break;
 
       case "naturaleza":
@@ -435,7 +442,7 @@ const CatProductos = () => {
     setPreciot(data[i].precio);
     setTfechat(data[i].fecha);
     setThorat(data[i].hora);
-    setDomiciliot(data[i].domicilio===0?false:true);
+    setDomiciliot(data[i].domicilio === 0 ? false : true);
     setGpst(data[i].gpsSN === 1 ? true : false);
     setCbgps(data[i].gpsSN === 1 ? true : false);
     setLatt(data[i].latitud);
@@ -452,8 +459,8 @@ const CatProductos = () => {
     setTfecha(tfechat);
     setThora(thorat);
     setCbgps(gpst);
-    setLat(latt)
-    setLng(lngt)
+    setLat(latt);
+    setLng(lngt);
   }
 
   const onPhotoChange = (e) => {
@@ -475,7 +482,7 @@ const CatProductos = () => {
       "http://localhost:3001/setproducto",
       {
         user: tuser,
-        producto: arrayproductos[producto].idproducto,
+        producto: arrayproductos[producto?.value].idproducto,
         negocio: arraynegocios[negocio].negocio,
         nick: nombrecorto,
         contenidofoto,
@@ -509,8 +516,8 @@ const CatProductos = () => {
         nick: nombrecorto,
         desc: descripcion,
         precio,
-        domicilio: domicilio===true?1:0,
-        gps:cbgps===true?1:0,
+        domicilio: domicilio === true ? 1 : 0,
+        gps: cbgps === true ? 1 : 0,
         agregar: agregarsn ? true : false,
         editar: editarsn ? true : false,
       });
@@ -524,14 +531,14 @@ const CatProductos = () => {
         nick: nombrecorto,
         desc: descripcion,
         precio,
-        domicilio: domicilio===true?1:0,
-        gps:cbgps===true?1:0,
+        domicilio: domicilio === true ? 1 : 0,
+        gps: cbgps === true ? 1 : 0,
         agregar: agregarsn ? true : false,
         editar: editarsn ? true : false,
       });
 
       recuperardatosproducto(tarrayproductos, 0);
-      productot = arrayproductos[producto].idproducto;
+      productot = arrayproductos[producto?.value].idproducto;
     }
     //
     setContenido(
@@ -557,7 +564,9 @@ const CatProductos = () => {
   const eliminar = () => {
     setEliminarsn(true);
     setContenido(
-      "¿Está seguro que desea eliminar a " + arrayproductos[producto].desc + "?"
+      "¿Está seguro que desea eliminar a " +
+        arrayproductos[producto?.value].desc +
+        "?"
     );
     setShow1(true);
   };
@@ -565,7 +574,7 @@ const CatProductos = () => {
   async function sino() {
     await axios.post(
       "http://localhost:3001/delproducto",
-      { producto: arrayproductos[producto].idproducto },
+      { producto: arrayproductos[producto?.value].idproducto },
       {}
     );
     // refrescar la lista despues de eliminada la categoria
@@ -597,7 +606,7 @@ const CatProductos = () => {
 
   return (
     <>
-     <Modal
+      <Modal
         visible={show1}
         onClose={onModalClose1}
         className="cmodal wmodal"
@@ -689,139 +698,23 @@ const CatProductos = () => {
           {inicia === false ? (
             <>
               <div className="catalogo-producto">
-             {showMap!==true?
-                <>
-                <div className="container-producto-select">
-
-
-                  <div className="input-area1-producto">
-                    <label className="label-datos-catproducto">
-                      Tipo de Negocio:{" "}
-                    </label>
-                    <select
-                      className="selecttn-prod"
-                      id="tnegocio"
-                      onChange={handleselect}
-                      value={tnegocio}
-                      disabled={agregarsn || editarsn}
-                    >
-                      {arraytnegocios.map((item, i) => {
-                        return (
-                          <option key={i} value={i}>
-                            {item.desc}
-                          </option>
-                        );
-                      })}
-                    </select>  
-                  </div>
-
-
-                  <div className="input-area1-producto">
-                    <label className="label-datos-catproducto">Negocio: </label>
-                    <select
-                      className="selectne-prod"
-                      id="negocio"
-                      onChange={handleselect}
-                      value={negocio}
-                      disabled={agregarsn || editarsn}
-                    >
-                      {arraynegocios.map((item, i) => {
-                        return (
-                          <option key={i} value={i}>
-                            {item.desc}
-                          </option>
-                        );
-                      })}
-                    </select>
-                  </div>
-
-
-
-                  {agregarsn === false ? (
-                    <div className="input-area1-producto">
-                      <label className="label-datos-catproducto">
-                        Producto:{" "}
-                      </label>
-                      <select
-                        className="selectpro-prod"
-                        id="producto"
-                        onChange={handleselect}
-                        value={producto}
-                        disabled={agregarsn || editarsn}
-                      >
-                        {arrayproductos.map((item, i) => {
-                          return (
-                            <option key={i} value={i}>
-                              {item.desc}
-                            </option>
-                          );
-                        })}
-                      </select>
-                    </div>
-                  ) : (
-                    ""
-                  )}
-
-                </div>
-
-
-                </>:""}
-
-
-{showMap!==true?
-<>
-                
-                {agregarsn || editarsn ? (
+                {showMap !== true ? (
                   <>
-                    <div className="container-producto-datos">
-                      {agregarsn === false ? (
-                        <label className="label-datos-catproducto">
-                          DATOS{" "}
-                        </label>
-                      ) : (
-                        <label className="label-datos-catproducto">
-                          DATOS DEL NUEVO PRODUCTO{" "}
-                        </label>
-                      )}
+                    <div className="container-producto-select">
                       <div className="input-area1-producto">
                         <label className="label-datos-catproducto">
-                          *Nombre:{" "}
-                        </label>
-                        <input
-                          className="input-cataproducto-1"
-                          id="nombrecorto"
-                          value={nombrecorto}
-                          onChange={handleInput}
-                          type="text"
-                          required
-                        />
-                      </div>
-                      <div className="input-area2">
-                        <label className="label-datos-catproducto">
-                          *Descripción:
-                        </label>
-                        <input
-                          className="input-cataproducto-2"
-                          id="descripcion"
-                          value={descripcion}
-                          onChange={handleInput}
-                          type="text"
-                          required
-                        />
-                      </div>
-                      <div className="input-area1-producto">
-                        <label className="label-datos-naturaleza">
-                          Naturaleza:{" "}
+                          Tipo de Negocio:{" "}
                         </label>
                         <select
-                          className="select-naturaleza-producto"
-                          id="naturaleza"
+                          className="selecttn-prod"
+                          id="tnegocio"
                           onChange={handleselect}
-                          value={naturaleza}
+                          value={tnegocio}
+                          disabled={agregarsn || editarsn}
                         >
-                          {arraynaturaleza.map((item, i) => {
+                          {arraytnegocios.map((item, i) => {
                             return (
-                              <option key={i} value={item.idnaturaleza}>
+                              <option key={i} value={i}>
                                 {item.desc}
                               </option>
                             );
@@ -829,125 +722,279 @@ const CatProductos = () => {
                         </select>
                       </div>
 
-                      <div className="input-area2">
+                      <div className="input-area1-producto">
                         <label className="label-datos-catproducto">
-                          Fecha:
+                          Negocio:{" "}
                         </label>
-                        <input
-                          className="input-cataproducto-20"
-                          id="tfecha"
-                          value={tfecha}
-                          onChange={handleInput}
-                          type="text"
-                          required
+                        <select
+                          className="selectne-prod"
+                          id="negocio"
+                          onChange={handleselect}
+                          value={negocio}
+                          disabled={agregarsn || editarsn}
+                        >
+                          {arraynegocios.map((item, i) => {
+                            return (
+                              <option key={i} value={i}>
+                                {item.desc}
+                              </option>
+                            );
+                          })}
+                        </select>
+                      </div>
+
+                      <div className="input-area1-producto">
+                        <label className="label-datos-catproducto">
+                          Producto:{" "}
+                        </label>
+                        {console.log(producto)}
+                        <Autocomplete
+                          disablePortal
+                          disabled={agregarsn || editarsn}
+                          id="producto"
+                          options={arrayproductos.map((item, i) => ({
+                            label: item.desc,
+                            value: i,
+                          }))}
+                          value={producto}
+                          onChange={handleProducto}
+                          sx={{
+                            marginLeft: "58px",
+                            marginTop: "5px",
+                            width: "225px",
+                            height: "30px",
+                            background: "aliceblue",
+                            ".MuiAutocomplete-input": {
+                              padding: "5px 0 0 5px !important",
+                            },
+                            ".MuiFilledInput-root": {
+                              padding: 0,
+                            },
+                            ".MuiFilledInput-root::before": {
+                              display: "none",
+                            },
+                            ".MuiFilledInput-root::after": {
+                              display: "none",
+                            },
+                          }}
+                          renderInput={(params) => (
+                            <TextField variant="filled" {...params} label="" />
+                          )}
                         />
                       </div>
-                      <div className="input-area2">
-                        <label className="label-datos-catproducto">Hora:</label>
-                        <input
-                          className="input-cataproducto-21"
-                          id="thora"
-                          value={thora}
-                          onChange={handleInput}
-                          type="text"
-                          required
-                        />
-                      </div>
-{/*                      {cbprecio ? (*/}
-                        <div className="input-area4">
+
+                      {/*
+                      {agregarsn === false ? (
+                        <div className="input-area1-producto">
                           <label className="label-datos-catproducto">
-                            Precio:
+                            Producto:{" "}
                           </label>
-                          <input
-                            className="input-cataproducto-4"
-                            id="precio"
-                            value={precio}
-                            onChange={handleInput}
-                            type="text"
-                            required
-                          />
-                        </div>
-{/*                      ) : (
-                        ""
-                      )}*/}
-{/*                      {cbdomicilio ? (*/}
-                        <div className="input-area4">
-                          <label className="label-datos-catproducto input-cataproducto-12">
-                            Domicilio:
-                          </label>
-                          <Checkbox
-                            sx={{ padding: 0 }}
-                            id="domicilio"
-                            color="checkbox"
-                            defaultChecked
-                            checked={domicilio}
-                            onClick={handleInput}
-                          />
-                        </div>
-{/*                      ) : (
-                        ""
-                      )}*/}
-
-                      <div className="input-area4">
-                         <label className="label-datos-catproducto input-cataproducto-99">
-                               GPS:
-                          </label>
-                          <Checkbox
-                            id="cbgps"
-                            color="checkbox"
-                            defaultChecked
-                            checked={cbgps}
-                            onClick={handleInput}
-                          />
-                      </div>
-
-                      <div className="input-area-foto-prod">
-                        <label className="label-2-prod">Foto:</label>
-                        <label className="label-2-1-prod">
-                          <input
-                            id="foto"
-                            value={foto}
-                            onChange={onPhotoChange}
-                            type="file"
-                            required
-                            multiple
-                          />
-                          Añadir foto
-                        </label>
-                        {nombrefoto !== "" ? (
-                          <div className="check-vista-1">
-                            <label className="label-vista-productos-1-1">
-                              Vista previa
-                            </label>
-                            <Checkbox
-                              className="cbox-vista"
-                              id="vista"
-                              color="checkbox"
-                              defaultChecked
-                              checked={cbvista}
-                              onClick={handleInput}
-                            />
-                          </div>
-                        ) : (
-                          ""
-                        )}
-                      </div>
-                      {nombrefoto !== "" && cbvista ? (
-                        <div className="img-class">
-                          <img className="img-producto" src={contenidofoto} />
+                          <select
+                            className="selectpro-prod"
+                            id="producto"
+                            onChange={handleselect}
+                            value={producto}
+                            disabled={agregarsn || editarsn}
+                          >
+                            {arrayproductos.map((item, i) => {
+                              return (
+                                <option key={i} value={i}>
+                                  {item.desc}
+                                </option>
+                              );
+                            })}
+                          </select>
                         </div>
                       ) : (
                         ""
                       )}
+*/}
                     </div>
                   </>
                 ) : (
                   ""
                 )}
 
+                {showMap !== true ? (
+                  <>
+                    {agregarsn || editarsn ? (
+                      <>
+                        <div className="container-producto-datos">
+                          {agregarsn === false ? (
+                            <label className="label-datos-catproducto">
+                              DATOS{" "}
+                            </label>
+                          ) : (
+                            <label className="label-datos-catproducto">
+                              DATOS DEL NUEVO PRODUCTO{" "}
+                            </label>
+                          )}
+                          <div className="input-area1-producto">
+                            <label className="label-datos-catproducto">
+                              *Nombre:{" "}
+                            </label>
+                            <input
+                              className="input-cataproducto-1"
+                              id="nombrecorto"
+                              value={nombrecorto}
+                              onChange={handleInput}
+                              type="text"
+                              required
+                            />
+                          </div>
+                          <div className="input-area2">
+                            <label className="label-datos-catproducto">
+                              *Descripción:
+                            </label>
+                            <input
+                              className="input-cataproducto-2"
+                              id="descripcion"
+                              value={descripcion}
+                              onChange={handleInput}
+                              type="text"
+                              required
+                            />
+                          </div>
+                          <div className="input-area1-producto">
+                            <label className="label-datos-naturaleza">
+                              Naturaleza:{" "}
+                            </label>
+                            <select
+                              className="select-naturaleza-producto"
+                              id="naturaleza"
+                              onChange={handleselect}
+                              value={naturaleza}
+                            >
+                              {arraynaturaleza.map((item, i) => {
+                                return (
+                                  <option key={i} value={item.idnaturaleza}>
+                                    {item.desc}
+                                  </option>
+                                );
+                              })}
+                            </select>
+                          </div>
 
-</>:""}
+                          <div className="input-area2">
+                            <label className="label-datos-catproducto">
+                              Fecha:
+                            </label>
+                            <input
+                              className="input-cataproducto-20"
+                              id="tfecha"
+                              value={tfecha}
+                              onChange={handleInput}
+                              type="text"
+                              required
+                            />
+                          </div>
+                          <div className="input-area2">
+                            <label className="label-datos-catproducto">
+                              Hora:
+                            </label>
+                            <input
+                              className="input-cataproducto-21"
+                              id="thora"
+                              value={thora}
+                              onChange={handleInput}
+                              type="text"
+                              required
+                            />
+                          </div>
+                          {/*                      {cbprecio ? (*/}
+                          <div className="input-area4">
+                            <label className="label-datos-catproducto">
+                              Precio:
+                            </label>
+                            <input
+                              className="input-cataproducto-4"
+                              id="precio"
+                              value={precio}
+                              onChange={handleInput}
+                              type="text"
+                              required
+                            />
+                          </div>
+                          {/*                      ) : (
+                        ""
+                      )}*/}
+                          <div className="input-area4">
+                            <label className="label-datos-catproducto input-cataproducto-12">
+                              Domicilio:
+                            </label>
+                            <Checkbox
+                              sx={{ padding: 0 }}
+                              id="domicilio"
+                              color="checkbox"
+                              defaultChecked
+                              checked={domicilio}
+                              onClick={handleInput}
+                            />
+                          </div>
 
+                          <div className="input-area4">
+                            <label className="label-datos-catproducto input-cataproducto-99">
+                              GPS:
+                            </label>
+                            <Checkbox
+                              id="cbgps"
+                              color="checkbox"
+                              defaultChecked
+                              checked={cbgps}
+                              onClick={handleInput}
+                            />
+                          </div>
+
+                          <div className="input-area-foto-prod">
+                            <label className="label-2-prod">Foto:</label>
+                            <label className="label-2-1-prod">
+                              <input
+                                id="foto"
+                                value={foto}
+                                onChange={onPhotoChange}
+                                type="file"
+                                required
+                                multiple
+                              />
+                              Añadir foto
+                            </label>
+                            {nombrefoto !== "" ? (
+                              <div className="check-vista-1">
+                                <label className="label-vista-productos-1-1">
+                                  Vista previa
+                                </label>
+                                <Checkbox
+                                  className="cbox-vista"
+                                  id="vista"
+                                  color="checkbox"
+                                  defaultChecked
+                                  checked={cbvista}
+                                  onClick={handleInput}
+                                />
+                              </div>
+                            ) : (
+                              ""
+                            )}
+                          </div>
+                          {nombrefoto !== "" && cbvista ? (
+                            <div className="img-class">
+                              <img
+                                className="img-producto"
+                                src={contenidofoto}
+                              />
+                            </div>
+                          ) : (
+                            ""
+                          )}
+                        </div>
+                      </>
+                    ) : (
+                      ""
+                    )}
+                  </>
+                ) : (
+                  ""
+                )}
 
                 <div className="producto-grupo-button">
                   {agregarsn === false && editarsn === false ? (
@@ -963,7 +1010,8 @@ const CatProductos = () => {
                   ) : (
                     ""
                   )}
-                  {arrayproductos[producto].desc !== "Desconocido" ? (
+                  {producto &&
+                  arrayproductos[producto?.value].desc !== "Desconocido" ? (
                     <>
                       {agregarsn === false && editarsn === false ? (
                         <Tippy content="Clic para editar el producto">
@@ -995,7 +1043,9 @@ const CatProductos = () => {
                         ""
                       )}
 
-                      {inicia === false && (agregarsn || editarsn) && showMap!==true ? (
+                      {inicia === false &&
+                      (agregarsn || editarsn) &&
+                      showMap !== true ? (
                         <Tippy content={`Galeria de fotos del producto`}>
                           <button
                             type="button"
@@ -1029,7 +1079,7 @@ const CatProductos = () => {
                     ""
                   )}
 
-                  {(agregarsn || editarsn) ? (
+                  {agregarsn || editarsn ? (
                     <Tippy
                       content={
                         nombrecorto.length !== 0 && descripcion.length !== 0
@@ -1085,8 +1135,9 @@ const CatProductos = () => {
                 {showMap === true &&
                 showGalerias === false &&
                 cbgps === true ? (
-                  <>                 
-                    <Map sx={{ height: "100%", width: "100%" }}
+                  <>
+                    <Map
+                      sx={{ height: "100%", width: "100%" }}
                       onMapClick={lngLatSelected}
                       remoteshowMap={showMap}
                       lat={lat}

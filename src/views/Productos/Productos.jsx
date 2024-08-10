@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import Close from "@mui/icons-material/Close";
 import Map from "../../components/Map/MapBox";
 import libre from "../../assets/images/libre.png";
+import marker from "../../assets/images/custom_marker.png";
 
 // Otros
 import { useEffect, useState } from "react";
@@ -52,7 +53,8 @@ const Productos = () => {
   const [mascerca, setMascerca] = useState();
   const [productot, setProductot] = useState();
   const [items, setItems] = useState([]);
-  
+  const [puntosState, setPuntosState] = useState(0);
+ 
   let users =
     sessionStorage.getItem("user") === null
       ? ""
@@ -585,6 +587,17 @@ const Productos = () => {
   const lngLatSelected = (point, lngLat) => {
     setLng(lngLat.lng);
     setLat(lngLat.lat);
+    if (puntosState===0 || puntosState===1){
+      setPuntosState(puntosState+1);
+      let info= puntosState===0?"Origen":"Destino";
+      setPuntos([...puntos,{lat: lngLat.lat, lng: lngLat.lng, image: marker, info: info}])
+   }
+   if (puntosState===2){
+    setPuntosState(1);
+     puntos.splice(puntos.length-2,2);
+     setPuntos([...puntos,{lat: lngLat.lat, lng: lngLat.lng, image: marker, info: "Origen"}])
+   }
+console.log("Tamaño", puntos.length);
   };
 
   const onChangeMap = (which, value) => {
@@ -1225,18 +1238,17 @@ const Productos = () => {
     );
     let paresgps=[];
     let itemst=[];
-    console.log(resultgps.data);
     resultgps.data.forEach((item) => {
          paresgps.push({lat: item.latitud, lng: item.longitud, image: libre, info: item.nombre});
          itemst.push({idproducto: item.idproducto, tarifa: item.tarifa, costoDomicilio: item.costoDomicilio});
      setPuntos(paresgps);
      setItems(itemst);
+     console.log("Despues: ",paresgps.length);
     });
 
   }
   //
   function init() {
-    console.log("33");
     setNivel(parsedParams.nivel);
     setNaturaleza1(parsedParams.naturaleza);
     setIdowner(parsedParams.idowner==="undefined"?parsedParams.owner:parsedParams.idowner);
@@ -1264,9 +1276,7 @@ const Productos = () => {
     sessionStorage.setItem("nivel", parsedParams.nivel);
     
     init_filtrar();
-    console.log("11")
     init1();
-    console.log("22")
   }
 
   function callchat() {
@@ -1299,7 +1309,6 @@ const Productos = () => {
   }
 
   async function init1() {
-    console.log("0");
     setShow1(true);
     setInicia(true);
     //
@@ -1330,7 +1339,6 @@ const Productos = () => {
     }
     //poner en cooki todos los parametros y pasar las cookis no los param,
     //pasar la condicion del filtro
-    console.log("0.1")
     const result1 = await axios.post(
       "http://localhost:3001/getproductos",
       {
@@ -1343,7 +1351,6 @@ const Productos = () => {
       },
       {}
     );
-    console.log("0.2")
     const newResult = [];
     //let keyproducto = 0;
     if (result1.data.error || result1.data.length === 0) {
@@ -1364,10 +1371,8 @@ const Productos = () => {
       });
       setResult(newResult);
       setNoproducto(true);
-      console.log("1");
     }
     else {
-      console.log("2");
       setNoproducto(false);
       result1.data.forEach((item, i) => {
         const obj = {
@@ -1412,7 +1417,6 @@ const Productos = () => {
       setCantidadproductos(result1.data.length);
       setResult(newResult);
     }
-    console.log("3");
 
     // Obtener el contenido de la foto de perfil
     contenidofoto.splice(0, contenidofoto.length);
@@ -1427,7 +1431,6 @@ const Productos = () => {
       }
     }
 
-    console.log("4");
     sessionStorage.setItem("carditem", 0);
     const resultgps = await axios.post(
       "http://localhost:3001/get-pares-gps-naturaleza",
@@ -1436,14 +1439,13 @@ const Productos = () => {
     );
     let paresgps=[];
     let itemst=[];
-    console.log(resultgps.data);
     resultgps.data.forEach((item) => {
          paresgps.push({lat: item.latitud, lng: item.longitud, image: libre, info: item.nombre})
          itemst.push({idproducto: item.idproducto, tarifa: item.tarifa, costoDomicilio: item.costoDomicilio});
      setPuntos(paresgps);
      setItems(itemst);
+     console.log("Inicia: ",paresgps.length);
     });
-    console.log("5");
 
     setInicia(false);
     setShow1(false);
@@ -1477,11 +1479,22 @@ const distanciaEnKilometros = (latitud1, longitud1, latitud2, longitud2)=>{
 }
 
 useEffect(() => {
+  console.log("*********",puntos.length);
   if (puntos.length!==0){
+    console.log("Si")
     let menor=999999;
     let esta=0;
     puntos.forEach((item, i)=>{
-      esta=distanciaEnKilometros(lat, lng, item.lat, item.lng).toFixed(2);
+      console.log(i);
+      console.log(puntosState);
+      let index=0;
+      if (puntosState!==0 && i<puntos.length-(puntosState+1)) {
+        index=puntosState
+        console.log("Index",puntos.length-index)
+        console.log(puntos[puntos.length-index].lat, puntos[puntos.length-index].lng)
+        esta=distanciaEnKilometros(puntos[puntos.length-index].lat, puntos[puntos.length-index].lng, item.lat, item.lng).toFixed(2);
+        console.log("Menos", esta);
+      }
       if (esta<menor){
         menor=esta
         setProductot(puntos[i].info);
@@ -1976,14 +1989,16 @@ useEffect(() => {
           </div>
 
           <div className="mapa-productos">
-             {showMap===true?
+            {console.log(puntos)}
+             {showMap===true?            
                  <>
                  <Tippy content={`Cerrar mapa`}>
                      <button className="offon-info-producto" onClick={()=>setShowMap(!showMap)}>
                          <Close />
                      </button>
                  </Tippy>
-                     <Map points={puntos} sx={{ height: "600px", width: "100%" }} onMapClick={lngLatSelected} remoteshowMap={showMap} lat={lat} lng={lng}  point={{lat, lng}} onChange={onChangeMap} remoteZoom={zoom} />
+                     <Map points={puntos} sx={{ height: "600px", width: "100%" }} onMapClick={lngLatSelected} remoteshowMap={showMap} lat={lat} lng={lng} onChange={onChangeMap} remoteZoom={zoom} />
+{/*                     <Map points={puntos} sx={{ height: "600px", width: "100%" }} onMapClick={lngLatSelected} remoteshowMap={showMap} lat={lat} lng={lng}  point={{lat, lng}} onChange={onChangeMap} remoteZoom={zoom} />*/}
                  </>:""
             }
 

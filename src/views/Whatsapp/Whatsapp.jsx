@@ -16,7 +16,6 @@ import IconButton from "@mui/material/IconButton"
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom"
 import { useLocation } from "react-router-dom";
-import Modal from "../../components/Modal/Modal";
 
 const Whatsapp = () => {
   const navigate = useNavigate();
@@ -59,7 +58,8 @@ const Whatsapp = () => {
         setCmd("")
     }
     else{
-        setContenido("(El comando NO se ejecuto correctamente)")
+//        setContenido("(El comando NO se ejecuto correctamente)")
+        setContenido(result.data.ok);
     }
     if (document.getElementById("cmd")) document.getElementById("cmd").focus();
 }
