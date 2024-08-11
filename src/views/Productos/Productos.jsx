@@ -52,8 +52,10 @@ const Productos = () => {
   const [contenidofoto, setContenidofoto] = useState([]);
   const [mascerca, setMascerca] = useState();
   const [productot, setProductot] = useState();
+  const [idproductot, setIdroductot] = useState();
   const [items, setItems] = useState([]);
   const [puntosState, setPuntosState] = useState(0);
+  const [carrera, setCarrera] = useState(0);
  
   let users =
     sessionStorage.getItem("user") === null
@@ -587,17 +589,24 @@ const Productos = () => {
   const lngLatSelected = (point, lngLat) => {
     setLng(lngLat.lng);
     setLat(lngLat.lat);
+    let lat1=puntos[puntos.length-1].lat;
+    let lng1=puntos[puntos.length-1].lng;
+    let ppuntos=puntosState+1;
     if (puntosState===0 || puntosState===1){
       setPuntosState(puntosState+1);
       let info= puntosState===0?"Origen":"Destino";
       setPuntos([...puntos,{lat: lngLat.lat, lng: lngLat.lng, image: marker, info: info}])
+      if (ppuntos===2){
+        // Tengo los dos puntos calculo la distancia entre ellos (Desde Origen hasta Destino)
+        setCarrera(distanciaEnKilometros(lat1, lng1, lngLat.lat, lngLat.lng).toFixed(2));
+      }
    }
    if (puntosState===2){
-    setPuntosState(1);
-     puntos.splice(puntos.length-2,2);
-     setPuntos([...puntos,{lat: lngLat.lat, lng: lngLat.lng, image: marker, info: "Origen"}])
+      setCarrera(0);
+      setPuntosState(1);
+      puntos.splice(puntos.length-2,2);
+      setPuntos([...puntos,{lat: lngLat.lat, lng: lngLat.lng, image: marker, info: "Origen"}])
    }
-console.log("Tamaño", puntos.length);
   };
 
   const onChangeMap = (which, value) => {
@@ -1243,7 +1252,6 @@ console.log("Tamaño", puntos.length);
          itemst.push({idproducto: item.idproducto, tarifa: item.tarifa, costoDomicilio: item.costoDomicilio});
      setPuntos(paresgps);
      setItems(itemst);
-     console.log("Despues: ",paresgps.length);
     });
 
   }
@@ -1277,15 +1285,6 @@ console.log("Tamaño", puntos.length);
     
     init_filtrar();
     init1();
-  }
-
-  function callchat() {
-    setDueño(result[Number(sessionStorage.getItem("carditem"))].xxxChat);
-    setChatnombre(result[Number(sessionStorage.getItem("carditem"))].Nombre);
-    if (showGalerias === false) {
-      setShowGalerias(false);
-      setShowchat(!showchat);
-    }
   }
 
   function verproducto(i) {
@@ -1352,21 +1351,13 @@ console.log("Tamaño", puntos.length);
       {}
     );
     const newResult = [];
-    //let keyproducto = 0;
     if (result1.data.error || result1.data.length === 0) {
-/*      let cadena =
-        sessionStorage.getItem("pnohay") === "undefined" ||
-          sessionStorage.getItem("pnohay") === "null"
-          ? "Productos"
-          : sessionStorage.getItem("pnohay");*/
-      //let cadena="";
       newResult.push({
         descnaturaleza: "",
         keyproducto: 0,
         negocio: "",
         categoria: "",
         Producto: result1.data.error,
-        //        Producto: result1.data.error + cadena,
         photo: "./galerias/app_images/destodo/logo.jpg",
       });
       setResult(newResult);
@@ -1376,35 +1367,16 @@ console.log("Tamaño", puntos.length);
       setNoproducto(false);
       result1.data.forEach((item, i) => {
         const obj = {
-//          descnaturaleza: item.descnaturaleza,
           keyproducto: item.keyproducto,
           idnegocio: item.idnegocio,
           xxxNegocio: item.negocio,
-//          Categoria: item.categoria,*/}
           Producto: item.descripcion,
           photo: "./galerias/app_images/productos/" + item.keyproducto + "/foto-1.jpg",
-//          photo: "./galerias/app_images/productos/" + item.keyproducto + "/" + item.keyproducto + ".jpg",
-//          reserva: item.reserva,
           user: item.iduser,
           tipouser: item.tipouser,
           ocupado: item.ocupado,
           tarifa: item.tarifa,
           costoDomicilio: item.costoDomicilio
-//          latitud: item.latitud,
-//          longitud: item.longitud,
-//          Precio: item.precio,
-//          Cantidad: item.cantidad,  console.log(item);
-//          Fecha: item.fecha,
-//          Hora: item.hora,
-/*          xxxNombre: item.nombre,
-          xxxEmail: item.Email,
-          xxxCelular: item.Celular,
-          xxxFijo: item.Fijo,
-          xxxProvincia: item.Provincia,
-          xxxMunicipio: item.Municipio,
-          xxxSede: item.Dirección,
-          xxxChat: item.dueño,
-          menuSN: item.menuSN,*/
         }
         if (result1.data[0].idnaturaleza === 62) {
           obj.Habilidades = item.adicional
@@ -1430,7 +1402,6 @@ console.log("Tamaño", puntos.length);
         contenidofoto.push(resultado.data);
       }
     }
-
     sessionStorage.setItem("carditem", 0);
     const resultgps = await axios.post(
       "http://localhost:3001/get-pares-gps-naturaleza",
@@ -1444,11 +1415,35 @@ console.log("Tamaño", puntos.length);
          itemst.push({idproducto: item.idproducto, tarifa: item.tarifa, costoDomicilio: item.costoDomicilio});
      setPuntos(paresgps);
      setItems(itemst);
-     console.log("Inicia: ",paresgps.length);
     });
 
     setInicia(false);
     setShow1(false);
+  }
+
+  async function shooping(){
+    if (showMap===true) {
+      // Insertar el movimiento y poner showmap en false
+      let tindex=puntos.length
+      await axios.post(
+      "http://localhost:3001/setmovimiento-new",
+      {
+        idmovimiento: 1, idproducto: idproductot, latOrigen: puntos[tindex-2].lat, latDestino: puntos[tindex-1].lat, 
+        lngOrigen: puntos[tindex-2].lng, lngDestino: puntos[tindex-1].lng, precio: (carrera*items[index].tarifa)+items[index].costoDomicilio, 
+        kms: carrera 
+      },
+      {}
+      );
+      await axios.post(
+        "http://localhost:3001/update-ocupado",
+        { idproducto: idproductot, ocupado: 1 }, 
+        {}
+      );
+     
+    }
+    setCarrera(0);
+    setPuntosState(0);
+    setShowMap(!showMap);
   }
 
   function onModalClose9() {
@@ -1479,25 +1474,19 @@ const distanciaEnKilometros = (latitud1, longitud1, latitud2, longitud2)=>{
 }
 
 useEffect(() => {
-  console.log("*********",puntos.length);
   if (puntos.length!==0){
-    console.log("Si")
     let menor=999999;
     let esta=0;
     puntos.forEach((item, i)=>{
-      console.log(i);
-      console.log(puntosState);
-      let index=0;
-      if (puntosState!==0 && i<puntos.length-(puntosState+1)) {
-        index=puntosState
-        console.log("Index",puntos.length-index)
-        console.log(puntos[puntos.length-index].lat, puntos[puntos.length-index].lng)
-        esta=distanciaEnKilometros(puntos[puntos.length-index].lat, puntos[puntos.length-index].lng, item.lat, item.lng).toFixed(2);
-        console.log("Menos", esta);
+      let tindex=0;
+      if (puntosState!==0 && i<=puntos.length-(puntosState+1)) {
+        tindex=puntosState;
+        esta=distanciaEnKilometros(puntos[puntos.length-tindex].lat, puntos[puntos.length-tindex].lng, item.lat, item.lng).toFixed(2);
       }
       if (esta<menor){
         menor=esta
         setProductot(puntos[i].info);
+        setIdroductot(items[i].idproducto);
         setIndex(i);
       }     
     });
@@ -1848,7 +1837,7 @@ useEffect(() => {
                       onClick={handleInput}
                     />
                     <Tippy content="Filtrar los establecimientos abiertos">
-                      <label className="label-abiertosn">¿Abierto?</label>
+                      <label className="label-abiertosn">¿Abierto/Libre?</label>
                     </Tippy>
                     {cbabiertosn === true ? (
                       <select
@@ -1960,12 +1949,12 @@ useEffect(() => {
               {" "}
               - {nombre.replaceAll("%20"," ")} - ({cantidadproductos})
             </h4>
-
-              <Tippy content="Ordenar el más cerca" >
-                     <button type="button" className="car negocio-button primary" onClick={() => setShowMap(!showMap)}>
+            {puntosState===2 || (showMap!==true && puntos.length!==0)?
+              <Tippy content={`Alquilar a ${puntos[index].info}`}>
+                     <button type="button" className="car negocio-button primary" onClick={shooping}>
                           <ShoppingCartOutlinedIcon />
                      </button>
-              </Tippy>
+              </Tippy>:""}
 
 
           </div>
@@ -1979,17 +1968,14 @@ useEffect(() => {
                   ))}
              </div>:""
             }
- 
           <div className="result"> 
           {showMap===true && mascerca>0?
             <>
-               {productot}{" esta a "}{mascerca}{" Kms "}{" precio: "}{((mascerca*items[index].tarifa)+items[index].costoDomicilio).toFixed(2)}
+               {productot}{" esta a "}{mascerca}{" Kms "}{"carrera "}{carrera}{" Kms precio: "}{((carrera*items[index].tarifa)+items[index].costoDomicilio).toFixed(2)}
             </>:""
             }
           </div>
-
           <div className="mapa-productos">
-            {console.log(puntos)}
              {showMap===true?            
                  <>
                  <Tippy content={`Cerrar mapa`}>
@@ -1998,13 +1984,9 @@ useEffect(() => {
                      </button>
                  </Tippy>
                      <Map points={puntos} sx={{ height: "600px", width: "100%" }} onMapClick={lngLatSelected} remoteshowMap={showMap} lat={lat} lng={lng} onChange={onChangeMap} remoteZoom={zoom} />
-{/*                     <Map points={puntos} sx={{ height: "600px", width: "100%" }} onMapClick={lngLatSelected} remoteshowMap={showMap} lat={lat} lng={lng}  point={{lat, lng}} onChange={onChangeMap} remoteZoom={zoom} />*/}
                  </>:""
             }
-
           </div>
-
-
         </Hero>
       </div>
     </>

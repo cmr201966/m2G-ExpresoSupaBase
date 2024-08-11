@@ -46,6 +46,8 @@ const InfoProducto = () => {
   const [tarifa, setTarifa] = useState(1);
   const [domicilio, setDomicilio] = useState(50);
   const [puntosState, setPuntosState] = useState(0);
+  const [carrera, setCarrera] = useState(0);
+  const [productot, setProductot] = useState("");
 
   async function init() {
     setNaturaleza1(parsedParams.naturaleza);
@@ -108,19 +110,30 @@ const InfoProducto = () => {
     return setLat(value);
   };
 
+
   const lngLatSelected = (point, lngLat) => {
-    setLng(lngLat.lng);
-    setLat(lngLat.lat);
-    if (puntosState===0 || puntosState===1){
-       setPuntosState(puntosState+1);
-       let info= puntosState===0?"Origen":"Destino";
-       setPuntos([...puntos,{lat: lngLat.lat, lng: lngLat.lng, image: marker, info: info}])
-    }
-    if (puntosState===2){
-      setPuntosState(1);
-      puntos.splice(puntos.length-2,2);
-      setPuntos([...puntos,{lat: lngLat.lat, lng: lngLat.lng, image: marker, info: "Origen"}])
-    }
+    if (ocupado===1) 
+      {
+        return;
+      }
+setLng(lngLat.lng);
+setLat(lngLat.lat);
+let ppuntos=puntosState+1;
+if (puntosState===0 || puntosState===1){
+  setPuntosState(puntosState+1);
+  let info= puntosState===0?"Origen":"Destino";
+  setPuntos([...puntos,{lat: lngLat.lat, lng: lngLat.lng, image: marker, info: info}])
+  if (ppuntos===2){
+    // Tengo los dos puntos calculo la distancia entre ellos (Desde Origen hasta Destino)
+    setCarrera(distanciaEnKilometros(puntos[1].lat, puntos[1].lng, lngLat.lat, lngLat.lng).toFixed(2));
+  }
+}
+if (puntosState===2){
+  setCarrera(0);
+  setPuntosState(1);
+  puntos.splice(puntos.length-2,2);
+  setPuntos([...puntos,{lat: lngLat.lat, lng: lngLat.lng, image: marker, info: "Origen"}])
+}
   };
 
   const calcularDistanciaEntreDosCoordenadas = (lat1, lon1, lat2, lon2) => {
@@ -155,13 +168,38 @@ const InfoProducto = () => {
     );
   };
 
-  function ordenar() {}
+  async function shooping(){
+    if (showMap===true) {
+      // Insertar el movimiento y poner showmap en false
+      let tindex=puntos.length
+      await axios.post(
+      "http://localhost:3001/setmovimiento-new",
+      {
+        idmovimiento: 1, idproducto: idproducto, latOrigen: puntos[tindex-2].lat, latDestino: puntos[tindex-1].lat, 
+        lngOrigen: puntos[tindex-2].lng, lngDestino: puntos[tindex-1].lng, precio: (carrera*tarifa)+domicilio, 
+        kms: carrera 
+      },
+      {}
+      );
+      setOcupado(true);
+      await axios.post(
+        "http://localhost:3001/update-ocupado",
+        { idproducto: idproducto, ocupado: 1 }, 
+        {}
+      );
+    }
+    setPuntos([]);
+    setPuntosState(0);
+
+  }
 
   useEffect(() => {
-    if (puntos.length !== 0) {
-      setDistancia(
-        distanciaEnKilometros(lat, lng, puntos[0].lat, puntos[0].lng).toFixed(2)
-      );
+    if (ocupado===1) {
+      return;
+    }
+    if (puntos.length !== 0 && puntosState==1) {
+      setDistancia(distanciaEnKilometros(lat, lng, puntos[0].lat, puntos[0].lng).toFixed(2));
+      setProductot(puntos[0].info);
     }
   }, [lng]);
 
@@ -286,23 +324,23 @@ const InfoProducto = () => {
           ) : (
             ""
           )}
-
-          {gps === 1 && showMap === true ? (
+          {gps === 1 && showMap === true && puntos.length!==0 ? (
             <section className="mapa">
               <div className="parrafo distancia">
-                <p>Distancia:</p>
+                <p>{puntos[0].info}</p>
+                <p>{" esta a "}</p>
                 <p>
                   {distancia}
-                  {" KMS"}
+                  {" KMS carrera "}{carrera}{" Kms "}
                   {" Precio: "}
-                  {(distancia * tarifa + domicilio).toFixed(0)}
+                  {((carrera * tarifa) + domicilio).toFixed(0)}
                 </p>
-                {distancia !== 0 ? (
+                {distancia !== 0 && (showMap===true && puntosState===2)? (
                   <Tippy content="Ordenar este producto">
                     <button
                       type="button"
                       className="car negocio-button primary"
-                      onClick={() => ordenar}
+                      onClick={shooping}
                     >
                       <ShoppingCartOutlinedIcon />
                     </button>

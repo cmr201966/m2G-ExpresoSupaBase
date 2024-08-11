@@ -747,7 +747,6 @@ const CatProductos = () => {
                         <label className="label-datos-catproducto">
                           Producto:{" "}
                         </label>
-                        {console.log(producto)}
                         <Autocomplete
                           disablePortal
                           disabled={agregarsn || editarsn}
@@ -759,7 +758,7 @@ const CatProductos = () => {
                           value={producto}
                           onChange={handleProducto}
                           sx={{
-                            marginLeft: "58px",
+                            marginLeft: "52px",
                             marginTop: "5px",
                             width: "225px",
                             height: "30px",

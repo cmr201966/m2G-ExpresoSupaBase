@@ -75,7 +75,7 @@
     height: 23px;
 }
 .select-naturaleza-producto{
-    margin-left: 14px;
+    margin-left: 17px;
     width: 231px;
     height: 30px;
 }
@@ -205,17 +205,20 @@
     margin-bottom: -12px;
 }
 .input-area1-producto{
+    display: flex;
+    width: 100%;
+    align-items: center;
     margin-left: 1px;
     margin-top: 5px;
 }
 .input-cataproducto-1{
-    margin-left: 27px;
+    margin-left: 29px;
     width: 225px;
     height: 25px;
     margin-bottom: 4px;   
 }
 .input-cataproducto-2{
-    margin-left: 4px;
+    margin-left: 2px;
     width: 225px;
     height: 25px;
 }

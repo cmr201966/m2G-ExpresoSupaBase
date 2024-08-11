@@ -97,6 +97,7 @@ const Aplicaciones = () => {
         { naturaleza: "", admin: false },
         {}
       );
+      console.log(resultnaturaleza);
       if (resultnaturaleza.data.error || resultnaturaleza.data.length === 0) 
       {
         setArrayNaturalezas(arraynonaturaleza);
