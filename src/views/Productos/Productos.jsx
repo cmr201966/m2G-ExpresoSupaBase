@@ -5,7 +5,7 @@ import Modal from "../../components/Modal/Modal";
 //import Map from "../../components/Map/MapBox";
 import Hero from "../../layouts/Hero/Hero";
 // @mui/icons-material
-import ShoppingCartOutlinedIcon from '@mui/icons-material/ShoppingCartOutlined';
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import Check from "@mui/icons-material/Check";
 import FilterAltOff from "@mui/icons-material/FilterAltOff";
@@ -25,15 +25,16 @@ import axios from "axios";
 import { useFilter } from "../../context/FilterProvider";
 
 // components
-import CardRow from "../../components/CardRow/CardRow"
+import CardRow from "../../components/CardRow/CardRow";
 
 // styles
 import "./styles.css";
+import config from "../../config";
 
 const Productos = () => {
   const navigate = useNavigate();
   const [mapLoading, setMapLoading] = useState(true);
-  const [puntos, setPuntos]=useState([]);
+  const [puntos, setPuntos] = useState([]);
   const { filterState, setFilterState } = useFilter();
   const location = useLocation();
   const parsedParams = {};
@@ -56,7 +57,8 @@ const Productos = () => {
   const [items, setItems] = useState([]);
   const [puntosState, setPuntosState] = useState(0);
   const [carrera, setCarrera] = useState(0);
- 
+  const [duracion, setDuracion] = useState(0);
+
   let users =
     sessionStorage.getItem("user") === null
       ? ""
@@ -79,12 +81,14 @@ const Productos = () => {
   // Estados que vienen del filtro
   const [arraynaturalezas, setArraynaturalezas] = useState([]);
   const arraynonaturalezas = [
-    { idnaturaleza: 999999, desc: "No hay naturalezas" },];
+    { idnaturaleza: 999999, desc: "No hay naturalezas" },
+  ];
   const [cbnaturaleza, setCbnaturaleza] = useState(0);
   const [naturaleza, setNaturaleza] = useState(0);
   const [arraytnegocios, setArraytnegocios] = useState([]);
   const arraynotnegocios = [
-    { categorianegocio: 999999, desc: "No hay tipos de negocios" },];
+    { categorianegocio: 999999, desc: "No hay tipos de negocios" },
+  ];
   const [tnegocio, setTnegocio] = useState(0);
   const [arraynegocios, setArraynegocios] = useState([]);
   const arraynonegocios = [{ idnegocio: 999999, desc: "No hay negocios" }];
@@ -128,7 +132,7 @@ const Productos = () => {
   const [index, setIndex] = useState(0);
 
   // Estados para la posición GPS del mapa
-  const [zoom, setZoom] = useState(12.00);
+  const [zoom, setZoom] = useState(12.0);
   const [showMap, setShowMap] = useState(false);
 
   // Estados para la posición GPS del mapa
@@ -160,7 +164,6 @@ const Productos = () => {
   let mdomicilio = sessionStorage.getItem("domicilio");
   let mabierto = sessionStorage.getItem("abierto");
   // Fin estados del filtro
-
 
   function parser(expresion, tabla, campo, tipo) {
     // analizar la expresion para formar la condicion
@@ -327,16 +330,19 @@ const Productos = () => {
       sessionStorage.getItem("filtro_productos") !== null &&
       sessionStorage.getItem("filtro_productos") !== undefined
     ) {
-
       //
       // Provincia
       //
       if (mprovincia !== null && mprovincia !== "") {
         if (condicion_filter.length !== 0) {
-          condicion_filter = condicion_filter + " and (tablacatnegocios.provinvia=" + mprovincia + ")";
-        }
-        else {
-          condicion_filter = " and (tablacatnegocios.provincia=" + mprovincia + ")";
+          condicion_filter =
+            condicion_filter +
+            " and (tablacatnegocios.provinvia=" +
+            mprovincia +
+            ")";
+        } else {
+          condicion_filter =
+            " and (tablacatnegocios.provincia=" + mprovincia + ")";
         }
       }
       //
@@ -344,10 +350,14 @@ const Productos = () => {
       //
       if (mmunicipio !== null && mmunicipio !== "") {
         if (condicion_filter.length !== 0) {
-          condicion_filter = condicion_filter + " and (tablacatnegocios.municipio=" + mmunicipio + ")";
-        }
-        else {
-          condicion_filter = " and (tablacatnegocios.municipio=" + mmunicipio + ")";
+          condicion_filter =
+            condicion_filter +
+            " and (tablacatnegocios.municipio=" +
+            mmunicipio +
+            ")";
+        } else {
+          condicion_filter =
+            " and (tablacatnegocios.municipio=" + mmunicipio + ")";
         }
       }
 
@@ -356,9 +366,9 @@ const Productos = () => {
       //
       if (mnaturaleza !== null && mnaturaleza !== "") {
         if (condicion_filter.length !== 0) {
-          condicion_filter = condicion_filter + " and (naturaleza=" + mnaturaleza + ")";
-        }
-        else {
+          condicion_filter =
+            condicion_filter + " and (naturaleza=" + mnaturaleza + ")";
+        } else {
           condicion_filter = " and (naturaleza=" + mnaturaleza + ")";
         }
       }
@@ -409,7 +419,7 @@ const Productos = () => {
       //
       if (mdesc !== null && mdesc !== "") {
         if (condicion_filter.length !== 0) {
-            condicion_filter =
+          condicion_filter =
             condicion_filter +
             " and instr(tablacatproductos.`desc`,'" +
             mdesc +
@@ -465,7 +475,7 @@ const Productos = () => {
     setInicia(true);
     setShow1(true);
 
-//  setNaturaleza(0);
+    //  setNaturaleza(0);
 
     // Tipos de Negocios
     let ttarraytnegocios = [];
@@ -586,27 +596,56 @@ const Productos = () => {
     setInicia(false);
   }
 
-  const lngLatSelected = (point, lngLat) => {
+  async function calculateDistance(start, end) {
+    console.log(start)
+    console.log(end)
+    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${start.join(
+      ","
+    )};${end.join(",")}?geometries=geojson&access_token=${config.mapBoxAPI};`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      console.log(data);
+      if (data) {
+        const distance = data.routes[0].distance; // Distance in meters
+        const duration = data.routes[0].duration; // Duration in seconds
+        return { distance: distance / 1000, duration: duration / 60 };
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+  const lngLatSelected = async (point, lngLat) => {
     setLng(lngLat.lng);
     setLat(lngLat.lat);
-    let lat1=puntos[puntos.length-1].lat;
-    let lng1=puntos[puntos.length-1].lng;
-    let ppuntos=puntosState+1;
-    if (puntosState===0 || puntosState===1){
-      setPuntosState(puntosState+1);
-      let info= puntosState===0?"Origen":"Destino";
-      setPuntos([...puntos,{lat: lngLat.lat, lng: lngLat.lng, image: marker, info: info}])
-      if (ppuntos===2){
+    let lat1 = puntos[puntos.length - 1].lat;
+    let lng1 = puntos[puntos.length - 1].lng;
+    let ppuntos = puntosState + 1;
+    if (puntosState === 0 || puntosState === 1) {
+      setPuntosState(puntosState + 1);
+      let info = puntosState === 0 ? "Origen" : "Destino";
+      setPuntos([
+        ...puntos,
+        { lat: lngLat.lat, lng: lngLat.lng, image: marker, info: info },
+      ]);
+      if (ppuntos === 2) {
         // Tengo los dos puntos calculo la distancia entre ellos (Desde Origen hasta Destino)
-        setCarrera(distanciaEnKilometros(lat1, lng1, lngLat.lat, lngLat.lng).toFixed(2));
+        const { distancia, duracion } = await calculateDistance([lng1,lat1], [lngLat.lng,lngLat.lat]);
+        setCarrera(distancia);
+        setDuracion(duracion);
       }
-   }
-   if (puntosState===2){
+    }
+    if (puntosState === 2) {
       setCarrera(0);
       setPuntosState(1);
-      puntos.splice(puntos.length-2,2);
-      setPuntos([...puntos,{lat: lngLat.lat, lng: lngLat.lng, image: marker, info: "Origen"}])
-   }
+      puntos.splice(puntos.length - 2, 2);
+      setPuntos([
+        ...puntos,
+        { lat: lngLat.lat, lng: lngLat.lng, image: marker, info: "Origen" },
+      ]);
+    }
   };
 
   const onChangeMap = (which, value) => {
@@ -633,7 +672,9 @@ const Productos = () => {
         break;
       case "municipio":
         setMunicipio(e.target.value);
-{/*}        cambia_municipio(e.target.value);*/}
+        {
+          /*}        cambia_municipio(e.target.value);*/
+        }
         break;
       case "cbnaturaleza":
         setCbnaturaleza(e.target.checked);
@@ -648,7 +689,8 @@ const Productos = () => {
       case "tnegocio":
         setTnegocio(e.target.value);
         cambia_tipo_tnegocio(
-          arraytnegocios[Number(e.target.value)].categorianegocio);
+          arraytnegocios[Number(e.target.value)].categorianegocio
+        );
         break;
       case "cbtnegocio":
         setCbtnegocio(e.target.checked);
@@ -774,10 +816,7 @@ const Productos = () => {
           //cbtnegocio true, producto en true y cproducto en true
           // los productos dependen de la categoriaproducto
           let ttproductos = arrayproductos.filter((item, i) => {
-            if (
-              item.idnegocio ===
-              tnegocios[negocio].idnegocio
-            ) {
+            if (item.idnegocio === tnegocios[negocio].idnegocio) {
               return item;
             }
           });
@@ -842,9 +881,7 @@ const Productos = () => {
         if (cbcproducto) {
           // tnegocio false, cproducto true, producto true mostrar los productos de la categoriaproducto
           let tmp = arrayproductos.filter((item, i) => {
-            if (
-              item.idnegocio === ttarraynegocios[0].idnegocio
-            ) {
+            if (item.idnegocio === ttarraynegocios[0].idnegocio) {
               return item;
             }
           });
@@ -927,9 +964,7 @@ const Productos = () => {
         if (cbcproducto) {
           // negocio true, producto true y cproducto true mostrar productos segun cproducto
           let tmp = arrayproductos.filter((item, i) => {
-            if (
-              item.idnegocio === ttarraynegocios[0].idnegocio
-            ) {
+            if (item.idnegocio === ttarraynegocios[0].idnegocio) {
               return item;
             }
           });
@@ -970,9 +1005,7 @@ const Productos = () => {
         if (cbcproducto) {
           // negocio false, producto true, cproducto true mostrar productos segun cproducto
           let tmp = arrayproductos.filter((item) => {
-            if (
-              item.idnegocio === ttarraynegocios[0].idnegocio
-            ) {
+            if (item.idnegocio === ttarraynegocios[0].idnegocio) {
               return item;
             }
           });
@@ -1004,7 +1037,6 @@ const Productos = () => {
     }
   }
 
-
   ///////////////////////
   // cambia_producto_cb /
   ///////////////////////
@@ -1016,19 +1048,14 @@ const Productos = () => {
         // cproducto true mostrar los productos para esta cproducto
         if (
           arrayproductos.filter((item) => {
-            if (
-              item.idnegocio === tnegocios[negocio].idnegocio
-            ) {
+            if (item.idnegocio === tnegocios[negocio].idnegocio) {
               return item;
             }
           }).length !== 0
         ) {
           setTproductos(
             arrayproductos.filter((item) => {
-              if (
-                item.idnegocio ===
-                tnegocios[cproducto].idnegocio
-              ) {
+              if (item.idnegocio === tnegocios[cproducto].idnegocio) {
                 return item;
               }
             })
@@ -1060,10 +1087,7 @@ const Productos = () => {
             // getproductos(tnegocio);
             setTproductos(
               arrayproductos.filter((item) => {
-                if (
-                  item.idnegocio ===
-                  tnegocios[negocio].idnegocio
-                ) {
+                if (item.idnegocio === tnegocios[negocio].idnegocio) {
                   return item;
                 }
               })
@@ -1105,7 +1129,6 @@ const Productos = () => {
     }
   }
 
-
   function ayuda1() {
     setContenido("Varios precios: 550,600,650 rango de precios: 700-1000");
     setShow(true);
@@ -1134,11 +1157,13 @@ const Productos = () => {
     // Naturalezas         /
     //*********************/
     if (cbnaturaleza === true) {
-      sessionStorage.setItem("naturaleza", arraynaturalezas[naturaleza].idnaturaleza);
+      sessionStorage.setItem(
+        "naturaleza",
+        arraynaturalezas[naturaleza].idnaturaleza
+      );
       mnaturaleza = arraynaturalezas[naturaleza].idnaturaleza;
       filtro = true;
-    }
-    else {
+    } else {
       sessionStorage.removeItem("naturaleza");
       mnaturaleza = "";
     }
@@ -1239,27 +1264,39 @@ const Productos = () => {
     init1();
   }
   //
-  async function paresGps(){
+  async function paresGps() {
     const resultgps = await axios.post(
       "http://localhost:3001/get-pares-gps-naturaleza",
-      { naturaleza: naturaleza1 }, 
+      { naturaleza: naturaleza1 },
       {}
     );
-    let paresgps=[];
-    let itemst=[];
+    let paresgps = [];
+    let itemst = [];
     resultgps.data.forEach((item) => {
-         paresgps.push({lat: item.latitud, lng: item.longitud, image: libre, info: item.nombre});
-         itemst.push({idproducto: item.idproducto, tarifa: item.tarifa, costoDomicilio: item.costoDomicilio});
-     setPuntos(paresgps);
-     setItems(itemst);
+      paresgps.push({
+        lat: item.latitud,
+        lng: item.longitud,
+        image: libre,
+        info: item.nombre,
+      });
+      itemst.push({
+        idproducto: item.idproducto,
+        tarifa: item.tarifa,
+        costoDomicilio: item.costoDomicilio,
+      });
+      setPuntos(paresgps);
+      setItems(itemst);
     });
-
   }
   //
   function init() {
     setNivel(parsedParams.nivel);
     setNaturaleza1(parsedParams.naturaleza);
-    setIdowner(parsedParams.idowner==="undefined"?parsedParams.owner:parsedParams.idowner);
+    setIdowner(
+      parsedParams.idowner === "undefined"
+        ? parsedParams.owner
+        : parsedParams.idowner
+    );
     if (
       sessionStorage.getItem("pnaturaleza") === "" ||
       sessionStorage.getItem("pnaturaleza") === undefined ||
@@ -1282,20 +1319,22 @@ const Productos = () => {
     sessionStorage.setItem("naturaleza", parsedParams.naturaleza);
     sessionStorage.setItem("idowner", parsedParams.idowner);
     sessionStorage.setItem("nivel", parsedParams.nivel);
-    
+
     init_filtrar();
     init1();
   }
 
   function verproducto(i) {
     //setShowproducto(true);
-    navigate(`/infoproducto?idproducto=${result[i].keyproducto}&naturaleza=${naturaleza1}`);
+    navigate(
+      `/infoproducto?idproducto=${result[i].keyproducto}&naturaleza=${naturaleza1}`
+    );
   }
 
   function vernegocio(i) {
-//    setShownegocio(true);
-  navigate(`/infonegocio?idnegocio=${result[i].idnegocio}`);
-}
+    //    setShownegocio(true);
+    navigate(`/infonegocio?idnegocio=${result[i].idnegocio}`);
+  }
 
   function selectcard(i) {
     document.getElementById(
@@ -1362,8 +1401,7 @@ const Productos = () => {
       });
       setResult(newResult);
       setNoproducto(true);
-    }
-    else {
+    } else {
       setNoproducto(false);
       result1.data.forEach((item, i) => {
         const obj = {
@@ -1371,18 +1409,20 @@ const Productos = () => {
           idnegocio: item.idnegocio,
           xxxNegocio: item.negocio,
           Producto: item.descripcion,
-          photo: "./galerias/app_images/productos/" + item.keyproducto + "/foto-1.jpg",
+          photo:
+            "./galerias/app_images/productos/" +
+            item.keyproducto +
+            "/foto-1.jpg",
           user: item.iduser,
           tipouser: item.tipouser,
           ocupado: item.ocupado,
           tarifa: item.tarifa,
-          costoDomicilio: item.costoDomicilio
-        }
+          costoDomicilio: item.costoDomicilio,
+        };
         if (result1.data[0].idnaturaleza === 62) {
-          obj.Habilidades = item.adicional
-        }
-        else {
-          obj.Requisitos = item.adicional
+          obj.Habilidades = item.adicional;
+        } else {
+          obj.Requisitos = item.adicional;
         }
         newResult.push(obj);
       });
@@ -1405,50 +1445,62 @@ const Productos = () => {
     sessionStorage.setItem("carditem", 0);
     const resultgps = await axios.post(
       "http://localhost:3001/get-pares-gps-naturaleza",
-      { naturaleza: parsedParams.naturaleza }, 
+      { naturaleza: parsedParams.naturaleza },
       {}
     );
-    let paresgps=[];
-    let itemst=[];
+    let paresgps = [];
+    let itemst = [];
     resultgps.data.forEach((item) => {
-         paresgps.push({lat: item.latitud, lng: item.longitud, image: libre, info: item.nombre})
-         itemst.push({idproducto: item.idproducto, tarifa: item.tarifa, costoDomicilio: item.costoDomicilio});
-     setPuntos(paresgps);
-     setItems(itemst);
+      paresgps.push({
+        lat: item.latitud,
+        lng: item.longitud,
+        image: libre,
+        info: item.nombre,
+      });
+      itemst.push({
+        idproducto: item.idproducto,
+        tarifa: item.tarifa,
+        costoDomicilio: item.costoDomicilio,
+      });
+      setPuntos(paresgps);
+      setItems(itemst);
     });
 
     setInicia(false);
     setShow1(false);
   }
 
-  async function shooping(){
-    if (showMap===true) {
+  async function shooping() {
+    if (showMap === true) {
       // Insertar el movimiento y poner showmap en false
-      let tindex=puntos.length
+      let tindex = puntos.length;
       await axios.post(
-      "http://localhost:3001/setmovimiento-new",
-      {
-        idmovimiento: 1, idproducto: idproductot, latOrigen: puntos[tindex-2].lat, latDestino: puntos[tindex-1].lat, 
-        lngOrigen: puntos[tindex-2].lng, lngDestino: puntos[tindex-1].lng, precio: (carrera*items[index].tarifa)+items[index].costoDomicilio, 
-        kms: carrera 
-      },
-      {}
+        "http://localhost:3001/setmovimiento-new",
+        {
+          idmovimiento: 1,
+          idproducto: idproductot,
+          latOrigen: puntos[tindex - 2].lat,
+          latDestino: puntos[tindex - 1].lat,
+          lngOrigen: puntos[tindex - 2].lng,
+          lngDestino: puntos[tindex - 1].lng,
+          precio: carrera * items[index].tarifa + items[index].costoDomicilio,
+          kms: carrera,
+        },
+        {}
       );
       await axios.post(
         "http://localhost:3001/update-ocupado",
-        { idproducto: idproductot, ocupado: 1 }, 
+        { idproducto: idproductot, ocupado: 1 },
         {}
       );
-     
     }
     setCarrera(0);
     setPuntosState(0);
     setShowMap(!showMap);
   }
 
-  function onModalClose9() {
-  }
- 
+  function onModalClose9() {}
+
   const calcularDistanciaEntreDosCoordenadas = (lat1, lon1, lat2, lon2) => {
     // Convertir todas las coordenadas a radianes
     lat1 = gradosARadianes(lat1);
@@ -1457,43 +1509,55 @@ const Productos = () => {
     lon2 = gradosARadianes(lon2);
     // Aplicar fórmula
     const RADIO_TIERRA_EN_KILOMETROS = 6371;
-    let diferenciaEntreLongitudes = (lon2 - lon1);
-    let diferenciaEntreLatitudes = (lat2 - lat1);
-    let a = Math.pow(Math.sin(diferenciaEntreLatitudes / 2.0), 2) + Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin(diferenciaEntreLongitudes / 2.0), 2);
+    let diferenciaEntreLongitudes = lon2 - lon1;
+    let diferenciaEntreLatitudes = lat2 - lat1;
+    let a =
+      Math.pow(Math.sin(diferenciaEntreLatitudes / 2.0), 2) +
+      Math.cos(lat1) *
+        Math.cos(lat2) *
+        Math.pow(Math.sin(diferenciaEntreLongitudes / 2.0), 2);
     let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
     return RADIO_TIERRA_EN_KILOMETROS * c;
-};
+  };
 
-const gradosARadianes = (grados) => {
-    return grados * Math.PI / 180;
-};
+  const gradosARadianes = (grados) => {
+    return (grados * Math.PI) / 180;
+  };
 
+  const distanciaEnKilometros = (latitud1, longitud1, latitud2, longitud2) => {
+    return calcularDistanciaEntreDosCoordenadas(
+      latitud1,
+      longitud1,
+      latitud2,
+      longitud2
+    );
+  };
 
-const distanciaEnKilometros = (latitud1, longitud1, latitud2, longitud2)=>{
-  return calcularDistanciaEntreDosCoordenadas(latitud1, longitud1, latitud2, longitud2);
-}
-
-useEffect(() => {
-  if (puntos.length!==0){
-    let menor=999999;
-    let esta=0;
-    puntos.forEach((item, i)=>{
-      let tindex=0;
-      if (puntosState!==0 && i<=puntos.length-(puntosState+1)) {
-        tindex=puntosState;
-        esta=distanciaEnKilometros(puntos[puntos.length-tindex].lat, puntos[puntos.length-tindex].lng, item.lat, item.lng).toFixed(2);
-      }
-      if (esta<menor){
-        menor=esta
-        setProductot(puntos[i].info);
-        setIdroductot(items[i].idproducto);
-        setIndex(i);
-      }     
-    });
-    setMascerca(menor);
-  }
-}, [lng]);
-
+  useEffect(() => {
+    if (puntos.length !== 0) {
+      let menor = 999999;
+      let esta = 0;
+      puntos.forEach((item, i) => {
+        let tindex = 0;
+        if (puntosState !== 0 && i <= puntos.length - (puntosState + 1)) {
+          tindex = puntosState;
+          esta = distanciaEnKilometros(
+            puntos[puntos.length - tindex].lat,
+            puntos[puntos.length - tindex].lng,
+            item.lat,
+            item.lng
+          ).toFixed(2);
+        }
+        if (esta < menor) {
+          menor = esta;
+          setProductot(puntos[i].info);
+          setIdroductot(items[i].idproducto);
+          setIndex(i);
+        }
+      });
+      setMascerca(menor);
+    }
+  }, [lng]);
 
   function onModalClose() {
     setFilterState({ type: "set", newvalue: false });
@@ -1609,7 +1673,6 @@ useEffect(() => {
                       ""
                     )}
                   </div>
-
                 </>
               ) : (
                 ""
@@ -1916,7 +1979,7 @@ useEffect(() => {
                 sessionStorage.getItem("user") === null
                   ? "Abrir sesión"
                   : "Cerrar la sesión de " +
-                  sessionStorage.getItem("usernombre"),
+                    sessionStorage.getItem("usernombre"),
             },
             {
               label: "Registrarse",
@@ -1928,64 +1991,129 @@ useEffect(() => {
               to: "/Acercade",
               tooltips: "Acerca de M2G-Destodo",
             },
-          ]} 
+          ]}
           nivel={1}
         />
         <Hero>
           <div className={"productos-cabeza"}>
-              <IconButton
-                color="primary"
-                onClick={() => {
-                  navigate(
-                    `/?naturaleza=${41}&idowner=${idowner}&nivel=${nivel}`
-                  );
-                }}
-              >
-                <ArrowBack />
-              </IconButton>
+            <IconButton
+              color="primary"
+              onClick={() => {
+                navigate(
+                  `/?naturaleza=${41}&idowner=${idowner}&nivel=${nivel}`
+                );
+              }}
+            >
+              <ArrowBack />
+            </IconButton>
 
             <h3 className="h1-cabeza-productos">DesTodo</h3>
             <h4 className="h3-cabeza-productos-1">
               {" "}
-              - {nombre.replaceAll("%20"," ")} - ({cantidadproductos})
+              - {nombre.replaceAll("%20", " ")} - ({cantidadproductos})
             </h4>
-            {puntosState===2 || (showMap!==true && puntos.length!==0)?
+            {puntosState === 2 || (showMap !== true && puntos.length !== 0) ? (
               <Tippy content={`Alquilar a ${puntos[index].info}`}>
-                     <button type="button" className="car negocio-button primary" onClick={shooping}>
-                          <ShoppingCartOutlinedIcon />
-                     </button>
-              </Tippy>:""}
-
-
+                <button
+                  type="button"
+                  className="car negocio-button primary"
+                  onClick={shooping}
+                >
+                  <ShoppingCartOutlinedIcon />
+                </button>
+              </Tippy>
+            ) : (
+              ""
+            )}
           </div>
 
-          {show1 ? <Box sx={{ width: "100%", height: "300px", display: "flex", alignItems: "center", justifyContent: "center" }}><CircularProgress color="checkbox" /></Box> : null}
+          {show1 ? (
+            <Box
+              sx={{
+                width: "100%",
+                height: "300px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CircularProgress color="checkbox" />
+            </Box>
+          ) : null}
 
-            {inicia === false && showMap!==true ? 
-             <div className="product-flex">
-                 {result.map((item, i) => (
-                    <CardRow tipouser={sessionStorage.getItem("tipouser")} user={sessionStorage.getItem("user")} mapLoading={mapLoading} noproducto={noproducto} onMapClick={() => { setLat(item.latitud); setLng(item.longitud); setShowrow3(true) }} verproducto={verproducto} vernegocio={vernegocio} paresGps={paresGps} key={i} i={i} selectcard={selectcard} contenidofoto={contenidofoto[i]} item={item} />
-                  ))}
-             </div>:""
-            }
-          <div className="result"> 
-          {showMap===true && mascerca>0?
-            <>
-               {productot}{" esta a "}{mascerca}{" Kms "}{"carrera "}{carrera}{" Kms precio: "}{((carrera*items[index].tarifa)+items[index].costoDomicilio).toFixed(2)}
-            </>:""
-            }
+          {inicia === false && showMap !== true ? (
+            <div className="product-flex">
+              {result.map((item, i) => (
+                <CardRow
+                  tipouser={sessionStorage.getItem("tipouser")}
+                  user={sessionStorage.getItem("user")}
+                  mapLoading={mapLoading}
+                  noproducto={noproducto}
+                  onMapClick={() => {
+                    setLat(item.latitud);
+                    setLng(item.longitud);
+                    setShowrow3(true);
+                  }}
+                  verproducto={verproducto}
+                  vernegocio={vernegocio}
+                  paresGps={paresGps}
+                  key={i}
+                  i={i}
+                  selectcard={selectcard}
+                  contenidofoto={contenidofoto[i]}
+                  item={item}
+                />
+              ))}
+            </div>
+          ) : (
+            ""
+          )}
+          <div className="result">
+            {showMap === true && mascerca > 0 ? (
+              <>
+                {productot}
+                {" esta a "}
+                {mascerca}
+                {" Kms "}
+                {"carrera "}
+                {carrera}
+                {" llegara en "}
+                {duracion}
+                {" Kms precio: "}
+                {(
+                  carrera * items[index].tarifa +
+                  items[index].costoDomicilio
+                ).toFixed(2)}
+              </>
+            ) : (
+              ""
+            )}
           </div>
           <div className="mapa-productos">
-             {showMap===true?            
-                 <>
-                 <Tippy content={`Cerrar mapa`}>
-                     <button className="offon-info-producto" onClick={()=>setShowMap(!showMap)}>
-                         <Close />
-                     </button>
-                 </Tippy>
-                     <Map points={puntos} sx={{ height: "600px", width: "100%" }} onMapClick={lngLatSelected} remoteshowMap={showMap} lat={lat} lng={lng} onChange={onChangeMap} remoteZoom={zoom} />
-                 </>:""
-            }
+            {showMap === true ? (
+              <>
+                <Tippy content={`Cerrar mapa`}>
+                  <button
+                    className="offon-info-producto"
+                    onClick={() => setShowMap(!showMap)}
+                  >
+                    <Close />
+                  </button>
+                </Tippy>
+                <Map
+                  points={puntos}
+                  sx={{ height: "600px", width: "100%" }}
+                  onMapClick={lngLatSelected}
+                  remoteshowMap={showMap}
+                  lat={lat}
+                  lng={lng}
+                  onChange={onChangeMap}
+                  remoteZoom={zoom}
+                />
+              </>
+            ) : (
+              ""
+            )}
           </div>
         </Hero>
       </div>
