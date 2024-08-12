@@ -19,6 +19,7 @@ function Place({ children, point, setPopupInfo }) {
     >
       {children ?? (
         <Pin
+          imageClassName={point?.imageClassName ?? ""}
           imagePlace={
             point?.image ??
             "https://docs.mapbox.com/mapbox-gl-js/assets/custom_marker.png"

@@ -1,10 +1,12 @@
 import { memo } from "react";
 import PropTypes from "prop-types";
 
-const Pin = memo(function Pin({ imagePlace }) {
+const Pin = memo(function Pin({ imagePlace, imageClassName }) {
   return (
+    <>
     <img
       src={imagePlace}
+      className={imageClassName}
       loading="lazy"
       style={{
         width: "35px",
@@ -15,11 +17,13 @@ const Pin = memo(function Pin({ imagePlace }) {
         borderRadius: "50%",
       }}
     />
+    </>
   );
 });
 
 Pin.propTypes = {
   imagePlace: PropTypes.string,
+  imageClassName: PropTypes.string
 };
 
 export default Pin;
