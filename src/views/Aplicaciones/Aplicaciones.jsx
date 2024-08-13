@@ -78,7 +78,6 @@ const Aplicaciones = () => {
     }
     else 
     {
-      console.log(result.data);
       setArrayAplicaciones(result.data);
       setAplicacion(0);
       recuperardatosproducto(result.data, 0);
@@ -97,7 +96,6 @@ const Aplicaciones = () => {
         { naturaleza: "", admin: false },
         {}
       );
-      console.log(resultnaturaleza);
       if (resultnaturaleza.data.error || resultnaturaleza.data.length === 0) 
       {
         setArrayNaturalezas(arraynonaturaleza);
@@ -124,6 +122,7 @@ const Aplicaciones = () => {
 
   function recuperardatosproducto(data, i) 
   {
+    console.log(i, data);
     setNickt(data[i].idapp);
     setDesct(data[i].desc);
     setTtipt(data[i].tooltip);
@@ -152,7 +151,6 @@ const Aplicaciones = () => {
     setEliminarsn(false);
     setDesc("");
   }
-
 
   function limpiardatosaplicacion() {
     setNick("");
@@ -216,14 +214,8 @@ const Aplicaciones = () => {
           break;
       case "idapp":
           setAplicacion(e.target.value);
-          setNick(arrayAplicaciones[e.target.value].idapp);
-          setDesc(arrayAplicaciones[e.target.value].desc);
-          setTtip(arrayAplicaciones[e.target.value].tooltip);
-          setNaturaleza(arrayAplicaciones[e.target.value].idnaturaleza);
-          setCbocultar(arrayAplicaciones[e.target.value].ocultar);
-          setCbrlogin(arrayAplicaciones[e.target.value].rlogin);
-          setCbadmin(arrayAplicaciones[e.target.value].admin);
-              break;
+          recuperardatosproducto(arrayAplicaciones, e.target.value);
+          break;
        case "desc":
             setDesc(e.target.value);
             break;

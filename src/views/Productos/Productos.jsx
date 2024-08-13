@@ -192,7 +192,6 @@ const Productos = () => {
   const centerMapOnAddress = async (address) => {
     try {
       const { longitude, latitude } = await geocodeAddress(address);
-      console.log("Geo:", latitude, longitude);
       setLatitude(latitude);
       setLongitude(longitude);
       setLat(latitude);
@@ -778,7 +777,6 @@ const Productos = () => {
         break;
       case "precio":
         setPrecio(e.target.value);
-        //        console.log(e.target.value);
         centerMapOnAddress(e.target.value);
         break;
       case "latitud":
@@ -1340,7 +1338,6 @@ const Productos = () => {
     );
     let paresgps = [];
     let itemst = [];
-    console.log("1")
     resultgps.data.forEach((item) => {
       paresgps.push({
         lat: item.latitud,
@@ -1356,7 +1353,6 @@ const Productos = () => {
       });
       setPuntos(paresgps);
       setItems(itemst);
-      console.log(paresgps);
     });
     setViewCarrito(paresgps.length > 0);
   }
@@ -1546,7 +1542,6 @@ const Productos = () => {
       });
       setPuntos(paresgps);
       setItems(itemst);
-      console.log(paresgps)
     });
     setViewCarrito(paresgps.length > 0);
     setInicia(false);
@@ -1556,7 +1551,6 @@ const Productos = () => {
   async function shooping() {
     if (showMap === true) {
       // Insertar el movimiento y poner showmap en false
-      centerMapOnAddress("Copa Club, santiago de cuba");
       let tindex = puntos.length;
       await axios.post(
         "http://localhost:3001/setmovimiento-new",

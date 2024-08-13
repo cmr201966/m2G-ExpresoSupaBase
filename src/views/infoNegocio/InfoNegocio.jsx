@@ -194,15 +194,15 @@ useEffect(() => {
               </div>
 
           </section>
-          <section className="galeria">
-            {inicio===false?
-             <ComGalerias rutatmp={"negocios/" + idnegocio} desctmp={desctmp} perfil={idnegocio} deQuien="del negocio" />:""
-            }
-          </section>             
           {gps===1 || gps===true?
-          <section className="mapa">
+          <section className="mapa-negocio">
              <Map sx={{ height: "400px", width: "100%" }} onMapClick={lngLatSelected} remoteshowMap={showMap} lat={lat} lng={lng} point={{ lat, lng }} onChange={onChangeMap} remoteZoom={zoom} /> 
           </section>:""
+          }
+          {inicio===false?
+             <section className="galeria">
+                <ComGalerias rutatmp={"negocios/" + idnegocio} desctmp={desctmp} perfil={idnegocio} deQuien="del negocio" />
+             </section>:""
           }
 
         </main>

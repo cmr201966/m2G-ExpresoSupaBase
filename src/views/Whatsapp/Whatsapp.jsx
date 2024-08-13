@@ -44,7 +44,11 @@ const Whatsapp = () => {
     });
   }, [location]);
     
-  
+  function limpiar(){
+     setCmd("");
+     setContenido("");
+  }
+
   async function confirmar() {
     const result =await axios.post(
       "http://localhost:3001/setcmd",
@@ -121,7 +125,7 @@ const Whatsapp = () => {
                       <button
                         type="button"
                         className="cmd-button primary"
-                        onClick={() => setCmd("")}
+                        onClick={limpiar}
                       >
                         <Close />
                       </button>

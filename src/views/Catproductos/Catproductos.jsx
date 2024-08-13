@@ -107,27 +107,12 @@ const CatProductos = () => {
     setIdowner(parsedParams.idowner);
 
     //
-    // Naturaleza
-    //
-    const resultnaturaleza = await axios.post(
-      "http://localhost:3001/getnaturaleza",
-      { naturaleza: "", admin: false, lista: [90, 92] },
-      {}
-    );
-    if (resultnaturaleza.data.error || resultnaturaleza.data.length === 0) {
-      setArraynaturaleza(arraynonaturaleza);
-      setNaturaleza(arraynonaturaleza[0].idnaturaleza);
-    } else {
-      setArraynaturaleza(resultnaturaleza.data);
-      setNaturaleza(resultnaturaleza.data[0].idnaturaleza);
-    }
-    //
     // Tipos de negocios
     //
     let ttarraytnegocios;
     const resulttnegocios = await axios.post(
-      "http://localhost:3001/gettnegociosuser",
-      { lista: [90, 92] },
+      "http://localhost:3001/getcategoriasnegociosapp",
+      {  },
       {}
     );
     if (resulttnegocios.data.error || resulttnegocios.data.length === 0) {
@@ -146,7 +131,7 @@ const CatProductos = () => {
       {
         user: "",
         //        user: tuser,
-        categorianegocio: ttarraytnegocios[0].keycategorianegocio,
+        categorianegocio: ttarraytnegocios[0].categorianegocio,
       },
       {}
     );
@@ -172,14 +157,17 @@ const CatProductos = () => {
         {}
       );
       let tproducto = 0;
+      console.log(resultproductos.data.error);
       if (resultproductos.data.error || resultproductos.data.length === 0) {
+        console.log("!!!!!!!!!!!!!!")
         setArrayproductos(arraynoproductos);
         recuperardatosproducto(arraynoproductos, 0);
         tproducto = arraynoproductos[0].idproducto;
         setProducto(null);
       } else {
-        const [primero] = resultproductos.data;
         console.log(resultproductos.data);
+        const [primero] = resultproductos.data;
+        console.log( primero.desc, 0)
         setProducto({ label: primero.desc, value: 0 });
         setArrayproductos(resultproductos.data);
         recuperardatosproducto(resultproductos.data, 0);
@@ -201,14 +189,6 @@ const CatProductos = () => {
           setNombrefoto(resultproductos.data[0].idproducto);
         } else {
           setNombrefoto("");
-        }
-        const rnaturaleza = await axios.post(
-          "http://localhost:3001/getnaturaleza-producto",
-          { producto: resultproductos.data[0].idproducto },
-          {}
-        );
-        if (rnaturaleza.data.length !== 0) {
-          setNaturalezat(rnaturaleza.data[0].naturaleza);
         }
       }
     }
@@ -274,10 +254,11 @@ const CatProductos = () => {
             user: "",
             //            user: tuser,
             categorianegocio:
-              arraytnegocios[e.target.value].keycategorianegocio,
+              arraytnegocios[e.target.value].categorianegocio,
           },
           {}
         );
+        console.log(resultnegocios);
         if (resultnegocios.data.error || resultnegocios.data.length === 0) {
           // No encontro ningun negocio para este usuario
           setArraynegocios(arraynonegocios);
@@ -286,28 +267,24 @@ const CatProductos = () => {
           setArraynegocios(resultnegocios.data);
 
           // Productos del negocio
+          console.log(resultnegocios.data[0].negocio);
           const resultproductos = await axios.post(
             "http://localhost:3001/getproductos-categoria",
             { negocio: resultnegocios.data[0].negocio },
             {}
           );
+          console.log(resultproductos);
           if (resultproductos.data.error || resultproductos.data.length === 0) {
             setArrayproductos(arraynoproductos);
             recuperardatosproducto(arraynoproductos, 0);
           } else {
-            // get la naturaleza de este producto
-            const rnaturaleza = await axios.post(
-              "http://localhost:3001/getnaturaleza-producto",
-              { producto: resultproductos.data[0].idproducto },
-              {}
-            );
-            if (rnaturaleza.data.length !== 0) {
-              setNaturalezat(rnaturaleza.data[0].naturaleza);
-            }
-
+            console.log("********",resultproductos.data)
             setArrayproductos(resultproductos.data);
             recuperardatosproducto(resultproductos.data, 0);
-            //restaurarmenut(tcategorias, 0, resultproductos.data, 0, topciones);
+            const [primero] = resultproductos.data;
+            setProducto({ label: primero.desc, value: 0 });
+            console.log( primero.desc, 0)
+                //restaurarmenut(tcategorias, 0, resultproductos.data, 0, topciones);
             const resultado = await axios.post(
               "http://localhost:3001/getjpg-file",
               {
@@ -327,7 +304,6 @@ const CatProductos = () => {
             }
           }
           setNegocio(0);
-          setProducto(null);
         }
         break;
 
@@ -453,7 +429,6 @@ const CatProductos = () => {
   }, [location]);
 
   function recuperardatosproducto(data, i) {
-    console.log(i, data);
     setNegociot(i);
     setProductot(data[i].idproducto);
     setNombrecortot(data[i].nick);
@@ -475,13 +450,11 @@ const CatProductos = () => {
     setDescripcion(descripciont);
     setNaturaleza(naturalezat);
     setPrecio(preciot);
-    console.log(ocupadot);
     setOcupado(ocupadot);
     setDomicilio(domiciliot);
     setTfecha(tfechat);
     setThora(thorat);
     setCbgps(gpst);
-    console.log(latt, lngt);
     setLat(latt);
     setLng(lngt);
   }
@@ -500,7 +473,6 @@ const CatProductos = () => {
   };
 
   async function confirmar() {
-    console.log(domicilio);
     const result = await axios.post(
       "http://localhost:3001/setproducto",
       {
@@ -513,7 +485,6 @@ const CatProductos = () => {
         precio,
         ocupado: ocupado===true?1:0,
         domicilio: domicilio === true ? 1 : 0,
-        naturaleza,
         agregar: agregarsn ? true : false,
         editar: editarsn ? true : false,
         fecha,
@@ -727,7 +698,7 @@ const CatProductos = () => {
                     <div className="container-producto-select">
                       <div className="input-area1-producto">
                         <label className="label-datos-catproducto">
-                          Tipo de Negocio:{" "}
+                           Aplicación:{" "}
                         </label>
                         <select
                           className="selecttn-prod"
@@ -766,7 +737,6 @@ const CatProductos = () => {
                           })}
                         </select>
                       </div>
-
                       <div className="input-area1-producto">
                         <label className="label-datos-catproducto">
                           Producto:{" "}
@@ -779,10 +749,14 @@ const CatProductos = () => {
                             label: item.desc,
                             value: i,
                           }))}
+                          isOptionEqualToValue={(
+                            option,
+                            value
+                        ) => option.value === value.value}                          
                           value={producto}
                           onChange={handleProducto}
                           sx={{
-                            marginLeft: "52px",
+                            marginLeft: "29px",
                             marginTop: "5px",
                             width: "225px",
                             height: "30px",
@@ -878,6 +852,8 @@ const CatProductos = () => {
                               required
                             />
                           </div>
+{/*
+
                           <div className="input-area1-producto">
                             <label className="label-datos-naturaleza">
                               Naturaleza:{" "}
@@ -897,6 +873,7 @@ const CatProductos = () => {
                               })}
                             </select>
                           </div>
+*/}
 
                           <div className="input-area2">
                             <label className="label-datos-catproducto">

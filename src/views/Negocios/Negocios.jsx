@@ -57,29 +57,10 @@ const CatNegocios = () => {
   const [municipio, setMunicipio] = useState(0);
   const [tmunicipio, setTmunicipio] = useState([]);
   const [arraycategoriasnegocios, setArraycategoriasnegocios] = useState([]);
-  const arraycategoriasnegocios1 = [
-//    { categorianegocio: 91, desc: "Compra/Venta" }, 
-//    { categorianegocio: 61, desc: "Fiestas" }, { categorianegocio: 62, desc: "Eventos" },
-//    { categorianegocio: 63, desc: "Cursos" }, { categorianegocio: 60, desc: "Empleos" },
-//    { categorianegocio: 86, desc: "Bolsa de Empleos" }, { categorianegocio: 90, desc: "Taxis" }, 
-    { categorianegocio: 90, desc: "Taxi ligero" }, 
-    { categorianegocio: 92, desc: "Moto taxi" }]
-//    { categorianegocio: 53, desc: "Software" }, { categorianegocio: 4, desc: "Restaurantes" }];
-  const [descripcionadicional, setDescripcionadicional] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const arraydesconocido = [{ provincia: 99, municipio: 99, desc: "Desconocido" }];
-  const [cbhorarios, setCbhorarios] = useState(true);
-  const [cbcapacidad, setCbcapacidad] = useState(true);
-  const arrayperiodo = [{ key: 1, desc: "Día" }, { key: 2, desc: "Mes" }, { key: 3, desc: "Año" }, { key: 4, desc: "Turno" }];
-  const [iperiodo, setIperiodo] = useState(0);
-  const [capacidad, setCapacidad] = useState(0);
-  const arraysemana = [{ key: 0, desc: "Todos los días" }, { key: 1, desc: "Domingo" }, { key: 2, desc: "Lunes" }, { key: 3, desc: "Martes" }, { key: 4, desc: "Miercoles" }, { key: 5, desc: "Jueves" }, { key: 6, desc: "Viernes" }, { key: 7, desc: "Sábado" }, { key: 8, desc: "Lunes a Sábado" }, { key: 9, desc: "Lunes a viernes" }];
-  const [isemana, setIsemana] = useState(0);
-  let [arrayhorarios, setArrayhorarios] = useState([{ diasemana: 99, horaopen: 0, minutoopen: 0, horaclose: 0, minutoclose: 0 }, { idnegocio: 99999999, horaopen: 0, minutoopen: 0, horaclose: 0, minutoclose: 0 }, { idnegocio: 99999999, horaopen: 0, minutoopen: 0, horaclose: 0, minutoclose: 0 }, { idnegocio: 99999999, horaopen: 0, minutoopen: 0, horaclose: 0, minutoclose: 0 }, { idnegocio: 99999999, horaopen: 0, minutoopen: 0, horaclose: 0, minutoclose: 0 }, { idnegocio: 99999999, horaopen: 0, minutoopen: 0, horaclose: 0, minutoclose: 0 }, { idnegocio: 99999999, horaopen: 0, minutoopen: 0, horaclose: 0, minutoclose: 0 }, { idnegocio: 99999999, horaopen: 0, minutoopen: 0, horaclose: 0, minutoclose: 0 }, { idnegocio: 99999999, horaopen: 0, minutoopen: 0, horaclose: 0, minutoclose: 0 }, { idnegocio: 99999999, horaopen: 0, minutoopen: 0, horaclose: 0, minutoclose: 0 }]);
-  const [arraythorarios, setArraythorarios] = useState([]);
   const [arraynegocios, setArraynegocios] = useState([]);
   const arraynonegocios = [{ idnegocio: 99999999, desc: "Desconocido" }];
-  const arraynohorarios = [{ idnegocio: 99999999, diasemana: 99, horaopen: 99, minutoopen: 99, horaclose: 99, minutoclose: 99 }];
   const [negocio, setIdnegocio] = useState(0);
   const [agregarsn, setAgregarsn] = useState(false);
   const [editarsn, setEditarsn] = useState(false);
@@ -90,15 +71,10 @@ const CatNegocios = () => {
   const [provinciat, setProvinciat] = useState("");
   const [municipiot, setMunicipiot] = useState("");
   const [descripciont, setDescripciont] = useState("");
-  const [descripcionadicionalt, setDescripcionadicionalt] = useState("");
   const [direccionpostalt, setDireccionpostalt] = useState("");
   const [telefonofijot, setTelefonofijot] = useState("");
   const [telefonocelulart, setTelefonocelulart] = useState("");
   const [correot, setCorreot] = useState("");
-  const [capacidadt, setCapacidadt] = useState("");
-  const [cbcapacidadt, setCbcapacidadt] = useState(false);
-  const [cbhorariost, setCbhorariost] = useState(false);
-  const [iperiodot, setIperiodot] = useState("");
   const [cbgps, setCbgps] = useState(false);
   const [cbgpst, setCbgpst] = useState(false);
   const [cbvista, setCbvista] = useState(false);
@@ -107,8 +83,6 @@ const CatNegocios = () => {
   const [chatnombre, setChatnombre] = useState("");
   const [indexChat, setIndexChat] = useState(0);
   const [showchat, setShowchat] = useState(false);
-  const [desctmp, setDesctmp] = useState("");
-  const [rutatmp, setRutatmp] = useState("");
   const [cambios, setCambios] = useState(false);
   const [nivel, setNivel] = useState(9999);
   const [idowner, setIdowner] = useState(9999);
@@ -152,16 +126,16 @@ const CatNegocios = () => {
        return
     }
 
-//    setArraycategoriasnegocios(resulcategoriasnegocios.data);
-    setArraycategoriasnegocios(arraycategoriasnegocios1);
+    setArraycategoriasnegocios(resulcategoriasnegocios.data);
     
     //Recuperar los negocios de esta categoria
+    console.log(resulcategoriasnegocios.data);
     const resultnegocios = await axios.post(
       "http://localhost:3001/getallnegocios",
-//      { categorianegocio: resulcategoriasnegocios.data[0].categorianegocio, user: sessionStorage.getItem("user") },
       { categorianegocio: resulcategoriasnegocios.data[0].categorianegocio, user: "" },
       {}
     );
+    console.log(resultnegocios.data);
     if (resultnegocios.data.error || resultnegocios.data.length === 0) {
       setArraynegocios(arraynonegocios);
     }
@@ -241,52 +215,35 @@ const CatNegocios = () => {
 
   function recuperadatosnegocio(datos) {
     setNickt(datos.nick);
-    setChatuser("root");
-    setChatnombre("Destodo");
     setProvinciat(datos.provincia);
     setMunicipiot(datos.municipio);
     setDescripciont(datos.desc);
-    setDescripcionadicionalt(datos.descadicional);
     setDireccionpostalt(datos.sede);
     setTelefonofijot(datos.fijo);
     setTelefonocelulart(datos.celular)
     setCorreot(datos.email);
     setCbgpst(datos.gpsSN===1?true:false);
     setCbgps(datos.gpsSN===1?true:false);
-    setCapacidadt(datos.capacidadacontratar);
-    if (datos.capacidadSN) {
-      setCbcapacidadt(true);
-    }
-    else {
-      setCbcapacidadt(false);
-    }
-    if (datos.horarioSN) {
-      setCbhorariost(true);
-    }
-    else {
-      setCbhorariost(false);
-    }
-    setIperiodot(datos.periodocapacidad);
   }
 
   function transferirdatosnegocio() {
     let ttmunicipio = [];
     setNick(nickt);
     setDescripcion(descripciont);
-    setDescripcionadicional(descripcionadicionalt);
+//    setDescripcionadicional(descripcionadicionalt);
     setDireccionpostal(direccionpostalt);
     setProvincia(provinciat);
     setMunicipio(municipiot);
-    ttmunicipio = arraymunicipios.filter((item, i) => { if (item.provincia === provinciat) { return item } });
+    ttmunicipio = arraymunicipios.filter((item) => { if (item.provincia === provinciat) { return item } });
     setTmunicipio(ttmunicipio);
     setTelefonofijo(telefonofijot);
     setTelefonocelular(telefonocelulart)
     setCorreo(correot);
     setCbgps(cbgpst);
-    setCapacidad(capacidadt);
-    setCbcapacidad(cbcapacidadt);
-    setCbhorarios(cbhorariost);
-    setIperiodo(iperiodot);
+//    setCapacidad(capacidadt);
+//    setCbcapacidad(cbcapacidadt);
+//    setCbhorarios(cbhorariost);
+//    setIperiodo(iperiodot);
 
   }
 
@@ -542,7 +499,7 @@ const CatNegocios = () => {
       { negocio: arraynegocios[negocio].idnegocio },
       {}
     );
-    //    refrescar la lista despues de eliminada la categoria
+    // refrescar la lista despues de eliminada la categoria
     arraynegocios.splice(negocio, 1);
     setShow1(false)
     setEliminarsn(false);
@@ -562,33 +519,17 @@ const CatNegocios = () => {
   const onModalClose1 = () => {
     setShow1(false)
   }
-  const galerias = () => {
-    if (showchat === true) return
-    if (showMap === true) return
-    if (showGalerias === false) {
-      setDesctmp(arraynegocios[negocio].desc);
-      setRutatmp("negocios/" + arraynegocios[negocio].idnegocio);
-      setShowGalerias(true);
-    }
-    else {
-      setShowGalerias(false);
-    }
-
-  }
 
   const onPhotoChange = (e) => {
     const file = e.target.files[0];
-    const fileName = e.target.value;
     setNombrefoto(e.target.value);
     if (!file) return;
     const reader = new FileReader();
-    // eslint-disable-next-line no-shadow
     reader.onload = (e) => {
       const content = e.target.result;
       setContenidofoto(content);
     };
     reader.readAsDataURL(file);
-    //const p  = e.target.value.substring(0).split("\\");
     setCbvista(true);
   }
 
@@ -655,10 +596,11 @@ const CatNegocios = () => {
           {show ? <Box sx={{ width: "100%", height: "500px", display: "flex", alignItems: "center", justifyContent: "center" }}><CircularProgress color="checkbox" /></Box> : null}
           {inicia === false ?
             <>
+            {console.log(arraycategoriasnegocios)}
               <div className="negocio">
                 <div className="container-negocio">
                   <div className="input-area-negocio">
-                    <label className="label-n">Tipo Negocio: </label>
+                    <label className="label-n">Aplicación: </label>
                     <select className="selectn" id="categorianegocio" onChange={handleInput} value={categorianegocio} disabled={agregarsn || editarsn}>
                       {arraycategoriasnegocios.map((item, i) => {
                         return <option key={i} value={i} >{item.desc}</option>
