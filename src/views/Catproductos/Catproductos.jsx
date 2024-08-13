@@ -79,6 +79,7 @@ const CatProductos = () => {
   const [editarsn, setEditarsn] = useState(false);
   const [eliminarsn, setEliminarsn] = useState(false);
   const [zoom, setZoom] = useState(15.5);
+  const [ocupado, setOcupado] = useState(1);
 
   //Estados para recuperar los datos del producto
 
@@ -89,6 +90,7 @@ const CatProductos = () => {
   const [descripciont, setDescripciont] = useState("");
   const [preciot, setPreciot] = useState("");
   const [domiciliot, setDomiciliot] = useState("");
+  const [ocupadot, setOcupadot] = useState(1);
   const [tfechat, setTfechat] = useState(false);
   const [thorat, setThorat] = useState(false);
   const [gpst, setGpst] = useState(false);
@@ -177,6 +179,7 @@ const CatProductos = () => {
         setProducto(null);
       } else {
         const [primero] = resultproductos.data;
+        console.log(resultproductos.data);
         setProducto({ label: primero.desc, value: 0 });
         setArrayproductos(resultproductos.data);
         recuperardatosproducto(resultproductos.data, 0);
@@ -215,18 +218,29 @@ const CatProductos = () => {
 
   const handleProducto = async (_, value) => {
     setProducto(value);
-    // get la naturaleza de este producto
-    const rnaturaleza = await axios.post(
-      "http://localhost:3001/getnaturaleza-producto",
-      { producto: arrayproductos[value?.value].idproducto },
-      {}
-    );
-    if (rnaturaleza.data.length !== 0) {
-      setNaturalezat(rnaturaleza.data[0].naturaleza);
-    }
-    // recuperar los valores del producto activo
-    // para que pueda ser modificado
-    recuperardatosproducto(arrayproductos, value?.value);
+
+          // Productos del negocio
+          const resultproductos = await axios.post(
+            "http://localhost:3001/getproductos-categoria",
+            { negocio: arraynegocios[negocio].negocio },
+            {}
+          );
+          if (resultproductos.data.error || resultproductos.data.length === 0) {
+            setArrayproductos(arraynoproductos);
+            recuperardatosproducto(arraynoproductos, 0);
+          } else {
+            // get la naturaleza de este producto
+            const rnaturaleza = await axios.post(
+              "http://localhost:3001/getnaturaleza-producto",
+              { producto: resultproductos.data[0].idproducto },
+              {}
+            );
+            if (rnaturaleza.data.length !== 0) {
+              setNaturalezat(rnaturaleza.data[0].naturaleza);
+            }
+
+            setArrayproductos(resultproductos.data);
+            recuperardatosproducto(resultproductos.data, 0);
 
     const resultado = await axios.post(
       "http://localhost:3001/getjpg-file",
@@ -245,7 +259,10 @@ const CatProductos = () => {
     } else {
       setNombrefoto("");
     }
+  }
   };
+
+
 
   async function handleselect(e) {
     switch (e.target.id) {
@@ -268,7 +285,7 @@ const CatProductos = () => {
         } else {
           setArraynegocios(resultnegocios.data);
 
-          // Categorias de producto de un negocio
+          // Productos del negocio
           const resultproductos = await axios.post(
             "http://localhost:3001/getproductos-categoria",
             { negocio: resultnegocios.data[0].negocio },
@@ -317,7 +334,6 @@ const CatProductos = () => {
       case "negocio":
         setNegocio(e.target.value);
         let tcategorias = [];
-
         const resultproductos = await axios.post(
           "http://localhost:3001/getproductos-categoria",
           { negocio: arraynegocios[e.target.value].negocio },
@@ -409,6 +425,9 @@ const CatProductos = () => {
       case "domicilio":
         setDomicilio(e.target.checked);
         break;
+      case "ocupado":
+        setOcupado(e.target.checked);
+        break;
       case "vista":
         setCbvista(e.target.checked);
         break;
@@ -443,10 +462,11 @@ const CatProductos = () => {
     setTfechat(data[i].fecha);
     setThorat(data[i].hora);
     setDomiciliot(data[i].domicilio === 0 ? false : true);
+    setOcupadot(data[i].ocupado === 0 ? false : true);
     setGpst(data[i].gpsSN === 1 ? true : false);
     setCbgps(data[i].gpsSN === 1 ? true : false);
-    setLatt(data[i].latitud);
-    setLngt(data[i].longitud);
+    setLatt(data[i].latitud===0?null:data[i].latitud);
+    setLngt(data[i].longitud===0?null:data[i].longitud);
   }
   function restaurardatosproductos() {
     //setNegocio(negociot);
@@ -455,10 +475,13 @@ const CatProductos = () => {
     setDescripcion(descripciont);
     setNaturaleza(naturalezat);
     setPrecio(preciot);
+    console.log(ocupadot);
+    setOcupado(ocupadot);
     setDomicilio(domiciliot);
     setTfecha(tfechat);
     setThora(thorat);
     setCbgps(gpst);
+    console.log(latt, lngt);
     setLat(latt);
     setLng(lngt);
   }
@@ -488,6 +511,7 @@ const CatProductos = () => {
         contenidofoto,
         desc: descripcion,
         precio,
+        ocupado: ocupado===true?1:0,
         domicilio: domicilio === true ? 1 : 0,
         naturaleza,
         agregar: agregarsn ? true : false,
@@ -900,7 +924,6 @@ const CatProductos = () => {
                               required
                             />
                           </div>
-                          {/*                      {cbprecio ? (*/}
                           <div className="input-area4">
                             <label className="label-datos-catproducto">
                               Precio:
@@ -914,22 +937,34 @@ const CatProductos = () => {
                               required
                             />
                           </div>
-                          {/*                      ) : (
-                        ""
-                      )}*/}
-                          <div className="input-area4">
-                            <label className="label-datos-catproducto input-cataproducto-12">
-                              Domicilio:
-                            </label>
-                            <Checkbox
-                              sx={{ padding: 0 }}
-                              id="domicilio"
-                              color="checkbox"
-                              defaultChecked
-                              checked={domicilio}
-                              onClick={handleInput}
-                            />
-                          </div>
+                          <div className="domicilio-ocupado">
+                                <div className="input-area4">
+                                   <label className="label-datos-catproducto input-cataproducto-12">
+                                          Domicilio:
+                                   </label>
+                                   <Checkbox
+                                   sx={{ padding: 0 }}
+                                   id="domicilio"
+                                   color="checkbox"
+                                   defaultChecked
+                                   checked={domicilio}
+                                   onClick={handleInput}
+                                   />
+                               </div>
+                               <div className="input-area4">
+                                   <label className="label-datos-catproducto input-cataproducto-12">
+                                          Ocupado:
+                                   </label>
+                                   <Checkbox
+                                   sx={{ padding: 0 }}
+                                   id="ocupado"
+                                   color="checkbox"
+                                   defaultChecked
+                                   checked={ocupado}
+                                   onClick={handleInput}
+                                   />
+                               </div>
+                        </div>
 
                           <div className="input-area4">
                             <label className="label-datos-catproducto input-cataproducto-99">
@@ -945,18 +980,20 @@ const CatProductos = () => {
                           </div>
 
                           <div className="input-area-foto-prod">
-                            <label className="label-2-prod">Foto:</label>
-                            <label className="label-2-1-prod">
-                              <input
-                                id="foto"
-                                value={foto}
-                                onChange={onPhotoChange}
-                                type="file"
-                                required
-                                multiple
-                              />
-                              Añadir foto
-                            </label>
+                            <div className="foto-anadir">
+                                 <label className="label-2-prod">Foto:</label>
+                                 <label className="label-2-1-prod">
+                                 <input
+                                    id="foto"
+                                    value={foto}
+                                    onChange={onPhotoChange}
+                                    type="file"
+                                    required
+                                    multiple
+                                 />
+                                 Añadir foto
+                                </label>
+                            </div>
                             {nombrefoto !== "" ? (
                               <div className="check-vista-1">
                                 <label className="label-vista-productos-1-1">

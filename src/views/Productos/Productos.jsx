@@ -63,6 +63,7 @@ const Productos = () => {
   const [viewCarrito, setViewCarrito] = useState(false);
   const [mlatitud, setMlatitud] = useState(0);
   const [mlongitud, setMlongitud] = useState(0);
+  const [toFly, setToFly] = useState(null);
 
   let users =
     sessionStorage.getItem("user") === null
@@ -141,10 +142,10 @@ const Productos = () => {
   const [showMap, setShowMap] = useState(false);
 
   // Estados para la posición GPS del mapa
-  const [lng, setLng] = useState(-75.829090519);
-  const [lat, setLat] = useState(20.0217583);
-  const [longitude, setLongitude] = useState(-75.829090519);
-  const [latitude, setLatitude] = useState(20.0217583);
+  const [lng, setLng] = useState();
+  const [lat, setLat] = useState();
+  const [longitude, setLongitude] = useState();
+  const [latitude, setLatitude] = useState();
 
   //
   // Ubicacion
@@ -173,28 +174,35 @@ const Productos = () => {
   // Fin estados del filtro
 
   const geocodeAddress = async (address) => {
-    const response = await fetch(`https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(address)}.json?access_token=${config.mapBoxAPI}`);
+    const response = await fetch(
+      `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
+        address
+      )}.json?access_token=${config.mapBoxAPI}`
+    );
     const data = await response.json();
 
     if (data.features.length > 0) {
-        const [longitude, latitude] = data.features[0].geometry.coordinates;
-        return { longitude, latitude };
+      const [longitude, latitude] = data.features[0].geometry.coordinates;
+      return { longitude, latitude };
     } else {
-        throw new Error("No se encontraron resultados.");
+      throw new Error("No se encontraron resultados.");
     }
-};
+  };
 
-const centerMapOnAddress = async (address) => {
+  const centerMapOnAddress = async (address) => {
     try {
-        const { longitude, latitude } = await geocodeAddress(address);
-        setLatitude(latitude);
-        setLongitude(longitude);
-        setMlatitud(latitude);
-        setMlongitud(longitude);
+      const { longitude, latitude } = await geocodeAddress(address);
+      console.log("Geo:", latitude, longitude);
+      setLatitude(latitude);
+      setLongitude(longitude);
+      setLat(latitude);
+      setLng(longitude);
+      setZoom(12.5);
+      setToFly({ latitude: latitude, longitude: longitude, zoom: 14.5 });
     } catch (error) {
-        console.error(error);
+      console.error(error);
     }
-};
+  };
 
   function parser(expresion, tabla, campo, tipo) {
     // analizar la expresion para formar la condicion
@@ -636,8 +644,8 @@ const centerMapOnAddress = async (address) => {
       const response = await fetch(url);
       const data = await response.json();
       if (data) {
-        const distance = data.routes[0].distance; 
-        const duration = data.routes[0].duration; 
+        const distance = data.routes[0].distance;
+        const duration = data.routes[0].duration;
         return { distancia: distance / 1000, duracion: duration / 60 };
       }
     } catch (error) {
@@ -656,20 +664,29 @@ const centerMapOnAddress = async (address) => {
       let info = puntosState === 0 ? "Origen" : "Destino";
       setPuntos([
         ...puntos,
-        { lat: lngLat.lat, lng: lngLat.lng, image: marker, info: info, imageClassName:"" },
+        {
+          lat: lngLat.lat,
+          lng: lngLat.lng,
+          image: marker,
+          info: info,
+          imageClassName: "",
+        },
       ]);
       if (ppuntos === 1) {
         // Primer punto calcular distancia del producto al cliente
-//         const { distancia, duracion } = await calculateDistance([lng1,lat1], [lngLat.lng,lngLat.lat]);
-//         setCarrera(distancia.toFixed(2));
-//         setDuracion1((duracion+5).toFixed(2));
+        //         const { distancia, duracion } = await calculateDistance([lng1,lat1], [lngLat.lng,lngLat.lat]);
+        //         setCarrera(distancia.toFixed(2));
+        //         setDuracion1((duracion+5).toFixed(2));
       }
-        if (ppuntos === 2) {
+      if (ppuntos === 2) {
         // Tengo los dos puntos calculo la distancia entre ellos (Desde Origen hasta Destino)
-        const { distancia, duracion } = await calculateDistance([lng1,lat1], [lngLat.lng,lngLat.lat]);
+        const { distancia, duracion } = await calculateDistance(
+          [lng1, lat1],
+          [lngLat.lng, lngLat.lat]
+        );
         setCarrera(distancia.toFixed(2));
-        setDuracion((duracion).toFixed(2));
-      }      
+        setDuracion(duracion.toFixed(2));
+      }
     }
     if (puntosState === 2) {
       setCarrera(0);
@@ -677,7 +694,13 @@ const centerMapOnAddress = async (address) => {
       puntos.splice(puntos.length - 2, 2);
       setPuntos([
         ...puntos,
-        { lat: lngLat.lat, lng: lngLat.lng, image: marker, info: "Origen", imageClassName:"" },
+        {
+          lat: lngLat.lat,
+          lng: lngLat.lng,
+          image: marker,
+          info: "Origen",
+          imageClassName: "",
+        },
       ]);
     }
   };
@@ -755,21 +778,18 @@ const centerMapOnAddress = async (address) => {
         break;
       case "precio":
         setPrecio(e.target.value);
-//        console.log(e.target.value);
-//        centerMapOnAddress(e.target.value);
-//        setLat(latitude);
-//        setLng(longitude);
-//        setZoom(10.50);
+        //        console.log(e.target.value);
+        centerMapOnAddress(e.target.value);
         break;
       case "latitud":
         setMlatitud(e.target.value);
         break;
       case "longitud":
-         setMlongitud(e.target.value);
-         break;
+        setMlongitud(e.target.value);
+        break;
       case "desc":
-         setDesc(e.target.value);
-         break;
+        setDesc(e.target.value);
+        break;
       case "cbdomicilio":
         setCbdomicilio(e.target.checked);
         break;
@@ -1320,13 +1340,14 @@ const centerMapOnAddress = async (address) => {
     );
     let paresgps = [];
     let itemst = [];
+    console.log("1")
     resultgps.data.forEach((item) => {
       paresgps.push({
         lat: item.latitud,
         lng: item.longitud,
         image: libre,
         info: item.nombre,
-        imageClassName: ""
+        imageClassName: "",
       });
       itemst.push({
         idproducto: item.idproducto,
@@ -1335,14 +1356,19 @@ const centerMapOnAddress = async (address) => {
       });
       setPuntos(paresgps);
       setItems(itemst);
+      console.log(paresgps);
     });
-    setViewCarrito(paresgps.length>0);
+    setViewCarrito(paresgps.length > 0);
   }
   //
 
   function init() {
-    setNivel(parsedParams.nivel!==undefined?parsedParams.nivel:nivel);
-    setNaturaleza1(parsedParams.naturaleza!==undefined?parsedParams.naturaleza:naturaleza1);
+    setNivel(parsedParams.nivel !== undefined ? parsedParams.nivel : nivel);
+    setNaturaleza1(
+      parsedParams.naturaleza !== undefined
+        ? parsedParams.naturaleza
+        : naturaleza1
+    );
     setIdowner(
       parsedParams.idowner === "undefined"
         ? parsedParams.owner
@@ -1494,7 +1520,10 @@ const centerMapOnAddress = async (address) => {
       }
     }
     sessionStorage.setItem("carditem", 0);
-    let natura=parsedParams.naturaleza===undefined?naturaleza1:parsedParams.naturaleza;
+    let natura =
+      parsedParams.naturaleza === undefined
+        ? naturaleza1
+        : parsedParams.naturaleza;
     const resultgps = await axios.post(
       "http://localhost:3001/get-pares-gps-naturaleza",
       { naturaleza: natura },
@@ -1508,7 +1537,7 @@ const centerMapOnAddress = async (address) => {
         lng: item.longitud,
         image: libre,
         info: item.nombre,
-        imageClassName:""
+        imageClassName: "",
       });
       itemst.push({
         idproducto: item.idproducto,
@@ -1517,13 +1546,14 @@ const centerMapOnAddress = async (address) => {
       });
       setPuntos(paresgps);
       setItems(itemst);
+      console.log(paresgps)
     });
-    setViewCarrito(paresgps.length>0);
+    setViewCarrito(paresgps.length > 0);
     setInicia(false);
     setShow1(false);
   }
 
-  async function shooping() {  
+  async function shooping() {
     if (showMap === true) {
       // Insertar el movimiento y poner showmap en false
       centerMapOnAddress("Copa Club, santiago de cuba");
@@ -1549,8 +1579,8 @@ const centerMapOnAddress = async (address) => {
       );
     }
     setPuntosState(0);
-    init()
-    setShowMap(!showMap)
+    init();
+    setShowMap(!showMap);
   }
 
   function onModalClose9() {}
@@ -1587,46 +1617,47 @@ const centerMapOnAddress = async (address) => {
     );
   };
 
-async function otroPunto(){
-  let menor = 999999;
-  let esta = 0;
-  let dura=0;
-  for(let i=0; i<puntos.length-1; i +=1){
-    let tindex = 0;
-    if (puntosState !== 0 && i <= puntos.length - (puntosState + 1)) {
-      tindex = puntosState;
-      //esta = distanciaEnKilometros(puntos[puntos.length - tindex].lat, puntos[puntos.length - tindex].lng, item.lat, item.lng).toFixed(2);
-      const { distancia, duracion } = await calculateDistance([puntos[puntos.length - tindex].lng, puntos[puntos.length - tindex].lat], [puntos[i].lng, puntos[i].lat]);
-      console.log(i, puntos[i].info, distancia, duracion)
-      esta = distancia.toFixed(2);
-      console.log(esta, menor);
-      dura=duracion;
+  async function otroPunto() {
+    let menor = 999999;
+    let esta = 0;
+    let dura = 0;
+    for (let i = 0; i < puntos.length - 1; i += 1) {
+      let tindex = 0;
+      if (puntosState !== 0 && i <= puntos.length - (puntosState + 1)) {
+        tindex = puntosState;
+        //esta = distanciaEnKilometros(puntos[puntos.length - tindex].lat, puntos[puntos.length - tindex].lng, item.lat, item.lng).toFixed(2);
+        const { distancia, duracion } = await calculateDistance(
+          [
+            puntos[puntos.length - tindex].lng,
+            puntos[puntos.length - tindex].lat,
+          ],
+          [puntos[i].lng, puntos[i].lat]
+        );
+        esta = distancia.toFixed(2);
+        dura = duracion;
+      }
+      if (Number(esta) < Number(menor)) {
+        menor = esta;
+        setProductot(puntos[i].info);
+        setIdroductot(items[i].idproducto);
+        setTarifa(items[i].tarifa);
+        setCostoDomicilio(items[i].costoDomicilio);
+        let tpuntos = [...puntos];
+        puntos.forEach((item, i) => {
+          tpuntos[i].imageClassName = "";
+        });
+        tpuntos[i].imageClassName = "iconoGrande";
+        setDuracion1(dura.toFixed(2));
+        setPuntos(tpuntos);
+        setIndex(i);
+      }
     }
-    if (Number(esta) < Number(menor)) {
-      console.log("Menor: ", esta, menor);
-      menor = esta;
-      setProductot(puntos[i].info);
-      setIdroductot(items[i].idproducto);
-      setTarifa(items[i].tarifa)
-      setCostoDomicilio(items[i].costoDomicilio)
-      let tpuntos=[...puntos];
-      puntos.forEach((item, i) => {
-        tpuntos[i].imageClassName="";
-      })
-      tpuntos[i].imageClassName="iconoGrande";
-      setDuracion1((dura.toFixed(2)))
-      setPuntos(tpuntos);
-      setIndex(i);
-    }
-    else console.log("No menor")
+    setMascerca(menor);
   }
-  setMascerca(menor);
 
-}
-
- useEffect(() => {
+  useEffect(() => {
     if (puntos.length !== 0) {
-        otroPunto();
+      otroPunto();
     }
   }, [lng]);
 
@@ -2083,10 +2114,10 @@ async function otroPunto(){
               {" "}
               - {nombre.replaceAll("%20", " ")} - ({cantidadproductos})
             </h4>
-            {console.log(puntos)}
-            {(puntosState === 2 && viewCarrito) || (showMap !== true && puntos.length !== 0 && viewCarrito) ? (
+            {(puntosState === 2 && viewCarrito) ||
+            (showMap !== true && puntos.length !== 0 && viewCarrito) ? (
               <Tippy content={`Ordenar un producto`}>
-              <button
+                <button
                   type="button"
                   className="car negocio-button primary"
                   onClick={shooping}
@@ -2097,65 +2128,25 @@ async function otroPunto(){
             ) : (
               ""
             )}
-            {showMap!==true && mascerca > 0?
-            <div >
-                 <label className="label-datos-productos input-productos-12">
-                        Ver otra vez:
-                 </label>
-                 <Checkbox
-                 sx={{ padding: 0 }}
-                 id="verOtraVez"
-                 color="checkbox"
-                 defaultChecked
-                 checked={verOtraVez}
-                 onClick={handleInput}
-                 />
-            </div>:""
-            }
-{/*
-             <div className="input-area4">
-                            <label className="label-datos-catproducto">
-                              Punto:
-                            </label>
-                            <input
-                              className="input-cataproducto-4"
-                              id="precio"
-                              value={precio}
-                              onChange={handleInput}
-                              type="text"
-                              required
-                            />
-             </div>
-             <div className="input-area4">
-                            <label className="label-datos-catproducto">
-                              Longitud:
-                            </label>
-                            <input
-                              className="input-cataproducto-4"
-                              id="longitud"
-                              value={mlongitud}
-                              onChange={handleInput}
-                              type="text"
-                              required
-                            />
-             </div>
-             <div className="input-area4">
-                            <label className="label-datos-catproducto">
-                              Latitud:
-                            </label>
-                            <input
-                              className="input-cataproducto-4"
-                              id="latitud"
-                              value={mlatitud}
-                              onChange={handleInput}
-                              type="text"
-                              required
-                            />
-             </div>
-*/}
+            {showMap !== true && mascerca > 0 ? (
+              <div className="verOtraVez">
+                <label className="label-datos-productos input-productos-12">
+                  Ver otra vez:
+                </label>
+                <Checkbox
+                  sx={{ padding: 0 }}
+                  id="verOtraVez"
+                  color="checkbox"
+                  defaultChecked
+                  checked={verOtraVez}
+                  onClick={handleInput}
+                />
+              </div>
+            ) : (
+              ""
+            )}
 
           </div>
-
           {show1 ? (
             <Box
               sx={{
@@ -2170,10 +2161,11 @@ async function otroPunto(){
             </Box>
           ) : null}
 
-            {(showMap === true && mascerca > 0) || (verOtraVez===true && mascerca>0) ? (
-              <>
-               <div className="result">
-               {productot}
+          {(showMap === true && mascerca > 0 && mascerca != 999999) ||
+          (verOtraVez === true && mascerca > 0 && mascerca != 999999) ? (
+            <>
+              <div className="result">
+                {productot}
                 {" esta a "}
                 {mascerca}
                 {" Kms y "}
@@ -2184,15 +2176,12 @@ async function otroPunto(){
                 {" Kms y "}
                 {duracion}
                 {" minutos, precio: "}
-                {(
-                  carrera * tarifa +
-                  costoDomicilio
-                ).toFixed(2)}
-                </div>
-              </>
-            ) : (
-              ""
-            )}
+                {(carrera * tarifa + costoDomicilio).toFixed(2)}
+              </div>
+            </>
+          ) : (
+            ""
+          )}
 
           {inicia === false && showMap !== true ? (
             <div className="product-flex">
@@ -2227,7 +2216,9 @@ async function otroPunto(){
                 <Tippy content={`Cerrar mapa`}>
                   <button
                     className="offon-info-producto"
-                    onClick={() => setShowMap(!showMap)}
+                    onClick={() => {
+                      setShowMap(!showMap);
+                    }}
                   >
                     <Close />
                   </button>
@@ -2237,6 +2228,7 @@ async function otroPunto(){
                   sx={{ height: "900px", width: "100%" }}
                   onMapClick={lngLatSelected}
                   remoteshowMap={showMap}
+                  flyTo={toFly}
                   lat={lat}
                   lng={lng}
                   onChange={onChangeMap}
@@ -2247,8 +2239,6 @@ async function otroPunto(){
               ""
             )}
           </div>
-
-
         </Hero>
       </div>
     </>

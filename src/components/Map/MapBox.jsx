@@ -47,19 +47,26 @@ function MapBox({
   noLocalMarker = true,
   onMapClick,
 }) {
+  console.log("Entra:", lat, lng, remoteZoom)
   const [zoom, setZoom] = useState(remoteZoom ?? 16);
-  const [longitude, setLongitude] = useState(-75.829090519 ?? lng);
-  const [latitude, setLatitude] = useState(20.0217583 ?? lat);
+  const [longitude, setLongitude] = useState(lng ?? -75.829090519);
+  const [latitude, setLatitude] = useState(lat ?? 20.0217583);
   const [localMarker, setLocalMarker] = useState(null);
-  const flyToPoint = useCallback((longitude, latitude, zoom) => {
-    map?.current?.flyTo({
-      center: [longitude, latitude],
-      zoom,
-    });
-    if (!noLocalMarker) setLocalMarker({ lat: latitude, lng: longitude });
-  }, []);
+
+  const flyToPoint = useCallback(
+    (longitude, latitude, zoom) => {
+      console.log("fly ", latitude, longitude, zoom);
+      map?.current?.flyTo({
+        center: [longitude, latitude],
+        zoom,
+      });
+      if (!noLocalMarker) setLocalMarker({ lat: latitude, lng: longitude });
+    },
+    [noLocalMarker]
+  );
 
   useEffect(() => {
+    console.log("Aqui ", latitude, longitude, zoom);
     flyToPoint(longitude, latitude, zoom);
   }, [flyToPoint, latitude, longitude, zoom]);
 
@@ -153,7 +160,7 @@ function MapBox({
 
   useEffect(() => {
     if (onLoadMap) onLoadMap();
-  }, [onLoadMap])
+  }, [onLoadMap]);
 
   return (
     <div id="map-container" className={css({ ...sx })}>

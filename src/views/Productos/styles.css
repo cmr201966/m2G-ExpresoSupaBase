@@ -44,7 +44,7 @@
 
 .h3-cabeza-productos-1 {
   color: aliceblue;
-  margin-top: 22px;
+  margin-top: 3px;
 }
 
 .button-filtrar-1 {
@@ -232,15 +232,19 @@ padding: 10px;
 }
 .result{
   margin-bottom: 10px;
-  margin-left: 20px;
+  margin-left: 41px;
   color:white
 }
 .input-productos-12{
   margin-right: 5px;
+  margin-left: 10px;
   width: 225px;
   margin-bottom: 8px !important;   
 }
 .iconoGrande{
   width: 50px !important;
   height: 50px !important;
+}
+.verOtraVez{
+  margin-top: 8px;
 }

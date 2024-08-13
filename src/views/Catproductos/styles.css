@@ -307,9 +307,10 @@
 }
 .input-area-foto-prod{
     display: flex;
-    width: 100%;
-    justify-content: flex-start;
+    flex-direction: row;
+    justify-content:space-between;
     align-items: center;
+    width: 333px;
 }
 .cp-button1{
     background: none;
@@ -415,6 +416,7 @@
 {
   color: aliceblue!important;
   margin-left: 4px!important;
+  margin-top: 5px;
 }
 .label-fecha-producto
 {
@@ -434,4 +436,17 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+}
+.domicilio-ocupado{
+    display: flex;
+    flex-direction: row;
+    width: 333px;
+    align-items: center;
+    justify-content: space-between;
+}    
+.foto-anadir{
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    width: 100%;
 }

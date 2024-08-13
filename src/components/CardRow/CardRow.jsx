@@ -36,7 +36,7 @@ const CardRow = (props) => {
       <div className="card-image">
         <img src={contenidofoto} alt="Imagen" />
         <Tippy content={`Libre/Ocupado`}>
-           <button className={`${ocupado===0?"card-image-onoff":"card-image-offon"}`}  disabled={tipouser===0?true:false} onClick={powerSettings}>
+           <button className={`${ocupado===0?"card-image-onoff":"card-image-offon"}`}  disabled={tipouser===null ||tipouser===0?true:false} onClick={powerSettings}>
              <PowerSettingsNewIcon />
            </button>
         </Tippy>
