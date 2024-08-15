@@ -129,13 +129,11 @@ const CatNegocios = () => {
     setArraycategoriasnegocios(resulcategoriasnegocios.data);
     
     //Recuperar los negocios de esta categoria
-    console.log(resulcategoriasnegocios.data);
     const resultnegocios = await axios.post(
       "http://localhost:3001/getallnegocios",
       { categorianegocio: resulcategoriasnegocios.data[0].categorianegocio, user: "" },
       {}
     );
-    console.log(resultnegocios.data);
     if (resultnegocios.data.error || resultnegocios.data.length === 0) {
       setArraynegocios(arraynonegocios);
     }
@@ -301,7 +299,6 @@ const CatNegocios = () => {
           {}
         );
         const data = resultnegocio.data;
-        console.log(data);
         if (data.error || data.length === 0) {
           setArraynegocios(arraynonegocios);
         }
@@ -596,7 +593,6 @@ const CatNegocios = () => {
           {show ? <Box sx={{ width: "100%", height: "500px", display: "flex", alignItems: "center", justifyContent: "center" }}><CircularProgress color="checkbox" /></Box> : null}
           {inicia === false ?
             <>
-            {console.log(arraycategoriasnegocios)}
               <div className="negocio">
                 <div className="container-negocio">
                   <div className="input-area-negocio">

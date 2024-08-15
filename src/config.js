@@ -1,11 +1,10 @@
-const {
-  // map box
-  VITE_MAPBOX_API,
-} = import.meta.env;
+const {VITE_MAPBOX_API, VITE_API_TOKEN} = import.meta.env;
 
-const config = {
-  // map box api
-  mapBoxAPI: VITE_MAPBOX_API,
-};
+const config = {mapBoxAPI: VITE_MAPBOX_API, destodoToken: VITE_API_TOKEN,};
+
+//const { VITE_API_TOKEN } = import.meta.env;
+
+//const destodoToken = {destodoToken: VITE_API_TOKEN,};
+
 
 export default config;

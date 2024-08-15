@@ -5,14 +5,10 @@ import Navbar from "../../components/Navbar/Navbar"
 // layouts
 import Hero from "../../layouts/Hero/Hero";
 //
-//import { useLocation } from "react-router-dom";
 //
 // styles
 import "./styles.css";
 import { useEffect, useState } from "react";
-import axios from "axios";
-//import { FormatColorResetRounded } from "@mui/icons-material";
-//import styledEngineSc from "@mui/styled-engine-sc";
 import Check from "@mui/icons-material/Check";
 import Add from "@mui/icons-material/Add";
 import Delete from "@mui/icons-material/Delete";
@@ -23,6 +19,7 @@ import ArrowBack from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom"
 import Modal from "../../components/Modal/Modal";
 import { useLocation } from "react-router-dom";
+import { getAplicaciones, getNaturalezas, setAplicaciones } from "../../servicios/aplicaciones";
 
 const Aplicaciones = () => {
   const navigate = useNavigate();
@@ -59,52 +56,55 @@ const Aplicaciones = () => {
   const [naturaleza1, setNaturaleza1] = useState(9999);
 
 
+  function guardaDatosAplicacion(data, i)
+  {
+    setArrayAplicaciones(data);
+    recuperardatosproducto(data, 0);
+    setNick(data[0].idapp);
+    setDesc(data[0].desc);
+    setTtip(data[0].tooltip);
+    setNaturaleza(data[0].idnaturaleza);
+    setCbocultar(data[0].ocultar);
+    setCbrlogin(data[0].rlogin);
+    setCbadmin(data[0].admin);
+    setAplicacion(0);
+
+  }
   async function init() {
     setContenido("Preparando condiciones...");
     setShow(true);
     setNivel(parsedParams.nivel);
     setNaturaleza1(parsedParams.naturaleza);
     setIdowner(parsedParams.idowner);
+    // Obtener las aplicaciones
+    let result = await getAplicaciones({});
 
-    const result = await axios.post(
-      "http://localhost:3001/getaplicaciones",
-      {},
-      {}
-    );
-    if (result.data.error || result.data.length === 0) 
+    result = await result.json();
+
+    if (result.error || result.length === 0) 
     {
       setArrayAplicaciones(arraynoaplicaciones);
       setAplicacion(arraynoaplicaciones[0].id);
     }
     else 
     {
-      setArrayAplicaciones(result.data);
-      setAplicacion(0);
-      recuperardatosproducto(result.data, 0);
-      setNick(result.data[0].idapp);
-      setDesc(result.data[0].desc);
-      setTtip(result.data[0].tooltip);
-      setNaturaleza(result.data[0].idnaturaleza);
-      setCbocultar(result.data[0].ocultar);
-      setCbrlogin(result.data[0].rlogin);
-      setCbadmin(result.data[0].admin);
+      guardaDatosAplicacion(result, 0)
   
     }
+     // Obtener las naturalezas
+     let resultnaturaleza = await getNaturalezas({naturaleza: "", admin: false});
 
-    const resultnaturaleza = await axios.post(
-        "http://localhost:3001/getnaturaleza",
-        { naturaleza: "", admin: false },
-        {}
-      );
-      if (resultnaturaleza.data.error || resultnaturaleza.data.length === 0) 
+     resultnaturaleza = await resultnaturaleza.json();
+
+      if (resultnaturaleza.error || resultnaturaleza.length === 0) 
       {
         setArrayNaturalezas(arraynonaturaleza);
         setNaturaleza(arraynonaturaleza[0].idnaturaleza);
       }
       else 
       {
-        setArrayNaturalezas(resultnaturaleza.data);
-        setNaturaleza(resultnaturaleza.data[0].idnaturaleza);
+        setArrayNaturalezas(resultnaturaleza);
+        setNaturaleza(resultnaturaleza[0].idnaturaleza);
       }
       
     setShow(false);
@@ -122,7 +122,6 @@ const Aplicaciones = () => {
 
   function recuperardatosproducto(data, i) 
   {
-    console.log(i, data);
     setNickt(data[i].idapp);
     setDesct(data[i].desc);
     setTtipt(data[i].tooltip);
@@ -152,16 +151,16 @@ const Aplicaciones = () => {
     setDesc("");
   }
 
-  function limpiardatosaplicacion() {
-    setNick("");
-    setDesc("");
-    setTtip("");
-    setCbocultar(false);
-    setCbrlogin(false);
-    setCbadmin(false);
+    function limpiardatosaplicacion() {
+       setNick("");
+       setDesc("");
+       setTtip("");
+       setCbocultar(false);
+       setCbrlogin(false);
+       setCbadmin(false);
 
-  }
-  const onModalClose = () => 
+    }
+    const onModalClose = () => 
     {
     setShow(false)
     }
@@ -185,17 +184,14 @@ const Aplicaciones = () => {
       setContenido("¿Está seguro que desea eliminar a " + arrayAplicaciones[aplicacion].desc + "?");
       //setShow1(true);
     }
-  
-  async function confirmar() {
-    const result = await axios.post(
-      "http://localhost:3001/setaplicacion",
-      {
-        id: arrayAplicaciones[aplicacion].id, idapp: nick, desc, tooltip: ttip, naturaleza, ocultar: cbocultar===true?1:0, 
-        rlogin: cbrlogin===true?1:0, admin: cbadmin===true?1:0, agregarsn, editarsn
-      },
-      {}
-    );
-    if (result.data.ok!=="ok"){
+
+    async function confirmar() {
+      // Grabar la aplicaciones
+      let result = await setAplicaciones({id: arrayAplicaciones[aplicacion].id, idapp: nick, desc, tooltip: ttip, naturaleza, ocultar: cbocultar===true?1:0,
+                                           rlogin: cbrlogin===true?1:0, admin: cbadmin===true?1:0, agregarsn, editarsn});
+      result = await result.json();
+
+    if (result.ok!=="ok"){
         setContenido("Error al agregar la aplicacion");
         setShow(true);
   
@@ -207,6 +203,7 @@ const Aplicaciones = () => {
   
     }
   }
+
   async function handleInput(e) {
     switch (e.target.id) {
       case "nick":
