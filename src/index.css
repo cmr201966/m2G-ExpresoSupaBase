@@ -276,6 +276,8 @@ input[type="file"]
 
 .gap {
   gap: 10px;
+  padding: 5px;
+
 }
 
 .padding {

@@ -14,6 +14,9 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import IconButton from "@mui/material/IconButton"
 import ArrowBack from "@mui/icons-material/ArrowBack";
+import { getprovincias, getmunicipios  } from "../../servicios/catalogos";
+import { getdatosiduser  } from "../../servicios/registrarse";
+import { getjpg  } from "../../servicios/imagenes";
 
 const Registrarse = () => {
   const location = useLocation();
@@ -64,29 +67,27 @@ const Registrarse = () => {
     setResultado(arrayplan[0].tip);
     setModifica(!(parsedParams.inserta==="true"));
     let ttprovincias=[];
-    const resultprovincia = await axios.post(
-      "http://localhost:3001/getprovincias",
-      {},
-      {}
-    );
-    if (resultprovincia.data.error || resultprovincia.data.length === 0)
+
+    let resultprovincia = await getprovincias({});
+    resultprovincia = await resultprovincia.json();
+
+    if (resultprovincia.error || resultprovincia.length === 0)
     {
       setArrayprovincias(arraydesconocido);
       ttprovincias=arraydesconocido;
     }
     else
     {
-      setArrayprovincias(resultprovincia.data);
-      ttprovincias=resultprovincia.data;
+      setArrayprovincias(resultprovincia);
+      ttprovincias=resultprovincia;
     }
     setProvincia(ttprovincias[0].provincia);
     let ttmunicipios=[];
-    const resultmunicipio = await axios.post(
-      "http://localhost:3001/getmunicipios",
-      {provincia: ""},
-      {}
-    );
-    if (resultmunicipio.data.error || resultmunicipio.data.length === 0)
+
+    let resultmunicipio = await getmunicipios({});
+    resultmunicipio = await resultmunicipio.json();
+
+    if (resultmunicipio.error || resultmunicipio.length === 0)
     {
        setArraymunicipios(arraydesconocido);
        setTmunicipios(arraydesconocido);
@@ -94,13 +95,12 @@ const Registrarse = () => {
     }
     else
     {
-      setArraymunicipios(resultmunicipio.data);
+      setArraymunicipios(resultmunicipio);
       if (sessionStorage.getItem("user") === null){
-         ttmunicipios = resultmunicipio.data.filter((item,i)=>{if (item.provincia === ttprovincias[0].provincia){return item}});
+         ttmunicipios = resultmunicipio.filter((item,i)=>{if (item.provincia === ttprovincias[0].provincia){return item}});
       }
       else{
-        console.log(sessionStorage.getItem("userprovincia"));
-        ttmunicipios = resultmunicipio.data.filter((item,i)=>{if (item.provincia === ttprovincias[sessionStorage.getItem("userprovincia")-1].provincia){return item}});
+        ttmunicipios = resultmunicipio.filter((item,i)=>{if (item.provincia === ttprovincias[sessionStorage.getItem("userprovincia")-1].provincia){return item}});
       }
     }
     if (ttmunicipios.length!==0)
@@ -116,33 +116,32 @@ const Registrarse = () => {
     setMunicipio(ttmunicipios[0].municipio);
     if (sessionStorage.getItem("user") !== null)
     {
-      const result = await axios.post(
-             "http://localhost:3001/getdatosiduser",
-             { user: sessionStorage.getItem("user") },
-             {}  
-             );
-             //
-             // Si ok poner valores de bd en estados
-             //
-             setUser(result.data[0].iduser);
-             setPassword(result.data[0].pw);
-             setNombre(result.data[0].nombre);
-             setEmail(result.data[0].email);
-             setFijo(result.data[0].fijo);
-             setCelular(result.data[0].celular);
-             setProvincia(result.data[0].provincia);
-             setMunicipio(result.data[0].municipio);
+
+      let result = await getdatosiduser({user: sessionStorage.getItem("user")});
+      result = await result.json();
+  
+      //
+      // Si ok poner valores de bd en estados
+      //
+      setUser(result[0].iduser);
+      setPassword(result[0].pw);
+      setNombre(result[0].nombre);
+      setEmail(result[0].email);
+      setFijo(result[0].fijo);
+      setCelular(result[0].celular);
+      setProvincia(result[0].provincia);
+      setMunicipio(result[0].municipio);
              //
              // Recuperar el contenido de la foto de perfil
              //
-             const resultado = await axios.post(
-              "http://localhost:3001/getjpg",
-              {foto: sessionStorage.getItem("user"), folder: "usuarios"},
-              {}
-              );
-              if (resultado.data.length!==0)
+
+             
+      let resultado = await getjpg({foto: sessionStorage.getItem("user"), folder: "usuarios"});
+      resultado = await result.text();
+
+             if (resultado.length!==0)
               {
-                 setContenidofoto(resultado.data);
+                 setContenidofoto(resultado);
                  setNombrefoto(sessionStorage.getItem("user"));
               }
               else
@@ -152,16 +151,11 @@ const Registrarse = () => {
       }
       else
       {
-        provinciachange(14, resultprovincia.data, resultmunicipio.data)
+        provinciachange(14, resultprovincia, resultmunicipio)
       }
 
     setInicia(false);
     setShow1(false);
-  }
-
-  const navegar = () => 
-  {
-    navigate("/");
   }
 
   const onModalClose = () => 
@@ -171,7 +165,7 @@ const Registrarse = () => {
       
   useEffect(() => {
     const localParams = location.search.substring(1).split("&");
-    localParams.forEach((item, i) => { const [paramName, paramValue] = item.split("="); parsedParams[paramName] = paramValue });
+    localParams.forEach((item) => { const [paramName, paramValue] = item.split("="); parsedParams[paramName] = paramValue });
   }, [location])
 
   useEffect(() => {
@@ -183,12 +177,9 @@ const Registrarse = () => {
   {
     let ttmunicipio=[];
         setProvincia(cambia);
-        ttmunicipio=municipiodata.filter((item,i)=>{if (item.provincia === cambia){return item}});
+        ttmunicipio=municipiodata.filter((item)=>{if (item.provincia === cambia){return item}});
         setTmunicipios(ttmunicipio);
-     if (ttmunicipio.length !== 0){
-        }
-        else
-        {
+     if (ttmunicipio.length === 0){
           setTmunicipios(arraydesconocido);
           ttmunicipio=arraydesconocido;
        }
@@ -278,6 +269,7 @@ const Registrarse = () => {
       {
         setDesc("");
       }
+
       const response = await axios.post(
       "http://localhost:3001/setregistrarse",
       { user, nombre, password, email, celular, fijo, provincia:provincia,municipio:municipio,

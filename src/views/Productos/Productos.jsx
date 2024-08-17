@@ -18,7 +18,10 @@ import Close from "@mui/icons-material/Close";
 import Map from "../../components/Map/MapBox";
 import libre from "../../assets/images/libre.png";
 import marker from "../../assets/images/custom_marker.png";
-
+import { getproductos, setMovimientosNew, updateOcupado } from "../../servicios/productos";
+import { getJpgFile } from "../../servicios/imagenes";
+import { getparesgpsnaturaleza } from "../../servicios/naturalezas";
+import { getprovincias, getmunicipios  } from "../../servicios/catalogos";
 // Otros
 import { useEffect, useState } from "react";
 import axios from "axios";
@@ -61,8 +64,6 @@ const Productos = () => {
   const [duracion1, setDuracion1] = useState(0);
   const [verOtraVez, setVerOtraVez] = useState(true);
   const [viewCarrito, setViewCarrito] = useState(false);
-  const [mlatitud, setMlatitud] = useState(0);
-  const [mlongitud, setMlongitud] = useState(0);
   const [toFly, setToFly] = useState(null);
 
   let users =
@@ -206,7 +207,6 @@ const Productos = () => {
   function parser(expresion, tabla, campo, tipo) {
     // analizar la expresion para formar la condicion
     let cual = 1;
-    let tor = false;
     let rango = false;
     let simbolo1 = "";
     let simbolo2 = "";
@@ -492,20 +492,22 @@ const Productos = () => {
       }
 
       if (mabierto !== null && mabierto !== "") {
-        let tabierto = Number(mabierto) === 0 ? true : false;
+        let tabierto = Number(mabierto) === 0 ? 0 : 1;
         if (condicion_filter.length !== 0) {
           condicion_filter =
             condicion_filter +
-            " and (tablacatnegocios.abierto=" +
+            " and (tablacatproductos.ocupado=" +
             tabierto +
             ")";
         } else {
-          condicion_filter = " and (tablacatnegocios.abierto=" + tabierto + ")";
+          condicion_filter = " and (tablacatproductos.ocupado=" + tabierto + ")";
         }
       }
     }
     return condicion_filter;
   }
+
+
   //************************/
   //  Código de filtrar     /
   //************************/
@@ -591,14 +593,9 @@ const Productos = () => {
     //*****************/
     // Provincias      /
     //*****************/
-    const resultprovincias = await axios.post(
-      "http://localhost:3001/getprovincias",
-      {},
-      {}
-    );
-    if (resultprovincias.data.error || resultprovincias.data.length === 0) {
-      setArraycolores(arraynoprovincias);
-    } else {
+    let resultprovincias = await getprovincias({});
+    resultprovincias = await resultprovincias.json();
+    if (!resultprovincias.error && resultprovincias.length !== 0) {
       setArrayprovincias(resultprovincias.data);
     }
     setProvincia(0);
@@ -607,19 +604,17 @@ const Productos = () => {
     // Municipios      /
     //*****************/
     let ttmunicipios = [];
-    const resultmunicipios = await axios.post(
-      "http://localhost:3001/getmunicipios",
-      { provincia: "" },
-      {}
-    );
-    if (resultmunicipios.data.error || resultmunicipios.data.length === 0) {
+    let resultmunicipios = await getmunicipios({});
+    resultmunicipios = await resultmunicipios.json(); 
+    
+    if (resultmunicipios.error || resultmunicipios.length === 0) {
       setArraymunicipios(arraynomunicipios);
       setTmunicipios(arraynomunicipios);
       ttmunicipios = arraynomunicipios;
     } else {
-      setArraymunicipios(resultmunicipios.data);
-      ttmunicipios = resultmunicipios.data.filter((item, i) => {
-        if (item.provincia === resultprovincias.data[0].provincia) {
+      setArraymunicipios(resultmunicipios);
+      ttmunicipios = resultmunicipios.filter((item, i) => {
+        if (item.provincia === resultprovincias[0].provincia) {
           return item;
         }
       });
@@ -671,12 +666,14 @@ const Productos = () => {
           imageClassName: "",
         },
       ]);
+
       if (ppuntos === 1) {
         // Primer punto calcular distancia del producto al cliente
         //         const { distancia, duracion } = await calculateDistance([lng1,lat1], [lngLat.lng,lngLat.lat]);
         //         setCarrera(distancia.toFixed(2));
         //         setDuracion1((duracion+5).toFixed(2));
       }
+
       if (ppuntos === 2) {
         // Tengo los dos puntos calculo la distancia entre ellos (Desde Origen hasta Destino)
         const { distancia, duracion } = await calculateDistance(
@@ -687,6 +684,7 @@ const Productos = () => {
         setDuracion(duracion.toFixed(2));
       }
     }
+
     if (puntosState === 2) {
       setCarrera(0);
       setPuntosState(1);
@@ -878,59 +876,7 @@ const Productos = () => {
 
       if (cbproducto) {
         //  producto en true
-        if (cbcproducto) {
-          //cbtnegocio true, producto en true y cproducto en true
-          // los productos dependen de la categoriaproducto
-          let ttproductos = arrayproductos.filter((item, i) => {
-            if (item.idnegocio === tnegocios[negocio].idnegocio) {
-              return item;
-            }
-          });
-          if (ttproductos.length === 0) {
-            setTproductos(arraynoproductos);
-          } else {
-            setTproductos(ttproductos);
-          }
-          setProducto(0);
-        } // productos por cproductos
-        else {
-          // cbtnegocio true, producto en true
-          //categoriaproducto false verificar cbnegocio
-          if (cbnegocio) {
-            // si cbnegocio mostrar los productos del negocio
-            const resultproductos = await axios.post(
-              "http://localhost:3001/getproductos-negocio",
-              { negocio: tnegocios[negocio].idnegocio },
-              {}
-            );
-            if (
-              resultproductos.data.error ||
-              resultproductos.data.length === 0
-            ) {
-              setTproductos(arraynoproductos);
-            } else {
-              setTproductos(resultproductos.data);
-            }
-            setProducto(0);
-          } // productos por negocio
-          else {
-            // si cbnegocio false, mostrar los productos del cbtnegocio
-            const resultproductos = await axios.post(
-              "http://localhost:3001/getproductos-tnegocio",
-              { categorianegocio: arraytnegocios[0].categorianegocio },
-              {}
-            );
-            if (
-              resultproductos.data.error ||
-              resultproductos.data.length === 0
-            ) {
-              setTproductos(arraynoproductos);
-            } else {
-              setTproductos(resultproductos.data);
-            }
-            setProducto(0);
-          } //productos por tnegocio
-        }
+       
       }
     } else {
       // tipo de negocio se apaga
@@ -944,42 +890,7 @@ const Productos = () => {
       } //cbnegocio true
       if (cbproducto) {
         //tnegocio false producto true
-        if (cbcproducto) {
-          // tnegocio false, cproducto true, producto true mostrar los productos de la categoriaproducto
-          let tmp = arrayproductos.filter((item, i) => {
-            if (item.idnegocio === ttarraynegocios[0].idnegocio) {
-              return item;
-            }
-          });
-          if (tmp.length !== 0) {
-            setTproductos(tmp);
-          } else {
-            setTproductos(arraynoproductos);
-          }
-        } else {
-          // tnegocio false,cproducto false preguntar por el negocio
-          if (cbnegocio) {
-            // tnegocio false,cproducto false negocio true mostrar productos del negocio
-            const resultproductos = await axios.post(
-              "http://localhost:3001/getproductos-negocio",
-              { negocio: tnegocios[negocio].idnegocio },
-              {}
-            );
-            if (
-              resultproductos.data.error ||
-              resultproductos.data.length === 0
-            ) {
-              setTproductos(arraynoproductos);
-            } else {
-              setTproductos(resultproductos.data);
-            }
-            setProducto(0);
-          } else {
-            // mostrar todos los productos todo para arriba es false
-            setTproductos(arrayproductos);
-            setProducto(0);
-          }
-        }
+
       }
     }
     setTnegocio(0);
@@ -1021,84 +932,17 @@ const Productos = () => {
         ttarraynegocios = arraynegocios;
       }
       setNegocio(0);
-      if (cbcproducto) {
-        // negocio true y cbcproducto true
-        // la categoriaproducto depende del negocio
-      }
       if (cbproducto) {
-        // negocio a true verificar cbcproducto
-        if (cbcproducto) {
-          // negocio true, producto true y cproducto true mostrar productos segun cproducto
-          let tmp = arrayproductos.filter((item, i) => {
-            if (item.idnegocio === ttarraynegocios[0].idnegocio) {
-              return item;
-            }
-          });
-          if (tmp.length !== 0) {
-            setTproductos(tmp);
-          } else {
-            setTproductos(arraynoproductos);
-          }
-        } else {
-          //negocio true, producto true y cproducto false mostrar productos segun negocio
-          const resultproductos = await axios.post(
-            "http://localhost:3001/getproductos-negocio",
-            { negocio: tnegocios[0].idnegocio },
-            {}
-          );
-          if (resultproductos.data.error || resultproductos.data.length === 0) {
-            setTproductos(arraynoproductos);
-          } else {
-            setTproductos(resultproductos.data);
-          }
-          setProducto(0);
-        }
+        // cbproducto a true verificar cbcproducto
+        
       }
     } // cbnegocio cambia a true
     else {
       // cbnegocio cambia a false
-      if (cbcproducto) {
-        // cbnegocio false y cbcproducto true verificar cbtnegocio si es true las categorias dependen de tnegocio
-        // si cbtnegocio es false mostrar todas las categorias ne productos
-        if (cbtnegocio) {
-          // las categorias dependen del tnegocio
-        } else {
-          // mostrar todas las cproductos
-        }
-      }
+
       if (cbproducto) {
         // negocio false, producto true verificar cproducto y tnegocio
-        if (cbcproducto) {
-          // negocio false, producto true, cproducto true mostrar productos segun cproducto
-          let tmp = arrayproductos.filter((item) => {
-            if (item.idnegocio === ttarraynegocios[0].idnegocio) {
-              return item;
-            }
-          });
-          if (tmp.length !== 0) {
-            setTproductos(tmp);
-          } else {
-            setTproductos(arraynoproductos);
-          }
-        } else {
-          if (cbtnegocio) {
-            // negocio true, producto true, cproducto false tnegocio true mostrar productos segun tnegocio
-            const resultproductos = await axios.post(
-              "http://localhost:3001/getproductos-tnegocio",
-              { categorianegocio: arraytnegocios[tnegocio].categorianegocio },
-              {}
-            );
-            if (
-              resultproductos.data.error ||
-              resultproductos.data.length === 0
-            ) {
-              setTproductos(arraynoproductos);
-            } else {
-              setTproductos(resultproductos.data);
-            }
-            setProducto(0);
-          }
-        }
+
       }
     }
   }
@@ -1110,60 +954,6 @@ const Productos = () => {
     if (cbproducto) {
       // producto true;
       // verificar cbcproducto, cbnegocio, cbtnegocio
-      if (cbcproducto) {
-        // cproducto true mostrar los productos para esta cproducto
-        if (
-          arrayproductos.filter((item) => {
-            if (item.idnegocio === tnegocios[negocio].idnegocio) {
-              return item;
-            }
-          }).length !== 0
-        ) {
-          setTproductos(
-            arrayproductos.filter((item) => {
-              if (item.idnegocio === tnegocios[cproducto].idnegocio) {
-                return item;
-              }
-            })
-          );
-        } else {
-          setTproductos(arraynoproductos);
-        }
-      } else {
-        // cbcproducto en false, verificar cbnegocio y cbtnegocio
-        if (cbnegocio) {
-          // el checkbox de negocio en true, filtrar los producto para el negocio activo
-          // getproductos(negocio);
-          // Productos de la primera categoria de productos
-          const resultproductos = await axios.post(
-            "http://localhost:3001/getproductos-negocio",
-            { negocio: tnegocios[negocio].idnegocio },
-            {}
-          );
-          if (resultproductos.data.error || resultproductos.data.length === 0) {
-            setTproductos(arraynoproductos);
-          } else {
-            setTproductos(resultproductos.data);
-          }
-          setProducto(0);
-        } else {
-          // check de negocio en false verificar cbtnegocio
-          if (cbtnegocio) {
-            // checkbox de tnegocios en true, filtrar los productos para el tnegocio activo
-            // getproductos(tnegocio);
-            setTproductos(
-              arrayproductos.filter((item) => {
-                if (item.idnegocio === tnegocios[negocio].idnegocio) {
-                  return item;
-                }
-              })
-            );
-          } else {
-            // el checkbox de productos esta en true y cbcproducto,cbnegocio,cbtnegocio estan en false
-            setTproductos(arrayproductos);
-          }
-        }
-      }
     }
   } // cambia_producto_cb
 
@@ -1450,20 +1240,13 @@ const Productos = () => {
     }
     //poner en cooki todos los parametros y pasar las cookis no los param,
     //pasar la condicion del filtro
-    const result1 = await axios.post(
-      "http://localhost:3001/getproductos",
-      {
-        naturaleza: sessionStorage.getItem("pnaturaleza"),
-        desc: sessionStorage.getItem("pdesc"),
-        condicion: sessionStorage.getItem("pcondicion"),
-        tipo: sessionStorage.getItem("ptipo"),
-        condicion_filter,
-        naturalezas: sessionStorage.getItem("pnaturalezas"),
-      },
-      {}
-    );
+
+    let result1 = await getproductos({naturaleza: sessionStorage.getItem("pnaturaleza"), desc: sessionStorage.getItem("pdesc"),condicion: sessionStorage.getItem("pcondicion"),
+                                     tipo: sessionStorage.getItem("ptipo"), condicion_filter, naturalezas: sessionStorage.getItem("pnaturalezas")});
+    result1 = await result1.json();
+
     const newResult = [];
-    if (result1.data.error || result1.data.length === 0) {
+    if (result1.error || result1.length === 0) {
       newResult.push({
         descnaturaleza: "",
         keyproducto: 0,
@@ -1476,7 +1259,7 @@ const Productos = () => {
       setNoproducto(true);
     } else {
       setNoproducto(false);
-      result1.data.forEach((item, i) => {
+      result1.forEach((item, i) => {
         const obj = {
           keyproducto: item.keyproducto,
           idnegocio: item.idnegocio,
@@ -1492,27 +1275,25 @@ const Productos = () => {
           tarifa: item.tarifa,
           costoDomicilio: item.costoDomicilio,
         };
-        if (result1.data[0].idnaturaleza === 62) {
+        if (result1[0].idnaturaleza === 62) {
           obj.Habilidades = item.adicional;
         } else {
           obj.Requisitos = item.adicional;
         }
         newResult.push(obj);
       });
-      setCantidadproductos(result1.data.length);
+      setCantidadproductos(result1.length);
       setResult(newResult);
     }
 
     // Obtener el contenido de la foto de perfil
     contenidofoto.splice(0, contenidofoto.length);
     for (let i = 0; i < newResult.length; i += 1) {
-      const resultado = await axios.post(
-        "http://localhost:3001/getjpg-file",
-        { file: newResult[i].photo, i },
-        {}
-      );
-      if (resultado.data.length !== 0 && resultado.error === undefined) {
-        contenidofoto.push(resultado.data);
+        let resultado = await getJpgFile({ file: newResult[i].photo, i });
+        resultado = await resultado.text();
+
+      if (resultado.length !== 0 && resultado.error === undefined) {
+        contenidofoto.push(resultado);
       }
     }
     sessionStorage.setItem("carditem", 0);
@@ -1520,14 +1301,13 @@ const Productos = () => {
       parsedParams.naturaleza === undefined
         ? naturaleza1
         : parsedParams.naturaleza;
-    const resultgps = await axios.post(
-      "http://localhost:3001/get-pares-gps-naturaleza",
-      { naturaleza: natura },
-      {}
-    );
+
+        let resultgps = await getparesgpsnaturaleza({ naturaleza: natura});
+        resultgps = await resultgps.json();
+        
     let paresgps = [];
     let itemst = [];
-    resultgps.data.forEach((item) => {
+    resultgps.forEach((item) => {
       paresgps.push({
         lat: item.latitud,
         lng: item.longitud,
@@ -1552,26 +1332,13 @@ const Productos = () => {
     if (showMap === true) {
       // Insertar el movimiento y poner showmap en false
       let tindex = puntos.length;
-      await axios.post(
-        "http://localhost:3001/setmovimiento-new",
-        {
-          idmovimiento: 1,
-          idproducto: idproductot,
-          latOrigen: puntos[tindex - 2].lat,
-          latDestino: puntos[tindex - 1].lat,
-          lngOrigen: puntos[tindex - 2].lng,
-          lngDestino: puntos[tindex - 1].lng,
-          precio: carrera * items[index].tarifa + items[index].costoDomicilio,
-          kms: carrera,
-        },
-        {}
-      );
-      await axios.post(
-        "http://localhost:3001/update-ocupado",
-        { idproducto: idproductot, ocupado: 1 },
-        {}
-      );
+
+        setMovimientosNew({ idmovimiento: 1, idproducto: idproductot, latOrigen: puntos[tindex - 2].lat, latDestino: puntos[tindex - 1].lat, lngOrigen: puntos[tindex - 2].lng,
+        lngDestino: puntos[tindex - 1].lng, precio: carrera * items[index].tarifa + items[index].costoDomicilio, kms: carrera,});
+        await updateOcupado({idproducto: idproductot, ocupado: 1 });
+  
     }
+
     setPuntosState(0);
     init();
     setShowMap(!showMap);
@@ -1579,76 +1346,44 @@ const Productos = () => {
 
   function onModalClose9() {}
 
-  const calcularDistanciaEntreDosCoordenadas = (lat1, lon1, lat2, lon2) => {
-    // Convertir todas las coordenadas a radianes
-    lat1 = gradosARadianes(lat1);
-    lon1 = gradosARadianes(lon1);
-    lat2 = gradosARadianes(lat2);
-    lon2 = gradosARadianes(lon2);
-    // Aplicar fórmula
-    const RADIO_TIERRA_EN_KILOMETROS = 6371;
-    let diferenciaEntreLongitudes = lon2 - lon1;
-    let diferenciaEntreLatitudes = lat2 - lat1;
-    let a =
-      Math.pow(Math.sin(diferenciaEntreLatitudes / 2.0), 2) +
-      Math.cos(lat1) *
-        Math.cos(lat2) *
-        Math.pow(Math.sin(diferenciaEntreLongitudes / 2.0), 2);
-    let c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
-    return RADIO_TIERRA_EN_KILOMETROS * c;
-  };
-
-  const gradosARadianes = (grados) => {
-    return (grados * Math.PI) / 180;
-  };
-
-  const distanciaEnKilometros = (latitud1, longitud1, latitud2, longitud2) => {
-    return calcularDistanciaEntreDosCoordenadas(
-      latitud1,
-      longitud1,
-      latitud2,
-      longitud2
-    );
-  };
-
   async function otroPunto() {
     let menor = 999999;
     let esta = 0;
     let dura = 0;
-    for (let i = 0; i < puntos.length - 1; i += 1) {
+    let tpuntos = [...puntos];
+    for (let i = 0; i < tpuntos.length - 1; i += 1) {
       let tindex = 0;
-      if (puntosState !== 0 && i <= puntos.length - (puntosState + 1)) {
+      if (puntosState !== 0 && i <= tpuntos.length - (puntosState + 1)) {
         tindex = puntosState;
         //esta = distanciaEnKilometros(puntos[puntos.length - tindex].lat, puntos[puntos.length - tindex].lng, item.lat, item.lng).toFixed(2);
         const { distancia, duracion } = await calculateDistance(
           [
-            puntos[puntos.length - tindex].lng,
-            puntos[puntos.length - tindex].lat,
+            tpuntos[tpuntos.length - tindex].lng,
+            tpuntos[tpuntos.length - tindex].lat,
           ],
-          [puntos[i].lng, puntos[i].lat]
+          [tpuntos[i].lng, puntos[i].lat]
         );
         esta = distancia.toFixed(2);
         dura = duracion;
       }
       if (Number(esta) < Number(menor)) {
         menor = esta;
-        setProductot(puntos[i].info);
+        setProductot(tpuntos[i].info);
         setIdroductot(items[i].idproducto);
         setTarifa(items[i].tarifa);
         setCostoDomicilio(items[i].costoDomicilio);
-        let tpuntos = [...puntos];
-        puntos.forEach((item, i) => {
+        tpuntos.forEach((item, i) => {
           tpuntos[i].imageClassName = "";
         });
         tpuntos[i].imageClassName = "iconoGrande";
         setDuracion1(dura.toFixed(2));
-        setPuntos(tpuntos);
         setIndex(i);
       }
     }
+    setPuntos(tpuntos);
     setMascerca(menor);
   }
-
+  
   useEffect(() => {
     if (puntos.length !== 0) {
       otroPunto();
@@ -1665,7 +1400,7 @@ const Productos = () => {
 
   useEffect(() => {
     const localParams = location.search.substring(1).split("&");
-    localParams.forEach((item, i) => {
+    localParams.forEach((item) => {
       const [paramName, paramValue] = item.split("=");
       parsedParams[paramName] = paramValue;
     });
@@ -2210,9 +1945,7 @@ const Productos = () => {
                 <Tippy content={`Cerrar mapa`}>
                   <button
                     className="offon-info-producto"
-                    onClick={() => {
-                      setShowMap(!showMap);
-                    }}
+                    onClick={() => setShowMap(!showMap)}
                   >
                     <Close />
                   </button>
@@ -2223,6 +1956,7 @@ const Productos = () => {
                   onMapClick={lngLatSelected}
                   remoteshowMap={showMap}
                   flyTo={toFly}
+                  tindex={index}
                   lat={lat}
                   lng={lng}
                   onChange={onChangeMap}

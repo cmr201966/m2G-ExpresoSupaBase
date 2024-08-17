@@ -6,20 +6,20 @@ import Tippy from "@tippyjs/react";
 import { Box, Button, useTheme, Badge } from "@mui/material";
 
 // @mui/icons-material
-import CollectionsIcon from "@mui/icons-material/Collections";
+//import CollectionsIcon from "@mui/icons-material/Collections";
 import FilterAltIcon from "@mui/icons-material/FilterAlt";
-import Chat from "@mui/icons-material/Chat";
+//import Chat from "@mui/icons-material/Chat";
 import MoreHoriz from "@mui/icons-material/MoreHoriz";
 import useOnclickOutside from "react-cool-onclickoutside";
 
 // styles
 import "./styles.css";
 import { useState } from "react";
-import axios from "axios";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import { useFilter } from "../../context/FilterProvider";
+import { getJpgFile } from "../../servicios/imagenes";
 
 const Navbar = (props) => {
   const theme = useTheme();
@@ -38,14 +38,15 @@ const Navbar = (props) => {
       : true;
   const tfiltro = "Filtrar " + sessionStorage.getItem("filtro");
   const mfiltro = sessionStorage.getItem("filtro") !== "";
-  const [rutatmp, setRutatmp] = useState("");
-  const [desctmp, setDesctmp] = useState("");
-  const [cbhowclient, setCbhowclient] = useState(false);
+//  const [rutatmp, setRutatmp] = useState("");
+//  const [desctmp, setDesctmp] = useState("");
+  const [setCbhowclient] = useState(false);
+//  const [cbhowclient, setCbhowclient] = useState(false);
   const navigate = useNavigate();
 
   async function init() {
     let foto;
-    let folder;
+//    let folder;
     if (sessionStorage.getItem("user") === null) {
       foto = "invitado";
 //      folder = "usuarios";
@@ -54,24 +55,21 @@ const Navbar = (props) => {
 //      folder = "usuarios";
     }
     // foto de perfil del usuario si ninguno entonces invitado.jpg
-    const resultado = await axios.post(
-      "http://localhost:3001/getjpg-file",
-      { file: "./galerias/app_images/usuarios/" + foto +  "/foto-1.jpg"},
-      {}
-    );
-    if (resultado.data.length !== 0) {
-      setContenidofoto(resultado.data);
+
+
+    let resultado = await getJpgFile({ file: "./galerias/app_images/usuarios/" + foto +  "/foto-1.jpg"});
+    resultado = await resultado.text();
+    if (resultado.length !== 0) {
+      setContenidofoto(resultado);
     } else {
       //  no se pudo leer el contenido de la foto
     }
     // foto del logo
-    const resultado_logo = await axios.post(
-      "http://localhost:3001/getjpg-file",
-      { file: "./galerias/app_images/destodo/logo.jpg" },
-      {}
-    );
-    if (resultado_logo.data.length !== 0) {
-      setContenido_logo(resultado_logo.data);
+
+    let resultado_logo = await getJpgFile({ file: "./galerias/app_images/destodo/logo.jpg"});
+    resultado_logo = await resultado_logo.text();
+    if (resultado_logo.length !== 0) {
+      setContenido_logo(resultado_logo);
     } else {
       //  no se pudo leer el contenido de la foto
     }
@@ -163,7 +161,7 @@ const Navbar = (props) => {
               </Fragment>
             )}
           </Box>
-{nivel!==0 && nivel!==null && nivel!==undefined?
+          {nivel!==0 && nivel!==null && nivel!==undefined?
           <Tippy content={tfiltro}>
             <div className="filter">
               <Button

@@ -159,7 +159,6 @@ const CatProductos = () => {
       let tproducto = 0;
       console.log(resultproductos.data.error);
       if (resultproductos.data.error || resultproductos.data.length === 0) {
-        console.log("!!!!!!!!!!!!!!")
         setArrayproductos(arraynoproductos);
         recuperardatosproducto(arraynoproductos, 0);
         tproducto = arraynoproductos[0].idproducto;
@@ -273,12 +272,10 @@ const CatProductos = () => {
             { negocio: resultnegocios.data[0].negocio },
             {}
           );
-          console.log(resultproductos);
           if (resultproductos.data.error || resultproductos.data.length === 0) {
             setArrayproductos(arraynoproductos);
             recuperardatosproducto(arraynoproductos, 0);
           } else {
-            console.log("********",resultproductos.data)
             setArrayproductos(resultproductos.data);
             recuperardatosproducto(resultproductos.data, 0);
             const [primero] = resultproductos.data;
@@ -567,11 +564,13 @@ const CatProductos = () => {
   };
 
   async function sino() {
+
     await axios.post(
       "http://localhost:3001/delproducto",
       { producto: arrayproductos[producto?.value].idproducto },
       {}
     );
+
     // refrescar la lista despues de eliminada la categoria
     //arraycategoriasproductos.splice(borrar, 1);
     iniciadatosgenerales();

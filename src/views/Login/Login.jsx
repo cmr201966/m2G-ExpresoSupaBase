@@ -11,7 +11,7 @@ import { useNavigate } from "react-router-dom"
 import "./styles.css";
 
 import { useState } from "react";
-import axios from "axios";
+import { login } from "../../servicios/login";
 
 
 
@@ -21,18 +21,10 @@ const Login = () => {
   const [password, setPassword] = useState("");
   const [resultado, setResultado] = useState("");
 
-async function verificauser(user)
-{
-  // Si el producto del usuario es movil pedir GPS
-  // Input y Icono para mostrar Mapa que sea opcional
-  // sino mapa debe teclear ubicacion Ej: Plaza de marte
-}
-
   function handleInput(e) {
     switch (e.target.id) {
       case "user":
         setUser(e.target.value);
-        verificauser(e.target.value);
         break;
       case "password":
         setPassword(e.target.value);
@@ -44,12 +36,12 @@ async function verificauser(user)
 
   async function confirmalogin(e) {
     e.preventDefault();
-    const result = await axios.post(
-      "http://localhost:3001/login",
-      { user, password },
-      {}
-    );
-    const data = await result.data;
+
+    let result = await login({user, password});
+    result = await result.json();
+
+    const data = await result;
+    console.log(data);
     if (data.error) 
     {
       setResultado(data.error);

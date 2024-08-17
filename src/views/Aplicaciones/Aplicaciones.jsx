@@ -78,7 +78,6 @@ const Aplicaciones = () => {
     setIdowner(parsedParams.idowner);
     // Obtener las aplicaciones
     let result = await getAplicaciones({});
-
     result = await result.json();
 
     if (result.error || result.length === 0) 

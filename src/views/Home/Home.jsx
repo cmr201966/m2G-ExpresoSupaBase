@@ -16,7 +16,7 @@ import { Link } from "react-router-dom";
 // styles
 import "./styles.css";
 import { useEffect, useState } from "react";
-import axios from "axios";
+import {getapps, getsubapps  } from "../../servicios/home";
 
 const Home = () => {
   const location = useLocation();
@@ -51,16 +51,11 @@ const Home = () => {
   if (parsedParams.nivel === undefined || parsedParams.idowner === undefined || parsedParams.nivel==="0") 
     {
       setNivel(0);
-      result1 = await axios.post(
 
-        "http://localhost:3001/getapps",
-        {          
-          login: sessionStorage.getItem("user") === null ? false : true,
-          user: sessionStorage.getItem("user")===null?"":sessionStorage.getItem("user"),
-        },
-        {}
-      );
-      result1.data.forEach((item, i) => {
+      let result = await getapps({login: sessionStorage.getItem("user") === null ? false : true, user: sessionStorage.getItem("user")===null?"":sessionStorage.getItem("user")});
+      result1 = await result.json();
+  
+      result1.forEach((item, i) => {
         let ttooltip = item.tooltip;
         if (item.tooltip === "Galerias") ttooltip = ttooltip + " de " + tayuda;
         newResult.push({
@@ -111,14 +106,13 @@ const Home = () => {
     sessionStorage.setItem("pcondicion", "");
     sessionStorage.setItem("ptipo", "");
     sessionStorage.setItem("pnohay", "");
-    result1 = await axios.post(
-      "http://localhost:3001/getsubapps",
-      { naturaleza, nivel, owner, user: sessionStorage.getItem("user") },
-      {}
-    );
-    if (!result1.data.error)
+
+let result = await getsubapps({naturaleza, nivel, owner, user: sessionStorage.getItem("user")});
+result1 = await result.json();
+
+    if (!result1.error)
     {
-    result1.data.forEach((item, i) => {
+    result1.forEach((item, i) => {
       let ttooltip = item.tooltip;
       if (item.tooltip === "Galerias") ttooltip = ttooltip + " de " + ayuda;
       newResult.push({

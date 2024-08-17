@@ -41,13 +41,15 @@ function MapBox({
   sx,
   style,
   remoteZoom,
+  tindex,
   lat,
   lng,
   onLoadMap,
   noLocalMarker = true,
   onMapClick,
 }) {
-  console.log("Entra:", lat, lng, remoteZoom)
+  console.log("Index", tindex);
+  const [mindex, setMindex] = useState(tindex ?? 0);
   const [zoom, setZoom] = useState(remoteZoom ?? 16);
   const [longitude, setLongitude] = useState(lng ?? -75.829090519);
   const [latitude, setLatitude] = useState(lat ?? 20.0217583);
@@ -55,7 +57,6 @@ function MapBox({
 
   const flyToPoint = useCallback(
     (longitude, latitude, zoom) => {
-      console.log("fly ", latitude, longitude, zoom);
       map?.current?.flyTo({
         center: [longitude, latitude],
         zoom,
@@ -66,7 +67,6 @@ function MapBox({
   );
 
   useEffect(() => {
-    console.log("Aqui ", latitude, longitude, zoom);
     flyToPoint(longitude, latitude, zoom);
   }, [flyToPoint, latitude, longitude, zoom]);
 
@@ -226,6 +226,7 @@ MapBox.propTypes = {
   onLoadMap: PropTypes.func,
   onMapClick: PropTypes.func,
   remotesShowMap: PropTypes.bool,
+  index:  PropTypes.number,
   lat: PropTypes.number,
   lng: PropTypes.number,
   onChangeMap: PropTypes.func,

@@ -8,7 +8,6 @@ import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
 
 import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Map from "../../components/Map/MapBox";
@@ -19,6 +18,10 @@ import "./styles.css";
 import marker from "../../assets/images/custom_marker.png";
 import libre from "../../assets/images/libre.png";
 import off from "../../assets/images/ocupado.png";
+import { getinfoproducto, setMovimientosNew, updateOcupado } from "../../servicios/productos";
+import { getJpgFile } from "../../servicios/imagenes";
+import { getParesGpsNaturalezaNew } from "../../servicios/naturalezas";
+
 
 const InfoProducto = () => {
   const navigate = useNavigate();
@@ -51,33 +54,26 @@ const InfoProducto = () => {
 
   async function init() {
     setNaturaleza1(parsedParams.naturaleza);
-    const result = await axios.post(
-      "http://localhost:3001/get-info-producto",
-      { idproducto: parsedParams.idproducto },
-      {}
-    );
-    if (result.data.length !== 0 && result.error === undefined) {
+    let result = await getinfoproducto({idproducto: parsedParams.idproducto});
+    result = await result.json();
+
+    if (result.length !== 0 && result.error === undefined) {
       setIdproducto(parsedParams.idproducto);
-      setNegocio(result.data[0].negocio);
-      setProducto(result.data[0].producto);
-      setPrecio(result.data[0].precio);
-      setOcupado(result.data[0].ocupado);
-      setFecha(result.data[0].fecha);
-      setHora(result.data[0].hora);
-      setGps(result.data[0].gpsSN);
-      setTarifa(result.data[0].tarifa);
+      setNegocio(result[0].negocio);
+      setProducto(result[0].producto);
+      setPrecio(result[0].precio);
+      setOcupado(result[0].ocupado);
+      setFecha(result[0].fecha);
+      setHora(result[0].hora);
+      setGps(result[0].gpsSN);
+      setTarifa(result[0].tarifa);
     }
 
-    const resultgps = await axios.post(
-      "http://localhost:3001/get-pares-gps-naturaleza-new",
-      {
-        naturaleza: parsedParams.naturaleza,
-        idproducto: parsedParams.idproducto,
-      },
-      {}
-    );
+    result = await getParesGpsNaturalezaNew({naturaleza: parsedParams.naturaleza,  idproducto: parsedParams.idproducto});
+    result = await result.json();
+
     let paresGps = [];
-    resultgps.data.forEach((item) => {
+    result.forEach((item) => {
       paresGps.push({
         lat: item.latitud,
         lng: item.longitud,
@@ -87,20 +83,11 @@ const InfoProducto = () => {
     });
     setPuntos(paresGps);
 
-    const resultado = await axios.post(
-      "http://localhost:3001/getjpg-file",
-      //    { file: "./galerias/app_images/productos" + "/" + parsedParams.idproducto + "/" + parsedParams.idproducto + ".jpg" },
-      {
-        file:
-          "./galerias/app_images/productos" +
-          "/" +
-          parsedParams.idproducto +
-          "/foto-1.jpg",
-      },
-      {}
-    );
-    if (resultado.data.length !== 0 && resultado.error === undefined) {
-      setContenidofoto(resultado.data);
+    result = await getJpgFile({file: "./galerias/app_images/productos" + "/" + parsedParams.idproducto + "/foto-1.jpg"});
+    result = await result.text();
+
+    if (result.length !== 0 && result.error === undefined) {
+      setContenidofoto(result);
     }
     setInicio(false);
   }
@@ -172,6 +159,9 @@ if (puntosState===2){
     if (showMap===true) {
       // Insertar el movimiento y poner showmap en false
       let tindex=puntos.length
+      setMovimientosNew({idmovimiento: 1, idproducto: idproducto, latOrigen: puntos[tindex-2].lat, latDestino: puntos[tindex-1].lat, lngOrigen: puntos[tindex-2].lng, lngDestino: puntos[tindex-1].lng, precio: (carrera*tarifa)+domicilio, kms: carrera});
+
+      {/*
       await axios.post(
       "http://localhost:3001/setmovimiento-new",
       {
@@ -181,13 +171,13 @@ if (puntosState===2){
       },
       {}
       );
+      */}
+
       setOcupado(true);
-      await axios.post(
-        "http://localhost:3001/update-ocupado",
-        { idproducto: idproducto, ocupado: 1 }, 
-        {}
-      );
+
+      await updateOcupado({idproducto: idproducto, ocupado: 1});
     }
+
     setPuntos([]);
     setPuntosState(0);
 

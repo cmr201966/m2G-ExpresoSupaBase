@@ -32,7 +32,7 @@ const Galerias = () => {
 
   useEffect(() => {
     const localParams = location.search.substring(1).split("&");
-    localParams.forEach((item, i) => {
+    localParams.forEach((item) => {
       const [paramName, paramValue] = item.split("=");
       parsedParams[paramName] = paramValue;
     });

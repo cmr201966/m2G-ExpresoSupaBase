@@ -3,7 +3,7 @@ import Modal from "../../components/Modal/Modal";
 import Checkbox from '@mui/material/Checkbox';
 // Mis controles
 import ChatDialogo from "../../components/ChatDialogo/ChatDialogo";
-import Chat from "@mui/icons-material/Chat"
+//import Chat from "@mui/icons-material/Chat"
 import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Map from "../../components/Map/MapBox";
 
@@ -190,7 +190,7 @@ const CatNegocios = () => {
     }
     else {
       setArraymunicipio(resultmunicipio.data);
-      ttmunicipio = resultmunicipio.data.filter((item, i) => { if (item.provincia === resultprovincia.data[0].provincia) { return item } });
+      ttmunicipio = resultmunicipio.data.filter((item) => { if (item.provincia === resultprovincia.data[0].provincia) { return item } });
       if (ttmunicipio.length !== 0) {
         setTmunicipio(ttmunicipio);
         setMunicipio(ttmunicipio[0].municipio);
@@ -380,7 +380,6 @@ const CatNegocios = () => {
         break;
       case "descripcionadicional":
         setCambios(true);
-        setDescripcionadicional(e.target.value);
         break;
       case "descripcion":
         setCambios(true);
@@ -388,15 +387,12 @@ const CatNegocios = () => {
         break;
       case "horarios":
         setCambios(true);
-        setCbhorarios(e.target.checked);
         break;
       case "capacidad":
         setCambios(true);
-        setCbcapacidad(e.target.checked);
         break;
       case "tcapacidad":
         setCambios(true);
-        setCapacidad(e.target.value);
         break;
       case "cbgps":
         setCbgps(e.target.checked);
@@ -472,14 +468,6 @@ const CatNegocios = () => {
   function agregar() {
     limpiardatosnegocio();
 
-    let thorarios = arrayhorarios;
-    setArraythorarios(arrayhorarios);
-    for (let i = 0; i < 10; i += 1) {
-      thorarios.push({ idnegocio: 99999999, horaopen: 0, minutoopen: 0, horaclose: 0, minutoclose: 0 })
-    }
-    arrayhorarios = thorarios;
-
-
     setAgregarsn(true);
     if (document.getElementById("nick")) document.getElementById("nick").focus();
   }
@@ -506,7 +494,6 @@ const CatNegocios = () => {
     setCambios(FormatColorResetRounded);
     setEliminarsn(false);
     setAgregarsn(false);
-    setArrayhorarios(arraythorarios);
     setEditarsn(false);
     setDescripcion("");
     setShowGalerias(false);

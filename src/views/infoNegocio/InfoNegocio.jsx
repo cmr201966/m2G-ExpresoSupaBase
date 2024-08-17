@@ -5,7 +5,6 @@ import IconButton from "@mui/material/IconButton"
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-import axios from "axios";
 
 import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Map from "../../components/Map/MapBox";
@@ -13,7 +12,9 @@ import { useLocation } from "react-router-dom";
 
 // styles
 import "./styles.css";
-import { Paragliding } from "@mui/icons-material";
+//import { Paragliding } from "@mui/icons-material";
+import {getinfonegocio  } from "../../servicios/negocios";
+import {getJpgFile  } from "../../servicios/imagenes";
 
 
 const InfoNegocio = () => {
@@ -52,34 +53,31 @@ const InfoNegocio = () => {
   };
 
   async function init(){
-    const result = await axios.post(
-      "http://localhost:3001/get-info-negocio",
-      { idnegocio: parsedParams.idnegocio }, 
-      {}
-    );
-    if (result.data.length !== 0 && result.error === undefined) {
+    let result = await getinfonegocio({ idnegocio: parsedParams.idnegocio });
+    result = await result.json();
+
+    if (result.length !== 0 && result.error === undefined) {
       setIdnegocio(parsedParams.idnegocio);
-      setNegocio(result.data[0].negocio);
-      setNombreDueno(result.data[0].nombre);
-      setEmail(result.data[0].email);
-      setCelular(result.data[0].celular);
-      setFijo(result.data[0].fijo);
-      setProvincia(result.data[0].provincia);
-      setMunicipio(result.data[0].municipio);
-      setSede(result.data[0].sede);
-      setLat(result.data[0].latitud);
-      setLng(result.data[0].longitud);
-      setGps(result.data[0].gpsSN);
+      setNegocio(result[0].negocio);
+      setNombreDueno(result[0].nombre);
+      setEmail(result[0].email);
+      setCelular(result[0].celular);
+      setFijo(result[0].fijo);
+      setProvincia(result[0].provincia);
+      setMunicipio(result[0].municipio);
+      setSede(result[0].sede);
+      setLat(result[0].latitud);
+      setLng(result[0].longitud);
+      setGps(result[0].gpsSN);
     //
     }
 
-    const resultado = await axios.post(
-    "http://localhost:3001/getjpg-file",
-    { file: "./galerias/app_images/negocios" + "/" + parsedParams.idnegocio + "/foto-1.jpg" }, 
-    {}
-  );
-  if (resultado.data.length !== 0 && resultado.error === undefined) {
-    setContenidofoto(resultado.data);
+   result = await getJpgFile({ file: "./galerias/app_images/negocios" + "/" + parsedParams.idnegocio + "/foto-1.jpg"});
+   result = await result.text();
+
+
+  if (result.length !== 0 && result.error === undefined) {
+    setContenidofoto(result);
   }
   setInicio(false);
 }

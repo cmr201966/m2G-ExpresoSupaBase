@@ -8,13 +8,13 @@ import Hero from "../../layouts/Hero/Hero";
 // styles
 import "./styles.css";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { Link } from "react-router-dom"
-import Modal from "../../components/Modal/Modal";
+//import Modal from "../../components/Modal/Modal";
 import ChatDialogo from "../../components/ChatDialogo/ChatDialogo";
 import IconButton from "@mui/material/IconButton";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom"
+import { getJpgFile } from "../../servicios/imagenes";
 
 
 const Acercade = () => {
@@ -28,13 +28,12 @@ const Acercade = () => {
 
   async function contenidofile(file) 
   {
-    const resultado = await axios.post(
-      "http://localhost:3001/getjpg-file",
-      { file },
-      {}
-    );
-    if (resultado.data.length !== 0 && resultado.error === undefined) {
-       setContenidofoto(resultado.data);
+
+    let result = await getJpgFile({file: file});
+    result = await result.text();
+
+    if (result.length !== 0 && result.error === undefined) {
+       setContenidofoto(result);
     }
   }
 function init()

@@ -3,19 +3,16 @@ import Tippy from "@tippyjs/react";
 import Navbar from "../../components/Navbar/Navbar"
 // layouts
 import Hero from "../../layouts/Hero/Hero";
-//
-//import { useLocation } from "react-router-dom";
-//
 // styles
 import "./styles.css";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import Check from "@mui/icons-material/Check";
 import Close from "@mui/icons-material/Close";
 import IconButton from "@mui/material/IconButton"
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom"
 import { useLocation } from "react-router-dom";
+import { setComando } from "../../servicios/Whatsapp";
 
 const Whatsapp = () => {
   const navigate = useNavigate();
@@ -49,34 +46,38 @@ const Whatsapp = () => {
      setContenido("");
   }
 
+
   async function confirmar() {
-    const result =await axios.post(
-      "http://localhost:3001/setcmd",
-      {
-        cmd
-      },
-      {}
-    );
-    if (result.data.ok==="ok"){
+    let result = await setComando({cmd: cmd});
+    result = await result.json();
+
+    if (result.ok==="ok"){
         setContenido("(El comando se ejecuto correctamente)")
         setCmd("")
     }
     else{
-//        setContenido("(El comando NO se ejecuto correctamente)")
-        setContenido(result.data.ok);
+        setContenido(result.ok);
     }
     if (document.getElementById("cmd")) document.getElementById("cmd").focus();
 }
 
-  async function handleInput(e) {
-    switch (e.target.id) {
-      case "cmd":
-          setContenido("");
-          setCmd(e.target.value);
-          break;
-     default:
-        break;
+  function handleInput(e) {
+    if (e.key==='Enter') 
+      {}
+    else{
+      switch (e.target.id) {
+        case "cmd":
+             setContenido("");
+             setCmd(e.target.value);
+             break;
+        default:
+            break;
     }
+  }
+  }
+
+  function key(e){
+    if (e.key==='Enter' && cmd.length!==0) confirmar();
   }
 
   useEffect(() => {
@@ -112,6 +113,7 @@ const Whatsapp = () => {
                                id="cmd"
                                value={cmd}
                                onChange={handleInput}
+                               onKeyDown={key}
                                type="text"
                                placeholder="moto/r-23456/parque cespedes/on"
                                required/>
