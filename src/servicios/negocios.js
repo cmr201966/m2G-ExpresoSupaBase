@@ -14,3 +14,10 @@ export async function makeRequest(url, body, method = "POST") {
 export async function getinfonegocio(body) {
   return makeRequest("http://localhost:3001/get-info-negocio", body);
 }
+
+export async function getnegocios1(body) {
+  return makeRequest("http://localhost:3001/getnegocios-1", body);
+}
+export async function getcategoriasnegocios(body) {
+  return makeRequest("http://localhost:3001/getcategoriasnegocios", body);
+}

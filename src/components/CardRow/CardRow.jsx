@@ -2,7 +2,6 @@ import Tippy from "@tippyjs/react";
 import InfoIcon from "@mui/icons-material/Info";
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import { useState } from "react";
-//import axios from "axios";
 import { updateOcupado } from "../../servicios/productos";
 
 // styles
@@ -18,13 +17,6 @@ const CardRow = (props) => {
         setOcupado(ocupado===0?1:0);
     }
 
-{/*
-    await axios.post(
-      "http://localhost:3001/update-ocupado",
-      { idproducto: item.keyproducto, ocupado: ocupado===0?1:0 },
-      {}
-    );
-*/}
     await updateOcupado({idproducto: item.keyproducto, ocupado: ocupado===0?1:0});
 
     paresGps();

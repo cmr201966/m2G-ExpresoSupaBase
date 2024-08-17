@@ -25,3 +25,7 @@ export async function updateOcupado(body) {
 export async function getproductos(body) {
   return makeRequest("http://localhost:3001/getproductos", body);
 }
+
+export async function getproductoscategoria(body) {
+  return makeRequest("http://localhost:3001/getproductos-categoria", body);
+}

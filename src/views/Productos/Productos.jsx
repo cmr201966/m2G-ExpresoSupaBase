@@ -18,13 +18,14 @@ import Close from "@mui/icons-material/Close";
 import Map from "../../components/Map/MapBox";
 import libre from "../../assets/images/libre.png";
 import marker from "../../assets/images/custom_marker.png";
-import { getproductos, setMovimientosNew, updateOcupado } from "../../servicios/productos";
+import { getproductos, getproductoscategoria, setMovimientosNew, updateOcupado } from "../../servicios/productos";
 import { getJpgFile } from "../../servicios/imagenes";
 import { getparesgpsnaturaleza } from "../../servicios/naturalezas";
 import { getprovincias, getmunicipios  } from "../../servicios/catalogos";
+import { getcategoriasnegocios, getnegocios1  } from "../../servicios/negocios";
+
 // Otros
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { useFilter } from "../../context/FilterProvider";
 
 // components
@@ -118,7 +119,6 @@ const Productos = () => {
   const [cbmunicipio, setCbmunicipio] = useState(false);
   const [cbprovincia, setCbprovincia] = useState(false);
   const [arrayprovincias, setArrayprovincias] = useState([]);
-  const arraynoprovincias = [{ provincia: 999999, desc: "No hay provincias" }];
   const [provincia, setProvincia] = useState("");
   const [arraymunicipios, setArraymunicipios] = useState([]);
   const [tmunicipios, setTmunicipios] = useState([]);
@@ -163,7 +163,6 @@ const Productos = () => {
   //
   let mtnegocio = sessionStorage.getItem("tnegocio");
   let mnegocio = sessionStorage.getItem("negocio");
-  let mcproducto = sessionStorage.getItem("cproducto");
   let mproducto = sessionStorage.getItem("producto");
   //
   // Atributos
@@ -515,40 +514,34 @@ const Productos = () => {
     setInicia(true);
     setShow1(true);
 
-    //  setNaturaleza(0);
 
     // Tipos de Negocios
+    
     let ttarraytnegocios = [];
-    const resulttnegocios = await axios.post(
-      "http://localhost:3001/getcategoriasnegocios",
-      {},
-      {}
-    );
+    let resulttnegocios = await getcategoriasnegocios({negocio: ""});
+    resulttnegocios = await resulttnegocios.json();
 
-    if (resulttnegocios.data.error || resulttnegocios.data.length === 0) {
+    if (resulttnegocios.error || resulttnegocios.length === 0) {
       setArraytnegocios(arraynotnegocios);
       ttarraytnegocios = arraynotnegocios;
     } else {
-      setArraytnegocios(resulttnegocios.data);
-      ttarraytnegocios = resulttnegocios.data;
+      setArraytnegocios(resulttnegocios);
+      ttarraytnegocios = resulttnegocios;
     }
     setTnegocio(0);
 
     // Negocios del primer tipo  de negocio
     let ttarraynegocios = [];
-    const resultnegocios = await axios.post(
-      "http://localhost:3001/getnegocios-1",
-      {},
-      {}
-    );
-    if (resultnegocios.data.error || resultnegocios.data.length === 0) {
+    let resultnegocios = await getnegocios1({negocio: ""});
+    resultnegocios = await resultnegocios.json();
+    if (resultnegocios.error || resultnegocios.length === 0) {
       setArraynegocios(arraynonegocios);
       setTnegocios(arraynonegocios);
       ttarraynegocios = arraynonegocios;
     } else {
-      setArraynegocios(resultnegocios.data);
+      setArraynegocios(resultnegocios);
       // filtrar los negocios del tipo de negocio activo.
-      ttarraynegocios = resultnegocios.data.filter((item) => {
+      ttarraynegocios = resultnegocios.filter((item) => {
         if (item.categorianegocio === ttarraytnegocios[0].categorianegocio) {
           return item;
         }
@@ -564,19 +557,18 @@ const Productos = () => {
     //**************************************************/
     // Productos del primer negocio                     /
     //**************************************************/
-    const resultproductos = await axios.post(
-      "http://localhost:3001/getproductos-categoria",
-      { negocio: "" },
-      {}
-    );
-    if (resultproductos.data.error || resultproductos.data.length === 0) {
+    
+    let resultproductos = await getproductoscategoria({negocio: ""});
+    resultproductos = await resultprovincias.json();
+
+    if (resultproductos.error || resultproductos.length === 0) {
       setArrayproductos(arraynoproductos);
       setTproductos(arraynoproductos);
     } else {
-      setArrayproductos(resultproductos.data);
+      setArrayproductos(resultproductos);
       // filtrar los productos del primer negocio
       let ttarrayproductos = [];
-      ttarrayproductos = resultproductos.data.filter((item) => {
+      ttarrayproductos = resultproductos.filter((item) => {
         if (item.idnegocio === ttarraynegocios[0].idnegocio) {
           return item;
         }
@@ -776,12 +768,6 @@ const Productos = () => {
       case "precio":
         setPrecio(e.target.value);
         centerMapOnAddress(e.target.value);
-        break;
-      case "latitud":
-        setMlatitud(e.target.value);
-        break;
-      case "longitud":
-        setMlongitud(e.target.value);
         break;
       case "desc":
         setDesc(e.target.value);
@@ -1121,11 +1107,9 @@ const Productos = () => {
   }
   //
   async function paresGps() {
-    const resultgps = await axios.post(
-      "http://localhost:3001/get-pares-gps-naturaleza",
-      { naturaleza: naturaleza1 },
-      {}
-    );
+    let resultgps = await getparesgpsnaturaleza({ naturaleza: naturaleza1});
+    resultgps = await resultgps.json();
+
     let paresgps = [];
     let itemst = [];
     resultgps.data.forEach((item) => {
