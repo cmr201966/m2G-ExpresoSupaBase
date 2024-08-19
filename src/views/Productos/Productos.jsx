@@ -124,7 +124,7 @@ const Productos = () => {
   ];
   const [municipio, setMunicipio] = useState("");
   const [cbnegocioproducto, setCbnegocioproducto] = useState(false);
-  const [cbatributos, setCbatributos] = useState(false);
+  const [cbatributos, setCbatributos] = useState(true);
   const [cbdomicilio, setCbdomicilio] = useState(false);
   const [cbabiertosn, setCbabiertosn] = useState(false);
   const [domicilio, setDomicilio] = useState(0);
@@ -556,7 +556,7 @@ const Productos = () => {
     //**************************************************/
     
     let resultproductos = await getproductoscategoria({negocio: ""});
-    resultproductos = await resultprovincias.json();
+    resultproductos = await resultproductos.json();
 
     if (resultproductos.error || resultproductos.length === 0) {
       setArrayproductos(arraynoproductos);
@@ -585,7 +585,7 @@ const Productos = () => {
     let resultprovincias = await getprovincias({});
     resultprovincias = await resultprovincias.json();
     if (!resultprovincias.error && resultprovincias.length !== 0) {
-      setArrayprovincias(resultprovincias.data);
+      setArrayprovincias(resultprovincias);
     }
     setProvincia(0);
 
@@ -1090,7 +1090,7 @@ const Productos = () => {
     setCbtnegocio(false);
     setCbnegocio(false);
     setCbproducto(false);
-    setCbatributos(false);
+    setCbatributos(true);
     setCbdesc(false);
     setDesc("");
     setCbprecio(false);
@@ -1109,7 +1109,7 @@ const Productos = () => {
 
     let paresgps = [];
     let itemst = [];
-    resultgps.data.forEach((item) => {
+    resultgps.forEach((item) => {
       paresgps.push({
         lat: item.latitud,
         lng: item.longitud,
@@ -1121,6 +1121,7 @@ const Productos = () => {
         idproducto: item.idproducto,
         tarifa: item.tarifa,
         costoDomicilio: item.costoDomicilio,
+        domicilio: item.domicilio,
       });
       setPuntos(paresgps);
       setItems(itemst);
@@ -1225,7 +1226,6 @@ const Productos = () => {
     let result1 = await getproductos({naturaleza: sessionStorage.getItem("pnaturaleza"), desc: sessionStorage.getItem("pdesc"),condicion: sessionStorage.getItem("pcondicion"),
                                      tipo: sessionStorage.getItem("ptipo"), condicion_filter, naturalezas: sessionStorage.getItem("pnaturalezas")});
     result1 = await result1.json();
-
     const newResult = [];
     if (result1.error || result1.length === 0) {
       newResult.push({
@@ -1233,7 +1233,8 @@ const Productos = () => {
         keyproducto: 0,
         negocio: "",
         categoria: "",
-        Producto: result1.data.error,
+        Producto: " No hay productos",
+//        Producto: result1.error,
         photo: "./galerias/app_images/destodo/logo.jpg",
       });
       setResult(newResult);
@@ -1255,6 +1256,7 @@ const Productos = () => {
           ocupado: item.ocupado,
           tarifa: item.tarifa,
           costoDomicilio: item.costoDomicilio,
+          domicilio: item.domicilio,
         };
         if (result1[0].idnaturaleza === 62) {
           obj.Habilidades = item.adicional;
@@ -1285,7 +1287,6 @@ const Productos = () => {
 
         let resultgps = await getparesgpsnaturaleza({ naturaleza: natura});
         resultgps = await resultgps.json();
-        
     let paresgps = [];
     let itemst = [];
     resultgps.forEach((item) => {
@@ -1409,7 +1410,13 @@ const Productos = () => {
             <div className="modal-filter-title">
               <label className="label-filter-title">Filtrar</label>
             </div>
+
+
+
             <Box sx={{ maxHeight: "400px", overflowY: "auto" }}>
+
+
+{/*
               <div className="check-ubicacion">
                 <Checkbox
                   className="cbox-ubicacion"
@@ -1490,6 +1497,10 @@ const Productos = () => {
                 ""
               )}
 
+              */}
+
+   
+{/*   
               <div>
                 <Checkbox
                   className="cbox-negocio-producto"
@@ -1595,6 +1606,9 @@ const Productos = () => {
               ) : (
                 ""
               )}
+
+*/}
+
               <div>
                 <Checkbox
                   className="cbox-atributos"

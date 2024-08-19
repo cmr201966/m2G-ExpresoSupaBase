@@ -11,11 +11,10 @@ import Hero from "../../layouts/Hero/Hero";
 // styles
 import "./styles.css";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import IconButton from "@mui/material/IconButton"
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import { getprovincias, getmunicipios  } from "../../servicios/catalogos";
-import { getdatosiduser  } from "../../servicios/registrarse";
+import { getdatosiduser, setregistrarse  } from "../../servicios/registrarse";
 import { getjpg  } from "../../servicios/imagenes";
 
 const Registrarse = () => {
@@ -269,15 +268,18 @@ const Registrarse = () => {
       {
         setDesc("");
       }
-
+{/*
       const response = await axios.post(
       "http://localhost:3001/setregistrarse",
       { user, nombre, password, email, celular, fijo, provincia:provincia,municipio:municipio,
         contenidofoto,modifica,plan},
       {}
     );
-    const data = await response.data;
-    console.log(data);
+*/}
+    let response = await setregistrarse({user, nombre, password, email, celular, fijo, provincia:provincia,municipio:municipio, contenidofoto,modifica,plan});
+    response = await response.json();
+
+    const data = await response;
     if (data.error) 
     {
       setContenido(data.error);
@@ -460,7 +462,6 @@ const Registrarse = () => {
             </div>
             <div className="input-area-registrarse-municipio">
               <label>Municipio:</label>
-              {console.log(tmunicipios)}
               <select className="select-registrarse-munic" id="municipio" onChange={handleselect} value={municipio}>
                 {tmunicipios.map((item, i) => {
                   return <option key={i} value={item.municipio} >{item.desc}</option>

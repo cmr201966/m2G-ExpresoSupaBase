@@ -8,9 +8,9 @@ import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Map from "../../components/Map/MapBox";
 
 import Tippy from "@tippyjs/react";
-import { Link } from "react-router-dom";
+//import { Link } from "react-router-dom";
 import Modal from "../../components/Modal/Modal";
-import { useParams } from "react-router-dom";
+//import { useParams } from "react-router-dom";
 // components
 import Navbar from "../../components/Navbar/Navbar";
 // layouts
@@ -31,8 +31,13 @@ import Close from "@mui/icons-material/Close";
 import Edit from "@mui/icons-material/Edit";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
+//import axios from "axios";
 import { useLocation } from "react-router-dom";
+import { getcategoriasnegociosapp, getnegociosusercategoria  } from "../../servicios/negocios";
+import { getproductoscategoria, setproducto, delproducto  } from "../../servicios/productos";
+import { getJpgFile  } from "../../servicios/imagenes";
+import { getnaturalezaproducto  } from "../../servicios/naturalezas";
+
 //import styledEngineSc from "@mui/styled-engine-sc";
 
 const CatProductos = () => {
@@ -55,8 +60,8 @@ const CatProductos = () => {
   const arraynonegocios = [
     { keycategorianegocio: 999999, idnegocio: 999999, desc: "Desconocido" },
   ];
-  const [arraynaturaleza, setArraynaturaleza] = useState([]);
-  const arraynonaturaleza = [{ idnaturaleza: 8, desc: "Desconocida" }];
+  //const [arraynaturaleza, setArraynaturaleza] = useState([]);
+  //const arraynonaturaleza = [{ idnaturaleza: 8, desc: "Desconocida" }];
   const [naturaleza, setNaturaleza] = useState(0);
   const [thora, setThora] = useState("");
   const [tfecha, setTfecha] = useState("");
@@ -110,33 +115,24 @@ const CatProductos = () => {
     // Tipos de negocios
     //
     let ttarraytnegocios;
-    const resulttnegocios = await axios.post(
-      "http://localhost:3001/getcategoriasnegociosapp",
-      {  },
-      {}
-    );
-    if (resulttnegocios.data.error || resulttnegocios.data.length === 0) {
+    let resulttnegocios = await getcategoriasnegociosapp({});
+    resulttnegocios = await resulttnegocios.json();
+
+    if (resulttnegocios.error || resulttnegocios.length === 0) {
       setArraytnegocios(arraynonegocios);
       ttarraytnegocios = arraynonegocios;
     } else {
-      setArraytnegocios(resulttnegocios.data);
-      ttarraytnegocios = resulttnegocios.data;
+      setArraytnegocios(resulttnegocios);
+      ttarraytnegocios = resulttnegocios;
     }
     setTnegocio(0);
     //
     // Negocios de un tipo y que pertenescan a un dueño
     //
-    const resultnegocios = await axios.post(
-      "http://localhost:3001/getnegociosusercategoria",
-      {
-        user: "",
-        //        user: tuser,
-        categorianegocio: ttarraytnegocios[0].categorianegocio,
-      },
-      {}
-    );
+    let resultnegocios = await getnegociosusercategoria({ user: "", categorianegocio: ttarraytnegocios[0].categorianegocio,});
+    resultnegocios = await resultnegocios.json();
     setNegocio(0);
-    if (resultnegocios.data.error || resultnegocios.data.length === 0) {
+    if (resultnegocios.error || resultnegocios.length === 0) {
       //
       // No encontro ningun negocio para este usuario
       //
@@ -147,45 +143,30 @@ const CatProductos = () => {
       // se encontraron negocios de este tipo
       // buscar los horarios del primer negocio
       //
-      setArraynegocios(resultnegocios.data);
+      setArraynegocios(resultnegocios);
       //
       // Productos de este negocio
       //
-      const resultproductos = await axios.post(
-        "http://localhost:3001/getproductos-categoria",
-        { negocio: resultnegocios.data[0].negocio },
-        {}
-      );
-      let tproducto = 0;
-      console.log(resultproductos.data.error);
-      if (resultproductos.data.error || resultproductos.data.length === 0) {
+      let resultproductos = await getproductoscategoria({ negocio: resultnegocios[0].negocio});
+      resultproductos = await resultproductos.json();
+      //let tproducto = 0;
+      if (resultproductos.error || resultproductos.length === 0) {
         setArrayproductos(arraynoproductos);
         recuperardatosproducto(arraynoproductos, 0);
-        tproducto = arraynoproductos[0].idproducto;
+        //tproducto = arraynoproductos[0].idproducto;
         setProducto(null);
       } else {
-        console.log(resultproductos.data);
-        const [primero] = resultproductos.data;
-        console.log( primero.desc, 0)
+        const [primero] = resultproductos;
         setProducto({ label: primero.desc, value: 0 });
-        setArrayproductos(resultproductos.data);
-        recuperardatosproducto(resultproductos.data, 0);
-        tproducto = resultproductos.data[0].idproducto;
-        const resultado = await axios.post(
-          "http://localhost:3001/getjpg-file",
-          {
-            file:
-              "./galerias/app_images/productos/" +
-              resultproductos.data[0].idproducto +
-              "/" +
-              "foto-1.jpg",
-          },
-          //          { foto: resultproductos.data[0].idproducto, folder: "productos" },
-          {}
-        );
-        if (resultado.data.length !== 0) {
-          setContenidofoto(resultado.data);
-          setNombrefoto(resultproductos.data[0].idproducto);
+        setArrayproductos(resultproductos);
+        recuperardatosproducto(resultproductos, 0);
+        //tproducto = resultproductos[0].idproducto;
+        let resultado = await getJpgFile({ file: "./galerias/app_images/productos/" + resultproductos[0].idproducto + "/" + "foto-1.jpg"});
+        resultado = await resultado.text();
+  
+        if (resultado.length !== 0) {
+          setContenidofoto(resultado);
+          setNombrefoto(resultproductos[0].idproducto);
         } else {
           setNombrefoto("");
         }
@@ -199,41 +180,28 @@ const CatProductos = () => {
     setProducto(value);
 
           // Productos del negocio
-          const resultproductos = await axios.post(
-            "http://localhost:3001/getproductos-categoria",
-            { negocio: arraynegocios[negocio].negocio },
-            {}
-          );
-          if (resultproductos.data.error || resultproductos.data.length === 0) {
+          let resultproductos = await getproductoscategoria({ negocio: arraynegocios[negocio].negocio });
+          resultproductos = await resultproductos.json();
+
+          if (resultproductos.error || resultproductos.length === 0) {
             setArrayproductos(arraynoproductos);
             recuperardatosproducto(arraynoproductos, 0);
           } else {
             // get la naturaleza de este producto
-            const rnaturaleza = await axios.post(
-              "http://localhost:3001/getnaturaleza-producto",
-              { producto: resultproductos.data[0].idproducto },
-              {}
-            );
-            if (rnaturaleza.data.length !== 0) {
-              setNaturalezat(rnaturaleza.data[0].naturaleza);
+
+        let rnaturaleza = await getnaturalezaproducto({ producto: resultproductos[0].idproducto});
+        rnaturaleza = await rnaturaleza.json();
+        if (rnaturaleza.length !== 0) {
+              setNaturalezat(rnaturaleza[0].naturaleza);
             }
 
-            setArrayproductos(resultproductos.data);
-            recuperardatosproducto(resultproductos.data, 0);
+            setArrayproductos(resultproductos);
+            recuperardatosproducto(resultproductos, 0);
+    let resultado = await getJpgFile({ file: "./galerias/app_images/productos" + "/" + arrayproductos[value?.value].idproducto + "/foto-1.jpg"});
+    resultado = await resultado.text();
 
-    const resultado = await axios.post(
-      "http://localhost:3001/getjpg-file",
-      {
-        file:
-          "./galerias/app_images/productos" +
-          "/" +
-          arrayproductos[value?.value].idproducto +
-          "/foto-1.jpg",
-      },
-      {}
-    );
-    if (resultado.data.length !== 0) {
-      setContenidofoto(resultado.data);
+    if (resultado.length !== 0) {
+      setContenidofoto(resultado);
       setNombrefoto(arrayproductos[value?.value].idproducto);
     } else {
       setNombrefoto("");
@@ -241,112 +209,107 @@ const CatProductos = () => {
   }
   };
 
+  async function getNegocios(value){
+    let resultnegocios = await getnegociosusercategoria({ user: "", categorianegocio: arraytnegocios[value].categorianegocio});
+    resultnegocios = await resultnegocios.json();
 
+    if (resultnegocios.error || resultnegocios.length === 0) {
+      // No encontro ningun negocio para este usuario
+      setArraynegocios(arraynonegocios);
+      setArrayproductos(arraynoproductos);
+    } else {
+      setArraynegocios(resultnegocios);
 
-  async function handleselect(e) {
+      // Productos del negocio
+      let resultproductos = await getproductoscategoria({ negocio: resultnegocios[0].negocio });
+      resultproductos = await resultproductos.json();
+
+      if (resultproductos.error || resultproductos.length === 0) {
+        setArrayproductos(arraynoproductos);
+        recuperardatosproducto(arraynoproductos, 0);
+      } else {
+        setArrayproductos(resultproductos);
+        recuperardatosproducto(resultproductos, 0);
+        const [primero] = resultproductos;
+        setProducto({ label: primero.desc, value: 0 });
+            //restaurarmenut(tcategorias, 0, resultproductos.data, 0, topciones);
+{/*
+            const resultado = await axios.post(
+          "http://localhost:3001/getjpg-file",
+          {
+            file: "./galerias/app_images/productos" + "/" + resultproductos.data[0].idproducto + "/foto-1.jpg", },
+          {}
+        );
+*/}
+        let resultado = await getJpgFile({ file: "./galerias/app_images/productos" + "/" + resultproductos[0].idproducto + "/foto-1.jpg"});
+        resultado = await resultado.text();
+        
+        if (resultado.length !== 0) {
+          setContenidofoto(resultado);
+          setNombrefoto(resultproductos[0].idproducto);
+        } else {
+          setNombrefoto("");
+        }
+      }
+      setNegocio(0);
+    }
+
+  }
+
+  async function getProductos(value){
+    let resultproductos = await getproductoscategoria({ negocio: arraynegocios[value].negocio });
+    resultproductos = await resultproductos.json();
+
+    if (resultproductos.error || resultproductos.length === 0) {
+      setArrayproductos(arraynoproductos);
+      recuperardatosproducto(arraynoproductos, 0);
+    } else {
+      setArrayproductos(resultproductos);
+      recuperardatosproducto(resultproductos, 0);
+      // get la naturaleza de este producto
+      let rnaturaleza = await getnaturalezaproducto({ producto: resultproductos[0].idproducto});
+      rnaturaleza = await rnaturaleza.json();
+
+      if (rnaturaleza.length !== 0) {
+        setNaturalezat(rnaturaleza[0].naturaleza);
+      }
+{/*
+      const resultado = await axios.post(
+        "http://localhost:3001/getjpg-file",
+        {
+          file:
+            "./galerias/app_images/productos" +
+            "/" +
+            resultproductos.data[0].idproducto +
+            "/foto-1.jpg",
+        },
+        {}
+      );
+*/}
+      let resultado = await getJpgFile({ file: "./galerias/app_images/productos" +  "/" +  resultproductos[0].idproducto + "/foto-1.jpg"});
+      resultado = await resultado.text();
+
+      if (resultado.length !== 0) {
+        setContenidofoto(resultado);
+        setNombrefoto(resultproductos[0].idproducto);
+      } else {
+        setNombrefoto("");
+      }
+    }
+
+  }
+
+  function handleselect(e) {
     switch (e.target.id) {
       case "tnegocio":
         setTnegocio(e.target.value);
-        const resultnegocios = await axios.post(
-          "http://localhost:3001/getnegociosusercategoria",
-          {
-            user: "",
-            //            user: tuser,
-            categorianegocio:
-              arraytnegocios[e.target.value].categorianegocio,
-          },
-          {}
-        );
-        console.log(resultnegocios);
-        if (resultnegocios.data.error || resultnegocios.data.length === 0) {
-          // No encontro ningun negocio para este usuario
-          setArraynegocios(arraynonegocios);
-          setArrayproductos(arraynoproductos);
-        } else {
-          setArraynegocios(resultnegocios.data);
-
-          // Productos del negocio
-          console.log(resultnegocios.data[0].negocio);
-          const resultproductos = await axios.post(
-            "http://localhost:3001/getproductos-categoria",
-            { negocio: resultnegocios.data[0].negocio },
-            {}
-          );
-          if (resultproductos.data.error || resultproductos.data.length === 0) {
-            setArrayproductos(arraynoproductos);
-            recuperardatosproducto(arraynoproductos, 0);
-          } else {
-            setArrayproductos(resultproductos.data);
-            recuperardatosproducto(resultproductos.data, 0);
-            const [primero] = resultproductos.data;
-            setProducto({ label: primero.desc, value: 0 });
-            console.log( primero.desc, 0)
-                //restaurarmenut(tcategorias, 0, resultproductos.data, 0, topciones);
-            const resultado = await axios.post(
-              "http://localhost:3001/getjpg-file",
-              {
-                file:
-                  "./galerias/app_images/productos" +
-                  "/" +
-                  resultproductos.data[0].idproducto +
-                  "/foto-1.jpg",
-              },
-              {}
-            );
-            if (resultado.data.length !== 0) {
-              setContenidofoto(resultado.data);
-              setNombrefoto(resultproductos.data[0].idproducto);
-            } else {
-              setNombrefoto("");
-            }
-          }
-          setNegocio(0);
-        }
+        getNegocios(e.target.value);      
         break;
 
       case "negocio":
         setNegocio(e.target.value);
-        let tcategorias = [];
-        const resultproductos = await axios.post(
-          "http://localhost:3001/getproductos-categoria",
-          { negocio: arraynegocios[e.target.value].negocio },
-          {}
-        );
-        if (resultproductos.data.error || resultproductos.data.length === 0) {
-          setArrayproductos(arraynoproductos);
-          recuperardatosproducto(arraynoproductos, 0);
-        } else {
-          // get la naturaleza de este producto
-          const rnaturaleza = await axios.post(
-            "http://localhost:3001/getnaturaleza-producto",
-            { producto: resultproductos.data[0].idproducto },
-            {}
-          );
-          if (rnaturaleza.data.length !== 0) {
-            setNaturalezat(rnaturaleza.data[0].naturaleza);
-          }
-          setArrayproductos(resultproductos.data);
-          recuperardatosproducto(resultproductos.data, 0);
-          const resultado = await axios.post(
-            "http://localhost:3001/getjpg-file",
-            {
-              file:
-                "./galerias/app_images/productos" +
-                "/" +
-                resultproductos.data[0].idproducto +
-                "/foto-1.jpg",
-            },
-            {}
-          );
-          if (resultado.data.length !== 0) {
-            setContenidofoto(resultado.data);
-            setNombrefoto(resultproductos.data[0].idproducto);
-          } else {
-            setNombrefoto("");
-          }
-        }
+        getProductos(e.target.value);       
         setProducto(null);
-
         break;
 
       case "producto":
@@ -470,36 +433,43 @@ const CatProductos = () => {
   };
 
   async function confirmar() {
-    const result = await axios.post(
-      "http://localhost:3001/setproducto",
-      {
-        user: tuser,
-        producto: arrayproductos[producto?.value].idproducto,
-        negocio: arraynegocios[negocio].negocio,
-        nick: nombrecorto,
-        contenidofoto,
-        desc: descripcion,
-        precio,
-        ocupado: ocupado===true?1:0,
-        domicilio: domicilio === true ? 1 : 0,
-        agregar: agregarsn ? true : false,
-        editar: editarsn ? true : false,
-        fecha,
-        thora,
-        tfecha,
-        gps: cbgps === true ? 1 : 0,
-        latitud: lat,
-        longitud: lng,
-      },
-      {}
-    );
-    if (result.data.error) {
-      setContenido(result.data.error);
+    console.log(producto);
+    let mproducto=0;
+    if (producto===null){
+       mproducto=0;
+    }
+    else{
+       mproducto=arrayproductos[producto?.value].idproducto;
+    }
+    console.log(mproducto);
+    let result = await setproducto({  user: tuser,
+      producto: mproducto,
+      negocio: arraynegocios[negocio].negocio,
+      nick: nombrecorto,
+      contenidofoto,
+      desc: descripcion,
+      precio,
+      ocupado: ocupado===true?1:0,
+      domicilio: domicilio === true ? 1 : 0,
+      agregar: agregarsn ? true : false,
+      editar: editarsn ? true : false,
+      fecha,
+      thora,
+      tfecha,
+      gps: cbgps === true ? 1 : 0,
+      latitud: lat,
+      longitud: lng,
+});
+    result = await result.json();
+    console.log(result);
+
+    if (result.error) {
+      setContenido(result.error);
       setShow1(true);
       return;
     }
     if (agregarsn) {
-      var productot = result.data.productot;
+      var productot = result.productot;
       arrayproductos.push({
         user: tuser,
         idproducto: productot,
@@ -564,12 +534,14 @@ const CatProductos = () => {
   };
 
   async function sino() {
-
+{/*
     await axios.post(
       "http://localhost:3001/delproducto",
       { producto: arrayproductos[producto?.value].idproducto },
       {}
     );
+*/}    
+    await delproducto({ producto: arrayproductos[producto?.value].idproducto});
 
     // refrescar la lista despues de eliminada la categoria
     //arraycategoriasproductos.splice(borrar, 1);
@@ -778,33 +750,6 @@ const CatProductos = () => {
                           )}
                         />
                       </div>
-
-                      {/*
-                      {agregarsn === false ? (
-                        <div className="input-area1-producto">
-                          <label className="label-datos-catproducto">
-                            Producto:{" "}
-                          </label>
-                          <select
-                            className="selectpro-prod"
-                            id="producto"
-                            onChange={handleselect}
-                            value={producto}
-                            disabled={agregarsn || editarsn}
-                          >
-                            {arrayproductos.map((item, i) => {
-                              return (
-                                <option key={i} value={i}>
-                                  {item.desc}
-                                </option>
-                              );
-                            })}
-                          </select>
-                        </div>
-                      ) : (
-                        ""
-                      )}
-*/}
                     </div>
                   </>
                 ) : (
@@ -851,28 +796,6 @@ const CatProductos = () => {
                               required
                             />
                           </div>
-{/*
-
-                          <div className="input-area1-producto">
-                            <label className="label-datos-naturaleza">
-                              Naturaleza:{" "}
-                            </label>
-                            <select
-                              className="select-naturaleza-producto"
-                              id="naturaleza"
-                              onChange={handleselect}
-                              value={naturaleza}
-                            >
-                              {arraynaturaleza.map((item, i) => {
-                                return (
-                                  <option key={i} value={item.idnaturaleza}>
-                                    {item.desc}
-                                  </option>
-                                );
-                              })}
-                            </select>
-                          </div>
-*/}
 
                           <div className="input-area2">
                             <label className="label-datos-catproducto">

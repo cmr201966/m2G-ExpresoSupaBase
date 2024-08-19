@@ -35,6 +35,10 @@ export async function getallnegocios(body) {
   return makeRequest("http://localhost:3001/getallnegocios", body);
 }
 
+export async function getnegociosusercategoria(body) {
+  return makeRequest("http://localhost:3001/getnegociosusercategoria", body);
+}
+
 export async function delnegocio(body) {
   return makeRequest("http://localhost:3001/delnegocio", body);
 }

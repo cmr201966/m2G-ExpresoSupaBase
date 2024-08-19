@@ -47,6 +47,7 @@ const InfoProducto = () => {
   const [naturaleza1, setNaturaleza1] = useState(0);
   const [distancia, setDistancia] = useState(0);
   const [tarifa, setTarifa] = useState(1);
+  const [costoDomicilio, setCostoDomicilio] = useState(50);
   const [domicilio, setDomicilio] = useState(50);
   const [puntosState, setPuntosState] = useState(0);
   const [carrera, setCarrera] = useState(0);
@@ -67,6 +68,8 @@ const InfoProducto = () => {
       setHora(result[0].hora);
       setGps(result[0].gpsSN);
       setTarifa(result[0].tarifa);
+      setCostoDomicilio(result[0].costoDomicilio);
+      setDomicilio(result[0].domicilio);
     }
 
     result = await getParesGpsNaturalezaNew({naturaleza: parsedParams.naturaleza,  idproducto: parsedParams.idproducto});
@@ -159,19 +162,8 @@ if (puntosState===2){
     if (showMap===true) {
       // Insertar el movimiento y poner showmap en false
       let tindex=puntos.length
-      setMovimientosNew({idmovimiento: 1, idproducto: idproducto, latOrigen: puntos[tindex-2].lat, latDestino: puntos[tindex-1].lat, lngOrigen: puntos[tindex-2].lng, lngDestino: puntos[tindex-1].lng, precio: (carrera*tarifa)+domicilio, kms: carrera});
-
-      {/*
-      await axios.post(
-      "http://localhost:3001/setmovimiento-new",
-      {
-        idmovimiento: 1, idproducto: idproducto, latOrigen: puntos[tindex-2].lat, latDestino: puntos[tindex-1].lat, 
-        lngOrigen: puntos[tindex-2].lng, lngDestino: puntos[tindex-1].lng, precio: (carrera*tarifa)+domicilio, 
-        kms: carrera 
-      },
-      {}
-      );
-      */}
+      await setMovimientosNew({idmovimiento: 1, idproducto: idproducto, latOrigen: puntos[tindex-2].lat, latDestino: puntos[tindex-1].lat, 
+                          lngOrigen: puntos[tindex-2].lng, lngDestino: puntos[tindex-1].lng, precio: (carrera*tarifa)+costoDomicilio, kms: carrera});
 
       setOcupado(true);
 
@@ -249,6 +241,19 @@ if (puntosState===2){
           </IconButton>
           <h3 className="main-title">M2G-Destodo</h3>
           <h4 className="registrarse-cabeza-1"> - Informacion del producto</h4>
+          {(distancia !== 0) && (showMap===true && puntosState===2 && domicilio===1) || (domicilio===0 && ocupado===0)? (
+                  <Tippy content="Ordenar este producto">
+                    <button
+                      type="button"
+                      className="car negocio-button primary"
+                      onClick={shooping}
+                    >
+                      <ShoppingCartOutlinedIcon />
+                    </button>
+                  </Tippy>
+                ) : (
+                  ""
+          )}
         </div>
 
         <main className="main-info-producto">
@@ -316,6 +321,7 @@ if (puntosState===2){
           )}
           {gps === 1 && showMap === true && puntos.length!==0 ? (
             <section className="mapa">
+              {domicilio===1?
               <div className="parrafo distancia">
                 <p>{puntos[0].info}</p>
                 <p>{" esta a "}</p>
@@ -323,22 +329,10 @@ if (puntosState===2){
                   {distancia}
                   {" KMS carrera "}{carrera}{" Kms "}
                   {" Precio: "}
-                  {((carrera * tarifa) + domicilio).toFixed(0)}
+                  {((carrera * tarifa) + costoDomicilio).toFixed(0)}
                 </p>
-                {distancia !== 0 && (showMap===true && puntosState===2)? (
-                  <Tippy content="Ordenar este producto">
-                    <button
-                      type="button"
-                      className="car negocio-button primary"
-                      onClick={shooping}
-                    >
-                      <ShoppingCartOutlinedIcon />
-                    </button>
-                  </Tippy>
-                ) : (
-                  ""
-                )}
-              </div>
+              </div>:""
+              }
               <Map
                 points={puntos}
                 sx={{ height: "600px", width: "100%" }}

@@ -3,7 +3,6 @@ import Modal from "../../components/Modal/Modal";
 import Checkbox from '@mui/material/Checkbox';
 // Mis controles
 import ChatDialogo from "../../components/ChatDialogo/ChatDialogo";
-//import Chat from "@mui/icons-material/Chat"
 import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Map from "../../components/Map/MapBox";
 
@@ -20,7 +19,6 @@ import { useNavigate } from "react-router-dom"
 import "./styles.css";
 import { useEffect, useState } from "react";
 import { FormatColorResetRounded } from "@mui/icons-material";
-//import styledEngineSc from "@mui/styled-engine-sc";
 import Check from "@mui/icons-material/Check";
 import Add from "@mui/icons-material/Add";
 import Delete from "@mui/icons-material/Delete";
@@ -134,13 +132,6 @@ const CatNegocios = () => {
     let resultnegocios = await getallnegocios({categorianegocio: resulcategoriasnegocios[0].categorianegocio, user: "" });
     resultnegocios = await resultnegocios.json();
 
-    {/*
-    const resultnegocios = await axios.post(
-      "http://localhost:3001/getallnegocios",
-      { categorianegocio: resulcategoriasnegocios.data[0].categorianegocio, user: "" },
-      {}
-    );
-    */}
 
     if (resultnegocios.error || resultnegocios.length === 0) {
       setArraynegocios(arraynonegocios);
@@ -158,13 +149,6 @@ const CatNegocios = () => {
       
       let resultado = await getJpgFile({file: "./galerias/app_images/negocios/" + resultnegocios[0].idnegocio + "/" + "foto-1.jpg" });
       resultado = await resultado.text();
-      {/*
-        const resultado = await axios.post(
-        "http://localhost:3001/getjpg-file",
-        { file: "./galerias/app_images/negocios/" + resultnegocios[0].idnegocio + "/" + "foto-1.jpg" },
-        {}
-      );
-      */}
       if (resultado.length !== 0) {
         setContenidofoto(resultado);
         setNombrefoto(foto-1);
@@ -175,13 +159,6 @@ const CatNegocios = () => {
       }
     }
     setIdnegocio(0);
-    {/*
-    const resultprovincia = await axios.post(
-      "http://localhost:3001/getprovincias",
-      {},
-      {}
-    );
-    */}
     let resultprovincia= await getprovincias({});
     resultprovincia = await resultprovincia.json();
 
@@ -197,13 +174,6 @@ const CatNegocios = () => {
     var ttmunicipio = [];
     let resultmunicipio= await getmunicipios({});
     resultmunicipio = await resultmunicipio.json();
-{/*
-    const resultmunicipio = await axios.post(
-      "http://localhost:3001/getmunicipios",
-      { provincia: "" },
-      {}
-    );
-    */}
 
     if (resultmunicipio.error || resultmunicipio.length === 0) {
       setArraymunicipio(arraydesconocido);
@@ -250,7 +220,6 @@ const CatNegocios = () => {
     let ttmunicipio = [];
     setNick(nickt);
     setDescripcion(descripciont);
-//    setDescripcionadicional(descripcionadicionalt);
     setDireccionpostal(direccionpostalt);
     setProvincia(provinciat);
     setMunicipio(municipiot);
@@ -260,10 +229,6 @@ const CatNegocios = () => {
     setTelefonocelular(telefonocelulart)
     setCorreo(correot);
     setCbgps(cbgpst);
-//    setCapacidad(capacidadt);
-//    setCbcapacidad(cbcapacidadt);
-//    setCbhorarios(cbhorariost);
-//    setIperiodo(iperiodot);
 
   }
 
@@ -277,8 +242,6 @@ const CatNegocios = () => {
     setCbgps(false);
     setNombrefoto("");
     setContenidofoto("");
-    //setMunicipio("");
-    //setProvincia("");
   }
 
   async function handleselect(e) {
@@ -307,13 +270,6 @@ const CatNegocios = () => {
   async function recuperaNegocios(value){
     let resultnegocio = await getallnegocios({categorianegocio: arraycategoriasnegocios[value].categorianegocio, user: ""});
     resultnegocio = await resultnegocio.json();
-{/*
-    const resultnegocio = await axios.post(
-      "http://localhost:3001/getallnegocios",
-      { categorianegocio: arraycategoriasnegocios[value].categorianegocio, user: "" },
-      {}
-    );
-    */}
     const data = resultnegocio;
     if (data.error || data.length === 0) {
       setArraynegocios(arraynonegocios);
@@ -330,14 +286,6 @@ const CatNegocios = () => {
       let resultado = await getJpgFile({file: "./galerias/app_images/negocios/" + resultnegocio[0].idnegocio + "/" + "foto-1.jpg"});
       resultado = await resultado.text();
 
-      {/*
-      const resultado = await axios.post(
-        "http://localhost:3001/getjpg-file",
-        {file: "./galerias/app_images/negocios/" + resultnegocio.data[0].idnegocio + "/" + "foto-1.jpg"},
-        {}
-      );
-      */}
-
       if (resultado.length !== 0) {
         setContenidofoto(resultado);
         setNombrefoto(resultnegocio[0].idnegocio);
@@ -353,13 +301,6 @@ const CatNegocios = () => {
 async function recuperaImgagenNegocio(value){
  let resultado = await getJpgFile({file: "./galerias/app_images/negocios/" + arraynegocios[value].idnegocio + "/" + "foto-1.jpg"});
  resultado = await resultado.text();
- {/*
-  const resultado = await axios.post(
-    "http://localhost:3001/getjpg-file",
-    {file: "./galerias/app_images/negocios/" + arraynegocios[value].idnegocio + "/" + "foto-1.jpg"},
-    {}
-  );
-  */}
   if (resultado.length !== 0) {
     setContenidofoto(resultado);
     setNombrefoto(arraynegocios[value].idnegocio);
@@ -451,22 +392,8 @@ function handleInput(e) {
 });
     result = await result.json();
 
-    {/*
-    const result = await axios.post(
-      "http://localhost:3001/setnegocio",
-      {
-        user: user, nick, categorianegocio: arraycategoriasnegocios[categorianegocio].categorianegocio,
-        negocio: arraynegocios[negocio].idnegocio, desc: descripcion,
-        sede: direccionpostal, fijo: telefonofijo, celular: telefonocelular, email: correo,        
-        agregarsn, editarsn, contenidofoto, provincia: provincia, municipio: municipio,
-        latitud: lat, longitud: lng, gps: cbgps===true?1:0, creaCategoriaProducto: false
-      },
-      {}
-    );
-*/}
 
     if (result.error) {
-      //      setContenido("No se registró el negocio.");
       setContenido(result.error);
       setShow1(true);
     }
@@ -527,13 +454,6 @@ function handleInput(e) {
   }
 
   async function sino() {
-    {/*
-    await axios.post(
-      "http://localhost:3001/delnegocio",
-      { negocio: arraynegocios[negocio].idnegocio },
-      {}
-    );
-    */}
     
     await delnegocio({negocio: arraynegocios[negocio].idnegocio});
        // refrescar la lista despues de eliminada la categoria

@@ -29,3 +29,12 @@ export async function getproductos(body) {
 export async function getproductoscategoria(body) {
   return makeRequest("http://localhost:3001/getproductos-categoria", body);
 }
+
+export async function delproducto(body) {
+  return makeRequest("http://localhost:3001/delproducto", body);
+}
+
+export async function setproducto(body) {
+  return makeRequest("http://localhost:3001/setproducto", body);
+}
+

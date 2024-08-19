@@ -62,9 +62,6 @@ const Whatsapp = () => {
 }
 
   function handleInput(e) {
-    if (e.key==='Enter') 
-      {}
-    else{
       switch (e.target.id) {
         case "cmd":
              setContenido("");
@@ -73,7 +70,6 @@ const Whatsapp = () => {
         default:
             break;
     }
-  }
   }
 
   function key(e){

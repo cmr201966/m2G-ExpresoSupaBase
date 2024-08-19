@@ -11,9 +11,12 @@ export async function makeRequest(url, body, method = "POST") {
   });
 }
 
-export async function getdatosiduser(body) {
-    return makeRequest("http://localhost:3001/getdatosiduser", body);
+export async function delfileinfolder(body) {
+  return makeRequest("http://localhost:3001/del_file_in_folder", body);
 }
-export async function setregistrarse(body) {
-  return makeRequest("http://localhost:3001/setregistrarse", body);
-}
+
+export async function creafileinfolder(body) {
+    return makeRequest("http://localhost:3001/set_file_in_folder", body);
+  }
+  
+  

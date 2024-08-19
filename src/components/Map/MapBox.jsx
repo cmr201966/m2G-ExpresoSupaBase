@@ -48,7 +48,6 @@ function MapBox({
   noLocalMarker = true,
   onMapClick,
 }) {
-  console.log("Index", tindex);
   const [mindex, setMindex] = useState(tindex ?? 0);
   const [zoom, setZoom] = useState(remoteZoom ?? 16);
   const [longitude, setLongitude] = useState(lng ?? -75.829090519);

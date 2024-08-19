@@ -4,7 +4,7 @@ import { useNavigate } from "react-router-dom"
 
 // styles
 import "./styles.css";
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 
 
 const Cerrarsesion = () => {

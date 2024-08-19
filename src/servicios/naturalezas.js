@@ -22,3 +22,7 @@ export async function getparesgpsnaturaleza(body) {
 export async function getParesGpsNaturalezaNew(body) {
   return makeRequest("http://localhost:3001/get-pares-gps-naturaleza-new", body);
 }
+
+export async function getnaturalezaproducto(body) {
+  return makeRequest("http://localhost:3001/getnaturaleza-producto", body);
+}

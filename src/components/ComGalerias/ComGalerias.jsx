@@ -7,12 +7,13 @@ import Modal from "../../components/Modal/Modal";
 // styles
 import "./styles.css";
 import { useEffect, useState } from "react";
-import axios from "axios";
-import Check from "@mui/icons-material/Check";
 import Add from "@mui/icons-material/Add";
 import Close from "@mui/icons-material/Close";
 import { Button, Box, useTheme } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
+import { getgalerias } from "../../servicios/galerias";
+import { getJpgFile } from "../../servicios/imagenes";
+import { creafileinfolder, delfileinfolder } from "../../servicios/fs";
 
 const ComGalerias = (props) => {
   const {
@@ -28,7 +29,7 @@ const ComGalerias = (props) => {
   const parsedParams = {};
   const [arrayalbum, setArrayalbum] = useState([]);
   const [arrayfotos, setArrayfotos] = useState([]);
-  const [nombre_album, setNombre_album] = useState("");
+  //const [nombre_album, setNombre_album] = useState("");
   const [inicia, setInicia] = useState(true);
   const [contenidofoto, setContenidofoto] = useState([]);
   const [contenidoalbum, setContenidoalbum] = useState([]);
@@ -60,15 +61,20 @@ const ComGalerias = (props) => {
 
   async function init1(rutatmp, i) {
     let marrayalbum = [];
+{/*
     const galeriasfolders = await axios.post(
       "http://localhost:3001/getgalerias",
       { ruta: rutatmp },
       {}
     );
+*/}    
+    let galeriasfolders = await getgalerias({ruta: rutatmp});
+    galeriasfolders = await galeriasfolders.json();
+
     let tarrayalbum = [];
     let tarrayfotos = [];
     let j = 1;
-    for (const item of galeriasfolders.data) {
+    for (const item of galeriasfolders) {
       if (item.toLowerCase().indexOf(".jpg") <= 0) {
         if (arrayalbum.length === 0 && item.toLowerCase() !== "pedidos") {
           tarrayalbum.push(item);
@@ -78,12 +84,18 @@ const ComGalerias = (props) => {
           j = j += 1;
           // obtener el contenido del primer jpg de cada album
           carpeta = rutatmp === "" ? "" : rutatmp + "/" + item;
+{/*
           const galeriasfolders = await axios.post(
             "http://localhost:3001/getgalerias",
             { ruta: carpeta },
             {}
           );
-          if (galeriasfolders.data.length > 0) {
+*/}
+          let galeriasfolders = await getgalerias({ruta: carpeta});
+          galeriasfolders = await galeriasfolders.json();
+
+          if (galeriasfolders.length > 0) {
+{/*            
             const primerjpg = await axios.post(
               "http://localhost:3001/getjpg-file",
               {
@@ -91,21 +103,28 @@ const ComGalerias = (props) => {
                   "./galerias/app_images/" +
                   carpeta +
                   "/" +
-                  galeriasfolders.data[0],
+                  galeriasfolders[0],
               },
               {}
             );
-            if (primerjpg.data.length !== 0 && primerjpg.error === undefined) {
-              contenidoalbum.push(primerjpg.data);
+*/}
+          let primerjpg = await getJpgFile({ file: "./galerias/app_images/" + carpeta + "/" + galeriasfolders[0]});
+          primerjpg = await primerjpg.text();
+          if (primerjpg.length !== 0 && primerjpg.error === undefined) {
+              contenidoalbum.push(primerjpg);
             }
           } else {
-            const primerjpg = await axios.post(
+              let primerjpg = await getJpgFile({ file: "./galerias/app_images/" + carpeta + "/nada.nada" });
+              primerjpg = await primerjpg.text();
+{/*              
+              const primerjpg = await axios.post(
               "http://localhost:3001/getjpg-file",
               { file: "./galerias/app_images/" + carpeta + "/nada.nada" },
               {}
             );
-            if (primerjpg.data.length !== 0 && primerjpg.error === undefined) {
-              contenidoalbum.push(primerjpg.data);
+*/}            
+            if (primerjpg.length !== 0 && primerjpg.error === undefined) {
+              contenidoalbum.push(primerjpg);
             }
           }
         }
@@ -119,13 +138,18 @@ const ComGalerias = (props) => {
     contenidofoto.splice(0, contenidofoto.length);
     let tarray = [];
     for (const item of tarrayfotos) {
+{/*      
       const resultado = await axios.post(
         "http://localhost:3001/getjpg-file",
         { file: "./galerias/app_images/" + carpeta + item },
         {}
       );
-      if (resultado.data.length !== 0 && resultado.error === undefined) {
-        tarray.push(resultado.data);
+*/}
+      let resultado = await getJpgFile({ file: "./galerias/app_images/" + carpeta + item  });
+      resultado = await resultado.text();
+
+      if (resultado.length !== 0 && resultado.error === undefined) {
+        tarray.push(resultado);
       }
     }
     setAlbumtxt(marrayalbum[i]);
@@ -135,6 +159,7 @@ const ComGalerias = (props) => {
     setInicia(false);
   }
 
+{/*  
   function handleInput(e) {
     switch (e.target.id) {
       case "nombre_album":
@@ -148,15 +173,18 @@ const ComGalerias = (props) => {
   function addalbum() {
     setAlbum_add(true);
   }
-
+*/}
   const [created, setCreated] = useState(false);
 
+{/*    
   async function confirmar_album() {
     const creacarpeta = await axios.post(
       "http://localhost:3001/getcreacarpeta",
       { ruta: "./galerias/app_images/" + rutatmp + "/" + nombre_album },
       {}
     );
+
+
     if (creacarpeta.error) {
       setContenido("No se pudo crear el album");
       setShow(true);
@@ -177,7 +205,9 @@ const ComGalerias = (props) => {
       setCreated(true);
     }
     setAlbum_add(false);
-  }
+
+    }
+*/}    
 
   useEffect(() => {
     if (created) {
@@ -208,19 +238,27 @@ const ComGalerias = (props) => {
   }
 
   async function del_file_in_folder(folder, file) {
+    {/*
     await axios.post(
       "http://localhost:3001/del_file_in_folder",
       { ruta: folder, file },
       {}
     );
+    */}
+    await delfileinfolder({ ruta: folder, file  });
+
   }
 
   async function crea_file_in_folder(folder, file, contenidofoto) {
+{/*    
     await axios.post(
       "http://localhost:3001/set_file_in_folder",
       { ruta: folder, file, contenidofoto },
       {}
     );
+*/}    
+await creafileinfolder({ ruta: folder, file, contenidofoto  });
+
   }
 
   async function onPhotoChange(e) {

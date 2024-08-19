@@ -6,8 +6,8 @@
   justify-content: center;
   align-items: center;
   color: aliceblue;
-  margin-bottom: 10px;
-}
+  gap:5px;
+  
 
 .logo-acerca {
   display: flex;

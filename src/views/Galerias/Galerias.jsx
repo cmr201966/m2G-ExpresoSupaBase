@@ -10,6 +10,7 @@ import ArrowBack from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
+import "./styles.css";
 
 const Galerias = () => {
   const location = useLocation();
@@ -75,7 +76,7 @@ const Galerias = () => {
         ]}
       />
       <Hero>
-        <div className="cabeza">
+        <div className="cabeza-galerias">
           {parsedParams.nivel === 0 ? (
             ""
           ) : (

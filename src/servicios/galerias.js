@@ -11,9 +11,8 @@ export async function makeRequest(url, body, method = "POST") {
   });
 }
 
-export async function getdatosiduser(body) {
-    return makeRequest("http://localhost:3001/getdatosiduser", body);
+export async function getgalerias(body) {
+  return makeRequest("http://localhost:3001/getgalerias", body);
 }
-export async function setregistrarse(body) {
-  return makeRequest("http://localhost:3001/setregistrarse", body);
-}
+
+  
