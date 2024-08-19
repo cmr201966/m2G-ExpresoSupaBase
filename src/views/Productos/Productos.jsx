@@ -81,16 +81,13 @@ const Productos = () => {
     { opcion: "Hacer coincidir todo el campo" },
     { opcion: "Comienzo del campo" },
   ];
-  let filtro_productos = sessionStorage.getItem("filtro_productos");
+  //let filtro_productos = sessionStorage.getItem("filtro_productos");
   let condicion_filter = "";
   //
   // Estados del filtro
   //
   // Estados que vienen del filtro
   const [arraynaturalezas, setArraynaturalezas] = useState([]);
-  const arraynonaturalezas = [
-    { idnaturaleza: 999999, desc: "No hay naturalezas" },
-  ];
   const [cbnaturaleza, setCbnaturaleza] = useState(0);
   const [naturaleza, setNaturaleza] = useState(0);
   const [arraytnegocios, setArraytnegocios] = useState([]);

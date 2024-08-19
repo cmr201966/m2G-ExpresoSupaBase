@@ -18,6 +18,23 @@ export async function getinfonegocio(body) {
 export async function getnegocios1(body) {
   return makeRequest("http://localhost:3001/getnegocios-1", body);
 }
+
 export async function getcategoriasnegocios(body) {
   return makeRequest("http://localhost:3001/getcategoriasnegocios", body);
+}
+
+export async function setnegocio(body) {
+  return makeRequest("http://localhost:3001/setnegocio", body);
+}
+
+export async function getcategoriasnegociosapp(body) {
+  return makeRequest("http://localhost:3001/getcategoriasnegociosapp", body);
+}
+
+export async function getallnegocios(body) {
+  return makeRequest("http://localhost:3001/getallnegocios", body);
+}
+
+export async function delnegocio(body) {
+  return makeRequest("http://localhost:3001/delnegocio", body);
 }

@@ -19,7 +19,6 @@ import { useNavigate } from "react-router-dom"
 // styles
 import "./styles.css";
 import { useEffect, useState } from "react";
-import axios from "axios";
 import { FormatColorResetRounded } from "@mui/icons-material";
 //import styledEngineSc from "@mui/styled-engine-sc";
 import Check from "@mui/icons-material/Check";
@@ -31,6 +30,10 @@ import IconButton from "@mui/material/IconButton"
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import CollectionsIcon from "@mui/icons-material/Collections"
 import MapIcon from "@mui/icons-material/Map";
+import { setnegocio, getcategoriasnegociosapp, getallnegocios, delnegocio  } from "../../servicios/negocios";
+import { getJpgFile } from "../../servicios/imagenes";
+import { getprovincias, getmunicipios } from "../../servicios/catalogos";
+
 
 const CatNegocios = () => {
   const navigate = useNavigate();
@@ -114,46 +117,56 @@ const CatNegocios = () => {
     setNaturaleza(parsedParams.naturaleza);
     setIdowner(parsedParams.idowner);
     // Recuperar las categorias de las aplicaciones que existen
-    const resulcategoriasnegocios = await axios.post(
-      "http://localhost:3001/getcategoriasnegociosapp",
-      { },
-      {}
-    );
-    if (resulcategoriasnegocios.data.length===0){
+    let resulcategoriasnegocios = await getcategoriasnegociosapp({});
+    resulcategoriasnegocios = await resulcategoriasnegocios.json();
+
+        if (resulcategoriasnegocios.length===0){
        setShow(false);
        setContenido("Agregue primero aplicaciones a la plataforma")
        setShow1(true);
        return
     }
 
-    setArraycategoriasnegocios(resulcategoriasnegocios.data);
+    setArraycategoriasnegocios(resulcategoriasnegocios);
     
     //Recuperar los negocios de esta categoria
+    
+    let resultnegocios = await getallnegocios({categorianegocio: resulcategoriasnegocios[0].categorianegocio, user: "" });
+    resultnegocios = await resultnegocios.json();
+
+    {/*
     const resultnegocios = await axios.post(
       "http://localhost:3001/getallnegocios",
       { categorianegocio: resulcategoriasnegocios.data[0].categorianegocio, user: "" },
       {}
     );
-    if (resultnegocios.data.error || resultnegocios.data.length === 0) {
+    */}
+
+    if (resultnegocios.error || resultnegocios.length === 0) {
       setArraynegocios(arraynonegocios);
     }
     else {
       // Posicionar el GPS
-      if ((resultnegocios.data[0].longitud !== null)) {
-        setLng(resultnegocios.data[0].longitud);
+      if ((resultnegocios[0].longitud !== null)) {
+        setLng(resultnegocios[0].longitud);
       }
-      if ((resultnegocios.data[0].latitud !== null)) {
-        setLat(resultnegocios.data[0].latitud);
+      if ((resultnegocios[0].latitud !== null)) {
+        setLat(resultnegocios[0].latitud);
       }
-      setArraynegocios(resultnegocios.data);
-      recuperadatosnegocio(resultnegocios.data[0]);
-      const resultado = await axios.post(
+      setArraynegocios(resultnegocios);
+      recuperadatosnegocio(resultnegocios[0]);
+      
+      let resultado = await getJpgFile({file: "./galerias/app_images/negocios/" + resultnegocios[0].idnegocio + "/" + "foto-1.jpg" });
+      resultado = await resultado.text();
+      {/*
+        const resultado = await axios.post(
         "http://localhost:3001/getjpg-file",
-        { file: "./galerias/app_images/negocios/" + resultnegocios.data[0].idnegocio + "/" + "foto-1.jpg" },
+        { file: "./galerias/app_images/negocios/" + resultnegocios[0].idnegocio + "/" + "foto-1.jpg" },
         {}
       );
-      if (resultado.data.length !== 0) {
-        setContenidofoto(resultado.data);
+      */}
+      if (resultado.length !== 0) {
+        setContenidofoto(resultado);
         setNombrefoto(foto-1);
 //        setNombrefoto(resultnegocios.data[0].idnegocio);
       }
@@ -162,35 +175,44 @@ const CatNegocios = () => {
       }
     }
     setIdnegocio(0);
-
+    {/*
     const resultprovincia = await axios.post(
       "http://localhost:3001/getprovincias",
       {},
       {}
     );
-    if (resultprovincia.data.error || resultprovincia.data.length === 0) {
+    */}
+    let resultprovincia= await getprovincias({});
+    resultprovincia = await resultprovincia.json();
+
+    if (resultprovincia.error || resultprovincia.length === 0) {
       setArrayprovincia(arraydesconocido);
       setProvincia(0);
     }
     else {
-      setArrayprovincia(resultprovincia.data);
-      setProvincia(resultprovincia.data[0].provincia);
+      setArrayprovincia(resultprovincia);
+      setProvincia(resultprovincia[0].provincia);
     }
 
     var ttmunicipio = [];
+    let resultmunicipio= await getmunicipios({});
+    resultmunicipio = await resultmunicipio.json();
+{/*
     const resultmunicipio = await axios.post(
       "http://localhost:3001/getmunicipios",
       { provincia: "" },
       {}
     );
-    if (resultmunicipio.data.error || resultmunicipio.data.length === 0) {
+    */}
+
+    if (resultmunicipio.error || resultmunicipio.length === 0) {
       setArraymunicipio(arraydesconocido);
       setTmunicipio(arraydesconocido);
       ttmunicipio = arraydesconocido;
     }
     else {
-      setArraymunicipio(resultmunicipio.data);
-      ttmunicipio = resultmunicipio.data.filter((item) => { if (item.provincia === resultprovincia.data[0].provincia) { return item } });
+      setArraymunicipio(resultmunicipio);
+      ttmunicipio = resultmunicipio.filter((item) => { if (item.provincia === resultprovincia[0].provincia) { return item } });
       if (ttmunicipio.length !== 0) {
         setTmunicipio(ttmunicipio);
         setMunicipio(ttmunicipio[0].municipio);
@@ -248,16 +270,11 @@ const CatNegocios = () => {
   function limpiardatosnegocio() {
     setNick("");
     setDescripcion("");
-    setDescripcionadicional("");
     setDireccionpostal("");
     setTelefonofijo("");
     setTelefonocelular("")
     setCorreo("");
     setCbgps(false);
-    setCapacidad("");
-    setCbcapacidad(false);
-    setCbhorarios(false);
-    setIperiodo(0);
     setNombrefoto("");
     setContenidofoto("");
     //setMunicipio("");
@@ -287,46 +304,79 @@ const CatNegocios = () => {
     }
   }
 
-  async function handleInput(e) {
+  async function recuperaNegocios(value){
+    let resultnegocio = await getallnegocios({categorianegocio: arraycategoriasnegocios[value].categorianegocio, user: ""});
+    resultnegocio = await resultnegocio.json();
+{/*
+    const resultnegocio = await axios.post(
+      "http://localhost:3001/getallnegocios",
+      { categorianegocio: arraycategoriasnegocios[value].categorianegocio, user: "" },
+      {}
+    );
+    */}
+    const data = resultnegocio;
+    if (data.error || data.length === 0) {
+      setArraynegocios(arraynonegocios);
+    }
+    else {
+      setArraynegocios(resultnegocio);
+      if ((resultnegocio[0].longitud !== null)) {
+        setLng(resultnegocio[0].longitud);
+      }
+      if ((resultnegocio[0].latitud !== null)) {
+        setLat(resultnegocio[0].latitud);
+      }
+      recuperadatosnegocio(resultnegocio[0]);
+      let resultado = await getJpgFile({file: "./galerias/app_images/negocios/" + resultnegocio[0].idnegocio + "/" + "foto-1.jpg"});
+      resultado = await resultado.text();
+
+      {/*
+      const resultado = await axios.post(
+        "http://localhost:3001/getjpg-file",
+        {file: "./galerias/app_images/negocios/" + resultnegocio.data[0].idnegocio + "/" + "foto-1.jpg"},
+        {}
+      );
+      */}
+
+      if (resultado.length !== 0) {
+        setContenidofoto(resultado);
+        setNombrefoto(resultnegocio[0].idnegocio);
+      }
+      else {
+        setNombrefoto("");
+      }
+
+    }
+
+  }
+
+async function recuperaImgagenNegocio(value){
+ let resultado = await getJpgFile({file: "./galerias/app_images/negocios/" + arraynegocios[value].idnegocio + "/" + "foto-1.jpg"});
+ resultado = await resultado.text();
+ {/*
+  const resultado = await axios.post(
+    "http://localhost:3001/getjpg-file",
+    {file: "./galerias/app_images/negocios/" + arraynegocios[value].idnegocio + "/" + "foto-1.jpg"},
+    {}
+  );
+  */}
+  if (resultado.length !== 0) {
+    setContenidofoto(resultado);
+    setNombrefoto(arraynegocios[value].idnegocio);
+  }
+  else {
+    setNombrefoto("");
+  }
+
+}
+
+function handleInput(e) {
     switch (e.target.id) {
       case "categorianegocio":
         setCategorianegocio(e.target.value);
         // recuperar los negocios de esta categoria
-        const resultnegocio = await axios.post(
-          "http://localhost:3001/getallnegocios",
-          { categorianegocio: arraycategoriasnegocios[e.target.value].categorianegocio, user: "" },
-//          { categorianegocio: arraycategoriasnegocios[e.target.value].categorianegocio, user: sessionStorage.getItem("user") },
-          {}
-        );
-        const data = resultnegocio.data;
-        if (data.error || data.length === 0) {
-          setArraynegocios(arraynonegocios);
-        }
-        else {
-          setArraynegocios(resultnegocio.data);
-          if ((resultnegocio.data[0].longitud !== null)) {
-            setLng(resultnegocio.data[0].longitud);
-          }
-          if ((resultnegocio.data[0].latitud !== null)) {
-            setLat(resultnegocio.data[0].latitud);
-          }
-          recuperadatosnegocio(resultnegocio.data[0]);
+        recuperaNegocios(e.target.value);
 
-          const resultado = await axios.post(
-            "http://localhost:3001/getjpg-file",
-            {file: "./galerias/app_images/negocios/" + resultnegocio.data[0].idnegocio + "/" + "foto-1.jpg"},
-//            { foto: resultnegocio.data[0].idnegocio, folder: "negocios" },
-            {}
-          );
-          if (resultado.data.length !== 0) {
-            setContenidofoto(resultado.data);
-            setNombrefoto(resultnegocio.data[0].idnegocio);
-          }
-          else {
-            setNombrefoto("");
-          }
-
-        }
         setIdnegocio(0)
         tcancelar();
         break;
@@ -342,20 +392,7 @@ const CatNegocios = () => {
         if ((arraynegocios[e.target.value].latitud !== null)) {
           setLat(arraynegocios[e.target.value].latitud);
         }
-
-        const resultado = await axios.post(
-          "http://localhost:3001/getjpg-file",
-          {file: "./galerias/app_images/negocios/" + arraynegocios[e.target.value].idnegocio + "/" + "foto-1.jpg"},
-//          { foto: arraynegocios[e.target.value].idnegocio, folder: "negocios" },
-          {}
-        );
-        if (resultado.data.length !== 0) {
-          setContenidofoto(resultado.data);
-          setNombrefoto(arraynegocios[e.target.value].idnegocio);
-        }
-        else {
-          setNombrefoto("");
-        }
+        recuperaImgagenNegocio(e.target.value);
 
         break;
       case "direccionpostal":
@@ -406,6 +443,15 @@ const CatNegocios = () => {
   }
 
   async function confirmar() {
+    let result = await setnegocio({ user: user, nick, categorianegocio: arraycategoriasnegocios[categorianegocio].categorianegocio,
+      negocio: arraynegocios[negocio].idnegocio, desc: descripcion,
+      sede: direccionpostal, fijo: telefonofijo, celular: telefonocelular, email: correo,        
+      agregarsn, editarsn, contenidofoto, provincia: provincia, municipio: municipio,
+      latitud: lat, longitud: lng, gps: cbgps===true?1:0, creaCategoriaProducto: false
+});
+    result = await result.json();
+
+    {/*
     const result = await axios.post(
       "http://localhost:3001/setnegocio",
       {
@@ -417,14 +463,16 @@ const CatNegocios = () => {
       },
       {}
     );
-    if (result.data.error) {
+*/}
+
+    if (result.error) {
       //      setContenido("No se registró el negocio.");
-      setContenido(result.data.error);
+      setContenido(result.error);
       setShow1(true);
     }
     else {
       if (agregarsn) {
-        arraynegocios.push({ idnegocio: result.data[0].mayor, desc: descripcion });
+        arraynegocios.push({ idnegocio: result[0].mayor, desc: descripcion });
         arraynegocios.sort((itemA, itemB) => {
           if (itemA.desc.charCodeAt(0) > itemB.desc.charCodeAt(0)) return 1;
           if (itemA.desc.charCodeAt(0) < itemB.desc.charCodeAt(0)) return -1;
@@ -479,12 +527,16 @@ const CatNegocios = () => {
   }
 
   async function sino() {
+    {/*
     await axios.post(
       "http://localhost:3001/delnegocio",
       { negocio: arraynegocios[negocio].idnegocio },
       {}
     );
-    // refrescar la lista despues de eliminada la categoria
+    */}
+    
+    await delnegocio({negocio: arraynegocios[negocio].idnegocio});
+       // refrescar la lista despues de eliminada la categoria
     arraynegocios.splice(negocio, 1);
     setShow1(false)
     setEliminarsn(false);
