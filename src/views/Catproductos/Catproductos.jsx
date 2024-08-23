@@ -441,7 +441,6 @@ const CatProductos = () => {
     else{
        mproducto=arrayproductos[producto?.value].idproducto;
     }
-    console.log(mproducto);
     let result = await setproducto({  user: tuser,
       producto: mproducto,
       negocio: arraynegocios[negocio].negocio,
@@ -461,7 +460,6 @@ const CatProductos = () => {
       longitud: lng,
 });
     result = await result.json();
-    console.log(result);
 
     if (result.error) {
       setContenido(result.error);
@@ -727,9 +725,9 @@ const CatProductos = () => {
                           value={producto}
                           onChange={handleProducto}
                           sx={{
-                            marginLeft: "29px",
+                            marginLeft: "31px",
                             marginTop: "5px",
-                            width: "225px",
+                            width: "300px",
                             height: "30px",
                             background: "aliceblue",
                             ".MuiAutocomplete-input": {

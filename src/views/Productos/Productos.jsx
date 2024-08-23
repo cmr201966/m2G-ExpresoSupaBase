@@ -136,14 +136,12 @@ const Productos = () => {
   const [index, setIndex] = useState(0);
 
   // Estados para la posición GPS del mapa
-  const [zoom, setZoom] = useState(12.0);
+  const [zoom, setZoom] = useState(11.7);
   const [showMap, setShowMap] = useState(false);
 
   // Estados para la posición GPS del mapa
   const [lng, setLng] = useState();
   const [lat, setLat] = useState();
-  const [longitude, setLongitude] = useState();
-  const [latitude, setLatitude] = useState();
 
   //
   // Ubicacion
@@ -189,8 +187,6 @@ const Productos = () => {
   const centerMapOnAddress = async (address) => {
     try {
       const { longitude, latitude } = await geocodeAddress(address);
-      setLatitude(latitude);
-      setLongitude(longitude);
       setLat(latitude);
       setLng(longitude);
       setZoom(12.5);
@@ -399,12 +395,12 @@ const Productos = () => {
       // Naturaleza
       //
       if (mnaturaleza !== null && mnaturaleza !== "") {
-        if (condicion_filter.length !== 0) {
-          condicion_filter =
-            condicion_filter + " and (naturaleza=" + mnaturaleza + ")";
-        } else {
-          condicion_filter = " and (naturaleza=" + mnaturaleza + ")";
-        }
+//        if (condicion_filter.length !== 0) {
+//          condicion_filter =
+//            condicion_filter + " and (tablaaplicaciones.idnaturaleza=" + mnaturaleza + ")";
+//        } else {
+//          condicion_filter = " and (tablaaplicaciones.idnaturaleza=" + mnaturaleza + ")";
+//        }
       }
 
       //
@@ -620,7 +616,8 @@ const Productos = () => {
 
   async function calculateDistance(start, end) {
     const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${start.join(
-      ","
+//    const url = `https://api.mapbox.com/directions/v5/mapbox/walking/${start.join(
+        ","
     )};${end.join(",")}?geometries=geojson&access_token=${config.mapBoxAPI}`;
 
     try {
@@ -1142,11 +1139,11 @@ const Productos = () => {
         ? parsedParams.owner
         : parsedParams.idowner
     );
-    if (
-      sessionStorage.getItem("pnaturaleza") === "" ||
-      sessionStorage.getItem("pnaturaleza") === undefined ||
-      sessionStorage.getItem("pnaturaleza") === null
-    ) {
+//    if (
+//      sessionStorage.getItem("pnaturaleza") === "" ||
+//      sessionStorage.getItem("pnaturaleza") === undefined ||
+//      sessionStorage.getItem("pnaturaleza") === null
+//    ) {
       sessionStorage.setItem(
         "pnaturaleza",
         parsedParams.naturaleza === "26" ? 0 : parsedParams.naturaleza
@@ -1159,7 +1156,7 @@ const Productos = () => {
       sessionStorage.setItem("ptipo", parsedParams.campo1);
       sessionStorage.setItem("pnohay", parsedParams.nohay);
       sessionStorage.setItem("pnaturalezas", parsedParams.naturalezas);
-    }
+  //  }
     sessionStorage.setItem("carditem", 0);
     sessionStorage.setItem("naturaleza", parsedParams.naturaleza);
     sessionStorage.setItem("idowner", parsedParams.idowner);
@@ -1322,7 +1319,9 @@ const Productos = () => {
     }
 
     setPuntosState(0);
-    init();
+    //init();
+    init_filtrar();
+    init1();
     setShowMap(!showMap);
   }
 
@@ -1413,7 +1412,7 @@ const Productos = () => {
 
 
 
-            <Box sx={{ maxHeight: "400px", overflowY: "auto" }}>
+            .mapa-productos            <Box sx={{ maxHeight: "400px", overflowY: "auto" }}>
 
 
 {/*
@@ -1614,7 +1613,6 @@ const Productos = () => {
                   className="cbox-atributos"
                   id="cbatributos"
                   color="checkbox"
-                  defaultChecked
                   checked={cbatributos}
                   onClick={handleInput}
                 />
@@ -1627,7 +1625,6 @@ const Productos = () => {
                       className="cbox-desc"
                       id="cbdesc"
                       color="checkbox"
-                      defaultChecked
                       checked={cbdesc}
                       onClick={handleInput}
                     />
@@ -1653,7 +1650,6 @@ const Productos = () => {
                       className="cbox-precio"
                       id="cbprecio"
                       color="checkbox"
-                      defaultChecked
                       checked={cbprecio}
                       onClick={handleInput}
                     />
@@ -1689,7 +1685,6 @@ const Productos = () => {
                       className="check-domicilio"
                       id="cbdomicilio"
                       color="checkbox"
-                      defaultChecked
                       checked={cbdomicilio}
                       onClick={handleInput}
                     />
@@ -1721,7 +1716,6 @@ const Productos = () => {
                       className="check-abiertosn"
                       id="cbabiertosn"
                       color="checkbox"
-                      defaultChecked
                       checked={cbabiertosn}
                       onClick={handleInput}
                     />
@@ -1838,9 +1832,10 @@ const Productos = () => {
               {" "}
               - {nombre.replaceAll("%20", " ")} - ({cantidadproductos})
             </h4>
-            {(puntosState === 2 && viewCarrito) ||
-            (showMap !== true && puntos.length !== 0 && viewCarrito) ? (
-              <Tippy content={`Ordenar un producto`}>
+{/*            (showMap !== true && puntos.length !== 0 && viewCarrito) || (domicilio===0 && ocupado===0)? (*/}
+              {(puntosState === 2 && viewCarrito) ||
+              (showMap !== true && puntos.length !== 0 && viewCarrito) || (domicilio===0)? (
+                <Tippy content={`Ordenar un producto`}>
                 <button
                   type="button"
                   className="car negocio-button primary"
@@ -1861,7 +1856,6 @@ const Productos = () => {
                   sx={{ padding: 0 }}
                   id="verOtraVez"
                   color="checkbox"
-                  defaultChecked
                   checked={verOtraVez}
                   onClick={handleInput}
                 />
@@ -1934,9 +1928,8 @@ const Productos = () => {
           ) : (
             ""
           )}
-          <div className="mapa-productos">
-            {showMap === true ? (
-              <>
+            {showMap === true ? 
+            <div className="mapa-productos">
                 <Tippy content={`Cerrar mapa`}>
                   <button
                     className="offon-info-producto"
@@ -1957,11 +1950,8 @@ const Productos = () => {
                   onChange={onChangeMap}
                   remoteZoom={zoom}
                 />
-              </>
-            ) : (
-              ""
-            )}
-          </div>
+             </div>:""
+            }
         </Hero>
       </div>
     </>

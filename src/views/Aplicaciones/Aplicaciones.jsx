@@ -92,7 +92,6 @@ const Aplicaciones = () => {
     }
      // Obtener las naturalezas
      let resultnaturaleza = await getNaturalezas({naturaleza: "", admin: false});
-
      resultnaturaleza = await resultnaturaleza.json();
 
       if (resultnaturaleza.error || resultnaturaleza.length === 0) 

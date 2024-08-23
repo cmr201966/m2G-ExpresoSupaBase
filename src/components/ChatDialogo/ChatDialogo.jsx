@@ -1,10 +1,11 @@
-import axios from "axios";
-import { useNavigate } from "react-router-dom";
-import Modal from "../../components/Modal/Modal";
+//import { useNavigate } from "react-router-dom";
+//import Modal from "../../components/Modal/Modal";
 import { useEffect, useState } from "react";
 import { IconButton } from "@mui/material";
 import { MenuOpen, Menu } from "@mui/icons-material";
-import { Close, Send } from "@mui/icons-material";
+import { Send } from "@mui/icons-material";
+import { setchat, getchat } from "../../servicios/chat";
+import { getJpgFile } from "../../servicios/imagenes";
 
 // styles
 import "./styles.css";
@@ -21,56 +22,40 @@ import {
   Paper,
 } from "@mui/material";
 
-const socket = io("http://localhost:3001");
+let socket = io("http://localhost:3001");
 
 const ChatDialogo = (props) => {
   const { user, nombre, indexChat, openSide, openSideHandler, fixed } = props;
-  const [show, setShow] = useState(false);
+//  const [show, setShow] = useState(false);
   const [inicia, setInicia] = useState(true);
-  const navigate = useNavigate();
+  //const navigate = useNavigate();
   const theme = useTheme();
 
   const [texto, setTexto] = useState("");
-  const [buscar, setBuscar] = useState("");
+  //const [buscar, setBuscar] = useState("");
   const [sendingMessage, setSendingMessage] = useState(false);
   const [msgs, setMsgs] = useState([]);
   const [contenidofoto, setContenidofoto] = useState("");
 
   async function init() {
-    // Recuperar los chats entre estos 2 users
-    //    socket.disconnect();
-    //    socket.connect();
-    const get_chat = await axios.post(
-      "http://localhost:3001/get-chat",
-      {
-        userOut: sessionStorage.getItem("user"),
-        userIn: user,
-      },
-      {}
-    );
-    let tmsgs = [];
-    tmsgs = get_chat.data;
-    setMsgs(tmsgs);
-    const fotobuffer = await axios.post(
-      "http://localhost:3001/getjpg-file",
-      {
-        file: "./galerias/app_images/usuarios/" + user + "/" + user + ".jpg",
-      },
-      {}
-    );
+    let get_chat = await getchat({ userOut: sessionStorage.getItem("user"), userIn: user});
+    get_chat = await get_chat.json();
+    setMsgs(get_chat);
+    let fotobuffer = await getJpgFile({ file: "./galerias/app_images/usuarios/" + user + "/foto-1.jpg"});
+    fotobuffer = await fotobuffer.text();
 
-    if (fotobuffer.data.length !== 0 && fotobuffer.error === undefined) {
-      setContenidofoto(fotobuffer.data);
+    if (fotobuffer.length !== 0 && fotobuffer.error === undefined) {
+       setContenidofoto(fotobuffer);
     } else {
-      setContenidofoto("");
+       setContenidofoto("");
     }
 
     setInicia(false);
   }
-
+{/*
   async function refrescar_chat() {
     const resultado = await axios.post(
-      "http://localhost:3001/get-chat",
+      "http://192.168.1.100:3001/get-chat",
       {
         userOut: sessionStorage.getItem("user"),
         userIn: user,
@@ -91,6 +76,7 @@ const ChatDialogo = (props) => {
       setMsgs(tmsgs);
     }
   }
+*/}
 
   async function enviar(e) {
     console.log(
@@ -112,19 +98,10 @@ const ChatDialogo = (props) => {
         desc: texto,
       });
       setMsgs(tmsgs);
-      const resultado = await axios.post(
-        "http://localhost:3001/set-chat",
-        {
-          userOut: sessionStorage.getItem("user"),
-          userIn: user,
-          texto,
-          tipo: true,
-        },
-        {}
-      );
-
+      await setchat({ userOut: sessionStorage.getItem("user"), userIn: user, texto, tipo: true});
+   
       setTexto("");
-      socket.emit("send-message", { target: user });
+      socket.emit("send-message", { userOut: sessionStorage.getItem("user"), userIn: user, texto: texto });
     } catch (err) {
       console.log(err);
     }
@@ -141,32 +118,45 @@ const ChatDialogo = (props) => {
     }
   }
 
-  const onModalClose = () => {
-    setShow(false);
-  };
-
   const [socketId, setSocketId] = useState(null);
 
   useEffect(() => {
+    console.log("user-id")
     if (socketId !== null) {
+      console.log("Entro...")
       socket.emit("user-id", { id: sessionStorage.getItem("user") });
     }
   }, [socketId]);
 
+async function refresca(){
+      
+  let get_chat = await getchat({ userOut: sessionStorage.getItem("user"), userIn: user});
+  get_chat = await get_chat.json();
+  setMsgs(get_chat);
+
+}
   useEffect(() => {
     //
     console.log("Observando...");
+    socket = io("http://localhost:3001");
     socket.on("connected", (param) => {
+      console.log("connected", param)
       const { socketId } = param;
       setSocketId(socketId);
       console.log("socketID: " + socketId);
     });
     //
-    socket.on("new-message", () => {
-      console.log("Mensaje nuevo");
-      console.log(user);
+    socket.on("new-message", (param) => {
+      const {userOut, userIn, texto}=param
+      console.log("Mensaje nuevo:", userOut, userIn, texto);
+{/*      console.log(msgs);
+      let tmsgs=[...msgs,{userOut: userOut, userIn: userIn, desc: texto}]
+      console.log(tmsgs);*/}
+  refresca();
+{/*
       setInicia(true);
       init();
+*/}      
     });
     //
     socket.on("disconnect", () => {
@@ -188,7 +178,7 @@ const ChatDialogo = (props) => {
         sx={{
           flex: 1,
           padding: "10px",
-          width: !fixed ? { md: "50%", xs: "100%" } : "100%",
+          width: !fixed ? { md: "100%", xs: "100%" } : "100%",
           background: theme.palette.background.paper,
           borderRadius: {
             md: openSideHandler ? "0 15px 15px 0" : "15px",
@@ -231,20 +221,16 @@ const ChatDialogo = (props) => {
               </IconButton>
             ) : null}
 
-            {inicia === false ? (
+            {inicia === false ? 
               <img
                 className="img-titulo-chat"
                 src={contenidofoto}
                 alt={nombre}
-              />
-            ) : (
-              ""
-            )}
-            {inicia === false ? (
-              <label className="nombre-chat">{nombre}</label>
-            ) : (
-              ""
-            )}
+              />:""
+            }
+            {inicia === false ? 
+              <label className="nombre-chat">{nombre}</label>: ""
+            }
           </Box>
         </Box>
         {inicia === false ? (
@@ -258,11 +244,12 @@ const ChatDialogo = (props) => {
             !msgs.error ? (
               <>
                 {msgs.map((item, i) => (
-                  <Box
+                  <Box key={i}
                     sx={{
                       padding: "1px",
                       display: "flex",
-                      width: "100%",
+                      width: "99%",
+                      marginBottom: "5px",
                       justifyContent:
                         item.userOut === sessionStorage.getItem("user")
                           ? "flex-end"

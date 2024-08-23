@@ -108,6 +108,14 @@ const CatNegocios = () => {
   };
 
   async function init() {
+    if (user==="cmr") {
+      setChatuser("jge");
+      setChatnombre("Jennifer Gonzalez")
+    }
+      else {
+        setChatuser("cmr");
+        setChatnombre("Carlos Mora Rojas")
+      }
     sessionStorage.setItem("filtro", "Ubicación")
     setShow(true);
     setCategorianegocio(0)
@@ -699,7 +707,6 @@ function handleInput(e) {
                     resultado !== "" && <label className="err">{resultado}</label>
                   }
 
-
                   <div className="negocio-grupo-button">
                     {(agregarsn === false && editarsn === false) && inicia === false ?
                       <Tippy content="Añadir categoria de negocio">
@@ -753,6 +760,11 @@ function handleInput(e) {
                              <CollectionsIcon />
                            </button>
                         </Tippy>
+                        <Tippy content={`Chat`}>
+                           <button type="button" className="producto-button primary"  onClick={() => setShowchat(!showchat)}>
+                               Chat
+                           </button>
+                        </Tippy>
                       </> : ""
                     }
                   </div>
@@ -767,13 +779,11 @@ function handleInput(e) {
 
                     <Map sx={{ height: "800px", width: "100%" }} onMapClick={lngLatSelected} remoteshowMap={showMap} lat={lat} lng={lng} point={{ lat, lng }} onChange={onChangeMap} remoteZoom={zoom} /></> : ""
                   }
+                  {showchat === true && showGalerias === false && showMap === false ?
+                     <ChatDialogo user={chatuser} nombre={chatnombre} indexChat={indexChat} /> : ""
+                  }
 
                 </div>
-
-                {showchat === true && showGalerias === false && showMap === false ?
-                  <ChatDialogo user={chatuser} nombre={chatnombre} indexChat={indexChat} />
-                  : ""
-                }
               </div>
             </> : ""}
         </Hero>

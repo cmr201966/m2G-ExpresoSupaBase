@@ -40,22 +40,20 @@ const Login = () => {
     let result = await login({user, password});
     result = await result.json();
 
-    const data = await result;
-    console.log(data);
-    if (data.error) 
+    if (result.error) 
     {
-      setResultado(data.error);
+      setResultado(result.error);
     } 
     else 
     {
-      sessionStorage.setItem("user", data.iduser);
-      sessionStorage.setItem("usernombre", data.nombre);
-      sessionStorage.setItem("tipouser", data.tipouser);
-      sessionStorage.setItem("usercelular", data.celular);
-      sessionStorage.setItem("userfijo", data.fijo);
-      sessionStorage.setItem("useremail", data.email);
-      sessionStorage.setItem("userprovincia", data.provincia);
-      sessionStorage.setItem("usermunicipio", data.municipio);
+      sessionStorage.setItem("user", result.iduser);
+      sessionStorage.setItem("usernombre", result.nombre);
+      sessionStorage.setItem("tipouser", result.tipouser);
+      sessionStorage.setItem("usercelular", result.celular);
+      sessionStorage.setItem("userfijo", result.fijo);
+      sessionStorage.setItem("useremail", result.email);
+      sessionStorage.setItem("userprovincia", result.provincia);
+      sessionStorage.setItem("usermunicipio", result.municipio);
 
       navegar("/"); // ir a home
       

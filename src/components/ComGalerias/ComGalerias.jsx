@@ -84,30 +84,10 @@ const ComGalerias = (props) => {
           j = j += 1;
           // obtener el contenido del primer jpg de cada album
           carpeta = rutatmp === "" ? "" : rutatmp + "/" + item;
-{/*
-          const galeriasfolders = await axios.post(
-            "http://localhost:3001/getgalerias",
-            { ruta: carpeta },
-            {}
-          );
-*/}
           let galeriasfolders = await getgalerias({ruta: carpeta});
           galeriasfolders = await galeriasfolders.json();
 
           if (galeriasfolders.length > 0) {
-{/*            
-            const primerjpg = await axios.post(
-              "http://localhost:3001/getjpg-file",
-              {
-                file:
-                  "./galerias/app_images/" +
-                  carpeta +
-                  "/" +
-                  galeriasfolders[0],
-              },
-              {}
-            );
-*/}
           let primerjpg = await getJpgFile({ file: "./galerias/app_images/" + carpeta + "/" + galeriasfolders[0]});
           primerjpg = await primerjpg.text();
           if (primerjpg.length !== 0 && primerjpg.error === undefined) {
@@ -116,13 +96,6 @@ const ComGalerias = (props) => {
           } else {
               let primerjpg = await getJpgFile({ file: "./galerias/app_images/" + carpeta + "/nada.nada" });
               primerjpg = await primerjpg.text();
-{/*              
-              const primerjpg = await axios.post(
-              "http://localhost:3001/getjpg-file",
-              { file: "./galerias/app_images/" + carpeta + "/nada.nada" },
-              {}
-            );
-*/}            
             if (primerjpg.length !== 0 && primerjpg.error === undefined) {
               contenidoalbum.push(primerjpg);
             }
@@ -138,13 +111,6 @@ const ComGalerias = (props) => {
     contenidofoto.splice(0, contenidofoto.length);
     let tarray = [];
     for (const item of tarrayfotos) {
-{/*      
-      const resultado = await axios.post(
-        "http://localhost:3001/getjpg-file",
-        { file: "./galerias/app_images/" + carpeta + item },
-        {}
-      );
-*/}
       let resultado = await getJpgFile({ file: "./galerias/app_images/" + carpeta + item  });
       resultado = await resultado.text();
 
@@ -159,126 +125,24 @@ const ComGalerias = (props) => {
     setInicia(false);
   }
 
-{/*  
-  function handleInput(e) {
-    switch (e.target.id) {
-      case "nombre_album":
-        setNombre_album(e.target.value);
-        break;
-      default:
-        break;
-    }
-  }
-
-  function addalbum() {
-    setAlbum_add(true);
-  }
-*/}
-  const [created, setCreated] = useState(false);
-
-{/*    
-  async function confirmar_album() {
-    const creacarpeta = await axios.post(
-      "http://localhost:3001/getcreacarpeta",
-      { ruta: "./galerias/app_images/" + rutatmp + "/" + nombre_album },
-      {}
-    );
-
-
-    if (creacarpeta.error) {
-      setContenido("No se pudo crear el album");
-      setShow(true);
-    } else {
-      const dtjpg = await axios.post(
-        "http://localhost:3001/getjpg-file",
-        { ruta: "./galerias/app_images/nada.nada" },
-        {}
-      );
-      let tarrayalbum = arrayalbum;
-      tarrayalbum.push(nombre_album);
-      setAlbumtxt(nombre_album);
-      setSelectalbum(tarrayalbum.length - 1);
-      setArrayalbum(tarrayalbum);
-      contenidoalbum.push(dtjpg.data);
-      let tarray = [];
-      setContenidofoto(tarray);
-      setCreated(true);
-    }
-    setAlbum_add(false);
-
-    }
-*/}    
-
-  useEffect(() => {
-    if (created) {
-      const ultimoAlbum = document.getElementById(
-        `imagen-${arrayalbum.length - 1}`
-      );
-      if (ultimoAlbum !== null) {
-        {
-          /*}        document.getElementById(`imagen-${arrayalbum.length - 1}`).scrollTo('#target');*/
-        }
-        ultimoAlbum.focus();
-        {
-          /*}        document.getElementById("galeria-album")*/
-        }
-        setCreated(false);
-      }
-    }
-  }, [created, arrayalbum]);
-
-  function cancelar_album() {
-    setAlbum_add(false);
-  }
-
-  function cambialbum(i) {
-    carpeta = arrayalbum[i].toLowerCase() === "perfil" ? "" : arrayalbum[i];
-    talbum = arrayalbum[i];
-    init1(rutatmp + "/" + carpeta, i);
-  }
-
   async function del_file_in_folder(folder, file) {
-    {/*
-    await axios.post(
-      "http://localhost:3001/del_file_in_folder",
-      { ruta: folder, file },
-      {}
-    );
-    */}
     await delfileinfolder({ ruta: folder, file  });
 
   }
 
   async function crea_file_in_folder(folder, file, contenidofoto) {
-{/*    
-    await axios.post(
-      "http://localhost:3001/set_file_in_folder",
-      { ruta: folder, file, contenidofoto },
-      {}
-    );
-*/}    
 await creafileinfolder({ ruta: folder, file, contenidofoto  });
 
   }
 
   async function onPhotoChange(e) {
     const file = e.target.files[0];
-    //const fileName = e.target.value;
     if (!file) return;
     const reader = new FileReader();
-    // eslint-disable-next-line no-shadow
-    let content;
     reader.onload = (e) => {
-      content = e.target.result;
       setContenidophoto(e.target.result);
     };
     reader.readAsDataURL(file);
-  }
-
-  function selectAlbum(i) {
-    setSelectalbum(i);
-    setAlbumtxt(arrayalbum[i]);
-    cambialbum(i);
   }
 
   function selectFoto(i) {
@@ -423,10 +287,10 @@ await creafileinfolder({ ruta: folder, file, contenidofoto  });
                 ""
               )}
 
-              <div className="galeria-foto">
-                {contenidofoto.map((item, i) => (
-                  <>
-                    <div className="imagen-borrar">
+   
+              {contenidofoto.map((item, i) => (
+              <div key={i} className="galeria-foto">
+                  <div key={i} className="imagen-borrar">
                       <img
                         key={i}
                         onClick={() => selectFoto(i)}
@@ -450,9 +314,9 @@ await creafileinfolder({ ruta: folder, file, contenidofoto  });
                         ""
                       )}
                     </div>
-                  </>
-                ))}
-              </div>
+               </div>
+              ))}
+
             </div>
           </Box>
         ) : (

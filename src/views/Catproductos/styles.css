@@ -55,14 +55,14 @@
     height: 23px;
 }
 .selecttn-prod{
-    width: 225px;
+    width: 300px;
     height: 30px;
     margin-left: 21px;
 }
 .selectne-prod{
     margin-left: 35px;
     margin-top: 5px;
-    width: 225px;
+    width: 300px;
     height: 30px;
 }
 .selectpro-prod{
@@ -213,13 +213,13 @@
     margin-top: 5px;
 }
 .input-cataproducto-1{
-    margin-left: 29px;
+    margin-left: 31px;
     width: 225px;
     height: 25px;
     margin-bottom: 4px;   
 }
 .input-cataproducto-2{
-    margin-left: 2px;
+    margin-left: 8px;
     width: 225px;
     height: 25px;
 }

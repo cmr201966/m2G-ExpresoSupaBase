@@ -31,6 +31,12 @@
   height: 40px;
   border-radius: 100px;
 }
+.nombre-chat {
+  margin-left: 5px;
+  color:blue;
+}
+  
+
 .elemento-nombre-chat {
   margin-left: 5px;
   margin-top: 8px;

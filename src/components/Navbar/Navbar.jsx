@@ -352,7 +352,6 @@ const Navbar = (props) => {
                 )}
               </Box>
             ) : null}
-            <Tippy content="">
               <div className="destodo-chat">
                 <Button
                   id="toggle-b"
@@ -369,7 +368,6 @@ const Navbar = (props) => {
                   <MoreHoriz id="toggle-i" />
                 </Button>
               </div>
-            </Tippy>
           </Box>
         </div>
       ) : (

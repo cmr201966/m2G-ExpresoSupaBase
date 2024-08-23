@@ -38,8 +38,8 @@ const Registrarse = () => {
   const [cbcup, setCbcup] = useState("");
   const [cbmlc, setCbmlc] = useState("");
   const arraydesconocido = [{ keycercade: 99, provincia: 99, municipio: 99, desc: "Desconocido" }];
-  const arrayplan= [{ plan: 0,  desc: "Gratis", tip:"Explorar, Comprar y Reservar" },{ plan: 1,  desc: "Básico", tip:"Crear Negocios" }];
-//  const arrayplan= [{ plan: 0,  desc: "Gratis", tip:"Explorar, Comprar y Reservar" },{ plan: 1,  desc: "Básico", tip:"Crear Negocios" },{ plan: 2,  desc: "Premiun", tip:"Crear Negocios Plus" }];
+//  const arrayplan= [{ plan: 0,  desc: "Gratis", tip:"Explorar, Comprar y Reservar" },{ plan: 1,  desc: "Básico", tip:"Crear Negocios" }];
+  const arrayplan= [{ plan: 0,  desc: "Gratis", tip:"Explorar, Comprar y Reservar" },{ plan: 1,  desc: "Básico", tip:"Crear Negocios" },{ plan: 2,  desc: "Premiun", tip:"Crear Negocios Plus" }];
   const [plan, setPlan] = useState(0);
   const [arrayprovincias, setArrayprovincias] = useState([]);
   const [arraymunicipios, setArraymunicipios] = useState([]);
@@ -64,6 +64,7 @@ const Registrarse = () => {
   async function init() {
     setShow1(true);
     setResultado(arrayplan[0].tip);
+    console.log("Insertar:", parsedParams.inserta==="true");
     setModifica(!(parsedParams.inserta==="true"));
     let ttprovincias=[];
 
@@ -122,21 +123,22 @@ const Registrarse = () => {
       //
       // Si ok poner valores de bd en estados
       //
+      console.log(result[0]);
       setUser(result[0].iduser);
       setPassword(result[0].pw);
       setNombre(result[0].nombre);
       setEmail(result[0].email);
       setFijo(result[0].fijo);
+      setPlan(result[0].tipouser);
+      console.log(result[0].tipouser);
       setCelular(result[0].celular);
       setProvincia(result[0].provincia);
       setMunicipio(result[0].municipio);
-             //
-             // Recuperar el contenido de la foto de perfil
-             //
-
-             
+      //
+      // Recuperar el contenido de la foto de perfil
+      //             
       let resultado = await getjpg({foto: sessionStorage.getItem("user"), folder: "usuarios"});
-      resultado = await result.text();
+      resultado = await resultado.text();
 
              if (resultado.length!==0)
               {
@@ -268,14 +270,6 @@ const Registrarse = () => {
       {
         setDesc("");
       }
-{/*
-      const response = await axios.post(
-      "http://localhost:3001/setregistrarse",
-      { user, nombre, password, email, celular, fijo, provincia:provincia,municipio:municipio,
-        contenidofoto,modifica,plan},
-      {}
-    );
-*/}
     let response = await setregistrarse({user, nombre, password, email, celular, fijo, provincia:provincia,municipio:municipio, contenidofoto,modifica,plan});
     response = await response.json();
 

@@ -78,7 +78,7 @@ useEffect(() => {
           </div>
               <p1>M2G-Destodo Versión 1.0</p1>
               <p1>Desarrollado por M2G Software.</p1>
-              <p1>Celular: (53)52675359 Fijo: (53)22657241 </p1>
+              <p1>Celular: +5352675359 Fijo: +5322657241 </p1>
               <p1>Email: cmr201966@gmail.com </p1>
               <p1>WhatsApp: 5352675359 </p1>
               <p1>Santiago de Cuba.</p1>

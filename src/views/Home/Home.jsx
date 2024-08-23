@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 import IconButton from "@mui/material/IconButton";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import { Box, CircularProgress } from "@mui/material";
+import { useFilter } from "../../context/FilterProvider";
 
 import Tippy from "@tippyjs/react";
 
@@ -19,6 +20,7 @@ import { useEffect, useState } from "react";
 import {getapps, getsubapps  } from "../../servicios/home";
 
 const Home = () => {
+  const { filterState, setFilterState } = useFilter();
   const location = useLocation();
   const parsedParams = {};
   const [result, setResult] = useState([]);
@@ -42,7 +44,10 @@ const Home = () => {
     sessionStorage.setItem("ptipo", "");
     sessionStorage.setItem("pnohay", "");
     sessionStorage.setItem("filtro", "Ubicación");
-    setOpcion("");
+    sessionStorage.removeItem("filtro_productos");
+    sessionStorage.setItem("condicion_filter", "");
+    setFilterState({ type: "set", newvalue: false });
+setOpcion("");
     let tayuda =
       sessionStorage.getItem("usernombre") === null
         ? "Invitado"
@@ -276,9 +281,7 @@ result1 = await result.json();
             ))}
           </Grid>
         </Hero>
-      </div>
-
-      
+      </div>     
     </>
   );
 };
