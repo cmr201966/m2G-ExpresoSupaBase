@@ -39,7 +39,8 @@ const Registrarse = () => {
   const [cbmlc, setCbmlc] = useState("");
   const arraydesconocido = [{ keycercade: 99, provincia: 99, municipio: 99, desc: "Desconocido" }];
 //  const arrayplan= [{ plan: 0,  desc: "Gratis", tip:"Explorar, Comprar y Reservar" },{ plan: 1,  desc: "Básico", tip:"Crear Negocios" }];
-  const arrayplan= [{ plan: 0,  desc: "Gratis", tip:"Explorar, Comprar y Reservar" },{ plan: 1,  desc: "Básico", tip:"Crear Negocios" },{ plan: 2,  desc: "Premiun", tip:"Crear Negocios Plus" }];
+//  const arrayplan= [{ plan: 0,  desc: "Gratis", tip:"Explorar, Comprar y Reservar" },{ plan: 1,  desc: "Básico", tip:"Crear Negocios" },{ plan: 2,  desc: "Premiun", tip:"Crear Negocios Plus" }];
+  const arrayplan= [{ plan: 0,  desc: "Gratis", tip:"Explorar, Comprar y Reservar" },{ plan: 1,  desc: "Operador", tip:"Gestiona negocio" },{ plan: 2,  desc: "Premiun", tip:"Crear Negocios Plus" }];
   const [plan, setPlan] = useState(0);
   const [arrayprovincias, setArrayprovincias] = useState([]);
   const [arraymunicipios, setArraymunicipios] = useState([]);
@@ -387,9 +388,6 @@ const Registrarse = () => {
                 required
               />
             </div>
-            {
-              resultado !== "" && <label className="resultado-registrarse">{resultado}</label>
-            }
             <div className="input-area-registrarse-plan">
               <label className="plan">*Plan:</label>
               <select  className="select-registrarse-plan"  id="plan" onChange={handleselect} value={plan}>
@@ -398,6 +396,9 @@ const Registrarse = () => {
                 })}
               </select>
             </div>
+            {
+              resultado !== "" && <label className="resultado-registrarse">{resultado}</label>
+            }
             <label className="label-grupo">Datos Personales</label>
             <div className="input-area-registrarse">
               <label className="nombre" >Nombre:</label>

@@ -6,6 +6,7 @@ import { MenuOpen, Menu } from "@mui/icons-material";
 import { Send } from "@mui/icons-material";
 import { setchat, getchat } from "../../servicios/chat";
 import { getJpgFile } from "../../servicios/imagenes";
+import { css } from "@emotion/css";
 
 // styles
 import "./styles.css";
@@ -14,19 +15,17 @@ import io from "socket.io-client";
 
 import {
   useTheme,
-  Box,
   Button,
   TextField,
   CircularProgress,
   Typography,
-  Paper,
 } from "@mui/material";
 
 let socket = io("http://localhost:3001");
 
 const ChatDialogo = (props) => {
   const { user, nombre, indexChat, openSide, openSideHandler, fixed } = props;
-//  const [show, setShow] = useState(false);
+  //  const [show, setShow] = useState(false);
   const [inicia, setInicia] = useState(true);
   //const navigate = useNavigate();
   const theme = useTheme();
@@ -38,21 +37,27 @@ const ChatDialogo = (props) => {
   const [contenidofoto, setContenidofoto] = useState("");
 
   async function init() {
-    let get_chat = await getchat({ userOut: sessionStorage.getItem("user"), userIn: user});
+    let get_chat = await getchat({
+      userOut: sessionStorage.getItem("user"),
+      userIn: user,
+    });
     get_chat = await get_chat.json();
     setMsgs(get_chat);
-    let fotobuffer = await getJpgFile({ file: "./galerias/app_images/usuarios/" + user + "/foto-1.jpg"});
+    let fotobuffer = await getJpgFile({
+      file: "./galerias/app_images/usuarios/" + user + "/foto-1.jpg",
+    });
     fotobuffer = await fotobuffer.text();
 
     if (fotobuffer.length !== 0 && fotobuffer.error === undefined) {
-       setContenidofoto(fotobuffer);
+      setContenidofoto(fotobuffer);
     } else {
-       setContenidofoto("");
+      setContenidofoto("");
     }
 
     setInicia(false);
   }
-{/*
+  {
+    /*
   async function refrescar_chat() {
     const resultado = await axios.post(
       "http://192.168.1.100:3001/get-chat",
@@ -76,21 +81,13 @@ const ChatDialogo = (props) => {
       setMsgs(tmsgs);
     }
   }
-*/}
+*/
+  }
 
   async function enviar(e) {
-    console.log(
-      "Enviar: Out( " +
-        sessionStorage.getItem("user") +
-        "), In(" +
-        user +
-        "), Texto: " +
-        texto
-    );
     setSendingMessage(true);
     e.preventDefault();
     try {
-      console.log(msgs);
       let tmsgs = msgs;
       tmsgs.push({
         userOut: sessionStorage.getItem("user"),
@@ -98,10 +95,19 @@ const ChatDialogo = (props) => {
         desc: texto,
       });
       setMsgs(tmsgs);
-      await setchat({ userOut: sessionStorage.getItem("user"), userIn: user, texto, tipo: true});
-   
+      await setchat({
+        userOut: sessionStorage.getItem("user"),
+        userIn: user,
+        texto,
+        tipo: true,
+      });
+
       setTexto("");
-      socket.emit("send-message", { userOut: sessionStorage.getItem("user"), userIn: user, texto: texto });
+      socket.emit("send-message", {
+        userOut: sessionStorage.getItem("user"),
+        userIn: user,
+        texto: texto,
+      });
     } catch (err) {
       console.log(err);
     }
@@ -121,42 +127,36 @@ const ChatDialogo = (props) => {
   const [socketId, setSocketId] = useState(null);
 
   useEffect(() => {
-    console.log("user-id")
     if (socketId !== null) {
-      console.log("Entro...")
       socket.emit("user-id", { id: sessionStorage.getItem("user") });
     }
   }, [socketId]);
 
-async function refresca(){
-      
-  let get_chat = await getchat({ userOut: sessionStorage.getItem("user"), userIn: user});
-  get_chat = await get_chat.json();
-  setMsgs(get_chat);
-
-}
+  async function refresca() {
+    let get_chat = await getchat({
+      userOut: sessionStorage.getItem("user"),
+      userIn: user,
+    });
+    get_chat = await get_chat.json();
+    setMsgs(get_chat);
+  }
   useEffect(() => {
     //
-    console.log("Observando...");
     socket = io("http://localhost:3001");
     socket.on("connected", (param) => {
-      console.log("connected", param)
       const { socketId } = param;
       setSocketId(socketId);
-      console.log("socketID: " + socketId);
     });
     //
     socket.on("new-message", (param) => {
-      const {userOut, userIn, texto}=param
-      console.log("Mensaje nuevo:", userOut, userIn, texto);
-{/*      console.log(msgs);
-      let tmsgs=[...msgs,{userOut: userOut, userIn: userIn, desc: texto}]
-      console.log(tmsgs);*/}
-  refresca();
-{/*
+      const { userOut, userIn, texto } = param;
+      refresca();
+      {
+        /*
       setInicia(true);
       init();
-*/}      
+*/
+      }
     });
     //
     socket.on("disconnect", () => {
@@ -173,44 +173,22 @@ async function refresca(){
   }, []);
 
   return (
-    <>
-      <Paper
-        sx={{
-          flex: 1,
-          padding: "10px",
-          width: !fixed ? { md: "100%", xs: "100%" } : "100%",
+    <div className="chat-container">
+      <div
+        className={`chat ${css({
+          borderRadius: openSideHandler ? "0 15px 15px 0" : "15px",
           background: theme.palette.background.paper,
-          borderRadius: {
-            md: openSideHandler ? "0 15px 15px 0" : "15px",
-            xs: "15px",
-          },
-          position: !fixed ? "relative" : "fixed",
-          height: !fixed ? "100%" : "400px",
-          paddingRight: !fixed ? 0 : "27px",
-          left: 0,
-          bottom: 0,
-        }}
+        })}`}
         elevation={2}
       >
-        <Box
-          sx={{
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "space-between",
-            background: theme.palette.background.default,
-            border: "1px solid gray",
-            padding: "10px",
+        <div
+          className={`style1 barra-titulo ${css({
             marginRight: !fixed ? 0 : "10px",
-          }}
-          className="barra-titulo"
+            background: theme.palette.background.default,
+          })}`}
         >
-          <Box
-            sx={{
-              gap: "10px",
-              display: "flex",
-              alignItems: "center",
-              flex: 1,
-            }}
+          <div
+          className="styly2"
           >
             {openSideHandler ? (
               <IconButton
@@ -221,22 +199,25 @@ async function refresca(){
               </IconButton>
             ) : null}
 
-            {inicia === false ? 
+            {inicia === false ? (
               <img
                 className="img-titulo-chat"
                 src={contenidofoto}
                 alt={nombre}
-              />:""
-            }
-            {inicia === false ? 
-              <label className="nombre-chat">{nombre}</label>: ""
-            }
-          </Box>
-        </Box>
+              />
+            ) : (
+              ""
+            )}
+            {inicia === false ? (
+              <label className="nombre-chat">{nombre}</label>
+            ) : (
+              ""
+            )}
+          </div>
+        </div>
         {inicia === false ? (
-          <Box
-            sx={{ paddingTop: "10px", marginRight: !fixed ? 0 : "10px" }}
-            className="chat-msgs"
+          <div
+          className={`chat-msgs ${css({marginRight: !fixed ? 0 : "10px" ,})}`}
           >
             {msgs.length !== 0 &&
             msgs !== undefined &&
@@ -244,8 +225,9 @@ async function refresca(){
             !msgs.error ? (
               <>
                 {msgs.map((item, i) => (
-                  <Box key={i}
-                    sx={{
+                  <div
+                    key={i}
+                    style={{
                       padding: "1px",
                       display: "flex",
                       width: "99%",
@@ -271,25 +253,24 @@ async function refresca(){
                     >
                       {item.desc}
                     </Typography>
-                  </Box>
+                  </div>
                 ))}
               </>
             ) : (
               ""
             )}
-          </Box>
+          </div>
         ) : (
           ""
         )}
 
-        <Box
-          sx={{
+        <form        
+          style={{
             display: "flex",
             alignItems: "center",
             gap: "10px",
             width: "100%",
           }}
-          component="form"
         >
           <TextField
             id="texto"
@@ -321,9 +302,9 @@ async function refresca(){
           ) : (
             <CircularProgress sx={{ marginRight: !fixed ? 0 : "10px" }} />
           )}
-        </Box>
-      </Paper>
-    </>
+        </form>
+      </div>
+    </div>
   );
 };
 

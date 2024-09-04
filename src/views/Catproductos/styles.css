@@ -18,7 +18,7 @@
 }
 .container-producto-datos{
     background-color: rgb(20 96 172);
-    width: 400px;
+    width: 410px;
     height: auto;
     padding: 1px;
 }
@@ -213,26 +213,26 @@
     margin-top: 5px;
 }
 .input-cataproducto-1{
-    margin-left: 31px;
-    width: 225px;
+    margin-left: 30px;
+    width: 292px;
     height: 25px;
     margin-bottom: 4px;   
 }
 .input-cataproducto-2{
-    margin-left: 8px;
-    width: 225px;
+    margin-left: 3px;
+    width: 292px;
     height: 25px;
 }
 .input-cataproducto-20{
     margin-left: 52px;
-    width: 225px;
+    width: 292px;
     margin-bottom: 4px;   
     margin-top: 5px; 
     height: 25px;
 }
 .input-cataproducto-21{
     margin-left: 61px;
-    width: 225px;
+    width: 292px;
     margin-bottom: 4px;   
     height: 25px;
 }
@@ -245,7 +245,7 @@
 }
 .input-cataproducto-4{
     margin-left: 51px;
-    width: 225px;    
+    width: 292px;    
     height: 25px;
  }
  .input-cataproducto-5{

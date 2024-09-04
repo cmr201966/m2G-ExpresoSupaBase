@@ -5,6 +5,7 @@ import IconButton from "@mui/material/IconButton";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import { Box, CircularProgress } from "@mui/material";
 import { useFilter } from "../../context/FilterProvider";
+import QRCode from 'react-qr-code';
 
 import Tippy from "@tippyjs/react";
 
@@ -47,7 +48,7 @@ const Home = () => {
     sessionStorage.removeItem("filtro_productos");
     sessionStorage.setItem("condicion_filter", "");
     setFilterState({ type: "set", newvalue: false });
-setOpcion("");
+    setOpcion("");
     let tayuda =
       sessionStorage.getItem("usernombre") === null
         ? "Invitado"
@@ -244,7 +245,7 @@ result1 = await result.json();
               </IconButton>
             )}
             <h3 className="h2-1-cabeza-home">M2G-Destodo</h3>
-            {/* <QRCode value="TRANSFERMOVIL_ETECSA, TRANSFERENCIA,9224069991525391,56174215" />*/}
+             {/*QRCode value="TRANSFERMOVIL_ETECSA, TRANSFERENCIA,9224069991525391,56174215" />*/}
             <h4 className="h3-1-cabeza-home">{opcion}</h4>
           </div>
           {show ? <Box sx={{ width: "100%", height: "300px", display: "flex", alignItems: "center", justifyContent: "center" }}><CircularProgress color="checkbox" /></Box> : null}

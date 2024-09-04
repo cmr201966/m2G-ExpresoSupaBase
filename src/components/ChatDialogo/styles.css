@@ -33,9 +33,8 @@
 }
 .nombre-chat {
   margin-left: 5px;
-  color:blue;
+  color: blue;
 }
-  
 
 .elemento-nombre-chat {
   margin-left: 5px;
@@ -97,6 +96,7 @@
   height: calc(100% - 112px);
   overflow-y: auto;
   overflow-x: hidden;
+  padding-top: "10px";
 }
 .chat-msgs-out {
   display: flex;
@@ -145,4 +145,49 @@
   margin-left: 10px;
   margin-top: 10px;
   color: aliceblue;
+}
+
+.chat-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: flex-end;
+  justify-content: flex-end;
+}
+
+.chat {
+  margin: 15px;
+  padding: 10px;
+  width: 400px;
+}
+
+.styly1{
+  display: "flex";
+  align-items: "center";
+  justify-content: "space-between";
+  border: "1px solid gray";
+  padding: "10px";
+}
+
+.style2{
+  gap: "10px";
+  display: "flex";
+  align-items: "center";
+  flex: 1;
+}
+
+.chat-map{
+  padding: "1px";
+  display: "flex";
+  width: "99%";
+  margin-bottom: "5px";
+}
+.style-3{
+  display: "flex";
+  align-items: "center";
+  gap: "10px";
+  width: "100%";
 }

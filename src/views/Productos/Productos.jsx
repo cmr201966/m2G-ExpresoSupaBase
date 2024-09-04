@@ -623,6 +623,7 @@ const Productos = () => {
     try {
       const response = await fetch(url);
       const data = await response.json();
+      console.log(data[0]);
       if (data) {
         const distance = data.routes[0].distance;
         const duration = data.routes[0].duration;
@@ -1412,7 +1413,7 @@ const Productos = () => {
 
 
 
-            .mapa-productos            <Box sx={{ maxHeight: "400px", overflowY: "auto" }}>
+<Box sx={{ maxHeight: "400px", overflowY: "auto" }}>
 
 
 {/*
