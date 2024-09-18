@@ -1,6 +1,7 @@
 import config from "../config";
 
 export async function makeRequest(url, body, method = "POST") {
+  console.log(body);
   return await fetch(url, {
     method,
     headers: {

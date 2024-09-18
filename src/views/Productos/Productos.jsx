@@ -17,6 +17,7 @@ import { useNavigate } from "react-router-dom";
 import Close from "@mui/icons-material/Close";
 import Map from "../../components/Map/MapBox";
 import libre from "../../assets/images/libre.png";
+import ocupado from "../../assets/images/ocupado.png";
 import marker from "../../assets/images/custom_marker.png";
 import { getproductos, getproductoscategoria, setMovimientosNew, updateOcupado } from "../../servicios/productos";
 import { getJpgFile } from "../../servicios/imagenes";
@@ -34,8 +35,11 @@ import CardRow from "../../components/CardRow/CardRow";
 // styles
 import "./styles.css";
 import config from "../../config";
+import { LegendToggle, LensTwoTone } from "@mui/icons-material";
 
 const Productos = () => {
+  
+  let bbox;
   const navigate = useNavigate();
   const [mapLoading, setMapLoading] = useState(true);
   const [puntos, setPuntos] = useState([]);
@@ -168,6 +172,49 @@ const Productos = () => {
   let mabierto = sessionStorage.getItem("abierto");
   // Fin estados del filtro
 
+
+
+  /////
+const kmToDegrees = (km) => {
+  return km / 111.32; // Aproximación para convertir km a grados
+};
+
+
+//const centerPoint = [20.0217583, -75.829090519]; 
+//let distanciaArriba = .5; // en km
+//let distanciaAbajo = .5; // en km
+//let distanciaIzquierda = .5; // en km
+//let distanciaDerecha = .5; // en km
+
+const createBoundingBox = (centerPoint, distanciaArriba, distanciaAbajo, distanciaIzquierda, distanciaDerecha) => {
+  const [lat, lon] = centerPoint;
+
+  const deltaLatArriba = kmToDegrees(distanciaArriba);
+  const deltaLatAbajo = kmToDegrees(distanciaAbajo);
+  const deltaLonIzquierda = kmToDegrees(distanciaIzquierda / Math.cos(lat * (Math.PI / 180))); // Ajustar por latitud
+  const deltaLonDerecha = kmToDegrees(distanciaDerecha / Math.cos(lat * (Math.PI / 180))); // Ajustar por latitud
+
+  const bbox = {
+      xmin: lon - deltaLonIzquierda,
+      ymin: lat - deltaLatAbajo,
+      xmax: lon + deltaLonDerecha,
+      ymax: lat + deltaLatArriba,
+  };
+
+  return bbox;
+};
+
+function contains(lat, lon, bbox) {
+  return (
+      lon >= bbox.xmin &&
+      lon <= bbox.xmax &&
+      lat >= bbox.ymin &&
+      lat <= bbox.ymax
+  );
+}
+/*
+let bbox = createBoundingBox(centerPoint, distanciaArriba, distanciaAbajo, distanciaIzquierda, distanciaDerecha);
+*/
   const geocodeAddress = async (address) => {
     const response = await fetch(
       `https://api.mapbox.com/geocoding/v5/mapbox.places/${encodeURIComponent(
@@ -623,7 +670,6 @@ const Productos = () => {
     try {
       const response = await fetch(url);
       const data = await response.json();
-      console.log(data[0]);
       if (data) {
         const distance = data.routes[0].distance;
         const duration = data.routes[0].duration;
@@ -653,12 +699,21 @@ const Productos = () => {
           imageClassName: "",
         },
       ]);
-
       if (ppuntos === 1) {
         // Primer punto calcular distancia del producto al cliente
         //         const { distancia, duracion } = await calculateDistance([lng1,lat1], [lngLat.lng,lngLat.lat]);
         //         setCarrera(distancia.toFixed(2));
         //         setDuracion1((duracion+5).toFixed(2));
+        //let bbox = createBoundingBox([lngLat.lat, lngLat.lng], 5, 5, 5, 5);
+//        bbox = createBoundingBox([lngLat.lat, lngLat.lng], distanciaArriba, distanciaAbajo, distanciaIzquierda, distanciaDerecha);
+        //console.log(bbox);
+        let tpuntos=[...puntos]
+        for (let i = 0; i < tpuntos.length; i += 1){
+/*              if (contains(tpuntos[i].latitud, tpuntos[i].longitud, bbox)) tpuntos[i].image=libre
+              else tpuntos[i].image=ocupado;*/
+          }
+        //setPuntos(tpuntos);
+    
       }
 
       if (ppuntos === 2) {
@@ -1113,6 +1168,8 @@ const Productos = () => {
         lng: item.longitud,
         image: libre,
         info: item.nombre,
+        distanciaMax: item.distanciaMax,
+        sCiudad: item.sCiudad,
         imageClassName: "",
       });
       itemst.push({
@@ -1162,7 +1219,6 @@ const Productos = () => {
     sessionStorage.setItem("naturaleza", parsedParams.naturaleza);
     sessionStorage.setItem("idowner", parsedParams.idowner);
     sessionStorage.setItem("nivel", parsedParams.nivel);
-
     init_filtrar();
     init1();
   }
@@ -1266,7 +1322,6 @@ const Productos = () => {
       setCantidadproductos(result1.length);
       setResult(newResult);
     }
-
     // Obtener el contenido de la foto de perfil
     contenidofoto.splice(0, contenidofoto.length);
     for (let i = 0; i < newResult.length; i += 1) {
@@ -1291,8 +1346,11 @@ const Productos = () => {
       paresgps.push({
         lat: item.latitud,
         lng: item.longitud,
+//        image: contains(item.latitud, item.longitud, bbox)?libre:ocupado,
         image: libre,
         info: item.nombre,
+        distanciaMax: item.distanciaMax,
+        sCiudad: item.sCiudad,
         imageClassName: "",
       });
       itemst.push({
@@ -1314,30 +1372,48 @@ const Productos = () => {
       let tindex = puntos.length;
 
         setMovimientosNew({ idmovimiento: 1, idproducto: idproductot, latOrigen: puntos[tindex - 2].lat, latDestino: puntos[tindex - 1].lat, lngOrigen: puntos[tindex - 2].lng,
-        lngDestino: puntos[tindex - 1].lng, precio: carrera * items[index].tarifa + items[index].costoDomicilio, kms: carrera,});
+        lngDestino: puntos[tindex - 1].lng, precio: carrera * items[index].tarifa + items[index].costoDomicilio, kms: carrera, user: users,});
         await updateOcupado({idproducto: idproductot, ocupado: 1 });
   
-    }
+        init_filtrar();
+        init1();
+        }
 
     setPuntosState(0);
-    //init();
-    init_filtrar();
-    init1();
     setShowMap(!showMap);
   }
 
   function onModalClose9() {}
 
   async function otroPunto() {
+    let tpuntos = [...puntos];
     let menor = 999999;
     let esta = 0;
     let dura = 0;
-    let tpuntos = [...puntos];
+    let tindex = 0;
+    let ok=false;
+    let distanciaArriba = .5; // en km
+    let distanciaAbajo = .5; // en km
+    let distanciaIzquierda = .5; // en km
+    let distanciaDerecha = .5; // en km   
+    while (ok===false){
+       menor = 999999;
+       esta = 0;
+       dura = 0;
+       tindex = 0;
+       tindex = puntosState;
+    bbox = createBoundingBox([tpuntos[tpuntos.length - tindex].lat, tpuntos[tpuntos.length - tindex].lng], distanciaArriba, distanciaAbajo, distanciaIzquierda, distanciaDerecha);
     for (let i = 0; i < tpuntos.length - 1; i += 1) {
-      let tindex = 0;
+      if (contains(tpuntos[i].lat, puntos[i].lng, bbox)===true) {
+        tpuntos[i].image=libre;
+      }
+      else{
+        tpuntos[i].image=ocupado;
+        continue
+      }
       if (puntosState !== 0 && i <= tpuntos.length - (puntosState + 1)) {
         tindex = puntosState;
-        //esta = distanciaEnKilometros(puntos[puntos.length - tindex].lat, puntos[puntos.length - tindex].lng, item.lat, item.lng).toFixed(2);
+``
         const { distancia, duracion } = await calculateDistance(
           [
             tpuntos[tpuntos.length - tindex].lng,
@@ -1348,27 +1424,36 @@ const Productos = () => {
         esta = distancia.toFixed(2);
         dura = duracion;
       }
-      if (Number(esta) < Number(menor)) {
-        menor = esta;
-        setProductot(tpuntos[i].info);
-        setIdroductot(items[i].idproducto);
-        setTarifa(items[i].tarifa);
-        setCostoDomicilio(items[i].costoDomicilio);
-        tpuntos.forEach((item, i) => {
-          tpuntos[i].imageClassName = "";
-        });
-        tpuntos[i].imageClassName = "iconoGrande";
-        setDuracion1(dura.toFixed(2));
-        setIndex(i);
+//      if ((Number(esta) < Number(menor)) && ((tpuntos[i].distanciaMax<esta)) || tpuntos[i].distanciaMax===0) {
+      if ((Number(esta) < Number(menor)) && ((tpuntos[i].distanciaMax===0) || (tpuntos[i].distanciaMax<esta))) {
+          menor = esta;
+          setProductot(tpuntos[i].info);
+          setIdroductot(items[i].idproducto);
+          setTarifa(items[i].tarifa);
+          setCostoDomicilio(items[i].costoDomicilio);
+          tpuntos.forEach((item, i) => {
+            tpuntos[i].imageClassName = "";
+          });
+          tpuntos[i].imageClassName = "iconoGrande";
+          setDuracion1(dura.toFixed(2));
+          setIndex(i);
+          ok=true;
       }
     }
+    if (ok===false){
+      distanciaArriba = distanciaArriba + .5; 
+      distanciaAbajo = distanciaAbajo + .5; 
+      distanciaIzquierda = distanciaIzquierda + .5; 
+      distanciaDerecha = distanciaDerecha + .5; 
+    }
+  }
     setPuntos(tpuntos);
     setMascerca(menor);
   }
   
   useEffect(() => {
-    if (puntos.length !== 0) {
-      otroPunto();
+    if (puntos.length !== 0) {      
+      if (puntosState==1) otroPunto();
     }
   }, [lng]);
 
@@ -1410,8 +1495,6 @@ const Productos = () => {
             <div className="modal-filter-title">
               <label className="label-filter-title">Filtrar</label>
             </div>
-
-
 
 <Box sx={{ maxHeight: "400px", overflowY: "auto" }}>
 
@@ -1833,9 +1916,7 @@ const Productos = () => {
               {" "}
               - {nombre.replaceAll("%20", " ")} - ({cantidadproductos})
             </h4>
-{/*            (showMap !== true && puntos.length !== 0 && viewCarrito) || (domicilio===0 && ocupado===0)? (*/}
-              {(puntosState === 2 && viewCarrito) ||
-              (showMap !== true && puntos.length !== 0 && viewCarrito) || (domicilio===0)? (
+              {(puntosState === 2 && viewCarrito && showMap===true) || (showMap === false && puntos.length !== 0 && viewCarrito)? (
                 <Tippy content={`Ordenar un producto`}>
                 <button
                   type="button"

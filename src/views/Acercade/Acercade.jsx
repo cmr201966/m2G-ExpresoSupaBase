@@ -1,3 +1,5 @@
+
+/*
 // components
 import Navbar from "../../components/Navbar/Navbar"
 import Tippy from "@tippyjs/react";
@@ -93,3 +95,48 @@ useEffect(() => {
 };
 
 export default Acercade;
+*/
+
+const kmToDegrees = (km) => {
+    return km / 111.32; // Aproximación para convertir km a grados
+};
+
+const createBoundingBox = (centerPoint, distanciaArriba, distanciaAbajo, distanciaIzquierda, distanciaDerecha) => {
+    const [lat, lon] = centerPoint;
+
+    const deltaLatArriba = kmToDegrees(distanciaArriba);
+    const deltaLatAbajo = kmToDegrees(distanciaAbajo);
+    const deltaLonIzquierda = kmToDegrees(distanciaIzquierda / Math.cos(lat * (Math.PI / 180))); // Ajustar por latitud
+    const deltaLonDerecha = kmToDegrees(distanciaDerecha / Math.cos(lat * (Math.PI / 180))); // Ajustar por latitud
+
+    const bbox = {
+        xmin: lon - deltaLonIzquierda,
+        ymin: lat - deltaLatAbajo,
+        xmax: lon + deltaLonDerecha,
+        ymax: lat + deltaLatArriba,
+    };
+
+    return bbox;
+};
+
+const BoundingBoxComponent = () => {
+    const centerPoint = [20.0217583, -75.829090519]; 
+    const distanciaArriba = 2; // en km
+    const distanciaAbajo = 2; // en km
+    const distanciaIzquierda = 2; // en km
+    const distanciaDerecha = 2; // en km
+
+    const bbox = createBoundingBox(centerPoint, distanciaArriba, distanciaAbajo, distanciaIzquierda, distanciaDerecha);
+
+    return (
+        <div>
+            <h2>Bounding Box</h2>
+            <p>Xmin: {bbox.xmin}</p>
+            <p>Ymin: {bbox.ymin}</p>
+            <p>Xmax: {bbox.xmax}</p>
+            <p>Ymax: {bbox.ymax}</p>
+        </div>
+    );
+};
+
+export default BoundingBoxComponent;

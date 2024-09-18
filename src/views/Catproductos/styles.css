@@ -9,7 +9,7 @@
     border-radius: 15px;
 }
 .container-producto-select{
-    margin-top: 11px;
+    margin-top: 10px;
     background-color: rgb(20 96 172);
     width: 400px;
     height: auto;
@@ -93,6 +93,7 @@
 }
 .label-vista-productos-1-1{
     color:aliceblue;
+    margin-right: 27px;
 /*    width: 82px;*/
 /*    margin-top: 3px;*/
   }
@@ -210,7 +211,7 @@
     width: 100%;
     align-items: center;
     margin-left: 1px;
-    margin-top: 5px;
+/*    margin-top: 5px;*/
 }
 .input-cataproducto-1{
     margin-left: 30px;
@@ -235,9 +236,6 @@
     width: 292px;
     margin-bottom: 4px;   
     height: 25px;
-}
-.input-area4{
-    margin-bottom: 5px;
 }
 .input-cataproducto-3{
     margin-left: 25px;
@@ -381,7 +379,7 @@
     width: 100%;
     justify-content: flex-start;
     display: flex;
-    margin-top: 15px; 
+    margin-top: 5px; 
     gap:20px;
 }
 .img-producto
@@ -449,4 +447,27 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+}
+.distancia-sciudad{
+    display: flex;
+    flex-direction: row;
+    width: 333px;
+    align-items: center;
+    justify-content: space-between;
+}
+.input-cataproducto-101{
+    width: 25px;
+}
+
+.input-cataproducto-103{
+    margin-right: 50px;
+}
+.input-cataproducto-104{
+    margin-right: 26px;
+    width: 225px;
+    margin-bottom: 8px !important;   
+ }
+.combo-gps{
+    width: 24px;
+    height: 24px;
 }

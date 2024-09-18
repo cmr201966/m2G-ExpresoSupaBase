@@ -7,7 +7,7 @@ const Place = loadable(() => import("./Place"));
 function Places({ onClickPoint, noDrag, points, setPopupInfo }) {
   return points?.map((point, i) => (
     <Place
-      key={`marker-${point.id}`}
+      key={`marker-${point.id}-${i}`}
       point={
         point
           ? point

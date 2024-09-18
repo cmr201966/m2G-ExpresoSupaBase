@@ -73,6 +73,8 @@ const CatProductos = () => {
   const [negocio, setNegocio] = useState(0);
   const [nombrecorto, setNombrecorto] = useState("");
   const [precio, setPrecio] = useState(0);
+  const [distanciaMax, setDistanciaMax] = useState(0);
+  const [cbsCiudad, setCbsCiudad] = useState(0);
   const [producto, setProducto] = useState(null);
   const [tnegocio, setTnegocio] = useState(0);
   const [cbvista, setCbvista] = useState(false);
@@ -103,6 +105,8 @@ const CatProductos = () => {
   const [nivel, setNivel] = useState(9999);
   const [idowner, setIdowner] = useState(9999);
   const [naturaleza1, setNaturaleza1] = useState(9999);
+  const [tcbsCiudad, setTcbsCiudad] = useState(false);
+  const [tdistanciaMax, setTdistanciaMax] = useState(false);
 
   async function init() {
     sessionStorage.setItem("filtro", "");
@@ -177,26 +181,28 @@ const CatProductos = () => {
   } //init
 
   const handleProducto = async (_, value) => {
-    setProducto(value);
+    console.log(arrayproductos);
+    console.log(value);
+    console.log(arrayproductos[value.value]);
+          setProducto(value);
 
+          recuperardatosproducto(arrayproductos, value.value);
+          {/*
           // Productos del negocio
           let resultproductos = await getproductoscategoria({ negocio: arraynegocios[negocio].negocio });
           resultproductos = await resultproductos.json();
 
           if (resultproductos.error || resultproductos.length === 0) {
             setArrayproductos(arraynoproductos);
-            recuperardatosproducto(arraynoproductos, 0);
           } else {
             // get la naturaleza de este producto
-
-        let rnaturaleza = await getnaturalezaproducto({ producto: resultproductos[0].idproducto});
+*/}
+        let rnaturaleza = await getnaturalezaproducto({ producto: arrayproductos[value?.value].idproducto});
         rnaturaleza = await rnaturaleza.json();
         if (rnaturaleza.length !== 0) {
               setNaturalezat(rnaturaleza[0].naturaleza);
             }
 
-            setArrayproductos(resultproductos);
-            recuperardatosproducto(resultproductos, 0);
     let resultado = await getJpgFile({ file: "./galerias/app_images/productos" + "/" + arrayproductos[value?.value].idproducto + "/foto-1.jpg"});
     resultado = await resultado.text();
 
@@ -206,7 +212,6 @@ const CatProductos = () => {
     } else {
       setNombrefoto("");
     }
-  }
   };
 
   async function getNegocios(value){
@@ -346,6 +351,12 @@ const CatProductos = () => {
       case "precio":
         setPrecio(e.target.value);
         break;
+      case "distanciaMax":
+        setDistanciaMax(e.target.value);
+        break;
+      case "cbsCiudad":
+        setCbsCiudad(e.target.checked);
+        break;
       case "tfecha":
         setTfecha(e.target.value);
         break;
@@ -402,6 +413,9 @@ const CatProductos = () => {
     setCbgps(data[i].gpsSN === 1 ? true : false);
     setLatt(data[i].latitud===0?null:data[i].latitud);
     setLngt(data[i].longitud===0?null:data[i].longitud);
+    setTcbsCiudad(data[i].sCiudad===1?true:false);
+    setTdistanciaMax(data[i].distanciaMax);
+    console.log(data[i]);
   }
   function restaurardatosproductos() {
     //setNegocio(negociot);
@@ -417,6 +431,10 @@ const CatProductos = () => {
     setCbgps(gpst);
     setLat(latt);
     setLng(lngt);
+    console.log(tcbsCiudad);
+    console.log(tdistanciaMax)
+    setCbsCiudad(tcbsCiudad);
+    setDistanciaMax(tdistanciaMax);
   }
 
   const onPhotoChange = (e) => {
@@ -433,7 +451,6 @@ const CatProductos = () => {
   };
 
   async function confirmar() {
-    console.log(producto);
     let mproducto=0;
     if (producto===null){
        mproducto=0;
@@ -455,9 +472,11 @@ const CatProductos = () => {
       fecha,
       thora,
       tfecha,
-      gps: cbgps === true ? 1 : 0,
+      gps: (cbgps === true) || (domicilio===true)? 1 : 0,
       latitud: lat,
       longitud: lng,
+      sCiudad: cbsCiudad ===true?1:0,
+      distanciaMax: distanciaMax,
 });
     result = await result.json();
 
@@ -862,19 +881,47 @@ const CatProductos = () => {
                                    />
                                </div>
                         </div>
-
+                         {domicilio!==true?
                           <div className="input-area4">
                             <label className="label-datos-catproducto input-cataproducto-99">
                               GPS:
                             </label>
-                            <Checkbox
+                            <Checkbox className="combo-gps"
                               id="cbgps"
                               color="checkbox"
                               defaultChecked
                               checked={cbgps}
                               onClick={handleInput}
                             />
-                          </div>
+                          </div>:""}
+                          {domicilio===true?
+                          <div className="distancia-sciudad">
+                              <div className="input-area4">
+                                   <label className="label-datos-catproducto input-cataproducto-102">
+                                          Distancia MAX:
+                                   </label>
+                                   <input
+                                        className="input-cataproducto-101"
+                                        id="distanciaMax"
+                                        value={distanciaMax}
+                                        onChange={handleInput}
+                                        type="text"
+                                        required
+                                   />
+                              </div>
+                              <div className="input-area4">
+                                   <label className="label-datos-catproducto input-cataproducto-104">
+                                          Solo ciudad:
+                                   </label>
+                                   <Checkbox className="combo-gps"
+                                       id="cbsCiudad"
+                                       color="checkbox"
+                                       defaultChecked
+                                       checked={cbsCiudad}
+                                       onClick={handleInput}
+                                   />
+                              </div>
+                          </div>:""}
 
                           <div className="input-area-foto-prod">
                             <div className="foto-anadir">
@@ -897,7 +944,7 @@ const CatProductos = () => {
                                   Vista previa
                                 </label>
                                 <Checkbox
-                                  className="cbox-vista"
+                                  className="combo-gps"
                                   id="vista"
                                   color="checkbox"
                                   defaultChecked
