@@ -73,7 +73,7 @@ const Login = () => {
         ]}
       />
       <Hero>
-        <h3 className="main-title">M2G-Destodo</h3>
+{/*        <h3 className="main-title">M2G-Destodo</h3>*/}
         <div className="login">
           <div className="container-login">
             <h4 className="title-1">Iniciar sesión</h4>

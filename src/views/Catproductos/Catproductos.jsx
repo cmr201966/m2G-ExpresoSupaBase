@@ -181,9 +181,6 @@ const CatProductos = () => {
   } //init
 
   const handleProducto = async (_, value) => {
-    console.log(arrayproductos);
-    console.log(value);
-    console.log(arrayproductos[value.value]);
           setProducto(value);
 
           recuperardatosproducto(arrayproductos, value.value);
@@ -415,7 +412,6 @@ const CatProductos = () => {
     setLngt(data[i].longitud===0?null:data[i].longitud);
     setTcbsCiudad(data[i].sCiudad===1?true:false);
     setTdistanciaMax(data[i].distanciaMax);
-    console.log(data[i]);
   }
   function restaurardatosproductos() {
     //setNegocio(negociot);
@@ -431,8 +427,6 @@ const CatProductos = () => {
     setCbgps(gpst);
     setLat(latt);
     setLng(lngt);
-    console.log(tcbsCiudad);
-    console.log(tdistanciaMax)
     setCbsCiudad(tcbsCiudad);
     setDistanciaMax(tdistanciaMax);
   }
@@ -686,7 +680,7 @@ const CatProductos = () => {
                     <div className="container-producto-select">
                       <div className="input-area1-producto">
                         <label className="label-datos-catproducto">
-                           Aplicación:{" "}
+                           Categoria:{" "}
                         </label>
                         <select
                           className="selecttn-prod"
@@ -1097,14 +1091,13 @@ const CatProductos = () => {
                     ""
                   )}
                 </div>
-
                 {inicia === false &&
                 showGalerias === true &&
                 showMap === false ? (
                   <ComGalerias
-                    deQuien={arrayproductos[producto].desc}
-                    rutatmp={"productos/" + arrayproductos[producto].idproducto}
-                    perfil={arrayproductos[producto].idproducto}
+                    deQuien={arrayproductos[producto.value].desc}
+                    rutatmp={"productos/" + arrayproductos[producto.value].idproducto}
+                    perfil={arrayproductos[producto.value].idproducto}
                     permiso={true}
                     botonCerrar={false}
                   />

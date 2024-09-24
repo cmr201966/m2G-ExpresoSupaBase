@@ -563,7 +563,7 @@ function handleInput(e) {
               <div className="negocio">
                 <div className="container-negocio">
                   <div className="input-area-negocio">
-                    <label className="label-n">Aplicación: </label>
+                    <label className="label-n">Categoria: </label>
                     <select className="selectn" id="categorianegocio" onChange={handleInput} value={categorianegocio} disabled={agregarsn || editarsn}>
                       {arraycategoriasnegocios.map((item, i) => {
                         return <option key={i} value={i} >{item.desc}</option>

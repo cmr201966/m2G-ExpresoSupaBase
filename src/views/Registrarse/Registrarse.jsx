@@ -328,7 +328,7 @@ const Registrarse = () => {
                }}>
                 <ArrowBack />
               </IconButton>
-              <h3 className="registrarse-cabeza">M2G-Destodo</h3>
+              <h3 className="registrarse-cabeza">m2G-Destodo</h3>
               <h4 className="registrarse-cabeza-1"> - Registrarse</h4>
       </div>
       {show1 ? <Box sx={{ width: "100%", height: "300px", display: "flex", alignItems: "center", justifyContent: "center" }}><CircularProgress color="checkbox" /></Box> : null}

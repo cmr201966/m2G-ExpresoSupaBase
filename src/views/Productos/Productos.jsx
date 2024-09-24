@@ -1392,10 +1392,10 @@ let bbox = createBoundingBox(centerPoint, distanciaArriba, distanciaAbajo, dista
     let dura = 0;
     let tindex = 0;
     let ok=false;
-    let distanciaArriba = .5; // en km
-    let distanciaAbajo = .5; // en km
-    let distanciaIzquierda = .5; // en km
-    let distanciaDerecha = .5; // en km   
+    let distanciaArriba = .2; // en km
+    let distanciaAbajo = .2; // en km
+    let distanciaIzquierda = .2; // en km
+    let distanciaDerecha = .2; // en km   
     while (ok===false){
        menor = 999999;
        esta = 0;
@@ -1441,10 +1441,10 @@ let bbox = createBoundingBox(centerPoint, distanciaArriba, distanciaAbajo, dista
       }
     }
     if (ok===false){
-      distanciaArriba = distanciaArriba + .5; 
-      distanciaAbajo = distanciaAbajo + .5; 
-      distanciaIzquierda = distanciaIzquierda + .5; 
-      distanciaDerecha = distanciaDerecha + .5; 
+      distanciaArriba = distanciaArriba + .2; 
+      distanciaAbajo = distanciaAbajo + .2; 
+      distanciaIzquierda = distanciaIzquierda + .2; 
+      distanciaDerecha = distanciaDerecha + .2; 
     }
   }
     setPuntos(tpuntos);

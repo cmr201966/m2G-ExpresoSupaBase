@@ -114,7 +114,7 @@ useEffect(() => {
           }}>
              <ArrowBack />
             </IconButton>
-        <h3 className="main-title">M2G-Destodo</h3>
+        <h3 className="main-title">m2G-Destodo</h3>
         <h4 className="registrarse-cabeza-1"> - Informacion del negocio</h4>
         </div>
 

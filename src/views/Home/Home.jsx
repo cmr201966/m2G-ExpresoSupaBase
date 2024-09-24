@@ -187,37 +187,42 @@ result1 = await result.json();
   return (
     <>
 
+
+{/*
+links={[
+  { label: "Inicio", to: "/", tooltips: "Ir a la página principal" },
+  {
+    label:
+      sessionStorage.getItem("user") === null
+        ? "Inicio sesión"
+        : "Cerrar sesión",
+    to:
+      sessionStorage.getItem("user") === null
+        ? "/login"
+        : "/cerrarsesion",
+    tooltips:
+      sessionStorage.getItem("user") === null
+        ? "Abrir sesión"
+        : "Cerrar la sesión de " +
+          sessionStorage.getItem("usernombre"),
+  },
+  {
+    label: "Registrarse",
+    to: "/registrarse?inserta=true",
+    tooltips: "Crear una cuenta de usuario",
+  },
+  
+  {
+    label: "Acerca de",
+    to: "/Acercade",
+    tooltips: "Acerca de M2G-Software",
+  },
+]} 
+*/}
+
       <div>
         <Navbar
-          links={[
-            { label: "Inicio", to: "/", tooltips: "Ir a la página principal" },
-            {
-              label:
-                sessionStorage.getItem("user") === null
-                  ? "Iniciar sesión"
-                  : "Cerrar sesión",
-              to:
-                sessionStorage.getItem("user") === null
-                  ? "/login"
-                  : "/cerrarsesion",
-              tooltips:
-                sessionStorage.getItem("user") === null
-                  ? "Abrir sesión"
-                  : "Cerrar la sesión de " +
-                    sessionStorage.getItem("usernombre"),
-            },
-            {
-              label: "Registrarse",
-              to: "/registrarse?inserta=true",
-              tooltips: "Crear una cuenta de usuario",
-            },
-            {
-              label: "Acerca de",
-              to: "/Acercade",
-              tooltips: "Acerca de M2G-Software",
-            },
-          ]} 
-          nivel={0}
+nivel={0}
         />
 
         <Hero>
@@ -244,7 +249,7 @@ result1 = await result.json();
                 <ArrowBack />
               </IconButton>
             )}
-            <h3 className="h2-1-cabeza-home">M2G-Destodo</h3>
+            {/*<h3 className="h2-1-cabeza-home">m2G-Destodo</h3>*/}
              {/*QRCode value="TRANSFERMOVIL_ETECSA, TRANSFERENCIA,9224069991525391,56174215" />*/}
             <h4 className="h3-1-cabeza-home">{opcion}</h4>
           </div>

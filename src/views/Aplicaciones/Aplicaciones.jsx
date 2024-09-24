@@ -268,19 +268,19 @@ const Aplicaciones = () => {
               <ArrowBack />
             </IconButton>
             <h3 className="h2-cabeza-negocios">Destodo</h3>
-            <h4 className="h3-1-cabeza-negocios"> - Aplicaciones</h4>
+            <h4 className="h3-1-cabeza-negocios"> - Categorias</h4>
           </div>
 
         <div className="aplicaciones">
           <div className="container-login">
             <div className="app-grip">
                 <div className="app-flex app-flex-gap">
-                     <label>ID aplicacion:</label>
+                     <label>ID Categoria:</label>
                      {inicia===false && (agregarsn || editarsn)?
                       <>
                      <label>Descripcion:</label>
                      <label>Tooltip:</label>
-                     <label className="app-label-naturaleza">Naturaleza: </label>
+                     <label className="app-label-naturaleza">Categoria: </label>
                      <label className="app-label app-input--12">Ocultar:</label>
                      <label className="app-label app-input--12">Requerido login:</label>
                      <label className="app-label app-input--12">Solo administrador:</label>

@@ -1,9 +1,11 @@
 .navbar-row {
   display: flex;
-  justify-content: space-between;
+  /*flex-direction: column;*/
+/*  justify-content: space-between;*/
   background-color: rgb(2, 114, 226);
-  align-items: center;
-  height: 70px;
+  /*align-items: center;*/
+  height: auto;
+/*  padding: 0 100px;*/
 }
 .logo-img {
   object-fit: cover;
@@ -19,9 +21,14 @@
   padding: 5px;
 }
 .logo {
+  display:flex;
+  align-items: center;
+  justify-content: center;
   color: aliceblue;
-  padding: 5px;
-  margin: 10px;
+  padding: 4px;
+  margin: 4px;
+  gap: 50px;
+  margin-right: 20px;
 }
 .links {
   display: flex;
@@ -31,8 +38,8 @@
 }
 .links a {
   color: aliceblue;
-  padding: 10px;
-  margin: 10px;
+  padding: 4px;
+  margin: 4px;
 }
 .filter {
   color: aliceblue;
@@ -41,7 +48,7 @@
   border-radius: 1rem;
   min-width: 0;
 }
-.destodo-chat {
+.hamburguesa {
   color: aliceblue;
   padding: 5px;
   align-items: center;
@@ -74,4 +81,41 @@
 
 .justify-content-end {
   justify-content: end;
+}
+.menu-nav{
+  font-size: 16px;
+  text-decoration: none;
+}
+.buscar-input{
+  height: 25px;
+  width: 500px;
+  padding-left: 8px;
+}
+.link-logo{
+  display: flex;
+  align-items: center;
+  color: white;
+  text-decoration: none;
+  margin-right: 100px;
+  padding-left: 20px;
+}
+.input-lupa{
+  position: relative;
+}
+.lupa{
+  position: absolute !important;
+  top:50%;
+  transform: translateY(-50%);
+  right: 2px;
+}
+.agrupa-menu{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  gap: 150px;
+}
+.menuTercero{
+  display: flex;
+  flex-direction: row;
+  align-items: center;
 }

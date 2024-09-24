@@ -239,7 +239,7 @@ if (puntosState===2){
           >
             <ArrowBack />
           </IconButton>
-          <h3 className="main-title">M2G-Destodo</h3>
+          <h3 className="main-title">m2G-Destodo</h3>
           <h4 className="registrarse-cabeza-1"> - Informacion del producto</h4>
           {(distancia !== 0) && (showMap===true && puntosState===2 && domicilio===1) || (domicilio===0 && ocupado===0)? (
                   <Tippy content="Ordenar este producto">

@@ -11,6 +11,7 @@ const Cerrarsesion = () => {
     const navigate = useNavigate();
     async function init() 
     {
+        console.log("Cerrar session")
         sessionStorage.removeItem("user");
         sessionStorage.removeItem("usernombre");
         sessionStorage.removeItem("tipouser");

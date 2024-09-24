@@ -1,5 +1,5 @@
 
-/*
+
 // components
 import Navbar from "../../components/Navbar/Navbar"
 import Tippy from "@tippyjs/react";
@@ -67,7 +67,7 @@ useEffect(() => {
               </IconButton>
             }
 
-            <h3 className="acercade-title">M2G-Destodo</h3>
+            <h3 className="acercade-title">Atrás</h3>
         </div>
         <div className="acercade">
           <div className="logo-acerca">
@@ -78,8 +78,8 @@ useEffect(() => {
             </Link>
             <h3>Acerca de</h3>
           </div>
-              <p1>M2G-Destodo Versión 1.0</p1>
-              <p1>Desarrollado por M2G Software.</p1>
+              <p1>m2G-Destodo Versión 1.0</p1>
+              <p1>Desarrollado por m2G-Software.</p1>
               <p1>Celular: +5352675359 Fijo: +5322657241 </p1>
               <p1>Email: cmr201966@gmail.com </p1>
               <p1>WhatsApp: 5352675359 </p1>
@@ -95,48 +95,21 @@ useEffect(() => {
 };
 
 export default Acercade;
+
+
+/*
+import React from 'react';
+import ReactBeforeSliderComponent from 'react-before-after-slider-component';
+import 'react-before-after-slider-component/dist/build.css';
+
+const FIRST_IMAGE = {
+  imageUrl: 'https://example.com/.../some-image.jpg'
+};
+const SECOND_IMAGE = {
+  imageUrl: 'https://example.com/.../some-image-2.jpg'
+};
+<ReactBeforeSliderComponent
+    firstImage={FIRST_IMAGE}
+    secondImage={SECOND_IMAGE}
+/>
 */
-
-const kmToDegrees = (km) => {
-    return km / 111.32; // Aproximación para convertir km a grados
-};
-
-const createBoundingBox = (centerPoint, distanciaArriba, distanciaAbajo, distanciaIzquierda, distanciaDerecha) => {
-    const [lat, lon] = centerPoint;
-
-    const deltaLatArriba = kmToDegrees(distanciaArriba);
-    const deltaLatAbajo = kmToDegrees(distanciaAbajo);
-    const deltaLonIzquierda = kmToDegrees(distanciaIzquierda / Math.cos(lat * (Math.PI / 180))); // Ajustar por latitud
-    const deltaLonDerecha = kmToDegrees(distanciaDerecha / Math.cos(lat * (Math.PI / 180))); // Ajustar por latitud
-
-    const bbox = {
-        xmin: lon - deltaLonIzquierda,
-        ymin: lat - deltaLatAbajo,
-        xmax: lon + deltaLonDerecha,
-        ymax: lat + deltaLatArriba,
-    };
-
-    return bbox;
-};
-
-const BoundingBoxComponent = () => {
-    const centerPoint = [20.0217583, -75.829090519]; 
-    const distanciaArriba = 2; // en km
-    const distanciaAbajo = 2; // en km
-    const distanciaIzquierda = 2; // en km
-    const distanciaDerecha = 2; // en km
-
-    const bbox = createBoundingBox(centerPoint, distanciaArriba, distanciaAbajo, distanciaIzquierda, distanciaDerecha);
-
-    return (
-        <div>
-            <h2>Bounding Box</h2>
-            <p>Xmin: {bbox.xmin}</p>
-            <p>Ymin: {bbox.ymin}</p>
-            <p>Xmax: {bbox.xmax}</p>
-            <p>Ymax: {bbox.ymax}</p>
-        </div>
-    );
-};
-
-export default BoundingBoxComponent;
