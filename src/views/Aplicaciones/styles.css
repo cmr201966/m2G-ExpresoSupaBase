@@ -41,5 +41,8 @@
 .grupo-button-app
 {
     display: flex;
+    width: 100%;
     justify-content: flex-end;
+    gap: 20px;
+    margin-top: 20px;
 }

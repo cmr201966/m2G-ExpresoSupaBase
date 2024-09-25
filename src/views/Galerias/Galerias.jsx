@@ -97,8 +97,7 @@ const Galerias = () => {
           )}
           {inicia === false ? (
             <>
-              <h3 className="h1-1-cabeza">Destodo.cu</h3>
-              <h5 className="h3-1-cabeza-galerias">-Galerias-{desctmp}</h5>
+              <h5 className="h3-1-cabeza-galerias">Galerias-{desctmp}</h5>
             </>
           ) : (
             ""

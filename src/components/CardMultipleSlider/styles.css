@@ -1,0 +1,24 @@
+.card-slider{
+    display: flex;
+    flex-direction: column;
+    min-width: 200px;
+    width: 200px;
+    height: 250px;
+    background-color: white;
+    border-radius: 15px;
+    align-items: center;
+    justify-content:space-between;
+    padding: 25px 5px 60px 5px;
+}
+.card-slider-titulo{
+    font-size: 16px;
+    color: black;
+}
+.card-slider-descripcion{
+    font-size: 14px;
+    color:black;
+}
+.card-slider-img{
+    width: 150px;
+    height: 150px;
+}

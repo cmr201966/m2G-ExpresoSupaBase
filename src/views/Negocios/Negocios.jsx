@@ -554,8 +554,7 @@ function handleInput(e) {
             }}>
               <ArrowBack />
             </IconButton>
-            <h3 className="h2-cabeza-negocios">Destodo</h3>
-            <h4 className="h3-1-cabeza-negocios"> - Negocios</h4>
+            <h4 className="h3-1-cabeza-negocios">Negocios</h4>
           </div>
           {show ? <Box sx={{ width: "100%", height: "500px", display: "flex", alignItems: "center", justifyContent: "center" }}><CircularProgress color="checkbox" /></Box> : null}
           {inicia === false ?

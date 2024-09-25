@@ -1496,7 +1496,7 @@ let bbox = createBoundingBox(centerPoint, distanciaArriba, distanciaAbajo, dista
               <label className="label-filter-title">Filtrar</label>
             </div>
 
-<Box sx={{ maxHeight: "400px", overflowY: "auto" }}>
+            <Box sx={{ maxHeight: "400px", overflowY: "auto" }}>
 
 
 {/*
@@ -1911,10 +1911,8 @@ let bbox = createBoundingBox(centerPoint, distanciaArriba, distanciaAbajo, dista
               <ArrowBack />
             </IconButton>
 
-            <h3 className="h1-cabeza-productos">DesTodo</h3>
             <h4 className="h3-cabeza-productos-1">
-              {" "}
-              - {nombre.replaceAll("%20", " ")} - ({cantidadproductos})
+              {nombre.replaceAll("%20", " ")} - ({cantidadproductos})
             </h4>
               {(puntosState === 2 && viewCarrito && showMap===true) || (showMap === false && puntos.length !== 0 && viewCarrito)? (
                 <Tippy content={`Ordenar un producto`}>

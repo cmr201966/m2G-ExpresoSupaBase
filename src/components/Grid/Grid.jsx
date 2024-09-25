@@ -5,7 +5,8 @@ import "./styles.css";
 const Grid = (props) => {
   const { children } = props;
 
-  return <div className="grid gap width">{children}</div>;
+{/*  return <div className="gridCentral gapDelMedio width">{children}</div>;*/}
+  return <div className="gridCentral gapDelMedio ">{children}</div>;
 };
 
 Grid.propTypes = {

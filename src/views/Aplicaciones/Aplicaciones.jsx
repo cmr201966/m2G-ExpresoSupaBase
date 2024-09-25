@@ -267,15 +267,14 @@ const Aplicaciones = () => {
             }}>
               <ArrowBack />
             </IconButton>
-            <h3 className="h2-cabeza-negocios">Destodo</h3>
-            <h4 className="h3-1-cabeza-negocios"> - Categorias</h4>
+            <h4 className="h3-1-cabeza-negocios">Categorias</h4>
           </div>
 
         <div className="aplicaciones">
-          <div className="container-login">
+          <div className="container-aplicaciones">
             <div className="app-grip">
                 <div className="app-flex app-flex-gap">
-                     <label>ID Categoria:</label>
+                     <label>Categoria:</label>
                      {inicia===false && (agregarsn || editarsn)?
                       <>
                      <label>Descripcion:</label>
@@ -347,7 +346,7 @@ const Aplicaciones = () => {
                  </div>                 
           </div>          
 
-          <div className="producto-grupo-button">
+          <div className="grupo-button-app">
                   {(agregarsn === false && editarsn === false) ?
                     <Tippy content="Añadir Producto">
                       <button type="button" className="producto-button primary" onClick={agregar}>

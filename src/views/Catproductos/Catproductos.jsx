@@ -612,34 +612,6 @@ const CatProductos = () => {
       </Modal>
       <div>
         <Navbar
-          links={[
-            { label: "Inicio", to: "/", tooltips: "Ir a la página principal" },
-            {
-              label:
-                sessionStorage.getItem("user") === null
-                  ? "Iniciar sesión"
-                  : "Cerrar sesión",
-              to:
-                sessionStorage.getItem("user") === null
-                  ? "/login"
-                  : "/cerrarsesion",
-              tooltips:
-                sessionStorage.getItem("user") === null
-                  ? "Abrir sesión"
-                  : "/Cerrar la sesión de " +
-                    sessionStorage.getItem("usernombre"),
-            },
-            {
-              label: "Registrarse",
-              to: "/registrarse?inserta=true",
-              tooltips: "Crear una cuenta de usuario",
-            },
-            {
-              label: "Acerca de",
-              to: "/Acercade",
-              tooltips: "Acerca de M2G-Destodo",
-            },
-          ]}
         />
         <Hero>
           <div className="cabeza">
@@ -653,11 +625,7 @@ const CatProductos = () => {
             >
               <ArrowBack />
             </IconButton>
-            <h3 className="h1-cabeza">DesTodo</h3>
-            <h4 className="h3-1-catproductos-cabeza">
-              {" "}
-              - Catálogo de Productos
-            </h4>
+            <h4 className="h3-1-catproductos-cabeza">Catálogo de Productos</h4>
           </div>
           {show ? (
             <Box
@@ -740,7 +708,7 @@ const CatProductos = () => {
                           sx={{
                             marginLeft: "31px",
                             marginTop: "5px",
-                            width: "300px",
+                            minWidth: "343px",
                             height: "30px",
                             background: "aliceblue",
                             ".MuiAutocomplete-input": {
@@ -777,13 +745,13 @@ const CatProductos = () => {
                               DATOS{" "}
                             </label>
                           ) : (
-                            <label className="label-datos-catproducto">
+                            <div className="label-datos-catproducto-1">
                               DATOS DEL NUEVO PRODUCTO{" "}
-                            </label>
+                            </div>
                           )}
                           <div className="input-area1-producto">
                             <label className="label-datos-catproducto">
-                              *Nombre:{" "}
+                              *Nombre:
                             </label>
                             <input
                               className="input-cataproducto-1"
@@ -847,8 +815,7 @@ const CatProductos = () => {
                               required
                             />
                           </div>
-                          <div className="domicilio-ocupado">
-                                <div className="input-area4">
+                          <div className="input-area4">
                                    <label className="label-datos-catproducto input-cataproducto-12">
                                           Domicilio:
                                    </label>
@@ -860,8 +827,8 @@ const CatProductos = () => {
                                    checked={domicilio}
                                    onClick={handleInput}
                                    />
-                               </div>
-                               <div className="input-area4">
+                          </div>
+                          <div className="input-area4">
                                    <label className="label-datos-catproducto input-cataproducto-12">
                                           Ocupado:
                                    </label>
@@ -873,8 +840,7 @@ const CatProductos = () => {
                                    checked={ocupado}
                                    onClick={handleInput}
                                    />
-                               </div>
-                        </div>
+                         </div>
                          {domicilio!==true?
                           <div className="input-area4">
                             <label className="label-datos-catproducto input-cataproducto-99">

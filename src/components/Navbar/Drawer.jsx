@@ -18,9 +18,9 @@ export default function NavigationDrawer({ open, onClose }) {
         {["Ubicación", "Iniciar sesión", "Registrarse", "Vender"].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton>
-              <ListItemIcon>
+{/*              <ListItemIcon>
                 {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
+              </ListItemIcon>*/}
               <ListItemText primary={text} />
             </ListItemButton>
           </ListItem>
@@ -31,9 +31,9 @@ export default function NavigationDrawer({ open, onClose }) {
         {["Acerca de"].map((text, index) => (
           <ListItem key={text} disablePadding>
             <ListItemButton>
-              <ListItemIcon>
+{/*              <ListItemIcon>
                 {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-              </ListItemIcon>
+              </ListItemIcon>*/}
               <ListItemText primary={text} />
             </ListItemButton>
           </ListItem>
