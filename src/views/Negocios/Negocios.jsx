@@ -118,11 +118,12 @@ const CatNegocios = () => {
       }
     sessionStorage.setItem("filtro", "Ubicación")
     setShow(true);
-    setCategorianegocio(0)
+    //setCategorianegocio(0)
     setNivel(parsedParams.nivel);
     setNaturaleza(parsedParams.naturaleza);
     setIdowner(parsedParams.idowner);
     // Recuperar las categorias de las aplicaciones que existen
+    {/*
     let resulcategoriasnegocios = await getcategoriasnegociosapp({});
     resulcategoriasnegocios = await resulcategoriasnegocios.json();
 
@@ -134,10 +135,12 @@ const CatNegocios = () => {
     }
 
     setArraycategoriasnegocios(resulcategoriasnegocios);
+    */}
     
     //Recuperar los negocios de esta categoria
     
-    let resultnegocios = await getallnegocios({categorianegocio: resulcategoriasnegocios[0].categorianegocio, user: "" });
+    let resultnegocios = await getallnegocios({categorianegocio: "", user: "" });
+//    let resultnegocios = await getallnegocios({categorianegocio: resulcategoriasnegocios[0].categorianegocio, user: "" });
     resultnegocios = await resultnegocios.json();
 
 
@@ -276,7 +279,8 @@ const CatNegocios = () => {
   }
 
   async function recuperaNegocios(value){
-    let resultnegocio = await getallnegocios({categorianegocio: arraycategoriasnegocios[value].categorianegocio, user: ""});
+    let resultnegocio = await getallnegocios({categorianegocio: "", user: ""});
+//    let resultnegocio = await getallnegocios({categorianegocio: arraycategoriasnegocios[value].categorianegocio, user: ""});
     resultnegocio = await resultnegocio.json();
     const data = resultnegocio;
     if (data.error || data.length === 0) {
@@ -392,8 +396,9 @@ function handleInput(e) {
   }
 
   async function confirmar() {
-    let result = await setnegocio({ user: user, nick, categorianegocio: arraycategoriasnegocios[categorianegocio].categorianegocio,
-      negocio: arraynegocios[negocio].idnegocio, desc: descripcion,
+//    let result = await setnegocio({ user: user, nick, categorianegocio: arraycategoriasnegocios[categorianegocio].categorianegocio,
+    let result = await setnegocio({ user: user, nick,
+        negocio: arraynegocios[negocio].idnegocio, desc: descripcion,
       sede: direccionpostal, fijo: telefonofijo, celular: telefonocelular, email: correo,        
       agregarsn, editarsn, contenidofoto, provincia: provincia, municipio: municipio,
       latitud: lat, longitud: lng, gps: cbgps===true?1:0, creaCategoriaProducto: false
@@ -417,7 +422,7 @@ function handleInput(e) {
 
       if (editarsn) {
         arraynegocios[negocio].nick = nick;
-        arraynegocios[negocio].categorianegocio = arraycategoriasnegocios[categorianegocio].categorianegocio;
+//        arraynegocios[negocio].categorianegocio = arraycategoriasnegocios[categorianegocio].categorianegocio;
         arraynegocios[negocio].negocio = arraynegocios[negocio].idnegocio;
         arraynegocios[negocio].desc = descripcion;
         arraynegocios[negocio].sede = direccionpostal;
@@ -561,6 +566,7 @@ function handleInput(e) {
             <>
               <div className="negocio">
                 <div className="container-negocio">
+                  {/*
                   <div className="input-area-negocio">
                     <label className="label-n">Categoria: </label>
                     <select className="selectn" id="categorianegocio" onChange={handleInput} value={categorianegocio} disabled={agregarsn || editarsn}>
@@ -569,6 +575,7 @@ function handleInput(e) {
                       })}
                     </select>
                   </div>
+                  */}
                   {agregarsn === false && editarsn === false ?
                     <>
                       <div className="input-area-negocio">

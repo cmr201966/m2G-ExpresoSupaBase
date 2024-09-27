@@ -20,3 +20,7 @@ export async function getsubapps(body) {
   }
   
 
+  export async function getCategoriasNew(body) {
+    return makeRequest("http://localhost:3001/getCategoriasNew", body);
+  }
+  

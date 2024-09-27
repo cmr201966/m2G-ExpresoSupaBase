@@ -4,15 +4,18 @@ import { Link } from "react-router-dom";
 import "./styles.css";
 
 const CardMultipleSlider = (props) => {
-  const { titulo, imagen, descripcion } = props
+  const { categoria, link, titulo, imagen, rutatmp, desctmp,  nivel } = props
 
-console.log(titulo, descripcion);
   return (
-    <div className="card-slider">    
-         <p className="card-slider-titulo"><b>{titulo}</b></p>
-         <img className="card-slider-img" src={imagen} alt={`Foto de ${titulo}`}  />
-         <p className="card-slider-descripcion">{descripcion}</p>
-    </div>
+         <Link 
+            className="card-slider"
+            to={`/${link}?nombre=${titulo}&categoria=${categoria}&rutatmp=${rutatmp}&desctmp=${desctmp}&nivel=${nivel}&deQuien=${sessionStorage.getItem("user") === null
+               ? "Invitado": sessionStorage.getItem("usernombre")}`}
+         >
+             <p className="card-slider-titulo"><b>{titulo}</b></p>
+             <img className="card-slider-img" src={imagen} alt={`Foto de ${titulo}`}  />
+             <p className="card-slider-descripcion">{titulo}</p>
+         </Link>
   );
 };
 

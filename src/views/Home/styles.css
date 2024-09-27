@@ -81,6 +81,7 @@
   display: grid;
   grid-template-columns: 1fr 60% 1fr;
   z-index: 10;
+  gap:10px
 }
 .negative-margin {
   margin-top: -150px;
@@ -91,7 +92,8 @@
   flex-wrap: wrap;
   width: 100%;
   margin: 5px auto 0 auto;
-
+  height: 800px;
+  
 }
 
 @media (max-width: 1700px) {
@@ -144,4 +146,11 @@
 
 .gapCentral {
   gap: 20px;
+}
+.grid-letf{
+  background-color: rgb(215, 228, 228);
+}
+.grid-rigth{
+  background-color: rgb(215, 228, 228);
+}
 }

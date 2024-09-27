@@ -35,7 +35,7 @@ const BigSlider = (props) => {
   useEffect(() => {
     setTimeout(() => {
       toLeft();
-    }, 10000);
+    }, 3000);
   }, [currentIndex, toLeft]);
 
   return (

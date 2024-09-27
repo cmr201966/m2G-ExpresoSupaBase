@@ -80,7 +80,7 @@ const Navbar = (props) => {
     { label: "Categorias", to: "/categorias", tooltips: "Productos de una categoria", depende: 0 },
     {
       label: "Vender",
-      to: "/administrar",
+      to: "/catproductos",
       tooltips: "Vender",
       depende: 0,
     },
@@ -125,21 +125,11 @@ const Navbar = (props) => {
     setInicia(false);
   }
 
-  function toggleMenu(e) {
-    {
-      /*    const { target } = e;
-    const { id } = target;
-    console.log(id)
-    if (id.indexOf("toggle") >= 0) setShowMenu(!showMenu);*/
-    }
-    console.log("Hola......", !showMenu);
+  function toggleMenu() {
     setShowMenu(!showMenu);
   }
 
-  function destodo_chat() {
-    navigate(`/chat`);
-  }
-
+  {/*
   function galerias() {
     let rutatmp =
       sessionStorage.getItem("user") === null
@@ -153,6 +143,7 @@ const Navbar = (props) => {
       `/Galerias?naturaleza=58&nombre=Galerias&rutatmp=${rutatmp}&desctmp=${desctmp}`
     );
   }
+    */}
 
   function handleInput(e) {
     switch (e.target.id) {

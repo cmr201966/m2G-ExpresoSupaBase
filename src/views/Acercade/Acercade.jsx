@@ -49,14 +49,7 @@ useEffect(() => {
 
   return (
     <div>
-      <Navbar
-        links={[
-          { label: "Inicio", to: "/",tooltips: "Ir a la página principal" },
-          { label: sessionStorage.getItem("user") === null ? "Iniciar sesión" : "Cerrar sesión", to: sessionStorage.getItem("user") === null ? "/login" : "/cerrarsesion", tooltips: sessionStorage.getItem("user") === null ? "Abrir sesión" : "/Cerrar la sesión de " + sessionStorage.getItem("usernombre") },
-          { label: "Registrarse", to: "/registrarse?inserta=true", tooltips: "Crear una cuenta de usuario" },
-          { label: "Acerca de", to: "/Acercade", tooltips: "Acerca de Destodo" },
-        ]}
-      />
+      <Navbar nivel={1}/>
       <Hero>
         <div className="cabeza">
             {parsedParams.nivel === 0 ? "" :

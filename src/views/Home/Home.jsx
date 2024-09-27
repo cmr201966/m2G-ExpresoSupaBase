@@ -1,3 +1,4 @@
+{/*QRCode value="TRANSFERMOVIL_ETECSA, TRANSFERENCIA,9224069991525391,56174215" />*/}
 import Navbar from "../../components/Navbar/Navbar";
 import Grid from "../../components/Grid/Grid";
 import { useLocation } from "react-router-dom";
@@ -5,11 +6,13 @@ import IconButton from "@mui/material/IconButton";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import { Box, CircularProgress } from "@mui/material";
 import { useFilter } from "../../context/FilterProvider";
-import QRCode from "react-qr-code";
+//import QRCode from "react-qr-code";
 import BigSlider from "../../components/BigSlider/BigSlider";
 import MultipleSlider from "../../components/MultipleSlider/MultipleSlider";
 import CardMultipleSlider from "../../components/CardMultipleSlider/CardMultipleSlider";
 import Tippy from "@tippyjs/react";
+import { useNavigate } from "react-router-dom"
+
 
 // layouts
 import Hero from "../../layouts/Hero/Hero";
@@ -20,9 +23,11 @@ import { Link } from "react-router-dom";
 // styles
 import "./styles.css";
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { getapps, getsubapps } from "../../servicios/home";
+//import { getapps, getsubapps } from "../../servicios/home";
+import { getCategoriasNew } from "../../servicios/home";
 
 const Home = () => {
+  const navigate = useNavigate();
   const { filterState, setFilterState } = useFilter();
   const location = useLocation();
   const parsedParams = {};
@@ -38,6 +43,7 @@ const Home = () => {
   const [show, setShow] = useState(false);
 
   async function init() {
+    setInicia(true);
     let result1;
     setShow(true);
     sessionStorage.setItem("pnaturaleza", "");
@@ -55,13 +61,53 @@ const Home = () => {
         ? "Invitado"
         : sessionStorage.getItem("usernombre");
     const newResult = [];
+
     if (
       parsedParams.nivel === undefined ||
       parsedParams.idowner === undefined ||
       parsedParams.nivel === "0"
     ) {
       setNivel(0);
+      let result = await getCategoriasNew({
+        user: sessionStorage.getItem("user")
+      });
 
+      result1 = await result.json();
+      result1.forEach((item) => {
+        let ttooltip = item.desc;
+        if (item.tooltip === "Galerias") ttooltip = ttooltip + " de " + tayuda;
+        newResult.push({
+          categoria: item.idcategoria,
+          name: item.categoria,
+          link: item.link,
+          photo:
+            "http://192.168.1.106:3001/app_images/categorias_de_negocios/" +
+            item.idcategoria +
+            "/" +
+            item.idcategoria +
+            ".jpeg",
+          tooltip: item.desc,
+        });
+      });
+      setResult(newResult);
+    } else {
+      {/*
+      setNivel(parsedParams.nivel);
+      cambiamenu(
+        parsedParams.naturaleza,
+        parsedParams.idowner,
+        parsedParams.nivel
+      );*/}
+    }
+
+
+{/*
+    if (
+      parsedParams.nivel === undefined ||
+      parsedParams.idowner === undefined ||
+      parsedParams.nivel === "0"
+    ) {
+      setNivel(0);
       let result = await getapps({
         login: sessionStorage.getItem("user") === null ? false : true,
         user:
@@ -71,7 +117,7 @@ const Home = () => {
       });
       result1 = await result.json();
 
-      result1.forEach((item, i) => {
+      result1.forEach((item) => {
         let ttooltip = item.tooltip;
         if (item.tooltip === "Galerias") ttooltip = ttooltip + " de " + tayuda;
         newResult.push({
@@ -101,6 +147,7 @@ const Home = () => {
         parsedParams.nivel
       );
     }
+      */}
     sessionStorage.getItem("user") === null
       ? setRutatmp("usuarios/invitado")
       : setRutatmp(`usuarios/${sessionStorage.getItem("user")}`);
@@ -111,6 +158,10 @@ const Home = () => {
     setShow(false);
   } // init
 
+
+  /************************************************ */
+  /************************************************ */
+  {/*
   async function cambiamenu(naturaleza, owner, nivel) {
     let result1;
     const newResult = [];
@@ -169,17 +220,10 @@ const Home = () => {
 
     setResult(newResult);
   }
+    */}
+  /************************************************ */
+  /************************************************ */
 
-  function handleInput(e) {
-    switch (e.target.id) {
-      default:
-        break;
-    }
-  }
-
-  function atras() {
-    setNivel(nivel - 1);
-  }
 
   useEffect(() => {
     const localParams = location.search.substring(1).split("&");
@@ -199,9 +243,15 @@ const Home = () => {
       resultOfCards.push(
         <CardMultipleSlider
           key={i}
+          link={prop.link}
           titulo={prop.name}
-          imagen={"http://192.168.1.106:3001/app_images/moto5.jpeg"}
-          descripcion={prop.tooltip}
+          categoria={prop.categoria}
+          imagen={prop.photo}
+          descripcion={name}
+          rutatmp={rutatmp}
+          desctmp={desctmp}
+          nivel={nivel}
+
         />
       )
     );
@@ -214,6 +264,8 @@ const Home = () => {
         <Navbar nivel={0} />
 
         <Hero>
+
+{/*
           <div className="cabeza">
             {nivel === 0 ? (
               ""
@@ -232,9 +284,23 @@ const Home = () => {
                 <ArrowBack />
               </IconButton>
             )}
-            {/*QRCode value="TRANSFERMOVIL_ETECSA, TRANSFERENCIA,9224069991525391,56174215" />*/}
             <h4 className="h3-1-cabeza-home">{opcion}</h4>
           </div>
+*/}
+        <div className="cabeza">
+            {nivel === 0 ? "" :
+            <>
+              <IconButton color="primary" onClick={() => {
+                navigate(`/?naturaleza=${sessionStorage.getItem("naturaleza")}&owner=${sessionStorage.getItem("idowner")}&nivel=${sessionStorage.getItem("nivel")}`);
+              }}>
+                <ArrowBack />
+              </IconButton>
+            <h3 className="acercade-title">Atrás</h3>
+            </>
+          }
+        </div>
+
+
           {show ? (
             <Box
               sx={{
@@ -248,18 +314,25 @@ const Home = () => {
               <CircularProgress color="checkbox" />
             </Box>
           ) : null}
+          {inicia===false?
+          <>
           <BigSlider
             imgs={[
               "http://192.168.1.106:3001/app_images/taxi1.jpeg",
-              "http://192.168.1.106:3001/app_images/taxi1.jpeg",
-              "http://192.168.1.106:3001/app_images/taxi1.jpeg",
+              "http://192.168.1.106:3001/app_images/moto5.jpeg",
+              "http://192.168.1.106:3001/app_images/seguro.jpeg",
             ]}
           />
           <div className="main-grid negative-margin">
             <div className="grid-letf"></div>
+
              <MultipleSlider  imgs={arrayOfCards}/> 
+
+
             <div className="grid-rigth"></div>
           </div>
+          </>:""
+          }
         </Hero>
       </div>
     </>
@@ -268,7 +341,8 @@ const Home = () => {
 
 {
   /*
-            <Grid>
+
+<Grid>
               {result.map((item, i) => (
                 <Link
                   className="link-image"
@@ -285,7 +359,6 @@ const Home = () => {
                           setNivel(nivel + 1);
                           setNaturaleza(item.naturaleza);
                           setOwner(item.idowner);
-                          //setSubmenu(true);
                           cambiamenu(item.naturaleza, item.owner, nivel + 1);
                         }
                       : () => {}

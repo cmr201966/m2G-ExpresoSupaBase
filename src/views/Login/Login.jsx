@@ -1,3 +1,14 @@
+      {/*
+        links={[
+          { label: "Inicio", to: "/",tooltips: "Ir a la página principal" },
+          { label: sessionStorage.getItem("user") === null ? "Iniciar sesión" : "Cerrar sesión", to: sessionStorage.getItem("user") === null ? "/login" : "/cerrarsesion", tooltips: sessionStorage.getItem("user") === null ? "Abrir sesión" : "/Cerrar la sesión de " + sessionStorage.getItem("usernombre") },
+          { label: "Registrarse", to: "/registrarse?inserta=true", tooltips: "Crear una cuenta de usuario" },
+          { label: "Acerca de", to: "/Acercade", tooltips: "Acerca de Destodo" },
+        ]}
+          */}
+
+
+
 // components
 import Navbar from "../../components/Navbar/Navbar"
 
@@ -54,26 +65,17 @@ const Login = () => {
       sessionStorage.setItem("useremail", result.email);
       sessionStorage.setItem("userprovincia", result.provincia);
       sessionStorage.setItem("usermunicipio", result.municipio);
-
-      navegar("/"); // ir a home
+      navegar("/?nivel=0"); 
       
-    } //data.error
+    } 
 
-  } //confirmalogin
+  } 
 
   return (
-    
+
     <div>
-      <Navbar
-        links={[
-          { label: "Inicio", to: "/",tooltips: "Ir a la página principal" },
-          { label: sessionStorage.getItem("user") === null ? "Iniciar sesión" : "Cerrar sesión", to: sessionStorage.getItem("user") === null ? "/login" : "/cerrarsesion", tooltips: sessionStorage.getItem("user") === null ? "Abrir sesión" : "/Cerrar la sesión de " + sessionStorage.getItem("usernombre") },
-          { label: "Registrarse", to: "/registrarse?inserta=true", tooltips: "Crear una cuenta de usuario" },
-          { label: "Acerca de", to: "/Acercade", tooltips: "Acerca de Destodo" },
-        ]}
-      />
+      <Navbar nivel={1} />
       <Hero>
-{/*        <h3 className="main-title">M2G-Destodo</h3>*/}
         <div className="login">
           <div className="container-login">
             <h4 className="title-1">Iniciar sesión</h4>

@@ -21,7 +21,8 @@ import ocupado from "../../assets/images/ocupado.png";
 import marker from "../../assets/images/custom_marker.png";
 import { getproductos, getproductoscategoria, setMovimientosNew, updateOcupado } from "../../servicios/productos";
 import { getJpgFile } from "../../servicios/imagenes";
-import { getparesgpsnaturaleza } from "../../servicios/naturalezas";
+import { getparesgpscategoria } from "../../servicios/catalogos";
+//import { getparesgpsnaturaleza } from "../../servicios/naturalezas";
 import { getprovincias, getmunicipios  } from "../../servicios/catalogos";
 import { getcategoriasnegocios, getnegocios1  } from "../../servicios/negocios";
 
@@ -133,7 +134,7 @@ const Productos = () => {
   const [cbabiertosn, setCbabiertosn] = useState(false);
   const [domicilio, setDomicilio] = useState(0);
   const [abierto, setAbierto] = useState(0);
-  const [naturaleza1, setNaturaleza1] = useState(0);
+  const [categoria, setCategoria] = useState(0);
   const [idowner, setIdowner] = useState(0);
   const [tarifa, setTarifa] = useState(0);
   const [costoDomicilio, setCostoDomicilio] = useState(0);
@@ -554,7 +555,6 @@ let bbox = createBoundingBox(centerPoint, distanciaArriba, distanciaAbajo, dista
     setInicia(true);
     setShow1(true);
 
-
     // Tipos de Negocios
     
     let ttarraytnegocios = [];
@@ -570,6 +570,7 @@ let bbox = createBoundingBox(centerPoint, distanciaArriba, distanciaAbajo, dista
     }
     setTnegocio(0);
 
+{/*
     // Negocios del primer tipo  de negocio
     let ttarraynegocios = [];
     let resultnegocios = await getnegocios1({negocio: ""});
@@ -594,13 +595,14 @@ let bbox = createBoundingBox(centerPoint, distanciaArriba, distanciaAbajo, dista
       }
     }
     setNegocio(0);
+    */}
     //**************************************************/
     // Productos del primer negocio                     /
     //**************************************************/
-    
-    let resultproductos = await getproductoscategoria({negocio: ""});
+    console.log(sessionStorage.getItem("categoria"))
+    let resultproductos = await getproductoscategoria({categoria: sessionStorage.getItem("categoria")});
     resultproductos = await resultproductos.json();
-
+    console.log("605", resultproductos);
     if (resultproductos.error || resultproductos.length === 0) {
       setArrayproductos(arraynoproductos);
       setTproductos(arraynoproductos);
@@ -608,8 +610,9 @@ let bbox = createBoundingBox(centerPoint, distanciaArriba, distanciaAbajo, dista
       setArrayproductos(resultproductos);
       // filtrar los productos del primer negocio
       let ttarrayproductos = [];
+      console.log(sessionStorage.getItem("categoria"));
       ttarrayproductos = resultproductos.filter((item) => {
-        if (item.idnegocio === ttarraynegocios[0].idnegocio) {
+        if (item.categorianegocio === Number(sessionStorage.getItem("categoria"))) {
           return item;
         }
       });
@@ -619,6 +622,7 @@ let bbox = createBoundingBox(centerPoint, distanciaArriba, distanciaAbajo, dista
         setTproductos(arraynoproductos);
         ttarrayproductos = arraynoproductos;
       }
+      {console.log("625", ttarrayproductos)}
     }
     setProducto(0);
 
@@ -657,7 +661,7 @@ let bbox = createBoundingBox(centerPoint, distanciaArriba, distanciaAbajo, dista
       }
     }
     setMunicipio(0);
-    setShow(filterState.show);
+    //setShow(filterState.show);
     setInicia(false);
   }
 
@@ -783,6 +787,7 @@ let bbox = createBoundingBox(centerPoint, distanciaArriba, distanciaAbajo, dista
         break;
       //*
       case "tnegocio":
+        console.log("8888888888")
         setTnegocio(e.target.value);
         cambia_tipo_tnegocio(
           arraytnegocios[Number(e.target.value)].categorianegocio
@@ -1157,9 +1162,9 @@ let bbox = createBoundingBox(centerPoint, distanciaArriba, distanciaAbajo, dista
   }
   //
   async function paresGps() {
-    let resultgps = await getparesgpsnaturaleza({ naturaleza: naturaleza1});
+//    let resultgps = await getparesgpsnaturaleza({ naturaleza: naturaleza1});
+    let resultgps = await getparesgpscategoria({ categoria: sessionStorage.getItem("categoria")});
     resultgps = await resultgps.json();
-
     let paresgps = [];
     let itemst = [];
     resultgps.forEach((item) => {
@@ -1187,37 +1192,9 @@ let bbox = createBoundingBox(centerPoint, distanciaArriba, distanciaAbajo, dista
 
   function init() {
     setNivel(parsedParams.nivel !== undefined ? parsedParams.nivel : nivel);
-    setNaturaleza1(
-      parsedParams.naturaleza !== undefined
-        ? parsedParams.naturaleza
-        : naturaleza1
-    );
-    setIdowner(
-      parsedParams.idowner === "undefined"
-        ? parsedParams.owner
-        : parsedParams.idowner
-    );
-//    if (
-//      sessionStorage.getItem("pnaturaleza") === "" ||
-//      sessionStorage.getItem("pnaturaleza") === undefined ||
-//      sessionStorage.getItem("pnaturaleza") === null
-//    ) {
-      sessionStorage.setItem(
-        "pnaturaleza",
-        parsedParams.naturaleza === "26" ? 0 : parsedParams.naturaleza
-      );
-      sessionStorage.setItem("pdesc", parsedParams.nombre);
-      sessionStorage.setItem(
-        "pcondicion",
-        parsedParams.condicion === "" ? "" : parsedParams.condicion
-      );
-      sessionStorage.setItem("ptipo", parsedParams.campo1);
-      sessionStorage.setItem("pnohay", parsedParams.nohay);
-      sessionStorage.setItem("pnaturalezas", parsedParams.naturalezas);
-  //  }
-    sessionStorage.setItem("carditem", 0);
-    sessionStorage.setItem("naturaleza", parsedParams.naturaleza);
-    sessionStorage.setItem("idowner", parsedParams.idowner);
+    if (parsedParams.categoria !== undefined && parsedParams.categoria !== null && parsedParams.categoria !== 0){
+       sessionStorage.setItem("categoria", parsedParams.categoria);
+    }
     sessionStorage.setItem("nivel", parsedParams.nivel);
     init_filtrar();
     init1();
@@ -1226,7 +1203,7 @@ let bbox = createBoundingBox(centerPoint, distanciaArriba, distanciaAbajo, dista
   function verproducto(i) {
     //setShowproducto(true);
     navigate(
-      `/infoproducto?idproducto=${result[i].keyproducto}&naturaleza=${naturaleza1}`
+      `/infoproducto?idproducto=${result[i].keyproducto}&categoria=${categoria}`
     );
   }
 
@@ -1277,8 +1254,10 @@ let bbox = createBoundingBox(centerPoint, distanciaArriba, distanciaAbajo, dista
     //poner en cooki todos los parametros y pasar las cookis no los param,
     //pasar la condicion del filtro
 
+    let result1 = await getproductos({categoria: sessionStorage.getItem("categoria")});
+{/*
     let result1 = await getproductos({naturaleza: sessionStorage.getItem("pnaturaleza"), desc: sessionStorage.getItem("pdesc"),condicion: sessionStorage.getItem("pcondicion"),
-                                     tipo: sessionStorage.getItem("ptipo"), condicion_filter, naturalezas: sessionStorage.getItem("pnaturalezas")});
+                                      tipo: sessionStorage.getItem("ptipo"), condicion_filter, naturalezas: sessionStorage.getItem("pnaturalezas")});*/}
     result1 = await result1.json();
     const newResult = [];
     if (result1.error || result1.length === 0) {
@@ -1333,12 +1312,10 @@ let bbox = createBoundingBox(centerPoint, distanciaArriba, distanciaAbajo, dista
       }
     }
     sessionStorage.setItem("carditem", 0);
-    let natura =
-      parsedParams.naturaleza === undefined
-        ? naturaleza1
-        : parsedParams.naturaleza;
 
-        let resultgps = await getparesgpsnaturaleza({ naturaleza: natura});
+/*        let resultgps = await getparesgpsnaturaleza({ naturaleza: natura});*/
+
+let resultgps = await getparesgpscategoria({ categoria: sessionStorage.getItem("categoria")});
         resultgps = await resultgps.json();
     let paresgps = [];
     let itemst = [];

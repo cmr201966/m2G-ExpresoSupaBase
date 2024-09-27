@@ -37,6 +37,7 @@ import { getcategoriasnegociosapp, getnegociosusercategoria  } from "../../servi
 import { getproductoscategoria, setproducto, delproducto  } from "../../servicios/productos";
 import { getJpgFile  } from "../../servicios/imagenes";
 import { getnaturalezaproducto  } from "../../servicios/naturalezas";
+import { getusuarios  } from "../../servicios/catalogos";
 
 //import styledEngineSc from "@mui/styled-engine-sc";
 
@@ -53,15 +54,20 @@ const CatProductos = () => {
   const [contenido, setContenido] = useState("");
   const [arraynegocios, setArraynegocios] = useState([]);
   const [arraytnegocios, setArraytnegocios] = useState([]);
+  const [arrayusuarios, setArrayusuarios] = useState([]);
   const [arrayproductos, setArrayproductos] = useState([]);
   const arraynoproductos = [
-    { idproducto: 99999999, marca: 999999, desc: "Desconocido" },
+    { idproducto: 99999999, marca: 999999, desc: "Desconocido", nick:"Desconocido" },
+  ];
+  const arraynousuarios = [
+    { usuario: 99999999, desc: "Desconocido", nick:"Desconocido" },
   ];
   const arraynonegocios = [
     { keycategorianegocio: 999999, idnegocio: 999999, desc: "Desconocido" },
   ];
   //const [arraynaturaleza, setArraynaturaleza] = useState([]);
   //const arraynonaturaleza = [{ idnaturaleza: 8, desc: "Desconocida" }];
+  const [usuario, setUsuario] = useState(0);
   const [naturaleza, setNaturaleza] = useState(0);
   const [thora, setThora] = useState("");
   const [tfecha, setTfecha] = useState("");
@@ -116,7 +122,7 @@ const CatProductos = () => {
     setIdowner(parsedParams.idowner);
 
     //
-    // Tipos de negocios
+    // Categorias de los productos
     //
     let ttarraytnegocios;
     let resulttnegocios = await getcategoriasnegociosapp({});
@@ -129,13 +135,14 @@ const CatProductos = () => {
       setArraytnegocios(resulttnegocios);
       ttarraytnegocios = resulttnegocios;
     }
+
     setTnegocio(0);
     //
     // Negocios de un tipo y que pertenescan a un dueño
     //
-    let resultnegocios = await getnegociosusercategoria({ user: "", categorianegocio: ttarraytnegocios[0].categorianegocio,});
+//    let resultnegocios = await getnegociosusercategoria({ user: "", categorianegocio: ttarraytnegocios[0].categorianegocio,});
+    let resultnegocios = await getnegociosusercategoria({ user: sessionStorage.getItem("user"), categorianegocio: "",});
     resultnegocios = await resultnegocios.json();
-    setNegocio(0);
     if (resultnegocios.error || resultnegocios.length === 0) {
       //
       // No encontro ningun negocio para este usuario
@@ -148,10 +155,34 @@ const CatProductos = () => {
       // buscar los horarios del primer negocio
       //
       setArraynegocios(resultnegocios);
+    }
+    setNegocio(0);
+
+    // Usuarios
+    let resultusuarios = await getusuarios({});
+    resultusuarios = await resultusuarios.json();
+    if (resultusuarios.error || resultusuarios.length === 0) {
       //
+      // No encontro ningun negocio para este usuario
+      //
+      setArrayusuarios(arraynousuarios);
+      setArrayproductos(arraynoproductos);
+    } else {
+      //
+      // se encontraron negocios de este tipo
+      // buscar los horarios del primer negocio
+      //
+      setArrayusuarios(resultusuarios);
+      console.log(resultusuarios);
+    }
+    setUsuario(0);
+
+
+    //
       // Productos de este negocio
       //
-      let resultproductos = await getproductoscategoria({ negocio: resultnegocios[0].negocio});
+//      let resultproductos = await getproductoscategoria({ negocio: resultnegocios[0].negocio});
+      let resultproductos = await getproductoscategoria({ user: sessionStorage.getItem("user"), categorianegocio: ttarraytnegocios[0].categorianegocio});
       resultproductos = await resultproductos.json();
       //let tproducto = 0;
       if (resultproductos.error || resultproductos.length === 0) {
@@ -175,7 +206,6 @@ const CatProductos = () => {
           setNombrefoto("");
         }
       }
-    }
     setInicia(false);
     setShow(false);
   } //init
@@ -259,8 +289,13 @@ const CatProductos = () => {
   }
 
   async function getProductos(value){
-    let resultproductos = await getproductoscategoria({ negocio: arraynegocios[value].negocio });
+//    let resultproductos = await getproductoscategoria({ negocio: arraynegocios[value].negocio });
+console.log("33333333", arraytnegocios[value].categorianegocio);
+console.log("4444444", sessionStorage.getItem("user"))
+    let resultproductos = await getproductoscategoria({ user: sessionStorage.getItem("user"), categoria: arraytnegocios[value].categorianegocio });
     resultproductos = await resultproductos.json();
+    setProducto(null);
+
 
     if (resultproductos.error || resultproductos.length === 0) {
       setArrayproductos(arraynoproductos);
@@ -304,14 +339,21 @@ const CatProductos = () => {
   function handleselect(e) {
     switch (e.target.id) {
       case "tnegocio":
+        console.log("8888888888")
         setTnegocio(e.target.value);
-        getNegocios(e.target.value);      
+        getProductos(e.target.value); 
         break;
+
+      case "usuario":
+        setUsuario(e.target.value);
+        break;
+  
+  
 
       case "negocio":
         setNegocio(e.target.value);
-        getProductos(e.target.value);       
-        setProducto(null);
+/*        getProductos(e.target.value); 
+        setProducto(null);*/
         break;
 
       case "producto":
@@ -454,7 +496,9 @@ const CatProductos = () => {
     }
     let result = await setproducto({  user: tuser,
       producto: mproducto,
-      negocio: arraynegocios[negocio].negocio,
+      usuario: arrayusuarios[usuario].iduser,
+//      negocio: arraynegocios[negocio].negocio,
+      categoria:arraytnegocios[tnegocio].categorianegocio,
       nick: nombrecorto,
       contenidofoto,
       desc: descripcion,
@@ -619,13 +663,13 @@ const CatProductos = () => {
               color="primary"
               onClick={() => {
                 navigate(
-                  `/?naturaleza=${naturaleza1}&idowner=${idowner}&nivel=${nivel}`
+                  `/?nivel=${0}`
                 );
               }}
             >
               <ArrowBack />
             </IconButton>
-            <h4 className="h3-1-catproductos-cabeza">Catálogo de Productos</h4>
+            <h4 className="h3-1-catproductos-cabeza">Publicar un Productos</h4>
           </div>
           {show ? (
             <Box
@@ -669,34 +713,15 @@ const CatProductos = () => {
 
                       <div className="input-area1-producto">
                         <label className="label-datos-catproducto">
-                          Negocio:{" "}
-                        </label>
-                        <select
-                          className="selectne-prod"
-                          id="negocio"
-                          onChange={handleselect}
-                          value={negocio}
-                          disabled={agregarsn || editarsn}
-                        >
-                          {arraynegocios.map((item, i) => {
-                            return (
-                              <option key={i} value={i}>
-                                {item.desc}
-                              </option>
-                            );
-                          })}
-                        </select>
-                      </div>
-                      <div className="input-area1-producto">
-                        <label className="label-datos-catproducto">
                           Producto:{" "}
                         </label>
+                        {console.log(arrayproductos)}
                         <Autocomplete
                           disablePortal
                           disabled={agregarsn || editarsn}
                           id="producto"
                           options={arrayproductos.map((item, i) => ({
-                            label: item.desc,
+                            label: item.nick,
                             value: i,
                           }))}
                           isOptionEqualToValue={(
@@ -706,7 +731,7 @@ const CatProductos = () => {
                           value={producto}
                           onChange={handleProducto}
                           sx={{
-                            marginLeft: "31px",
+                            marginLeft: "30px",
                             marginTop: "5px",
                             minWidth: "343px",
                             height: "30px",
@@ -749,6 +774,27 @@ const CatProductos = () => {
                               DATOS DEL NUEVO PRODUCTO{" "}
                             </div>
                           )}
+
+                        <div className="input-area1-producto">
+                             <label className="label-datos-catproducto">
+                                Dueño:
+                             </label>
+                             <select
+                                 className="selectne-prod"
+                                 id="usuario"
+                                 onChange={handleselect}
+                                 value={usuario}
+                             >
+                             {arrayusuarios.map((item, i) => {
+                                return (
+                                   <option key={i} value={i}>
+                                      {item.nombre}
+                                   </option>
+                                  );
+                              })}
+                             </select>
+                        </div>
+
                           <div className="input-area1-producto">
                             <label className="label-datos-catproducto">
                               *Nombre:

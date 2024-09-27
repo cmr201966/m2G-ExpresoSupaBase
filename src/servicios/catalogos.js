@@ -19,3 +19,11 @@ export async function getmunicipios(body) {
     return makeRequest("http://localhost:3001/getmunicipios", body);
 }
 
+
+export async function getparesgpscategoria(body) {
+  return makeRequest("http://localhost:3001/get-pares-gps-categoria", body);
+}
+
+export async function getusuarios(body) {
+  return makeRequest("http://localhost:3001/getusuarios", body);
+}
