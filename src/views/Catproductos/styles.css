@@ -1,12 +1,13 @@
 .catalogo-producto {
-    height: 190px;
+    /*height: 160px;*/
     width:  460px;
     display: flex;
-    align-items: start;
+    align-items:center;
     flex-direction: column;
     padding: 15px;
     background: rgb(20, 96, 172);
     border-radius: 15px;
+    margin: 0 auto;
 }
 .container-producto-select{
     margin-top: 10px;
@@ -49,9 +50,12 @@
     height: 23px;
 }
 .selecttn-prod{
-    min-width: 343px;
+    min-width: 337px;
     height: 30px;
     margin-left: 26px;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+    padding-left: 7px;
 }
 .selectne-prod{
     margin-left: 48px;
@@ -132,11 +136,18 @@
 }
 .label-datos-catproducto{
     color:aliceblue;
+/*    margin-bottom: 5px;
+    margin-left: 7px;*/
+}
+.label-datos-catproducto-dueño{
+    color:aliceblue;
     margin-bottom: 5px;
+    margin-left: 48px;
 }
 .label-datos-catproducto-1{
     color:aliceblue;
-    margin-bottom: 10px;    
+    margin-bottom: 20px;
+    margin-top: 10px;
 }
 .label-datos-producto-1{
     color:aliceblue;
@@ -200,50 +211,87 @@
 }
 .input-area-producto{
     margin-top: 5px;
+    
   }
 .input-area9{
     margin-top: -9px;
     margin-bottom: -12px;
+    
 }
 .input-area1-producto{
     display: flex;
     width: 100%;
     align-items: center;
     margin-left: 1px;
+   
+    
 /*    margin-top: 5px;*/
 }
 .input-cataproducto-1{
     margin-left: 30px;
-    width: 333px;
+    width: 326px;
     height: 25px;
     margin-bottom: 4px;   
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+    padding-left: 7px;
 }
 .input-cataproducto-2{
     margin-left: 3px;
     width: 333px;
     height: 25px;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+    
 }
 .input-cataproducto-20{
-    margin-left: 52px;
-    width: 333px;
+    margin-left: 51px;
+    width: 328px;
     margin-bottom: 4px;   
     margin-top: 5px; 
     height: 25px;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+    padding-left: 7px;
 }
 .input-cataproducto-21{
-    margin-left: 61px;
-    width: 333px;
+    margin-left: 42px;
+    width: 328px;
     margin-bottom: 4px;   
     height: 25px;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+    padding-left: 7px;
+}
+.input-cataproducto-999{
+    margin-left: 16px;
+    width: 44px;
+    margin-bottom: 4px;   
+    height: 25px;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+    padding-left: 7px;
+}
+.input-cataproducto-998{
+    margin-left: 5px;
+    width: 64px;
+    margin-bottom: 4px;   
+    height: 25px;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+    padding-left: 7px;
 }
 .input-cataproducto-3{
     margin-left: 25px;
     width: 225px;
 }
 .input-cataproducto-4{
-    margin-left: 50px;
-    width: 333px;    
+    margin-left: 51px;
+    width: 45px;   
     height: 25px;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+    padding-left: 7px;
  }
  .input-cataproducto-5{
     margin-left: 163px;
@@ -274,14 +322,7 @@
     width: 225px;
  }
  .input-cataproducto-12{
-    margin-right: 24px;
     width: 225px;
-    margin-bottom: 8px !important;   
- }
- .input-cataproducto-99{
-    margin-right: 58px;
-    width: 225px;
-    margin-bottom: 8px !important;   
  }
 .input-cataproducto-13{
    margin-right: 28px;
@@ -372,6 +413,7 @@
     width: 50px;
     margin-right: 10px;
     margin-bottom: 10px;
+    margin-top: 10px;
 }
 .producto-grupo-button
 {
@@ -386,7 +428,6 @@
 .img-producto
 {
     height: 280px;
-    width: 247px;
     margin-top: 4px;
     object-fit: cover;
  }
@@ -415,8 +456,9 @@
  .h3-1-catproductos-cabeza
 {
   color: aliceblue!important;
-  margin-left: 4px!important;
+/*  margin-left: 4px!important;
   margin-top: 5px;
+  */
 }
 .label-fecha-producto
 {
@@ -453,8 +495,6 @@
     display: flex;
     flex-direction: row;
     width: 333px;
-    align-items: center;
-    justify-content: space-between;
 }
 .input-cataproducto-101{
     width: 25px;
@@ -472,3 +512,46 @@
     width: 24px;
     height: 24px;
 }
+p{
+    color:white
+}
+.div-papa{
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    width: 70%;
+}
+.precio-capacidad-color{
+    display: flex;
+ }
+ .domicilio-ocupado-gps{
+    display: flex;
+ }
+ .plazas{
+    margin-left: 17px;
+ }
+ .color{
+    margin-left: 17px;
+ }
+ .domicilio{
+    margin-right: 29px;
+ }
+ .ocupado{
+    margin-left: 48px;
+ }
+ .gps{
+    margin-left: 48px;
+    margin-right: 10px;
+ }
+ .lejania{
+    margin-right: 13px;
+ }
+ .sciudad{
+    margin-left: 38px;
+    margin-right: 15px;
+ }
+ .label-photo{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+ }

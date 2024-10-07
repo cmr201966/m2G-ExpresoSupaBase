@@ -1,5 +1,3 @@
-//import FormGroup from '@mui/material/FormGroup';
-//import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from "@mui/material/Checkbox";
 import CollectionsIcon from "@mui/icons-material/Collections";
 import { Box, CircularProgress } from "@mui/material";
@@ -8,18 +6,11 @@ import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Map from "../../components/Map/MapBox";
 
 import Tippy from "@tippyjs/react";
-//import { Link } from "react-router-dom";
 import Modal from "../../components/Modal/Modal";
-//import { useParams } from "react-router-dom";
-// components
 import Navbar from "../../components/Navbar/Navbar";
-// layouts
 import Hero from "../../layouts/Hero/Hero";
-//
 import { useNavigate } from "react-router-dom";
-// styles
 import "./styles.css";
-// @mui/material
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { IconButton } from "@mui/material";
@@ -29,54 +20,51 @@ import Add from "@mui/icons-material/Add";
 import Delete from "@mui/icons-material/Delete";
 import Close from "@mui/icons-material/Close";
 import Edit from "@mui/icons-material/Edit";
-
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useEffect, useState } from "react";
-//import axios from "axios";
 import { useLocation } from "react-router-dom";
-import { getcategoriasnegociosapp, getnegociosusercategoria  } from "../../servicios/negocios";
-import { getproductoscategoria, setproducto, delproducto  } from "../../servicios/productos";
-import { getJpgFile  } from "../../servicios/imagenes";
-import { getnaturalezaproducto  } from "../../servicios/naturalezas";
-import { getusuarios  } from "../../servicios/catalogos";
-
-//import styledEngineSc from "@mui/styled-engine-sc";
+import { getcategoriasnegociosapp } from "../../servicios/negocios";
+import {
+  getproductoscategoria,
+  setproducto,
+  delproducto,
+} from "../../servicios/productos";
+import { getJpgFile } from "../../servicios/imagenes";
+import { getnaturalezaproducto } from "../../servicios/naturalezas";
 
 const CatProductos = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const parsedParams = {};
-  const [tuser, setTuser] = useState(sessionStorage.getItem("user"));
+  const [tuser] = useState(sessionStorage.getItem("user"));
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
   const [showGalerias, setShowGalerias] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [contenidofoto, setContenidofoto] = useState();
   const [contenido, setContenido] = useState("");
-  const [arraynegocios, setArraynegocios] = useState([]);
   const [arraytnegocios, setArraytnegocios] = useState([]);
-  const [arrayusuarios, setArrayusuarios] = useState([]);
   const [arrayproductos, setArrayproductos] = useState([]);
   const arraynoproductos = [
-    { idproducto: 99999999, marca: 999999, desc: "Desconocido", nick:"Desconocido" },
+    {
+      idproducto: 99999999,
+      marca: 999999,
+      desc: "Desconocido",
+      nick: "Desconocido",
+    },
   ];
-  const arraynousuarios = [
-    { usuario: 99999999, desc: "Desconocido", nick:"Desconocido" },
-  ];
-  const arraynonegocios = [
-    { keycategorianegocio: 999999, idnegocio: 999999, desc: "Desconocido" },
-  ];
-  //const [arraynaturaleza, setArraynaturaleza] = useState([]);
-  //const arraynonaturaleza = [{ idnaturaleza: 8, desc: "Desconocida" }];
-  const [usuario, setUsuario] = useState(0);
-  const [naturaleza, setNaturaleza] = useState(0);
-  const [thora, setThora] = useState("");
-  const [tfecha, setTfecha] = useState("");
+
+  const arraynonegocios = [{ categorianegocio: 999999, desc: "Desconocido" }];
+  const [marca, setMarca] = useState("");
+  const [modelo, setModelo] = useState("");
+  const [talla, setTalla] = useState("");
+  const [color, setColor] = useState("");
   const [latt, setLatt] = useState(0);
   const [lngt, setLngt] = useState(0);
-  const [foto, setFoto] = useState();
+  const [foto] = useState();
   const [nombrefoto, setNombrefoto] = useState("");
   const [descripcion, setDescripcion] = useState("");
-  const [negocio, setNegocio] = useState(0);
   const [nombrecorto, setNombrecorto] = useState("");
   const [precio, setPrecio] = useState(0);
   const [distanciaMax, setDistanciaMax] = useState(0);
@@ -86,44 +74,44 @@ const CatProductos = () => {
   const [cbvista, setCbvista] = useState(false);
   const [domicilio, setDomicilio] = useState(false);
   const [cbgps, setCbgps] = useState(false);
-  const [nombrecortofoto, setNombrecortofoto] = useState("");
+  const [nombrecortofoto] = useState("");
   const [inicia, setInicia] = useState(true);
   const [agregarsn, setAgregarsn] = useState(false);
   const [editarsn, setEditarsn] = useState(false);
   const [eliminarsn, setEliminarsn] = useState(false);
-  const [zoom, setZoom] = useState(15.5);
+  const [zoom] = useState(15.5);
+  const [lng, setLng] = useState(-75.829090519);
+  const [lat, setLat] = useState(20.0217583);
   const [ocupado, setOcupado] = useState(1);
 
   //Estados para recuperar los datos del producto
 
-  const [negociot, setNegociot] = useState("");
-  const [naturalezat, setNaturalezat] = useState("");
   const [productot, setProductot] = useState("");
   const [nombrecortot, setNombrecortot] = useState("");
   const [descripciont, setDescripciont] = useState("");
   const [preciot, setPreciot] = useState("");
   const [domiciliot, setDomiciliot] = useState("");
   const [ocupadot, setOcupadot] = useState(1);
-  const [tfechat, setTfechat] = useState(false);
-  const [thorat, setThorat] = useState(false);
   const [gpst, setGpst] = useState(false);
-  const [fecha, setFecha] = useState("");
-  const [nivel, setNivel] = useState(9999);
-  const [idowner, setIdowner] = useState(9999);
-  const [naturaleza1, setNaturaleza1] = useState(9999);
   const [tcbsCiudad, setTcbsCiudad] = useState(false);
   const [tdistanciaMax, setTdistanciaMax] = useState(false);
+  const [marcat, setMarcat] = useState("");
+  const [modelot, setModelot] = useState("");
+  const [tallat, setTallat] = useState("");
+  const [colort, setColort] = useState("");
+
+  const buscarEnArreglo = (arreglo, valor, atributo) => {
+    let index = -1;
+    arreglo.forEach((item, i) => {
+      if (Number(item[atributo]) === Number(valor)) {
+        index = i;
+      }
+    });
+    return index;
+  };
 
   async function init() {
-    sessionStorage.setItem("filtro", "");
     setShow(true);
-    setNivel(parsedParams.nivel);
-    setNaturaleza1(parsedParams.naturaleza);
-    setIdowner(parsedParams.idowner);
-
-    //
-    // Categorias de los productos
-    //
     let ttarraytnegocios;
     let resulttnegocios = await getcategoriasnegociosapp({});
     resulttnegocios = await resulttnegocios.json();
@@ -135,102 +123,79 @@ const CatProductos = () => {
       setArraytnegocios(resulttnegocios);
       ttarraytnegocios = resulttnegocios;
     }
-
-    setTnegocio(0);
-    //
-    // Negocios de un tipo y que pertenescan a un dueño
-    //
-//    let resultnegocios = await getnegociosusercategoria({ user: "", categorianegocio: ttarraytnegocios[0].categorianegocio,});
-    let resultnegocios = await getnegociosusercategoria({ user: sessionStorage.getItem("user"), categorianegocio: "",});
-    resultnegocios = await resultnegocios.json();
-    if (resultnegocios.error || resultnegocios.length === 0) {
-      //
-      // No encontro ningun negocio para este usuario
-      //
-      setArraynegocios(arraynonegocios);
+    let posicion = buscarEnArreglo(
+      ttarraytnegocios,
+      parsedParams.categoria,
+      "categorianegocio"
+    );
+    posicion = posicion === -1 ? 0 : posicion;
+    setTnegocio(posicion);
+    let resultproductos = await getproductoscategoria({
+      user: sessionStorage.getItem("user"),
+      categoria: ttarraytnegocios[posicion].categorianegocio,
+      producto,
+    });
+    resultproductos = await resultproductos.json();
+    if (resultproductos.error || resultproductos.length === 0) {
       setArrayproductos(arraynoproductos);
+      recuperardatosproducto(arraynoproductos, 0);
+      //        setProducto(null);
     } else {
-      //
-      // se encontraron negocios de este tipo
-      // buscar los horarios del primer negocio
-      //
-      setArraynegocios(resultnegocios);
-    }
-    setNegocio(0);
+      const posicionProducto = buscarEnArreglo(
+        resultproductos,
+        parsedParams.idproducto,
+        "idproducto"
+      );
 
-    // Usuarios
-    let resultusuarios = await getusuarios({});
-    resultusuarios = await resultusuarios.json();
-    if (resultusuarios.error || resultusuarios.length === 0) {
-      //
-      // No encontro ningun negocio para este usuario
-      //
-      setArrayusuarios(arraynousuarios);
-      setArrayproductos(arraynoproductos);
-    } else {
-      //
-      // se encontraron negocios de este tipo
-      // buscar los horarios del primer negocio
-      //
-      setArrayusuarios(resultusuarios);
-      console.log(resultusuarios);
-    }
-    setUsuario(0);
-
-
-    //
-      // Productos de este negocio
-      //
-//      let resultproductos = await getproductoscategoria({ negocio: resultnegocios[0].negocio});
-      let resultproductos = await getproductoscategoria({ user: sessionStorage.getItem("user"), categorianegocio: ttarraytnegocios[0].categorianegocio});
-      resultproductos = await resultproductos.json();
-      //let tproducto = 0;
-      if (resultproductos.error || resultproductos.length === 0) {
-        setArrayproductos(arraynoproductos);
-        recuperardatosproducto(arraynoproductos, 0);
-        //tproducto = arraynoproductos[0].idproducto;
-        setProducto(null);
-      } else {
-        const [primero] = resultproductos;
-        setProducto({ label: primero.desc, value: 0 });
-        setArrayproductos(resultproductos);
-        recuperardatosproducto(resultproductos, 0);
-        //tproducto = resultproductos[0].idproducto;
-        let resultado = await getJpgFile({ file: "./galerias/app_images/productos/" + resultproductos[0].idproducto + "/" + "foto-1.jpg"});
-        resultado = await resultado.text();
-  
-        if (resultado.length !== 0) {
-          setContenidofoto(resultado);
-          setNombrefoto(resultproductos[0].idproducto);
-        } else {
-          setNombrefoto("");
-        }
+      setArrayproductos(resultproductos);
+      //        setProducto({label: resultproductos[posicionProducto].nick, value: posicionProducto});
+      if (
+        parsedParams.idproducto !== null &&
+        parsedParams.idproducto !== "null" &&
+        parsedParams.idproducto !== undefined &&
+        parsedParams.idproducto !== "undefined"
+      ) {
+        restaurardatosproductosNew(resultproductos, posicionProducto);
+        setEditarsn(true);
       }
+
+      let resultado = await getJpgFile({
+        file:
+          "./galerias/app_images/productos/" +
+          resultproductos[0].idproducto +
+          "/" +
+          "foto-1.jpg",
+      });
+      resultado = await resultado.text();
+
+      if (resultado.length !== 0) {
+        setContenidofoto(resultado);
+        setNombrefoto(resultproductos[0].idproducto);
+      } else {
+        setNombrefoto("");
+      }
+    }
     setInicia(false);
     setShow(false);
   } //init
 
   const handleProducto = async (_, value) => {
-          setProducto(value);
-
-          recuperardatosproducto(arrayproductos, value.value);
-          {/*
-          // Productos del negocio
-          let resultproductos = await getproductoscategoria({ negocio: arraynegocios[negocio].negocio });
-          resultproductos = await resultproductos.json();
-
-          if (resultproductos.error || resultproductos.length === 0) {
-            setArrayproductos(arraynoproductos);
-          } else {
-            // get la naturaleza de este producto
-*/}
-        let rnaturaleza = await getnaturalezaproducto({ producto: arrayproductos[value?.value].idproducto});
-        rnaturaleza = await rnaturaleza.json();
-        if (rnaturaleza.length !== 0) {
-              setNaturalezat(rnaturaleza[0].naturaleza);
-            }
-
-    let resultado = await getJpgFile({ file: "./galerias/app_images/productos" + "/" + arrayproductos[value?.value].idproducto + "/foto-1.jpg"});
+    setProducto(value);
+    recuperardatosproducto(arrayproductos, value.value);
+    let rnaturaleza = await getnaturalezaproducto({
+      producto: arrayproductos[value?.value].idproducto,
+    });
+    rnaturaleza = await rnaturaleza.json();
+    if (rnaturaleza.length !== 0) {
+      //      setNaturalezat(rnaturaleza[0].naturaleza);
+    }
+    let resultado = await getJpgFile({
+      file:
+        "./galerias/app_images/productos" +
+        "/" +
+        arrayproductos[value?.value].idproducto +
+        "/foto-1.jpg",
+    });
     resultado = await resultado.text();
 
     if (resultado.length !== 0) {
@@ -241,61 +206,13 @@ const CatProductos = () => {
     }
   };
 
-  async function getNegocios(value){
-    let resultnegocios = await getnegociosusercategoria({ user: "", categorianegocio: arraytnegocios[value].categorianegocio});
-    resultnegocios = await resultnegocios.json();
-
-    if (resultnegocios.error || resultnegocios.length === 0) {
-      // No encontro ningun negocio para este usuario
-      setArraynegocios(arraynonegocios);
-      setArrayproductos(arraynoproductos);
-    } else {
-      setArraynegocios(resultnegocios);
-
-      // Productos del negocio
-      let resultproductos = await getproductoscategoria({ negocio: resultnegocios[0].negocio });
-      resultproductos = await resultproductos.json();
-
-      if (resultproductos.error || resultproductos.length === 0) {
-        setArrayproductos(arraynoproductos);
-        recuperardatosproducto(arraynoproductos, 0);
-      } else {
-        setArrayproductos(resultproductos);
-        recuperardatosproducto(resultproductos, 0);
-        const [primero] = resultproductos;
-        setProducto({ label: primero.desc, value: 0 });
-            //restaurarmenut(tcategorias, 0, resultproductos.data, 0, topciones);
-{/*
-            const resultado = await axios.post(
-          "http://localhost:3001/getjpg-file",
-          {
-            file: "./galerias/app_images/productos" + "/" + resultproductos.data[0].idproducto + "/foto-1.jpg", },
-          {}
-        );
-*/}
-        let resultado = await getJpgFile({ file: "./galerias/app_images/productos" + "/" + resultproductos[0].idproducto + "/foto-1.jpg"});
-        resultado = await resultado.text();
-        
-        if (resultado.length !== 0) {
-          setContenidofoto(resultado);
-          setNombrefoto(resultproductos[0].idproducto);
-        } else {
-          setNombrefoto("");
-        }
-      }
-      setNegocio(0);
-    }
-
-  }
-
-  async function getProductos(value){
-//    let resultproductos = await getproductoscategoria({ negocio: arraynegocios[value].negocio });
-console.log("33333333", arraytnegocios[value].categorianegocio);
-console.log("4444444", sessionStorage.getItem("user"))
-    let resultproductos = await getproductoscategoria({ user: sessionStorage.getItem("user"), categoria: arraytnegocios[value].categorianegocio });
+  async function getProductos(value) {
+    let resultproductos = await getproductoscategoria({
+      user: sessionStorage.getItem("user"),
+      categoria: arraytnegocios[value].categorianegocio,
+    });
     resultproductos = await resultproductos.json();
     setProducto(null);
-
 
     if (resultproductos.error || resultproductos.length === 0) {
       setArrayproductos(arraynoproductos);
@@ -303,27 +220,22 @@ console.log("4444444", sessionStorage.getItem("user"))
     } else {
       setArrayproductos(resultproductos);
       recuperardatosproducto(resultproductos, 0);
-      // get la naturaleza de este producto
-      let rnaturaleza = await getnaturalezaproducto({ producto: resultproductos[0].idproducto});
+      let rnaturaleza = await getnaturalezaproducto({
+        producto: resultproductos[0].idproducto,
+      });
       rnaturaleza = await rnaturaleza.json();
 
       if (rnaturaleza.length !== 0) {
         setNaturalezat(rnaturaleza[0].naturaleza);
       }
-{/*
-      const resultado = await axios.post(
-        "http://localhost:3001/getjpg-file",
-        {
-          file:
-            "./galerias/app_images/productos" +
-            "/" +
-            resultproductos.data[0].idproducto +
-            "/foto-1.jpg",
-        },
-        {}
-      );
-*/}
-      let resultado = await getJpgFile({ file: "./galerias/app_images/productos" +  "/" +  resultproductos[0].idproducto + "/foto-1.jpg"});
+
+      let resultado = await getJpgFile({
+        file:
+          "./galerias/app_images/productos" +
+          "/" +
+          resultproductos[0].idproducto +
+          "/foto-1.jpg",
+      });
       resultado = await resultado.text();
 
       if (resultado.length !== 0) {
@@ -333,41 +245,34 @@ console.log("4444444", sessionStorage.getItem("user"))
         setNombrefoto("");
       }
     }
-
   }
 
   function handleselect(e) {
     switch (e.target.id) {
       case "tnegocio":
-        console.log("8888888888")
         setTnegocio(e.target.value);
-        getProductos(e.target.value); 
+        getProductos(e.target.value);
         break;
-
+      /*
       case "usuario":
         setUsuario(e.target.value);
         break;
   
-  
-
-      case "negocio":
+        case "negocio":
         setNegocio(e.target.value);
-/*        getProductos(e.target.value); 
-        setProducto(null);*/
+        getProductos(e.target.value); 
+        setProducto(null);
         break;
-
+*/
       case "producto":
         break;
-
+      /*
       case "naturaleza":
         setNaturaleza(e.target.value);
         break;
+        */
     }
   }
-
-  // Estados para la posición GPS del mapa
-  const [lng, setLng] = useState(-75.829090519);
-  const [lat, setLat] = useState(20.0217583);
 
   const onChangeMap = (which, value) => {
     if (which === "lng") return setLng(value);
@@ -390,23 +295,26 @@ console.log("4444444", sessionStorage.getItem("user"))
       case "precio":
         setPrecio(e.target.value);
         break;
+      case "marca":
+        setMarca(e.target.value);
+        break;
+      case "modelo":
+        setModelo(e.target.value);
+        break;
+      case "talla":
+        setTalla(e.target.value);
+        break;
+      case "color":
+        setColor(e.target.value);
+        break;
       case "distanciaMax":
         setDistanciaMax(e.target.value);
         break;
       case "cbsCiudad":
         setCbsCiudad(e.target.checked);
         break;
-      case "tfecha":
-        setTfecha(e.target.value);
-        break;
       case "cbgps":
         setCbgps(e.target.checked);
-        break;
-      case "thora":
-        setThora(e.target.value);
-        break;
-      case "fecha":
-        setFecha(e.target.value);
         break;
       case "domicilio":
         setDomicilio(e.target.checked);
@@ -422,8 +330,10 @@ console.log("4444444", sessionStorage.getItem("user"))
     }
   }
   function iniciadatosgenerales() {
-    setTfecha("");
-    setThora("");
+    setMarca("");
+    setModelo("");
+    setTalla("");
+    setColor("");
     setNombrefoto("");
     setNombrecorto("");
     setDescripcion("");
@@ -439,33 +349,56 @@ console.log("4444444", sessionStorage.getItem("user"))
   }, [location]);
 
   function recuperardatosproducto(data, i) {
-    setNegociot(i);
-    setProductot(data[i].idproducto);
+    let index = buscarEnArreglo(data, data[i].idproducto, "idproducto");
+    console.log(i);
+    console.log(data);
+    setProducto({ label: data[i].desc, value: index });
     setNombrecortot(data[i].nick);
     setDescripciont(data[i].desc);
     setPreciot(data[i].precio);
-    setTfechat(data[i].fecha);
-    setThorat(data[i].hora);
+    setMarcat(data[i].marca);
+    setModelot(data[i].modelo);
+    setTallat(data[i].talla);
+    setColort(data[i].color);
     setDomiciliot(data[i].domicilio === 0 ? false : true);
     setOcupadot(data[i].ocupado === 0 ? false : true);
     setGpst(data[i].gpsSN === 1 ? true : false);
     setCbgps(data[i].gpsSN === 1 ? true : false);
-    setLatt(data[i].latitud===0?null:data[i].latitud);
-    setLngt(data[i].longitud===0?null:data[i].longitud);
-    setTcbsCiudad(data[i].sCiudad===1?true:false);
+    setLatt(data[i].latitud === 0 ? null : data[i].latitud);
+    setLngt(data[i].longitud === 0 ? null : data[i].longitud);
+    setTcbsCiudad(data[i].sCiudad === 1 ? true : false);
     setTdistanciaMax(data[i].distanciaMax);
   }
+  function restaurardatosproductosNew(data, posicion) {
+    setProducto({ label: data[posicion].desc, value: posicion });
+    setNombrecorto(data[posicion].nick);
+    setDescripcion(data[posicion].desc);
+    setPrecio(data[posicion].precio);
+    setMarca(data[posicion].marca);
+    setModelo(data[posicion].modelo);
+    setTalla(data[posicion].talla);
+    setColor(data[posicion].color);
+    setDomicilio(data[posicion].domicilio === 0 ? false : true);
+    setOcupado(data[posicion].ocupado === 0 ? false : true);
+    setCbgps(data[posicion].gpsSN === 1 ? true : false);
+    setLat(data[posicion].latitud === 0 ? null : data[posicion].latitud);
+    setLng(data[posicion].longitud === 0 ? null : data[posicion].longitud);
+    setCbsCiudad(data[posicion].sCiudad === 1 ? true : false);
+    setDistanciaMax(data[posicion].distanciaMax);
+  }
+
   function restaurardatosproductos() {
-    //setNegocio(negociot);
     setNombrefoto(productot);
     setNombrecorto(nombrecortot);
     setDescripcion(descripciont);
-    setNaturaleza(naturalezat);
+    //setNaturaleza(naturalezat);
     setPrecio(preciot);
     setOcupado(ocupadot);
     setDomicilio(domiciliot);
-    setTfecha(tfechat);
-    setThora(thorat);
+    setMarca(marcat);
+    setModelo(modelot);
+    setTalla(tallat);
+    setColor(colort);
     setCbgps(gpst);
     setLat(latt);
     setLng(lngt);
@@ -474,6 +407,7 @@ console.log("4444444", sessionStorage.getItem("user"))
   }
 
   const onPhotoChange = (e) => {
+    console.log("Aqui")
     const file = e.target.files[0];
     setNombrefoto(e.target.value);
     if (!file) return;
@@ -483,39 +417,41 @@ console.log("4444444", sessionStorage.getItem("user"))
       setContenidofoto(content);
     };
     reader.readAsDataURL(file);
+    console.log("true");
     setCbvista(true);
   };
 
   async function confirmar() {
-    let mproducto=0;
-    if (producto===null){
-       mproducto=0;
+    let mproducto = 0;
+    if (producto === null) {
+      mproducto = 0;
+    } else {
+      mproducto = arrayproductos[producto?.value].idproducto;
     }
-    else{
-       mproducto=arrayproductos[producto?.value].idproducto;
-    }
-    let result = await setproducto({  user: tuser,
+    let result = await setproducto({
+      user: tuser,
       producto: mproducto,
-      usuario: arrayusuarios[usuario].iduser,
-//      negocio: arraynegocios[negocio].negocio,
-      categoria:arraytnegocios[tnegocio].categorianegocio,
+      //      usuario: arrayusuarios[usuario].iduser,
+      //      negocio: arraynegocios[negocio].negocio,
+      categoria: arraytnegocios[tnegocio].categorianegocio,
       nick: nombrecorto,
       contenidofoto,
       desc: descripcion,
       precio,
-      ocupado: ocupado===true?1:0,
+      ocupado: ocupado === true ? 1 : 0,
       domicilio: domicilio === true ? 1 : 0,
       agregar: agregarsn ? true : false,
       editar: editarsn ? true : false,
-      fecha,
-      thora,
-      tfecha,
-      gps: (cbgps === true) || (domicilio===true)? 1 : 0,
+      marca,
+      modelo,
+      talla,
+      color,
+      gps: cbgps === true || domicilio === true ? 1 : 0,
       latitud: lat,
       longitud: lng,
-      sCiudad: cbsCiudad ===true?1:0,
+      sCiudad: cbsCiudad === true ? 1 : 0,
       distanciaMax: distanciaMax,
-});
+    });
     result = await result.json();
 
     if (result.error) {
@@ -528,7 +464,6 @@ console.log("4444444", sessionStorage.getItem("user"))
       arrayproductos.push({
         user: tuser,
         idproducto: productot,
-        negocio: arraynegocios[negocio].negocio,
         foto: nombrecortofoto,
         nick: nombrecorto,
         desc: descripcion,
@@ -543,7 +478,6 @@ console.log("4444444", sessionStorage.getItem("user"))
       tarrayproductos.push({
         user: tuser,
         idproducto: productot,
-        negocio: arraynegocios[negocio].negocio,
         foto: nombrecortofoto,
         nick: nombrecorto,
         desc: descripcion,
@@ -589,14 +523,16 @@ console.log("4444444", sessionStorage.getItem("user"))
   };
 
   async function sino() {
-{/*
+    {
+      /*
     await axios.post(
       "http://localhost:3001/delproducto",
       { producto: arrayproductos[producto?.value].idproducto },
       {}
     );
-*/}    
-    await delproducto({ producto: arrayproductos[producto?.value].idproducto});
+*/
+    }
+    await delproducto({ producto: arrayproductos[producto?.value].idproducto });
 
     // refrescar la lista despues de eliminada la categoria
     //arraycategoriasproductos.splice(borrar, 1);
@@ -613,9 +549,6 @@ console.log("4444444", sessionStorage.getItem("user"))
     setShowGalerias(false);
     setShowMap(false);
   }
-  const onModalClose = () => {
-    setShow(false);
-  };
 
   const onModalClose1 = () => {
     setShow1(false);
@@ -655,22 +588,8 @@ console.log("4444444", sessionStorage.getItem("user"))
         </div>
       </Modal>
       <div>
-        <Navbar
-        />
+        <Navbar />
         <Hero>
-          <div className="cabeza">
-            <IconButton
-              color="primary"
-              onClick={() => {
-                navigate(
-                  `/?nivel=${0}`
-                );
-              }}
-            >
-              <ArrowBack />
-            </IconButton>
-            <h4 className="h3-1-catproductos-cabeza">Publicar un Productos</h4>
-          </div>
           {show ? (
             <Box
               sx={{
@@ -686,377 +605,291 @@ console.log("4444444", sessionStorage.getItem("user"))
           ) : null}
           {inicia === false ? (
             <>
-              <div className="catalogo-producto">
-                {showMap !== true ? (
-                  <>
-                    <div className="container-producto-select">
-                      <div className="input-area1-producto">
-                        <label className="label-datos-catproducto">
-                           Categoria:{" "}
-                        </label>
-                        <select
-                          className="selecttn-prod"
-                          id="tnegocio"
-                          onChange={handleselect}
-                          value={tnegocio}
-                          disabled={agregarsn || editarsn}
-                        >
-                          {arraytnegocios.map((item, i) => {
-                            return (
-                              <option key={i} value={i}>
-                                {item.desc}
-                              </option>
-                            );
-                          })}
-                        </select>
-                      </div>
+              <div className="div-papa">
+                <div className="cabeza">
+                  <IconButton
+                    color="primary"
+                    onClick={() => {
+                      navigate(`/?nivel=${0}`);
+                    }}
+                  >
+                    <ArrowBack className="flecha" />
+                  </IconButton>
+                  <h4 className="h3-1-catproductos-cabeza">Atrás</h4>
+                </div>
 
-                      <div className="input-area1-producto">
-                        <label className="label-datos-catproducto">
-                          Producto:{" "}
-                        </label>
-                        {console.log(arrayproductos)}
-                        <Autocomplete
-                          disablePortal
-                          disabled={agregarsn || editarsn}
-                          id="producto"
-                          options={arrayproductos.map((item, i) => ({
-                            label: item.nick,
-                            value: i,
-                          }))}
-                          isOptionEqualToValue={(
-                            option,
-                            value
-                        ) => option.value === value.value}                          
-                          value={producto}
-                          onChange={handleProducto}
-                          sx={{
-                            marginLeft: "30px",
-                            marginTop: "5px",
-                            minWidth: "343px",
-                            height: "30px",
-                            background: "aliceblue",
-                            ".MuiAutocomplete-input": {
-                              padding: "5px 0 0 5px !important",
-                            },
-                            ".MuiFilledInput-root": {
-                              padding: 0,
-                            },
-                            ".MuiFilledInput-root::before": {
-                              display: "none",
-                            },
-                            ".MuiFilledInput-root::after": {
-                              display: "none",
-                            },
-                          }}
-                          renderInput={(params) => (
-                            <TextField variant="filled" {...params} label="" />
-                          )}
-                        />
-                      </div>
-                    </div>
-                  </>
-                ) : (
-                  ""
-                )}
-
-                {showMap !== true ? (
-                  <>
-                    {agregarsn || editarsn ? (
-                      <>
-                        <div className="container-producto-datos">
-                          {agregarsn === false ? (
-                            <label className="label-datos-catproducto">
-                              DATOS{" "}
-                            </label>
-                          ) : (
-                            <div className="label-datos-catproducto-1">
-                              DATOS DEL NUEVO PRODUCTO{" "}
-                            </div>
-                          )}
-
+                <div className="catalogo-producto">
+                  <p className="strong">Publicar un Productos</p>
+                  {showMap !== true ? (
+                    <>
+                      <div className="container-producto-select">
                         <div className="input-area1-producto">
-                             <label className="label-datos-catproducto">
-                                Dueño:
-                             </label>
-                             <select
-                                 className="selectne-prod"
-                                 id="usuario"
-                                 onChange={handleselect}
-                                 value={usuario}
-                             >
-                             {arrayusuarios.map((item, i) => {
-                                return (
-                                   <option key={i} value={i}>
-                                      {item.nombre}
-                                   </option>
-                                  );
-                              })}
-                             </select>
+                          <label className="label-datos-catproducto">
+                            Categoria:{" "}
+                          </label>
+                          <select
+                            className="selecttn-prod"
+                            id="tnegocio"
+                            onChange={handleselect}
+                            value={tnegocio}
+                            disabled={agregarsn || editarsn}
+                          >
+                            {arraytnegocios.map((item, i) => {
+                              return (
+                                <option key={i} value={i}>
+                                  {item.desc}
+                                </option>
+                              );
+                            })}
+                          </select>
                         </div>
 
-                          <div className="input-area1-producto">
-                            <label className="label-datos-catproducto">
-                              *Nombre:
-                            </label>
-                            <input
-                              className="input-cataproducto-1"
-                              id="nombrecorto"
-                              value={nombrecorto}
-                              onChange={handleInput}
-                              type="text"
-                              required
-                            />
-                          </div>
-                          <div className="input-area2">
-                            <label className="label-datos-catproducto">
-                              *Descripción:
-                            </label>
-                            <input
-                              className="input-cataproducto-2"
-                              id="descripcion"
-                              value={descripcion}
-                              onChange={handleInput}
-                              type="text"
-                              required
-                            />
-                          </div>
+                        <div className="input-area1-producto">
+                          <label className="label-datos-catproducto">
+                            Producto:{" "}
+                          </label>
+                          <Autocomplete
+                            disablePortal
+                            disabled={agregarsn || editarsn}
+                            id="producto"
+                            options={arrayproductos.map((item, i) => ({
+                              label: item.nick,
+                              value: i,
+                            }))}
+                            isOptionEqualToValue={(option, value) =>
+                              option.value === value.value
+                            }
+                            value={producto}
+                            onChange={handleProducto}
+                            sx={{
+                              paddingleft: "7px",
+                              borderRadius: "15px",
+                              marginLeft: "30px",
+                              marginTop: "5px",
+                              minWidth: "336px",
+                              height: "30px",
+                              background: "aliceblue",
+                              ".MuiAutocomplete-input": {
+                                padding: "5px 0 0 5px !important",
+                              },
+                              ".MuiFilledInput-root": {
+                                padding: 0,
+                              },
+                              ".MuiFilledInput-root::before": {
+                                display: "none",
+                              },
+                              ".MuiFilledInput-root::after": {
+                                display: "none",
+                              },
+                            }}
+                            renderInput={(params) => (
+                              <TextField
+                                variant="filled"
+                                {...params}
+                                label=""
+                              />
+                            )}
+                          />
+                        </div>
+                      </div>
+                    </>
+                  ) : (
+                    ""
+                  )}
 
-                          <div className="input-area2">
-                            <label className="label-datos-catproducto">
-                              Fecha:
-                            </label>
-                            <input
-                              className="input-cataproducto-20"
-                              id="tfecha"
-                              value={tfecha}
-                              onChange={handleInput}
-                              type="text"
-                              required
-                            />
-                          </div>
-                          <div className="input-area2">
-                            <label className="label-datos-catproducto">
-                              Hora:
-                            </label>
-                            <input
-                              className="input-cataproducto-21"
-                              id="thora"
-                              value={thora}
-                              onChange={handleInput}
-                              type="text"
-                              required
-                            />
-                          </div>
-                          <div className="input-area4">
-                            <label className="label-datos-catproducto">
-                              Precio:
-                            </label>
-                            <input
-                              className="input-cataproducto-4"
-                              id="precio"
-                              value={precio}
-                              onChange={handleInput}
-                              type="text"
-                              required
-                            />
-                          </div>
-                          <div className="input-area4">
-                                   <label className="label-datos-catproducto input-cataproducto-12">
-                                          Domicilio:
-                                   </label>
-                                   <Checkbox
-                                   sx={{ padding: 0 }}
-                                   id="domicilio"
-                                   color="checkbox"
-                                   defaultChecked
-                                   checked={domicilio}
-                                   onClick={handleInput}
-                                   />
-                          </div>
-                          <div className="input-area4">
-                                   <label className="label-datos-catproducto input-cataproducto-12">
-                                          Ocupado:
-                                   </label>
-                                   <Checkbox
-                                   sx={{ padding: 0 }}
-                                   id="ocupado"
-                                   color="checkbox"
-                                   defaultChecked
-                                   checked={ocupado}
-                                   onClick={handleInput}
-                                   />
-                         </div>
-                         {domicilio!==true?
-                          <div className="input-area4">
-                            <label className="label-datos-catproducto input-cataproducto-99">
-                              GPS:
-                            </label>
-                            <Checkbox className="combo-gps"
-                              id="cbgps"
-                              color="checkbox"
-                              defaultChecked
-                              checked={cbgps}
-                              onClick={handleInput}
-                            />
-                          </div>:""}
-                          {domicilio===true?
-                          <div className="distancia-sciudad">
-                              <div className="input-area4">
-                                   <label className="label-datos-catproducto input-cataproducto-102">
-                                          Distancia MAX:
-                                   </label>
-                                   <input
-                                        className="input-cataproducto-101"
-                                        id="distanciaMax"
-                                        value={distanciaMax}
-                                        onChange={handleInput}
-                                        type="text"
-                                        required
-                                   />
-                              </div>
-                              <div className="input-area4">
-                                   <label className="label-datos-catproducto input-cataproducto-104">
-                                          Solo ciudad:
-                                   </label>
-                                   <Checkbox className="combo-gps"
-                                       id="cbsCiudad"
-                                       color="checkbox"
-                                       defaultChecked
-                                       checked={cbsCiudad}
-                                       onClick={handleInput}
-                                   />
-                              </div>
-                          </div>:""}
-
-                          <div className="input-area-foto-prod">
-                            <div className="foto-anadir">
-                                 <label className="label-2-prod">Foto:</label>
-                                 <label className="label-2-1-prod">
-                                 <input
-                                    id="foto"
-                                    value={foto}
-                                    onChange={onPhotoChange}
-                                    type="file"
-                                    required
-                                    multiple
-                                 />
-                                 Añadir foto
-                                </label>
+                  {showMap !== true ? (
+                    <>
+                      {agregarsn || editarsn ? (
+                        <>
+                          <div className="container-producto-datos">
+                            <div className="label-datos-catproducto-1 strong">
+                              Datos del nuevo producto{" "}
                             </div>
-                            {nombrefoto !== "" ? (
-                              <div className="check-vista-1">
-                                <label className="label-vista-productos-1-1">
-                                  Vista previa
+                            <div className="input-area1-producto">
+                              <label className="label-datos-catproducto">
+                                *Nombre:
+                              </label>
+                              <input
+                                className="input-cataproducto-1"
+                                id="nombrecorto"
+                                value={nombrecorto}
+                                onChange={handleInput}
+                                type="text"
+                                required
+                              />
+                            </div>
+                            <div className="input-area2">
+                              <label className="label-datos-catproducto">
+                                *Descripción:
+                              </label>
+                              <input
+                                className="input-cataproducto-2"
+                                id="descripcion"
+                                value={descripcion}
+                                onChange={handleInput}
+                                type="text"
+                                required
+                              />
+                            </div>
+                            <div className="input-area2">
+                              <label className="label-datos-catproducto">
+                                Marca:
+                              </label>
+                              <input
+                                className="input-cataproducto-20"
+                                id="marca"
+                                value={marca}
+                                onChange={handleInput}
+                                type="text"
+                                required
+                              />
+                            </div>
+                            <div className="input-area2">
+                              <label className="label-datos-catproducto">
+                                Modelo:
+                              </label>
+                              <input
+                                className="input-cataproducto-21"
+                                id="modelo"
+                                value={modelo}
+                                onChange={handleInput}
+                                type="text"
+                                required
+                              />
+                            </div>
+                            <div className="precio-capacidad-color">
+                              <div className="input-area2">
+                                <label className="label-datos-catproducto">
+                                  Precio:
+                                </label>
+                                <input
+                                  className="input-cataproducto-4"
+                                  id="precio"
+                                  value={precio}
+                                  onChange={handleInput}
+                                  type="text"
+                                  required
+                                />
+                              </div>
+                              <div className="input-area2">
+                                <label className="label-datos-catproducto plazas">
+                                  Plazas:
+                                </label>
+                                <input
+                                  className="input-cataproducto-999"
+                                  id="talla"
+                                  value={talla}
+                                  onChange={handleInput}
+                                  type="text"
+                                  required
+                                />
+                              </div>
+                              <div className="input-area2">
+                                <label className="label-datos-catproducto color">
+                                  Color:
+                                </label>
+                                <input
+                                  className="input-cataproducto-998"
+                                  id="color"
+                                  value={color}
+                                  onChange={handleInput}
+                                  type="text"
+                                  required
+                                />
+                              </div>
+                            </div>
+                            <div className="domicilio-ocupado-gps">
+                              <div className="input-area4">
+                                <label className="label-datos-catproducto input-cataproducto-12 domicilio">
+                                  Domicilio:
                                 </label>
                                 <Checkbox
-                                  className="combo-gps"
-                                  id="vista"
+                                  sx={{ padding: 0 }}
+                                  id="domicilio"
                                   color="checkbox"
                                   defaultChecked
-                                  checked={cbvista}
+                                  checked={domicilio}
                                   onClick={handleInput}
+                                />
+                              </div>
+                              <div className="input-area4">
+                                <label className="label-datos-catproducto input-cataproducto-12 ocupado">
+                                  Ocupado:
+                                </label>
+                                <Checkbox
+                                  sx={{ padding: 0 }}
+                                  id="ocupado"
+                                  color="checkbox"
+                                  defaultChecked
+                                  checked={ocupado}
+                                  onClick={handleInput}
+                                />
+                              </div>
+                              {domicilio !== true ? (
+                                <div className="input-area4">
+                                  <label className="label-datos-catproducto gps">
+                                    GPS:
+                                  </label>
+                                  <Checkbox
+                                    className="combo-gps"
+                                    id="cbgps"
+                                    color="checkbox"
+                                    defaultChecked
+                                    checked={cbgps}
+                                    onClick={handleInput}
+                                  />
+                                </div>
+                              ) : (
+                                ""
+                              )}
+                            </div>
+
+                            {domicilio === true ? (
+                              <div className="distancia-sciudad">
+                                <div className="input-area4">
+                                  <label className="lejania">
+                                    Lejanía kms:
+                                  </label>
+                                  <input
+                                    className="input-cataproducto-101"
+                                    id="distanciaMax"
+                                    value={distanciaMax}
+                                    onChange={handleInput}
+                                    type="text"
+                                    required
+                                  />
+                                </div>
+                                <div className="input-area4">
+                                  <label className="sciudad">Ciudad:</label>
+                                  <Checkbox
+                                    className="combo-gps"
+                                    id="cbsCiudad"
+                                    color="checkbox"
+                                    defaultChecked
+                                    checked={cbsCiudad}
+                                    onClick={handleInput}
+                                  />
+                                </div>
+                              </div>
+                            ) : (
+                              ""
+                            )}
+
+                            <div className="input-area-foto-prod">
+
+                            </div>
+                            {nombrefoto !== "" && cbvista ? (
+                              <div className="img-class">
+                                <img
+                                  className="img-producto"
+                                  src={contenidofoto}
                                 />
                               </div>
                             ) : (
                               ""
                             )}
                           </div>
-                          {nombrefoto !== "" && cbvista ? (
-                            <div className="img-class">
-                              <img
-                                className="img-producto"
-                                src={contenidofoto}
-                              />
-                            </div>
-                          ) : (
-                            ""
-                          )}
-                        </div>
-                      </>
-                    ) : (
-                      ""
-                    )}
-                  </>
-                ) : (
-                  ""
-                )}
-
-                <div className="producto-grupo-button">
-                  {agregarsn === false && editarsn === false ? (
-                    <Tippy content="Añadir Producto">
-                      <button
-                        type="button"
-                        className="producto-button primary"
-                        onClick={agregar}
-                      >
-                        <Add />
-                      </button>
-                    </Tippy>
-                  ) : (
-                    ""
-                  )}
-                  {producto &&
-                  arrayproductos[producto?.value].desc !== "Desconocido" ? (
-                    <>
-                      {agregarsn === false && editarsn === false ? (
-                        <Tippy content="Clic para editar el producto">
-                          <button
-                            type="button"
-                            className="producto-button primary"
-                            disabled={arrayproductos[0].desc === "Desconocido"}
-                            onClick={editar}
-                          >
-                            <Edit />
-                          </button>
-                        </Tippy>
-                      ) : (
-                        ""
-                      )}
-
-                      {agregarsn === false && editarsn === false ? (
-                        <Tippy content="Clic para eliminar el producto">
-                          <button
-                            type="button"
-                            className="producto-button primary"
-                            disabled={arrayproductos[0].desc === "Desconocido"}
-                            onClick={eliminar}
-                          >
-                            <Delete />
-                          </button>
-                        </Tippy>
-                      ) : (
-                        ""
-                      )}
-
-                      {inicia === false &&
-                      (agregarsn || editarsn) &&
-                      showMap !== true ? (
-                        <Tippy content={`Galeria de fotos del producto`}>
-                          <button
-                            type="button"
-                            className="producto-button primary"
-                            onClick={() => setShowGalerias(!showGalerias)}
-                          >
-                            <CollectionsIcon />
-                          </button>
-                        </Tippy>
-                      ) : (
-                        ""
-                      )}
-
-                      {cbgps === true &&
-                      inicia === false &&
-                      (agregarsn || editarsn) ? (
-                        <Tippy content="Ubicar el producto en el mapa">
-                          <button
-                            type="button"
-                            className="negocio-button primary"
-                            onClick={() => setShowMap(!showMap)}
-                          >
-                            <MapIcon />
-                          </button>
-                        </Tippy>
+                        </>
                       ) : (
                         ""
                       )}
@@ -1065,76 +898,201 @@ console.log("4444444", sessionStorage.getItem("user"))
                     ""
                   )}
 
-                  {agregarsn || editarsn ? (
-                    <Tippy
-                      content={
-                        nombrecorto.length !== 0 && descripcion.length !== 0
-                          ? "Registrar el producto"
-                          : "Complete los datos necesarios"
-                      }
-                    >
-                      <button
-                        type="button"
-                        className="producto-button primary"
-                        onClick={
+                  <div className="producto-grupo-button">
+
+                    {(agregarsn === true || editarsn === true) && nombrefoto !== "" && nombrecorto!="" && descripcion!==""? (
+                      <Tippy content="Vista previa">
+                        <button
+                          type="button"
+                          className="producto-button primary"
+                          onClick={()=>setCbvista(!cbvista)}
+                        >
+                          <VisibilityIcon />
+                        </button>
+                      </Tippy>
+                     ) : (
+                      ""
+                    )}
+
+                      {(agregarsn === true || editarsn === true) && nombrecorto!="" && descripcion!==""? (
+                         <label className="producto-button primary label-photo">
+                          <input
+
+                            id="foto"
+                            value={foto}
+                            onChange={onPhotoChange}
+                            type="file"
+                            required
+                            multiple
+
+                          />
+                          <Tippy content="Añadir foto">
+                            <AddPhotoAlternateIcon />
+                          </Tippy>
+                        </label>
+                    ) : (
+                      ""
+                    )}
+
+                    {agregarsn === false && editarsn === false ? (
+                      <Tippy content="Añadir Producto">
+                        <button
+                          type="button"
+                          className="producto-button primary"
+                          onClick={agregar}
+                        >
+                          <Add />
+                        </button>
+                      </Tippy>
+                    ) : (
+                      ""
+                    )}
+                    {producto &&
+                    arrayproductos[producto?.value].desc !== "Desconocido" ? (
+                      <>
+                        {agregarsn === false && editarsn === false ? (
+                          <Tippy content="Clic para editar el producto">
+                            <button
+                              type="button"
+                              className="producto-button primary"
+                              disabled={
+                                arrayproductos[0].desc === "Desconocido"
+                              }
+                              onClick={editar}
+                            >
+                              <Edit />
+                            </button>
+                          </Tippy>
+                        ) : (
+                          ""
+                        )}
+
+                        {agregarsn === false && editarsn === false ? (
+                          <Tippy content="Clic para eliminar el producto">
+                            <button
+                              type="button"
+                              className="producto-button primary"
+                              disabled={
+                                arrayproductos[0].desc === "Desconocido"
+                              }
+                              onClick={eliminar}
+                            >
+                              <Delete />
+                            </button>
+                          </Tippy>
+                        ) : (
+                          ""
+                        )}
+
+                        {inicia === false &&
+                        (agregarsn || editarsn) &&
+                        showMap !== true ? (
+                          <Tippy content={`Galeria de fotos del producto`}>
+                            <button
+                              type="button"
+                              className="producto-button primary"
+                              onClick={() => setShowGalerias(!showGalerias)}
+                            >
+                              <CollectionsIcon />
+                            </button>
+                          </Tippy>
+                        ) : (
+                          ""
+                        )}
+
+                        {cbgps === true &&
+                        inicia === false &&
+                        (agregarsn || editarsn) ? (
+                          <Tippy content="Ubicar el producto en el mapa">
+                            <button
+                              type="button"
+                              className="negocio-button primary"
+                              onClick={() => setShowMap(!showMap)}
+                            >
+                              <MapIcon />
+                            </button>
+                          </Tippy>
+                        ) : (
+                          ""
+                        )}
+                      </>
+                    ) : (
+                      ""
+                    )}
+
+                   {(agregarsn === true || editarsn === true) && nombrecorto!="" && descripcion!==""? (
+                      <Tippy
+                        content={
                           nombrecorto.length !== 0 && descripcion.length !== 0
-                            ? confirmar
-                            : ""
+                            ? "Registrar el producto"
+                            : "Complete los datos necesarios"
                         }
                       >
-                        <Check />
-                      </button>
-                    </Tippy>
+                        <button
+                          type="button"
+                          className="producto-button primary"
+                          onClick={
+                            nombrecorto.length !== 0 && descripcion.length !== 0
+                              ? confirmar
+                              : ""
+                          }
+                        >
+                          <Check />
+                        </button>
+                      </Tippy>
+                    ) : (
+                      ""
+                    )}
+
+                    {agregarsn || editarsn ? (
+                      <Tippy content="Cancelar, agregar ó editar producto">
+                        <button
+                          type="button"
+                          className="producto-button primary"
+                          onClick={tcancelar}
+                        >
+                          <Close />
+                        </button>
+                      </Tippy>
+                    ) : (
+                      ""
+                    )}
+                  </div>
+                  {inicia === false &&
+                  showGalerias === true &&
+                  showMap === false ? (
+                    <ComGalerias
+                      deQuien={arrayproductos[producto.value].desc}
+                      rutatmp={
+                        "productos/" + arrayproductos[producto.value].idproducto
+                      }
+                      perfil={arrayproductos[producto.value].idproducto}
+                      permiso={true}
+                      botonCerrar={false}
+                    />
                   ) : (
                     ""
                   )}
 
-                  {agregarsn || editarsn ? (
-                    <Tippy content="Cancelar, agregar ó editar producto">
-                      <button
-                        type="button"
-                        className="producto-button primary"
-                        onClick={tcancelar}
-                      >
-                        <Close />
-                      </button>
-                    </Tippy>
+                  {showMap === true &&
+                  showGalerias === false &&
+                  cbgps === true ? (
+                    <>
+                      <Map
+                        sx={{ height: "100%", width: "100%" }}
+                        onMapClick={lngLatSelected}
+                        remoteshowMap={showMap}
+                        lat={lat}
+                        lng={lng}
+                        point={{ lat, lng }}
+                        onChange={onChangeMap}
+                        remoteZoom={zoom}
+                      />
+                    </>
                   ) : (
                     ""
                   )}
                 </div>
-                {inicia === false &&
-                showGalerias === true &&
-                showMap === false ? (
-                  <ComGalerias
-                    deQuien={arrayproductos[producto.value].desc}
-                    rutatmp={"productos/" + arrayproductos[producto.value].idproducto}
-                    perfil={arrayproductos[producto.value].idproducto}
-                    permiso={true}
-                    botonCerrar={false}
-                  />
-                ) : (
-                  ""
-                )}
-
-                {showMap === true &&
-                showGalerias === false &&
-                cbgps === true ? (
-                  <>
-                    <Map
-                      sx={{ height: "100%", width: "100%" }}
-                      onMapClick={lngLatSelected}
-                      remoteshowMap={showMap}
-                      lat={lat}
-                      lng={lng}
-                      point={{ lat, lng }}
-                      onChange={onChangeMap}
-                      remoteZoom={zoom}
-                    />
-                  </>
-                ) : (
-                  ""
-                )}
               </div>
             </>
           ) : (

@@ -58,7 +58,6 @@ const BigSlider = (props) => {
             {item}
           </div>
         ))}
-{/*        {imgs?.length && <div className="multiple-slider-item">{imgs[0]}</div>}*/}
       </div>
         <button onClick={() => toLeft()} className="multiple-slider-nav right">
           {">"}

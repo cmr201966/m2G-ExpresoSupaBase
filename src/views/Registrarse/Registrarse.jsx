@@ -27,30 +27,24 @@ const Registrarse = () => {
   const [fijo, setFijo] = useState("");
   const [celular, setCelular] = useState("");
   const [email, setEmail] = useState("");
-  const [sede, setSede] = useState("");
-  const [foto, setFoto] = useState();
+  const [foto] = useState();
   const [nombrefoto, setNombrefoto] = useState("");
   const [contenidofoto, setContenidofoto] = useState();
-  const [nit, setNit] = useState("");
   const [desc, setDesc] = useState("");
   const [provincia, setProvincia] = useState(13);
   const [municipio, setMunicipio] = useState(0);
-  const [cbcup, setCbcup] = useState("");
-  const [cbmlc, setCbmlc] = useState("");
-  const arraydesconocido = [{ keycercade: 99, provincia: 99, municipio: 99, desc: "Desconocido" }];
-//  const arrayplan= [{ plan: 0,  desc: "Gratis", tip:"Explorar, Comprar y Reservar" },{ plan: 1,  desc: "Básico", tip:"Crear Negocios" }];
-//  const arrayplan= [{ plan: 0,  desc: "Gratis", tip:"Explorar, Comprar y Reservar" },{ plan: 1,  desc: "Básico", tip:"Crear Negocios" },{ plan: 2,  desc: "Premiun", tip:"Crear Negocios Plus" }];
+  const arraydesconocido = [{ provincia: 99, municipio: 99, desc: "Desconocido" }];
   const arrayplan= [{ plan: 0,  desc: "Gratis", tip:"Explorar, Comprar y Reservar" },{ plan: 1,  desc: "Operador", tip:"Gestiona negocio" },{ plan: 2,  desc: "Premiun", tip:"Crear Negocios Plus" }];
   const [plan, setPlan] = useState(0);
   const [arrayprovincias, setArrayprovincias] = useState([]);
   const [arraymunicipios, setArraymunicipios] = useState([]);
   const [tmunicipios, setTmunicipios] = useState([]);
-  const [cp1, setCp1] = useState("Z");
-  const [cp2, setCp2] = useState("K");
-  const [cp3, setCp3] = useState("M");
-  const [cp4, setCp4] = useState("W");
-  const [cp5, setCp5] = useState("P");
-  const [cp6, setCp6] = useState();
+  const [cp1] = useState("Z");
+  const [cp2] = useState("K");
+  const [cp3] = useState("M");
+  const [cp4] = useState("W");
+  const [cp5] = useState("P");
+  const [cp6] = useState();
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
   const [cbvista, setCbvista] = useState(false);
@@ -65,10 +59,9 @@ const Registrarse = () => {
   async function init() {
     setShow1(true);
     setResultado(arrayplan[0].tip);
-    console.log("Insertar:", parsedParams.inserta==="true");
     setModifica(!(parsedParams.inserta==="true"));
+    
     let ttprovincias=[];
-
     let resultprovincia = await getprovincias({});
     resultprovincia = await resultprovincia.json();
 
@@ -98,10 +91,10 @@ const Registrarse = () => {
     {
       setArraymunicipios(resultmunicipio);
       if (sessionStorage.getItem("user") === null){
-         ttmunicipios = resultmunicipio.filter((item,i)=>{if (item.provincia === ttprovincias[0].provincia){return item}});
+         ttmunicipios = resultmunicipio.filter((item)=>{if (item.provincia === ttprovincias[0].provincia){return item}});
       }
       else{
-        ttmunicipios = resultmunicipio.filter((item,i)=>{if (item.provincia === ttprovincias[sessionStorage.getItem("userprovincia")-1].provincia){return item}});
+        ttmunicipios = resultmunicipio.filter((item)=>{if (item.provincia === ttprovincias[sessionStorage.getItem("userprovincia")-1].provincia){return item}});
       }
     }
     if (ttmunicipios.length!==0)
@@ -234,23 +227,11 @@ const Registrarse = () => {
       case "fijo":
         setFijo(e.target.value);
         break;
-      case "sede":
-        setSede(e.target.value);
-        break;
       case "celular":
         setCelular(e.target.value);
         break;
-      case "cbmlc":
-        setCbmlc(e.target.value);
-        break;
-      case "cbcup":
-        setCbcup(e.target.value);
-        break;
       case "desc":
         setDesc(e.target.value);
-        break;
-      case "nit":
-        setNit(e.target.value);
         break;
       case "vista":
         setCbvista(e.target.checked);

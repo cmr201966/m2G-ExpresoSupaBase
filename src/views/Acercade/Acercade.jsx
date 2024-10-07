@@ -54,7 +54,7 @@ useEffect(() => {
         <div className="cabeza">
             {parsedParams.nivel === 0 ? "" :
               <IconButton color="primary" onClick={() => {
-                navigate(`/?naturaleza=${sessionStorage.getItem("naturaleza")}&owner=${sessionStorage.getItem("idowner")}&nivel=${sessionStorage.getItem("nivel")}`);
+                navigate(`/?nivel=${sessionStorage.getItem("nivel")}`);
               }}>
                 <ArrowBack />
               </IconButton>

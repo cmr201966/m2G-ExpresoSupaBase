@@ -48,12 +48,10 @@ function MapBox({
   noLocalMarker = true,
   onMapClick,
 }) {
-  const [mindex, setMindex] = useState(tindex ?? 0);
-  const [zoom, setZoom] = useState(remoteZoom ?? 16);
+  const [zoom] = useState(remoteZoom ?? 16);
   const [longitude, setLongitude] = useState(lng ?? -75.829090519);
   const [latitude, setLatitude] = useState(lat ?? 20.0217583);
   const [localMarker, setLocalMarker] = useState(null);
-
   const flyToPoint = useCallback(
     (longitude, latitude, zoom) => {
       map?.current?.flyTo({

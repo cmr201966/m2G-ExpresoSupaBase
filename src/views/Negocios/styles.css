@@ -187,8 +187,7 @@
 .img-class
 {
     display: flex;
-    width: 100%;
-    justify-content: flex-start;
+    justify-content:center;
     margin-top: 10px;
 }
 .cbhorarios

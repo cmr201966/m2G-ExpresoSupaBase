@@ -1,5 +1,5 @@
 import Tippy from "@tippyjs/react";
-import Checkbox from '@mui/material/Checkbox';
+//import Checkbox from '@mui/material/Checkbox';
 // components
 import Navbar from "../../components/Navbar/Navbar"
 // layouts
@@ -14,12 +14,17 @@ import Add from "@mui/icons-material/Add";
 import Delete from "@mui/icons-material/Delete";
 import Close from "@mui/icons-material/Close";
 import Edit from "@mui/icons-material/Edit";
-import IconButton from "@mui/material/IconButton"
+import IconButton from "@mui/material/IconButton";
 import ArrowBack from "@mui/icons-material/ArrowBack";
-import { useNavigate } from "react-router-dom"
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import { useNavigate } from "react-router-dom";
 import Modal from "../../components/Modal/Modal";
 import { useLocation } from "react-router-dom";
-import { getAplicaciones, getNaturalezas, setAplicaciones } from "../../servicios/aplicaciones";
+import { getAplicaciones, setAplicaciones } from "../../servicios/aplicaciones";
+import { getcategoriasnegocios } from "../../servicios/negocios";
+import { getJpgFile  } from "../../servicios/imagenes";
+
 
 const Aplicaciones = () => {
   const navigate = useNavigate();
@@ -29,12 +34,9 @@ const Aplicaciones = () => {
   const [nick, setNick] = useState("");
   const [desc, setDesc] = useState("");
   const [ttip, setTtip] = useState("");
-  const [arrayNaturalezas, setArrayNaturalezas] = useState([]);
-  const arraynonaturaleza = [{ idnaturaleza: 8, desc: "Desconocida" }];
-  const [naturaleza, setNaturaleza] = useState("");
-  const [cbocultar, setCbocultar] = useState(false);
-  const [cbrlogin, setCbrlogin] = useState(false);
-  const [cbadmin, setCbadmin] = useState(false);
+  const [arrayCategorias, setArrayCategorias] = useState([]);
+  const arraynoCategorias = [{ idcategoria: 8, desc: "Desconocida" }];
+  const [categoria, setCategoria] = useState("");
   const [inicia, setInicia] = useState(true);
   const [agregarsn, setAgregarsn] = useState(false);
   const [editarsn, setEditarsn] = useState(false);
@@ -46,15 +48,12 @@ const Aplicaciones = () => {
   const [nickt, setNickt] = useState("");
   const [desct, setDesct] = useState("");
   const [ttipt, setTtipt] = useState("");
-  const [naturalezat, setNaturalezat] = useState("");
-  const [cbocultart, setCbocultart] = useState(false);
-  const [cbrlogint, setCbrlogint] = useState(false);
-  const [cbadmint, setCbadmint] = useState(false);
   const [contenido, setContenido] = useState("");
-  const [nivel, setNivel] = useState(9999);
-  const [idowner, setIdowner] = useState(9999);
-  const [naturaleza1, setNaturaleza1] = useState(9999);
-
+  const [categoriat, setCategoriat] = useState(9999);
+  const [nombrefoto, setNombrefoto] = useState("");
+  const [contenidofoto, setContenidofoto] = useState();
+  const [cbvista, setCbvista] = useState(false);
+  const [foto] = useState();
 
   function guardaDatosAplicacion(data, i)
   {
@@ -63,20 +62,13 @@ const Aplicaciones = () => {
     setNick(data[0].idapp);
     setDesc(data[0].desc);
     setTtip(data[0].tooltip);
-    setNaturaleza(data[0].idnaturaleza);
-    setCbocultar(data[0].ocultar);
-    setCbrlogin(data[0].rlogin);
-    setCbadmin(data[0].admin);
+    setCategoria(data[0].idcategoria);
     setAplicacion(0);
 
   }
   async function init() {
     setContenido("Preparando condiciones...");
     setShow(true);
-    setNivel(parsedParams.nivel);
-    setNaturaleza1(parsedParams.naturaleza);
-    setIdowner(parsedParams.idowner);
-    // Obtener las aplicaciones
     let result = await getAplicaciones({});
     result = await result.json();
 
@@ -88,22 +80,34 @@ const Aplicaciones = () => {
     else 
     {
       guardaDatosAplicacion(result, 0)
+      setCategoria(result[0].idcategoria);
   
     }
-     // Obtener las naturalezas
-     let resultnaturaleza = await getNaturalezas({naturaleza: "", admin: false});
-     resultnaturaleza = await resultnaturaleza.json();
+     let resultcategorias = await getcategoriasnegocios({});
+     resultcategorias = await resultcategorias.json();
 
-      if (resultnaturaleza.error || resultnaturaleza.length === 0) 
+      if (resultcategorias.error || resultcategorias.length === 0) 
       {
-        setArrayNaturalezas(arraynonaturaleza);
-        setNaturaleza(arraynonaturaleza[0].idnaturaleza);
+        setArrayCategorias(arraynoCategorias);
       }
       else 
       {
-        setArrayNaturalezas(resultnaturaleza);
-        setNaturaleza(resultnaturaleza[0].idnaturaleza);
-      }
+        setArrayCategorias(resultcategorias);
+        if (result.length>0){
+           setCategoriat(buscaCategoria(resultcategorias, result[0].idcategoria));
+           let resultado = await getJpgFile({ file: "./galerias/app_images/aplicaciones/" + result[0].id + "/" + result[0].id + ".jpg"});
+           resultado = await resultado.text();
+     
+           if (resultado.length !== 0) {
+             setContenidofoto(resultado);
+             setNombrefoto("");
+           } else {
+             setNombrefoto("");
+           }
+ 
+        }        
+          }
+  
       
     setShow(false);
     setInicia(false);
@@ -118,27 +122,38 @@ const Aplicaciones = () => {
   }, [location]);
 
 
+  function buscaCategoria(data, categoria){
+    let j=999999;
+    for(let i=0; i<data.length; i+=1){
+        if (data[i].categorianegocio===categoria){
+          j=i;
+        }
+    }
+    return(j);
+  }
   function recuperardatosproducto(data, i) 
   {
     setNickt(data[i].idapp);
     setDesct(data[i].desc);
     setTtipt(data[i].tooltip);
+    {/*
     setNaturalezat(data[i].idnaturaleza);
     setCbocultart(data[i].ocultar);
     setCbrlogint(data[i].rlogin);
-    setCbadmint(data[i].admin);
+    setCbadmint(data[i].admin);*/}
     
   }
+
   function restaurardatosproductos() 
   {
     //setNegocio(negociot);
     setNick(nickt);
     setDesc(desct);
     setTtip(ttipt);
-    setNaturaleza(naturalezat);
-    setCbocultar(cbocultart);
+    setCategoria(categoriat);
+    {/*etCbocultar(cbocultart);
     setCbrlogin(cbrlogint);
-    setCbadmin(cbadmint);
+    setCbadmin(cbadmint);*/}
   }
     
   function tcancelar() 
@@ -153,9 +168,10 @@ const Aplicaciones = () => {
        setNick("");
        setDesc("");
        setTtip("");
+       {/*
        setCbocultar(false);
        setCbrlogin(false);
-       setCbadmin(false);
+       setCbadmin(false);*/}
 
     }
     const onModalClose = () => 
@@ -184,9 +200,8 @@ const Aplicaciones = () => {
     }
 
     async function confirmar() {
-      // Grabar la aplicaciones
-      let result = await setAplicaciones({id: arrayAplicaciones[aplicacion].id, idapp: nick, desc, tooltip: ttip, naturaleza, ocultar: cbocultar===true?1:0,
-                                           rlogin: cbrlogin===true?1:0, admin: cbadmin===true?1:0, agregarsn, editarsn});
+      let result = await setAplicaciones({id: arrayAplicaciones[aplicacion].id, iduser: sessionStorage.getItem("user"), nick, desc, tooltip: ttip, 
+                                          categoria: arrayCategorias[categoria].categorianegocio, agregarsn, editarsn, contenidofoto});
       result = await result.json();
 
     if (result.ok!=="ok"){
@@ -202,6 +217,19 @@ const Aplicaciones = () => {
     }
   }
 
+  async function buscaFoto(foto){
+    let resultado = await getJpgFile({ file: foto});
+    resultado = await resultado.text();
+
+    if (resultado.length !== 0) {
+      setContenidofoto(resultado);
+      setNombrefoto("Foto");
+    } else {
+      setNombrefoto("");
+    }
+     return
+  }
+
   async function handleInput(e) {
     switch (e.target.id) {
       case "nick":
@@ -210,29 +238,39 @@ const Aplicaciones = () => {
       case "idapp":
           setAplicacion(e.target.value);
           recuperardatosproducto(arrayAplicaciones, e.target.value);
-          break;
+          setCategoriat(buscaCategoria(arrayCategorias, arrayAplicaciones[e.target.value].idcategoria));
+          buscaFoto("./galerias/app_images/aplicaciones/" + arrayAplicaciones[e.target.value].id + "/" + arrayAplicaciones[e.target.value].id + ".jpg");
+              break;
        case "desc":
             setDesc(e.target.value);
             break;
       case "ttip":
            setTtip(e.target.value);
            break;
-      case "naturaleza":
-           setNaturaleza(e.target.value);
+      case "categoria":
+           setCategoria(e.target.value);
            break;
-      case "ocultar":
-           setCbocultar(e.target.checked);
-           break;
-      case "rlogin":
-           setCbrlogin(e.target.checked);
-           break;
-      case "admin":
-           setCbadmin(e.target.checked);
-           break;
+      case "vista":
+           setCbvista(e.target.checked);
+           break;   
      default:
         break;
     }
   }
+
+  const onPhotoChange = (e) => {
+    const file = e.target.files[0];
+    setNombrefoto(e.target.value);
+    if (!file) return;
+    const reader = new FileReader();
+    reader.onload = (e) => {
+      const content = e.target.result;
+      setContenidofoto(content);
+    };
+    reader.readAsDataURL(file);
+    setCbvista(true);
+  };
+
 
   useEffect(() => {
     init()
@@ -260,29 +298,27 @@ const Aplicaciones = () => {
         ]}
       />
       <Hero>
-      <div className="cabeza">
+        <div className="div-papa">
+        <div className="cabeza">
             <IconButton color="primary" onClick={() => {
-              navigate(`/?naturaleza=${naturaleza1}&idowner=${idowner}&nivel=${nivel}`);
-//              navigate(-1);
+              navigate(`/?nivel=${0}`);
             }}>
-              <ArrowBack />
+            <ArrowBack className="flecha" />
             </IconButton>
-            <h4 className="h3-1-cabeza-negocios">Categorias</h4>
-          </div>
+            <h4 className="h3-1-cabeza-negocios">Atrás</h4>
+        </div>
 
         <div className="aplicaciones">
+          <p className="strong"> Publicar anuncio</p>
           <div className="container-aplicaciones">
             <div className="app-grip">
                 <div className="app-flex app-flex-gap">
-                     <label>Categoria:</label>
+                     <label>Anuncio:</label>
                      {inicia===false && (agregarsn || editarsn)?
                       <>
                      <label>Descripcion:</label>
                      <label>Tooltip:</label>
                      <label className="app-label-naturaleza">Categoria: </label>
-                     <label className="app-label app-input--12">Ocultar:</label>
-                     <label className="app-label app-input--12">Requerido login:</label>
-                     <label className="app-label app-input--12">Solo administrador:</label>
                      </>:""
                      }
                  </div>
@@ -295,6 +331,7 @@ const Aplicaciones = () => {
                                type="text"
                                required
                        />:""}
+                       
                     {(agregarsn===false && editarsn===false) || editarsn===true?
                       <div className="input-area1-producto">
                         <select className="app-select-naturaleza" disabled={editarsn===true?true:false} id="idapp" onChange={handleInput} value={aplicacion}>
@@ -306,48 +343,76 @@ const Aplicaciones = () => {
 
 
                       {inicia===false && (agregarsn || editarsn)?
-                       <>
-                       <input className="app-input-area"
+                         <>
+                         <input className="app-input-area"
                                 id="desc"
                                 value={desc}
                                 onChange={handleInput}
                                 type="text"
                                 required
-                        />
+                         />
 
-                       <input className="app-input-area"
+                         <input className="app-input-area"
                               id="ttip"
                               value={ttip}
                               onChange={handleInput}
                               type="text"
                               required
-                        />
-
-                      <div className="input-area1-producto">
-                          <select className="app-select-naturaleza" id="naturaleza" onChange={handleInput} value={naturaleza}>
-                               {arrayNaturalezas.map((item, i) => {
-                                   return <option key={i} value={item.idnaturaleza} >{item.desc}</option>
+                         />
+                         <div className="input-area1-producto">
+                           <select className="app-select-naturaleza" id="categoria" onChange={handleInput} value={categoria}>
+                               {arrayCategorias.map((item, i) => {
+                                   return <option key={i} value={i} >{item.desc}</option>
                                })}
-                          </select>
-                      </div>
+                           </select>
+                         </div>
 
-                      <div className="input-area4">
-                           <Checkbox sx={{ padding: 0 }} id="ocultar" color="checkbox" defaultChecked checked={cbocultar} onClick={handleInput} />
-                      </div>
-                      <div className="input-area4">
-                          <Checkbox sx={{ padding: 0 }} id="rlogin" color="checkbox" defaultChecked checked={cbrlogin} onClick={handleInput} />
-                     </div>
-                     <div className="input-area4">
-                         <Checkbox sx={{ padding: 0 }} id="admin" color="checkbox" defaultChecked checked={cbadmin} onClick={handleInput} />
-                     </div>
-                     </>:""
-                     }
-
+                       </>:""
+                      }
                  </div>                 
-          </div>          
+          </div> 
+          {nombrefoto !== "" && cbvista ? (
+                          <div className="img-class">
+                              <img
+                                className="img-producto"
+                                src={contenidofoto}
+                              />
+                          </div>
+                          ) : (
+                            ""
+                          )}
 
           <div className="grupo-button-app">
-                  {(agregarsn === false && editarsn === false) ?
+                   {(agregarsn === true || editarsn === true) && nombrefoto !== "" && nick!=="" && desc!=="" && ttip!==""? (
+                      <Tippy content="Vista previa">
+                        <button
+                          type="button"
+                          className="producto-button primary"
+                          onClick={()=>setCbvista(!cbvista)}>
+                          <VisibilityIcon />
+                        </button>
+                      </Tippy>
+                     ) : (
+                      ""
+                    )}
+                  {(agregarsn === true || editarsn === true) && nick!=="" && desc!=="" && ttip!==""? (
+                         <label className="producto-button primary label-photo">
+                          <input
+                            id="foto"
+                            value={foto}
+                            onChange={onPhotoChange}
+                            type="file"
+                            required
+                            multiple
+                          />
+                          <Tippy content="Añadir foto">
+                            <AddPhotoAlternateIcon />
+                          </Tippy>
+                        </label>
+                    ) : (
+                      ""
+                    )}
+                {(agregarsn === false && editarsn === false) ?
                     <Tippy content="Añadir Producto">
                       <button type="button" className="producto-button primary" onClick={agregar}>
                       <Add />
@@ -373,7 +438,7 @@ const Aplicaciones = () => {
                   }
 
                   </>:""}
-                  {inicia===false && (agregarsn || editarsn) && (nick.length!=0 && desc.length!=0) ?
+                  {inicia===false && (agregarsn || editarsn) && (nick?.length!==0 && desc?.length!==0) ?
                     <Tippy content={nick.length !== 0 && desc.length !== 0 ? "Registrar el producto" : "Complete los datos necesarios"}>
                       <button type="button" className="producto-button primary" onClick={nick.length !== 0 && desc.length !== 0 ? confirmar : ""}>
                       <Check />
@@ -392,6 +457,8 @@ const Aplicaciones = () => {
                 </div>
 
            </div>
+
+        </div>
 
         </div>
 

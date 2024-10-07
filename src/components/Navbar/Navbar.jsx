@@ -2,57 +2,36 @@ import { Fragment } from "react";
 import { Link } from "react-router-dom";
 import Tippy from "@tippyjs/react";
 
-// @mui components
-import { Box, useTheme, IconButton } from "@mui/material";
+import { Box, IconButton } from "@mui/material";
 
-// @mui/icons-material
-//import CollectionsIcon from "@mui/icons-material/Collections";
-//import Chat from "@mui/icons-material/Chat";
-//import MoreHoriz from "@mui/icons-material/MoreHoriz";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-import useOnclickOutside from "react-cool-onclickoutside";
+//import useOnclickOutside from "react-cool-onclickoutside";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';// styles
-import "./styles.css";
+import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import { useState } from "react";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useFilter } from "../../context/FilterProvider";
 import { getJpgFile } from "../../servicios/imagenes";
 import NavigationDrawer from "./Drawer";
+import "./styles.css";
 
 const Navbar = (props) => {
-  const theme = useTheme();
-  const { filterState, setFilterState } = useFilter();
-  const { links } = props;
+  const navigate = useNavigate();
   const { nivel } = props;
+  const foto1=      "http://localhost:3001/app_images/destodo/dtlogo.jpg";
   const [showMenu, setShowMenu] = useState(false);
 
-  const [contenidofoto, setContenidofoto] = useState();
-  const [contenido_logo, setContenido_logo] = useState();
   const [inicia, setInicia] = useState(true);
   const [buscar, setBuscar] = useState("");
-  const filtro =
-    sessionStorage.getItem("filtro_contrato") === null &&
-    sessionStorage.getItem("filtro_productos") === null
-      ? false
-      : true;
-  const tfiltro = "Filtrar " + sessionStorage.getItem("filtro");
-  const mfiltro = sessionStorage.getItem("filtro") !== "";
-  //  const [rutatmp, setRutatmp] = useState("");
-  //  const [desctmp, setDesctmp] = useState("");
-  const [setCbhowclient] = useState(false);
-  //  const [cbhowclient, setCbhowclient] = useState(false);
-  const navigate = useNavigate();
-
   const [menuPrimero] = useState([
     {
       label: "Ubicación",
       to: "/ubicacion",
       tooltips: "Donde recibira su producto ó servicio",
-      img:1,
+      img:1, anuncio: null
     },
   ]);
 {/* depende=0->no depende de nada, 1->nivel, 2-> no autentificado*/} 
@@ -60,29 +39,31 @@ const Navbar = (props) => {
     { label: "Inicio", to: "/", tooltips: "Ir a la página principal", depende: 1 },
     {
       label:
-        sessionStorage.getItem("user") === null
-          ? "Inicio sesión"
-          : "Cerrar sesión",
-      to: sessionStorage.getItem("user") === null ? "/login" : "/cerrarsesion",
+        sessionStorage.getItem("user") === null || sessionStorage.getItem("user") === 'null'? "Inicio sesión": "Cerrar sesión",
+      to: sessionStorage.getItem("user") === null || sessionStorage.getItem("user") === 'null' ? "/login" : "/cerrarsesion",
       tooltips:
-        sessionStorage.getItem("user") === null
-          ? "Abrir sesión"
-          : "Cerrar la sesión de " + sessionStorage.getItem("usernombre"),
-          depende:0,
+        sessionStorage.getItem("user") === null || sessionStorage.getItem("user") === 'null'? "Abrir sesión": "Cerrar la sesión de " + sessionStorage.getItem("usernombre"), depende:0
     },
 
     {
       label: "Registrarse",
       to: "/registrarse?inserta=true",
       tooltips: "Crear una cuenta de usuario",
-      depende:2,
+      depende:2
     },
     { label: "Categorias", to: "/categorias", tooltips: "Productos de una categoria", depende: 0 },
     {
       label: "Vender",
       to: "/catproductos",
-      tooltips: "Vender",
+      tooltips: "Vender un producto",
+      depende: 0
+    },
+    {
+      label: "Anuncios",
+      to: "/aplicaciones",
+      tooltips: "Anunciar un negocio",
       depende: 0,
+      categoria: ""
     },
   ]);
 
@@ -107,21 +88,12 @@ const Navbar = (props) => {
     });
     resultado = await resultado.text();
     if (resultado.length !== 0) {
-      setContenidofoto(resultado);
+    //  setContenidofoto(resultado);
     } else {
       //  no se pudo leer el contenido de la foto
     }
     // foto del logo
 
-    let resultado_logo = await getJpgFile({
-      file: "./galerias/app_images/destodo/logo.jpg",
-    });
-    resultado_logo = await resultado_logo.text();
-    if (resultado_logo.length !== 0) {
-      setContenido_logo(resultado_logo);
-    } else {
-      //  no se pudo leer el contenido de la foto
-    }
     setInicia(false);
   }
 
@@ -129,27 +101,8 @@ const Navbar = (props) => {
     setShowMenu(!showMenu);
   }
 
-  {/*
-  function galerias() {
-    let rutatmp =
-      sessionStorage.getItem("user") === null
-        ? "usuarios/invitado"
-        : `usuarios/${sessionStorage.getItem("user")}`;
-    let desctmp =
-      sessionStorage.getItem("user") === null
-        ? "invitado"
-        : `${sessionStorage.getItem("usernombre")}`;
-    navigate(
-      `/Galerias?naturaleza=58&nombre=Galerias&rutatmp=${rutatmp}&desctmp=${desctmp}`
-    );
-  }
-    */}
-
   function handleInput(e) {
     switch (e.target.id) {
-      case "howclient":
-        setCbhowclient(e.target.checked);
-        break;
       case "buscar":
         setBuscar(e.target.value);
         break;
@@ -157,27 +110,33 @@ const Navbar = (props) => {
         break;
     }
   }
+  function buscaProductos(e){
+    e.preventDefault()
+    navigate(`/productos?buscar=${buscar}&user=${sessionStorage.getItem("user")}&nombre=Filtro: '${buscar}'`);
+  }
 
   useEffect(() => {
     init();
   }, []);
 
+/*
   const ref = useOnclickOutside((e) => {
     setShowMenu(false);
   });
-
-
+*/
   return (
     <>
       <div className="navbar-row">
         <div className="logo">
           <Link className="link-logo" to="/acercade">
-            <Tippy content="Acerca de M2G-Software">
-              <img className="logo-img-one" src={contenido_logo} />
+            <Tippy content="Acerca de M2G-Expreso">
+              <img className="logo-img-one" src={foto1} />
+{/*}              <img className="logo-img-one" src={contenido_logo} />*/}
             </Tippy>
-            DesTodo
+            El Expreso
           </Link>
           <div className="input-lupa">
+            <form onSubmit={buscaProductos}>
             <input
               className="buscar-input"
               id="buscar"
@@ -185,7 +144,7 @@ const Navbar = (props) => {
               value={buscar}
               onChange={handleInput}
               type="text"
-              required
+    //          required
             />
             <IconButton
               className="lupa"
@@ -195,9 +154,22 @@ const Navbar = (props) => {
             >
               <SearchIcon />
             </IconButton>
-          </div>
-          {inicia === false ? (
+            </form>
+          </div>          
+          {inicia === false ? (          
             <div className="menuTercero">
+              <Link className="tools-color" to="/whatsapp" >
+              <Tippy content={`Ejecutar pedidos del cliente`}>
+                <IconButton
+                  sx={{ padding: 0 }}
+                  id="tool"
+                  color="inherit"
+                >
+                <ManageAccountsIcon />
+                </IconButton>
+                </Tippy>
+              </Link>
+
               <IconButton
                 sx={{ padding: 0 }}
                 id="car"
@@ -224,7 +196,7 @@ const Navbar = (props) => {
         <div className="agrupa-menu">
           {inicia === false ? (
             <div className="menuPrimero">
-              <Box
+          <Box
                 sx={{ display: { xs: "none", md: "flex" } }}
                 className="links"
               >
@@ -251,7 +223,6 @@ const Navbar = (props) => {
               >
                 {menuSegundo.map((item, i) => (
                   <Fragment key={i}>
-
                    {((item.depende === 1 && nivel === 0) || (item.depende === 2 &&  sessionStorage.getItem("user")!== null)) ? (
                       <></>
                     ) : (
@@ -259,7 +230,7 @@ const Navbar = (props) => {
                           <Link
                             className="menu-nav"
                             key={item.label}
-                            to={item.to}
+                            to={item.anuncio===undefined?`${item.to}?categoria=0`:`${item.to}?anuncio=${item.anuncio}&categoria=0`}
                           >
                             {item.label}
                           </Link>

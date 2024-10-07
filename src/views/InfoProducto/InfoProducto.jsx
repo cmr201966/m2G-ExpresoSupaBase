@@ -44,7 +44,7 @@ const InfoProducto = () => {
   const [inicio, setInicio] = useState(true);
   const [gps, setGps] = useState(true);
   const [puntos, setPuntos] = useState([]);
-  const [naturaleza1, setNaturaleza1] = useState(0);
+  const [categoria, setCategoria] = useState(0);
   const [distancia, setDistancia] = useState(0);
   const [tarifa, setTarifa] = useState(1);
   const [costoDomicilio, setCostoDomicilio] = useState(50);
@@ -54,10 +54,11 @@ const InfoProducto = () => {
   const [productot, setProductot] = useState("");
 
   async function init() {
-    setNaturaleza1(parsedParams.naturaleza);
+    console.log(parsedParams);
+    setCategoria(parsedParams.categoria);
     let result = await getinfoproducto({idproducto: parsedParams.idproducto});
     result = await result.json();
-
+    console.log(result);
     if (result.length !== 0 && result.error === undefined) {
       setIdproducto(parsedParams.idproducto);
       setNegocio(result[0].negocio);
@@ -72,7 +73,7 @@ const InfoProducto = () => {
       setDomicilio(result[0].domicilio);
     }
 
-    result = await getParesGpsNaturalezaNew({naturaleza: parsedParams.naturaleza,  idproducto: parsedParams.idproducto});
+    result = await getParesGpsNaturalezaNew({categoria: parsedParams.categoria,  idproducto: parsedParams.idproducto});
     result = await result.json();
 
     let paresGps = [];
@@ -200,34 +201,7 @@ if (puntosState===2){
   return (
     <div>
       <Navbar
-        links={[
-          { label: "Inicio", to: "/", tooltips: "Ir a la página principal" },
-          {
-            label:
-              sessionStorage.getItem("user") === null
-                ? "Iniciar sesión"
-                : "Cerrar sesión",
-            to:
-              sessionStorage.getItem("user") === null
-                ? "/login"
-                : "/cerrarsesion",
-            tooltips:
-              sessionStorage.getItem("user") === null
-                ? "Abrir sesión"
-                : "/Cerrar la sesión de " +
-                  sessionStorage.getItem("usernombre"),
-          },
-          {
-            label: "Registrarse",
-            to: "/registrarse?inserta=true",
-            tooltips: "Crear una cuenta de usuario",
-          },
-          {
-            label: "Acerca de",
-            to: "/Acercade",
-            tooltips: "Acerca de Destodo",
-          },
-        ]}
+         nivel={1}
       />
       <Hero>
         <div className="cabeza">

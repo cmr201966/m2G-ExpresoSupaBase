@@ -18,6 +18,8 @@ import InfoProducto from "./views/InfoProducto/InfoProducto";
 import InfoNegocio from "./views/infoNegocio/InfoNegocio";
 import Aplicaciones from "./views/Aplicaciones/Aplicaciones";
 import Whatsapp from "./views/Whatsapp/Whatsapp";
+import Ubicacion from "./views/Ubicacion/Ubicacion";
+import Categorias from "./views/Categorias/Categorias";
 
 import "tippy.js/dist/tippy.css";
 import "./index.css";
@@ -41,6 +43,8 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <Route exact path="/infonegocio" element={<InfoNegocio />} />
             <Route exact path="/aplicaciones" element={<Aplicaciones />} />
             <Route exact path="/whatsapp" element={<Whatsapp />} />
+            <Route exact path="/ubicacion" element={<Ubicacion />} />
+            <Route exact path="/categorias" element={<Categorias />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

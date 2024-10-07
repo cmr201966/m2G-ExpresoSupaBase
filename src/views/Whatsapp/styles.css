@@ -1,14 +1,18 @@
 .WhatsApp{
     display: flex;
     flex-direction: column;
-    justify-content: space-between;
-    width: 100%;
-    padding: 10px;
+    background: rgb(20, 96, 172);
+    width: 450px;
+    padding: 20px;
+    margin: 0 auto;
     gap:10px;
 }
 .cmd-input-area{
-    width: 500px;
+    width: 450px;
     height: 25px;
+    border-radius: 15px;
+    border: 1px solid aliceblue
+
 }
 label {
     color: aliceblue;
@@ -26,6 +30,20 @@ label {
 .cmd-botones{
     display: flex;
     flex-direction: row;
-    width: 115px;
-    justify-content: space-between;
+    justify-content: flex-end;
+    gap: 20px;
+}
+.div-papa{
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    width: 70%;
+}
+.input-area-registrarse-provincia{
+    display: flex;
+    align-items: center;
+}
+.input-area-registrarse-municipio{
+    display: flex;
+    align-items: center;
 }

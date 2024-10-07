@@ -7,7 +7,7 @@ export async function makeRequest(url, body, method = "POST") {
       "Content-Type": "application/json",
       Authorization: `Bearer ${config.destodoToken}`,
     },
-    body: JSON.stringify(body), 
+    body: JSON.stringify(body),
   });
 }
 
@@ -26,4 +26,13 @@ export async function getparesgpscategoria(body) {
 
 export async function getusuarios(body) {
   return makeRequest("http://localhost:3001/getusuarios", body);
+}
+
+
+export async function getCategoriaText(body) {
+  return makeRequest("http://localhost:3001/getCategoriaText", body);
+}
+
+export async function getProductoText(body) {
+  return makeRequest("http://localhost:3001/getProductoText", body);
 }

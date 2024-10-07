@@ -49,31 +49,27 @@ const ComGalerias = (props) => {
   const [showimg, setShowimg] = useState(false);
 
   async function init() {
+    console.log("1");
     if (rutatmp === "/") {
       return;
     }
-    sessionStorage.setItem("filtro", "");
-    sessionStorage.setItem("naturaleza", parsedParams.naturaleza);
-    sessionStorage.setItem("idowner", parsedParams.idowner);
     sessionStorage.setItem("nivel", parsedParams.nivel);
+    console.log("2");
     init1(rutatmp, 0);
   }
 
   async function init1(rutatmp, i) {
+    console.log("3");
     let marrayalbum = [];
-{/*
-    const galeriasfolders = await axios.post(
-      "http://localhost:3001/getgalerias",
-      { ruta: rutatmp },
-      {}
-    );
-*/}    
+    console.log(rutatmp);
     let galeriasfolders = await getgalerias({ruta: rutatmp});
     galeriasfolders = await galeriasfolders.json();
+    console.log("4");
 
     let tarrayalbum = [];
     let tarrayfotos = [];
     let j = 1;
+    console.log("GF",galeriasfolders);
     for (const item of galeriasfolders) {
       if (item.toLowerCase().indexOf(".jpg") <= 0) {
         if (arrayalbum.length === 0 && item.toLowerCase() !== "pedidos") {
@@ -84,8 +80,10 @@ const ComGalerias = (props) => {
           j = j += 1;
           // obtener el contenido del primer jpg de cada album
           carpeta = rutatmp === "" ? "" : rutatmp + "/" + item;
+          console.log("5", carpeta);
           let galeriasfolders = await getgalerias({ruta: carpeta});
           galeriasfolders = await galeriasfolders.json();
+          console.log("6");
 
           if (galeriasfolders.length > 0) {
           let primerjpg = await getJpgFile({ file: "./galerias/app_images/" + carpeta + "/" + galeriasfolders[0]});

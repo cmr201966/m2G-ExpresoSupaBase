@@ -129,8 +129,8 @@ code
 .cabeza
 {
   display:flex;
-/*  flex-wrap: wrap;  */
   align-items: center;
+  margin-top: 10px;
 }
 .h1-cabeza
 {
@@ -291,4 +291,12 @@ input[type="file"]
 }
 h1, h2, h3, h4, h5, h6{
   margin: 0;
+}
+.strong{
+  font-weight: bold;
+}
+.input-area2{
+  display: flex;
+  align-items: center;
+
 }
