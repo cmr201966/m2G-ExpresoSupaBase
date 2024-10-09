@@ -1,28 +1,10 @@
-      {/*
-        links={[
-          { label: "Inicio", to: "/",tooltips: "Ir a la página principal" },
-          { label: sessionStorage.getItem("user") === null ? "Iniciar sesión" : "Cerrar sesión", to: sessionStorage.getItem("user") === null ? "/login" : "/cerrarsesion", tooltips: sessionStorage.getItem("user") === null ? "Abrir sesión" : "/Cerrar la sesión de " + sessionStorage.getItem("usernombre") },
-          { label: "Registrarse", to: "/registrarse?inserta=true", tooltips: "Crear una cuenta de usuario" },
-          { label: "Acerca de", to: "/Acercade", tooltips: "Acerca de Destodo" },
-        ]}
-          */}
-
-
-
-// components
 import Navbar from "../../components/Navbar/Navbar"
-
-// layouts
 import Hero from "../../layouts/Hero/Hero";
-
-// 
 import { useNavigate } from "react-router-dom"
-
-// styles
-import "./styles.css";
-
-import { useState } from "react";
 import { login } from "../../servicios/login";
+import { useEffect, useState } from "react";
+import { useLocation } from "react-router-dom";
+import "./styles.css";
 
 
 
@@ -31,7 +13,20 @@ const Login = () => {
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
   const [resultado, setResultado] = useState("");
+  const parsedParams = {};
+  const location = useLocation();
 
+  async function init() {
+    if (parsedParams.login!== undefined && parsedParams.login!== 'undefined' && parsedParams.login!== null && parsedParams.login!== 'null'){
+      sessionStorage.setItem("login", parsedParams.login);
+   }
+   else sessionStorage.setItem("login", null);
+   if (parsedParams.regreso!== undefined && parsedParams.regreso!== 'undefined' && parsedParams.regreso!== null && parsedParams.regreso!== 'null'){
+    sessionStorage.setItem("ruta", parsedParams.regreso);
+ }
+ else sessionStorage.setItem("regreso", null);
+
+  }
   function handleInput(e) {
     switch (e.target.id) {
       case "user":
@@ -65,11 +60,26 @@ const Login = () => {
       sessionStorage.setItem("useremail", result.email);
       sessionStorage.setItem("userprovincia", result.provincia);
       sessionStorage.setItem("usermunicipio", result.municipio);
-      navegar("/?nivel=0"); 
+      const ruta = sessionStorage.getItem("regreso") + "?regreso=1";
+      if ((sessionStorage.getItem("login")==="1") || (sessionStorage.getItem("login")===1)){
+         navegar(ruta)
+      } else
+         navegar("/?nivel=0"); 
       
-    } 
-
+    }  
   } 
+  useEffect(() => {
+    const localParams = location.search.substring(1).split("&");
+    localParams.forEach((item) => {
+      const [paramName, paramValue] = item.split("=");
+      parsedParams[paramName] = paramValue;
+    });
+  }, [location]);
+  useEffect(() => {
+    init();
+  }, []);
+
+
 
   return (
 

@@ -34,7 +34,7 @@ const Registrarse = () => {
   const [provincia, setProvincia] = useState(13);
   const [municipio, setMunicipio] = useState(0);
   const arraydesconocido = [{ provincia: 99, municipio: 99, desc: "Desconocido" }];
-  const arrayplan= [{ plan: 0,  desc: "Gratis", tip:"Explorar, Comprar y Reservar" },{ plan: 1,  desc: "Operador", tip:"Gestiona negocio" },{ plan: 2,  desc: "Premiun", tip:"Crear Negocios Plus" }];
+  const arrayplan= [{ plan: 0,  desc: "Gratis", tip:"Explorar, Comprar y Reservar" },{ plan: 1,  desc: "Estandar", tip:"Chofer plan estandar" },{ plan: 2,  desc: "Premiun", tip:"Crear Negocios Plus" }];
   const [plan, setPlan] = useState(0);
   const [arrayprovincias, setArrayprovincias] = useState([]);
   const [arraymunicipios, setArraymunicipios] = useState([]);
@@ -90,8 +90,9 @@ const Registrarse = () => {
     else
     {
       setArraymunicipios(resultmunicipio);
-      if (sessionStorage.getItem("user") === null){
+      if (sessionStorage.getItem("user") === 'null'){
          ttmunicipios = resultmunicipio.filter((item)=>{if (item.provincia === ttprovincias[0].provincia){return item}});
+         console.log(ttmunicipios);
       }
       else{
         ttmunicipios = resultmunicipio.filter((item)=>{if (item.provincia === ttprovincias[sessionStorage.getItem("userprovincia")-1].provincia){return item}});
@@ -108,16 +109,12 @@ const Registrarse = () => {
     }
 
     setMunicipio(ttmunicipios[0].municipio);
-    if (sessionStorage.getItem("user") !== null)
+    if (sessionStorage.getItem("user") !== 'null' && sessionStorage.getItem("user") !== null)
     {
 
       let result = await getdatosiduser({user: sessionStorage.getItem("user")});
       result = await result.json();
   
-      //
-      // Si ok poner valores de bd en estados
-      //
-      console.log(result[0]);
       setUser(result[0].iduser);
       setPassword(result[0].pw);
       setNombre(result[0].nombre);
@@ -128,9 +125,6 @@ const Registrarse = () => {
       setCelular(result[0].celular);
       setProvincia(result[0].provincia);
       setMunicipio(result[0].municipio);
-      //
-      // Recuperar el contenido de la foto de perfil
-      //             
       let resultado = await getjpg({foto: sessionStorage.getItem("user"), folder: "usuarios"});
       resultado = await resultado.text();
 
@@ -273,7 +267,6 @@ const Registrarse = () => {
     setNombrefoto(e.target.value);
     if (!file) return;
     const reader = new FileReader();
-    // eslint-disable-next-line no-shadow
     reader.onload = (e) => {
       const content = e.target.result;
       setContenidofoto(content);
@@ -294,23 +287,17 @@ const Registrarse = () => {
 
     <div>
       <Navbar
-        links={[
-          { label: "Inicio", to: "/",tooltips: "Ir a la página principal" },
-          { label: sessionStorage.getItem("user") === null ? "Iniciar sesión" : "Cerrar sesión", to: sessionStorage.getItem("user") === null ? "/login" : "/cerrarsesion", tooltips: sessionStorage.getItem("user") === null ? "Abrir sesión" : "/Cerrar la sesión de " + sessionStorage.getItem("usernombre") },
-          { label: "Registrarse", to: "/registrarse?inserta=true", tooltips: "Crear una cuenta de usuario" },
-          { label: "Acerca de", to: "/Acercade", tooltips: "Acerca de M2g-Destodo" },
-        ]} 
       />
       <Hero>
+      <div className="div-papa">
       <div className="cabeza">
                <IconButton color="primary" onClick={() => 
                {
-                  navigate(`/?naturaleza=${sessionStorage.getItem("naturaleza")}&owner=${sessionStorage.getItem("idowner")}&nivel=${sessionStorage.getItem("nivel")}`);
+                  navigate("/?nivel=0");
                }}>
                 <ArrowBack />
               </IconButton>
-              <h3 className="registrarse-cabeza">m2G-Destodo</h3>
-              <h4 className="registrarse-cabeza-1"> - Registrarse</h4>
+              <h4 className="registrarse-cabeza-1">Atrás</h4>
       </div>
       {show1 ? <Box sx={{ width: "100%", height: "300px", display: "flex", alignItems: "center", justifyContent: "center" }}><CircularProgress color="checkbox" /></Box> : null}
 
@@ -318,12 +305,15 @@ const Registrarse = () => {
         <>
         <div className="registrarse">
           <div className="container-registrarse">
-            <label className="label-grupo">Datos Generales</label>
+          <label className="label-grupo label-registrase-size strong">Registrarse</label>
+          <label className="label-grupo label-datos-size strong">Datos Generales</label>
             <div className="input-area-registrarse">
+              {console.log(modifica)}
               <label className="usuario" >*Usuario:</label>
               <input
                 id="user"
                 value={user}
+                disabled={modifica}
                 onChange={handleInput}
                 type="text"
                 required
@@ -349,6 +339,7 @@ const Registrarse = () => {
                 required
               />
             </div>
+{/*}
             <div className="input-area-registrarse">
               <label className="email">*Email:</label>
               <input
@@ -359,6 +350,7 @@ const Registrarse = () => {
                 required
               />
             </div>
+*/}            
             <div className="input-area-registrarse">
               <label className="celular">*Celular:</label>
               <input
@@ -380,7 +372,7 @@ const Registrarse = () => {
             {
               resultado !== "" && <label className="resultado-registrarse">{resultado}</label>
             }
-            <label className="label-grupo">Datos Personales</label>
+            <label className="label-grupo label-datos-size strong">Datos Personales</label>
             <div className="input-area-registrarse">
               <label className="nombre" >Nombre:</label>
               <input
@@ -391,7 +383,7 @@ const Registrarse = () => {
                 required
               />
             </div>
-
+{/*
             <div className="input-area-registrarse">
               <label className="fijo">Tel. Fijo:</label>
               <input
@@ -402,6 +394,7 @@ const Registrarse = () => {
                 required
               />
             </div>
+*/}            
             <div className="input-area-foto-registrarse">
                 <label className="label-2-registrarse">Foto:</label>
                 <label className="label-2-1-registrarse">
@@ -445,6 +438,7 @@ const Registrarse = () => {
               </select>
             </div>
 
+{/*
             <label className="label-grupo">Comprobación</label>
             <div className="input-cp">
               <label className="cp" style={{transform:`rotateZ(${35}deg)`}}>{cp1}</label>
@@ -463,7 +457,7 @@ const Registrarse = () => {
                 required
               />
             </div>
-
+*/}
             <div className="grupo-button-registrarse">
               <button type="button" className="confirmar registrarse-button primary" onClick={confirmar}>
                 Confirmar
@@ -471,7 +465,10 @@ const Registrarse = () => {
             </div>
           </div>
         </div>
+
+
         </>:""}
+        </div>
       </Hero>
     </div>
     </>

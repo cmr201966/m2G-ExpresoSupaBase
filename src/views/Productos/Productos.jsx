@@ -234,7 +234,6 @@ function contains(lat, lon, bbox) {
        sessionStorage.setItem("categoria", parsedParams.categoria);
     }
     else sessionStorage.setItem("categoria", null);
-
     if (parsedParams.user !== undefined && parsedParams.user !== null && parsedParams.user !== ""){
       sessionStorage.setItem("user", parsedParams.user);
     }
@@ -264,8 +263,6 @@ function contains(lat, lon, bbox) {
  
     sessionStorage.setItem("nivel", parsedParams.nivel);
 
-    console.log("User:",sessionStorage.getItem("user"), "UserAnuncio:",sessionStorage.getItem("userAnuncio"), "Categoria:",sessionStorage.getItem("categoria"), "Buscar:",sessionStorage.getItem("buscar"));
-    console.log("Latitud:",sessionStorage.getItem("latitud"), "Longitud:",sessionStorage.getItem("longitud"));
     init1();
   }
 
@@ -292,7 +289,8 @@ function contains(lat, lon, bbox) {
   async function init1() {
     setShow1(true);
     setInicia(true);
-    let result1 = await getproductos({categoria: sessionStorage.getItem("categoria"), user: sessionStorage.getItem("user"), userAnuncio: sessionStorage.getItem("userAnuncio"), buscar: sessionStorage.getItem("buscar")});
+    let result1 = await getproductos({categoria: sessionStorage.getItem("categoria"), user: sessionStorage.getItem("user"), userAnuncio: sessionStorage.getItem("userAnuncio"), 
+                                    buscar: sessionStorage.getItem("buscar")});
     result1 = await result1.json();
     const newResult = [];
     if (result1.error || result1.length === 0) {
@@ -390,6 +388,7 @@ function contains(lat, lon, bbox) {
   }
 
   async function otroPunto() {
+    console.log("Puntos:", puntos);
     let tpuntos = [...puntos];
     let menor = 999999;
     let esta = 0;
@@ -427,8 +426,14 @@ function contains(lat, lon, bbox) {
         );
         esta = distancia.toFixed(2);
         dura = duracion;
+        console.log("Distancia:", esta);
+        console.log("menor:", menor);
+        console.log("distamcia MAX", tpuntos[i].distanciaMax);
+        console.log("distancia menor que menor", Number(esta) < Number(menor),"Esta mas lejos que la distancia minima", (tpuntos[i].distanciaMax===0) || (tpuntos[i].distanciaMax>=esta));
       }
-      if ((Number(esta) < Number(menor)) && ((tpuntos[i].distanciaMax===0) || (tpuntos[i].distanciaMax<esta))) {
+      console.log((Number(esta) < Number(menor)) && ((tpuntos[i].distanciaMax===0) || (tpuntos[i].distanciaMax<esta)));
+      if ((Number(esta) < Number(menor)) && ((tpuntos[i].distanciaMax===0) || (tpuntos[i].distanciaMax>=esta))) {
+        console.log("Entre");
           menor = esta;
           setProductot(tpuntos[i].info);
           setIdroductot(items[i].idproducto);
@@ -442,6 +447,7 @@ function contains(lat, lon, bbox) {
           setIndex(i);
           ok=true;
       }
+      console.log("i",i)
     }
     if (ok===false){
       distanciaArriba = distanciaArriba + .2; 
@@ -459,6 +465,7 @@ function contains(lat, lon, bbox) {
       if (puntosState==1) otroPunto();
     }
   }, [lng]);
+
   useEffect(() => {
     setShow(filterState.show);
   }, [filterState]);
@@ -498,8 +505,7 @@ function contains(lat, lon, bbox) {
 
             <h4 className="h3-cabeza-productos-1">
               {nombre} - ({cantidadproductos})
-            </h4>
-              {(puntosState === 2 && viewCarrito && showMap===true) || (showMap === false && puntos.length !== 0 && viewCarrito)? (
+            </h4>{(puntosState === 2 && viewCarrito && showMap===true) || (showMap === false && puntos.length !== 0 && viewCarrito)? (
                 <Tippy content={`Ordenar un producto`}>
                 <button
                   type="button"
@@ -530,8 +536,6 @@ function contains(lat, lon, bbox) {
             )}
 
           </div>
-
-
           {show1 ? (
             <Box
               sx={{
@@ -550,18 +554,19 @@ function contains(lat, lon, bbox) {
           (verOtraVez === true && mascerca > 0 && mascerca != 999999) ? (
             <>
               <div className="result">
-                {productot}
-                {" esta a "}
+{/*                {productot}*/}
+                {"Recogida a "}
                 {mascerca}
-                {" Kms y "}
-                {duracion1}
-                {" minutos,"}
-                {" la carrera es de "}
+                {" Kms "}
+{/*                {duracion1}
+                {" minutos,"}*/}
+                {", carrera  "}
                 {carrera}
-                {" Kms y "}
-                {duracion}
-                {" minutos, precio: "}
-                {(carrera * tarifa + costoDomicilio).toFixed(2)}
+                {" Kms "}
+{/*                {duracion}
+                {" minutos, precio: "}*/}
+                {" , precio: "}
+                {(carrera * tarifa + costoDomicilio).toFixed(2) + ", Marca, Color, Chapa, telefono"}
               </div>
             </>
           ) : (
@@ -607,7 +612,7 @@ function contains(lat, lon, bbox) {
                 </Tippy>
                 <Map
                   points={puntos}
-                  sx={{ height: "900px", width: "100%" }}
+                  sx={{ height: "900px", width: "1000px" }}
                   onMapClick={lngLatSelected}
                   remoteshowMap={showMap}
                   flyTo={toFly}

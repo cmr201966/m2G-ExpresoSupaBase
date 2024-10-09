@@ -4,13 +4,11 @@ import { Box, CircularProgress } from "@mui/material";
 import MapIcon from "@mui/icons-material/Map";
 import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Map from "../../components/Map/MapBox";
-
 import Tippy from "@tippyjs/react";
 import Modal from "../../components/Modal/Modal";
 import Navbar from "../../components/Navbar/Navbar";
 import Hero from "../../layouts/Hero/Hero";
 import { useNavigate } from "react-router-dom";
-import "./styles.css";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
 import { IconButton } from "@mui/material";
@@ -25,19 +23,15 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { getcategoriasnegociosapp } from "../../servicios/negocios";
-import {
-  getproductoscategoria,
-  setproducto,
-  delproducto,
-} from "../../servicios/productos";
+import { getproductoscategoria,  setproducto,  delproducto,} from "../../servicios/productos";
 import { getJpgFile } from "../../servicios/imagenes";
-import { getnaturalezaproducto } from "../../servicios/naturalezas";
+//import { getnaturalezaproducto } from "../../servicios/naturalezas";
+import "./styles.css";
 
 const CatProductos = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const parsedParams = {};
-  const [tuser] = useState(sessionStorage.getItem("user"));
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
   const [showGalerias, setShowGalerias] = useState(false);
@@ -82,16 +76,16 @@ const CatProductos = () => {
   const [zoom] = useState(15.5);
   const [lng, setLng] = useState(-75.829090519);
   const [lat, setLat] = useState(20.0217583);
-  const [ocupado, setOcupado] = useState(1);
+  const [ocupado, setOcupado] = useState(true);
 
   //Estados para recuperar los datos del producto
 
-  const [productot, setProductot] = useState("");
+  const [productot] = useState("");
   const [nombrecortot, setNombrecortot] = useState("");
   const [descripciont, setDescripciont] = useState("");
   const [preciot, setPreciot] = useState("");
   const [domiciliot, setDomiciliot] = useState("");
-  const [ocupadot, setOcupadot] = useState(1);
+  const [ocupadot, setOcupadot] = useState(true);
   const [gpst, setGpst] = useState(false);
   const [tcbsCiudad, setTcbsCiudad] = useState(false);
   const [tdistanciaMax, setTdistanciaMax] = useState(false);
@@ -112,6 +106,12 @@ const CatProductos = () => {
 
   async function init() {
     setShow(true);
+    for (let prop in parsedParams) {
+      sessionStorage.setItem(prop, parsedParams[prop])
+    }
+    if ((sessionStorage.getItem("login")===1 || sessionStorage.getItem("login")==='1') && (sessionStorage.getItem("user")==='null' || sessionStorage.getItem("user")===null)){
+        navigate(`/login?login=1&regreso=${sessionStorage.getItem("regreso")}`);
+    }
     let ttarraytnegocios;
     let resulttnegocios = await getcategoriasnegociosapp({});
     resulttnegocios = await resulttnegocios.json();
@@ -136,10 +136,10 @@ const CatProductos = () => {
       producto,
     });
     resultproductos = await resultproductos.json();
+    console.log("139", resultproductos);
     if (resultproductos.error || resultproductos.length === 0) {
       setArrayproductos(arraynoproductos);
       recuperardatosproducto(arraynoproductos, 0);
-      //        setProducto(null);
     } else {
       const posicionProducto = buscarEnArreglo(
         resultproductos,
@@ -148,7 +148,6 @@ const CatProductos = () => {
       );
 
       setArrayproductos(resultproductos);
-      //        setProducto({label: resultproductos[posicionProducto].nick, value: posicionProducto});
       if (
         parsedParams.idproducto !== null &&
         parsedParams.idproducto !== "null" &&
@@ -158,19 +157,14 @@ const CatProductos = () => {
         restaurardatosproductosNew(resultproductos, posicionProducto);
         setEditarsn(true);
       }
-
-      let resultado = await getJpgFile({
-        file:
-          "./galerias/app_images/productos/" +
-          resultproductos[0].idproducto +
-          "/" +
-          "foto-1.jpg",
-      });
+console.log("./galerias/app_images/productos/" + resultproductos[0].idproducto + "/" + "foto-1.jpg");
+      let resultado = await getJpgFile({file: "./galerias/app_images/productos/" + resultproductos[0].idproducto + "/" + "foto-1.jpg",});
       resultado = await resultado.text();
 
       if (resultado.length !== 0) {
         setContenidofoto(resultado);
-        setNombrefoto(resultproductos[0].idproducto);
+        console.log(resultproductos[0].idproducto);
+        setNombrefoto("166", resultproductos[0].idproducto);
       } else {
         setNombrefoto("");
       }
@@ -180,22 +174,13 @@ const CatProductos = () => {
   } //init
 
   const handleProducto = async (_, value) => {
+    console.log("*******************************", value)
     setProducto(value);
+    console.log(arrayproductos);
     recuperardatosproducto(arrayproductos, value.value);
-    let rnaturaleza = await getnaturalezaproducto({
-      producto: arrayproductos[value?.value].idproducto,
-    });
-    rnaturaleza = await rnaturaleza.json();
-    if (rnaturaleza.length !== 0) {
-      //      setNaturalezat(rnaturaleza[0].naturaleza);
-    }
+    console.log("./galerias/app_images/productos" + "/" + arrayproductos[value?.value].idproducto + "/foto-1.jpg");
     let resultado = await getJpgFile({
-      file:
-        "./galerias/app_images/productos" +
-        "/" +
-        arrayproductos[value?.value].idproducto +
-        "/foto-1.jpg",
-    });
+    file: "./galerias/app_images/productos" + "/" + arrayproductos[value?.value].idproducto + "/foto-1.jpg",});
     resultado = await resultado.text();
 
     if (resultado.length !== 0) {
@@ -218,24 +203,13 @@ const CatProductos = () => {
       setArrayproductos(arraynoproductos);
       recuperardatosproducto(arraynoproductos, 0);
     } else {
+      console.log(resultproductos);
       setArrayproductos(resultproductos);
+      console.log("./galerias/app_images/productos" + "/" + resultproductos[0].idproducto + "/foto-1.jpg");
+      console.log(resultproductos[0].idproducto);
+      setNombrefoto(resultproductos[0].idproducto);
       recuperardatosproducto(resultproductos, 0);
-      let rnaturaleza = await getnaturalezaproducto({
-        producto: resultproductos[0].idproducto,
-      });
-      rnaturaleza = await rnaturaleza.json();
-
-      if (rnaturaleza.length !== 0) {
-        setNaturalezat(rnaturaleza[0].naturaleza);
-      }
-
-      let resultado = await getJpgFile({
-        file:
-          "./galerias/app_images/productos" +
-          "/" +
-          resultproductos[0].idproducto +
-          "/foto-1.jpg",
-      });
+      let resultado = await getJpgFile({file: "./galerias/app_images/productos" + "/" + resultproductos[0].idproducto + "/foto-1.jpg",});
       resultado = await resultado.text();
 
       if (resultado.length !== 0) {
@@ -253,24 +227,8 @@ const CatProductos = () => {
         setTnegocio(e.target.value);
         getProductos(e.target.value);
         break;
-      /*
-      case "usuario":
-        setUsuario(e.target.value);
-        break;
-  
-        case "negocio":
-        setNegocio(e.target.value);
-        getProductos(e.target.value); 
-        setProducto(null);
-        break;
-*/
       case "producto":
         break;
-      /*
-      case "naturaleza":
-        setNaturaleza(e.target.value);
-        break;
-        */
     }
   }
 
@@ -350,8 +308,9 @@ const CatProductos = () => {
 
   function recuperardatosproducto(data, i) {
     let index = buscarEnArreglo(data, data[i].idproducto, "idproducto");
+    console.log("+++++++++++++++++++++++++++", index)
     console.log(i);
-    console.log(data);
+    console.log(data)
     setProducto({ label: data[i].desc, value: index });
     setNombrecortot(data[i].nick);
     setDescripciont(data[i].desc);
@@ -370,6 +329,7 @@ const CatProductos = () => {
     setTdistanciaMax(data[i].distanciaMax);
   }
   function restaurardatosproductosNew(data, posicion) {
+console.log("-------------------",data[posicion].desc,  posicion );   
     setProducto({ label: data[posicion].desc, value: posicion });
     setNombrecorto(data[posicion].nick);
     setDescripcion(data[posicion].desc);
@@ -388,26 +348,24 @@ const CatProductos = () => {
   }
 
   function restaurardatosproductos() {
-    setNombrefoto(productot);
+    //setNombrefoto(productot);
     setNombrecorto(nombrecortot);
     setDescripcion(descripciont);
-    //setNaturaleza(naturalezat);
     setPrecio(preciot);
-    setOcupado(ocupadot);
-    setDomicilio(domiciliot);
     setMarca(marcat);
     setModelo(modelot);
     setTalla(tallat);
     setColor(colort);
+    setDistanciaMax(tdistanciaMax);
+    setOcupado(ocupadot===false?0:1);
+    setDomicilio(domiciliot===0?0:1);
+    setCbsCiudad(tcbsCiudad===0?0:1);
     setCbgps(gpst);
     setLat(latt);
     setLng(lngt);
-    setCbsCiudad(tcbsCiudad);
-    setDistanciaMax(tdistanciaMax);
   }
 
   const onPhotoChange = (e) => {
-    console.log("Aqui")
     const file = e.target.files[0];
     setNombrefoto(e.target.value);
     if (!file) return;
@@ -417,7 +375,6 @@ const CatProductos = () => {
       setContenidofoto(content);
     };
     reader.readAsDataURL(file);
-    console.log("true");
     setCbvista(true);
   };
 
@@ -429,10 +386,8 @@ const CatProductos = () => {
       mproducto = arrayproductos[producto?.value].idproducto;
     }
     let result = await setproducto({
-      user: tuser,
+      user: sessionStorage.getItem("user"),
       producto: mproducto,
-      //      usuario: arrayusuarios[usuario].iduser,
-      //      negocio: arraynegocios[negocio].negocio,
       categoria: arraytnegocios[tnegocio].categorianegocio,
       nick: nombrecorto,
       contenidofoto,
@@ -462,7 +417,7 @@ const CatProductos = () => {
     if (agregarsn) {
       var productot = result.productot;
       arrayproductos.push({
-        user: tuser,
+        user: sessionStorage.getItem("user"),
         idproducto: productot,
         foto: nombrecortofoto,
         nick: nombrecorto,
@@ -476,7 +431,7 @@ const CatProductos = () => {
     } else {
       let tarrayproductos = [];
       tarrayproductos.push({
-        user: tuser,
+        user: sessionStorage.getItem("user"),
         idproducto: productot,
         foto: nombrecortofoto,
         nick: nombrecorto,
@@ -488,8 +443,8 @@ const CatProductos = () => {
         editar: editarsn ? true : false,
       });
 
-      recuperardatosproducto(tarrayproductos, 0);
-      productot = arrayproductos[producto?.value].idproducto;
+      //recuperardatosproducto(tarrayproductos, 0);
+      //productot = arrayproductos[producto?.value].idproducto;
     }
     //
     setContenido(
@@ -523,19 +478,8 @@ const CatProductos = () => {
   };
 
   async function sino() {
-    {
-      /*
-    await axios.post(
-      "http://localhost:3001/delproducto",
-      { producto: arrayproductos[producto?.value].idproducto },
-      {}
-    );
-*/
-    }
     await delproducto({ producto: arrayproductos[producto?.value].idproducto });
 
-    // refrescar la lista despues de eliminada la categoria
-    //arraycategoriasproductos.splice(borrar, 1);
     iniciadatosgenerales();
     setShow1(false);
     setEliminarsn(false);
@@ -620,7 +564,7 @@ const CatProductos = () => {
 
                 <div className="catalogo-producto">
                   <p className="strong">Publicar un Productos</p>
-                  {showMap !== true ? (
+                  {showMap === true || showMap === false ? (
                     <>
                       <div className="container-producto-select">
                         <div className="input-area1-producto">
@@ -648,6 +592,7 @@ const CatProductos = () => {
                           <label className="label-datos-catproducto">
                             Producto:{" "}
                           </label>
+                          {console.log(arrayproductos)}
                           <Autocomplete
                             disablePortal
                             disabled={agregarsn || editarsn}
@@ -689,15 +634,22 @@ const CatProductos = () => {
                                 label=""
                               />
                             )}
+                            renderOption={(props, option) => (
+                              <li {...props} key={option.value}>
+                                {option.label}
+                              </li>
+                            )}
+
                           />
                         </div>
                       </div>
+
                     </>
                   ) : (
                     ""
                   )}
 
-                  {showMap !== true ? (
+                  {showMap === false || showMap === true ? (
                     <>
                       {agregarsn || editarsn ? (
                         <>
@@ -746,7 +698,7 @@ const CatProductos = () => {
                             </div>
                             <div className="input-area2">
                               <label className="label-datos-catproducto">
-                                Modelo:
+                                Chapa:
                               </label>
                               <input
                                 className="input-cataproducto-21"
@@ -804,10 +756,8 @@ const CatProductos = () => {
                                   Domicilio:
                                 </label>
                                 <Checkbox
-                                  sx={{ padding: 0 }}
                                   id="domicilio"
-                                  color="checkbox"
-                                  defaultChecked
+                                  sx={{ color: 'white', '&.Mui-checked': { color: 'white',},}}
                                   checked={domicilio}
                                   onClick={handleInput}
                                 />
@@ -816,11 +766,10 @@ const CatProductos = () => {
                                 <label className="label-datos-catproducto input-cataproducto-12 ocupado">
                                   Ocupado:
                                 </label>
+                                {console.log(ocupado)}
                                 <Checkbox
-                                  sx={{ padding: 0 }}
                                   id="ocupado"
-                                  color="checkbox"
-                                  defaultChecked
+                                  sx={{ color: 'white', '&.Mui-checked': { color: 'white',},}}
                                   checked={ocupado}
                                   onClick={handleInput}
                                 />
@@ -833,8 +782,7 @@ const CatProductos = () => {
                                   <Checkbox
                                     className="combo-gps"
                                     id="cbgps"
-                                    color="checkbox"
-                                    defaultChecked
+                                    sx={{ color: 'white', '&.Mui-checked': { color: 'white',},}}
                                     checked={cbgps}
                                     onClick={handleInput}
                                   />
@@ -864,8 +812,7 @@ const CatProductos = () => {
                                   <Checkbox
                                     className="combo-gps"
                                     id="cbsCiudad"
-                                    color="checkbox"
-                                    defaultChecked
+                                    sx={{ color: 'white', '&.Mui-checked': { color: 'white',},}}
                                     checked={cbsCiudad}
                                     onClick={handleInput}
                                   />
@@ -947,6 +894,8 @@ const CatProductos = () => {
                     ) : (
                       ""
                     )}
+                    {console.log("893", arrayproductos)}
+                    {console.log(producto)}
                     {producto &&
                     arrayproductos[producto?.value].desc !== "Desconocido" ? (
                       <>
@@ -999,10 +948,9 @@ const CatProductos = () => {
                         ) : (
                           ""
                         )}
-
                         {cbgps === true &&
                         inicia === false &&
-                        (agregarsn || editarsn) ? (
+                        (agregarsn || editarsn) && ((showGalerias===false && showMap===false) || (showGalerias===false && (showMap===true))) ? (
                           <Tippy content="Ubicar el producto en el mapa">
                             <button
                               type="button"
@@ -1019,8 +967,9 @@ const CatProductos = () => {
                     ) : (
                       ""
                     )}
-
-                   {(agregarsn === true || editarsn === true) && nombrecorto!="" && descripcion!==""? (
+{console.log("964", "F:", nombrefoto, "N:",nombrecorto, "D:",descripcion, agregarsn, editarsn)}
+{console.log((agregarsn === true || editarsn === true) && nombrecorto!=="" && descripcion!==""  && nombrefoto !== "")}
+                   {(agregarsn === true || editarsn === true) && nombrecorto!=="" && descripcion!==""  && nombrefoto !== "" ? (
                       <Tippy
                         content={
                           nombrecorto.length !== 0 && descripcion.length !== 0
@@ -1058,9 +1007,9 @@ const CatProductos = () => {
                       ""
                     )}
                   </div>
-                  {inicia === false &&
-                  showGalerias === true &&
-                  showMap === false ? (
+                </div>
+
+                {inicia === false && showGalerias === true && showMap === false ? (
                     <ComGalerias
                       deQuien={arrayproductos[producto.value].desc}
                       rutatmp={
@@ -1073,11 +1022,10 @@ const CatProductos = () => {
                   ) : (
                     ""
                   )}
-
-                  {showMap === true &&
-                  showGalerias === false &&
-                  cbgps === true ? (
-                    <>
+                  {console.log(showMap,showGalerias,cbgps)}
+                  {console.log(showMap === true && showGalerias === false && cbgps === true )}
+                  {showMap === true && showGalerias === false && cbgps === true ? (
+                    <div className="mapa-catalogo">
                       <Map
                         sx={{ height: "100%", width: "100%" }}
                         onMapClick={lngLatSelected}
@@ -1088,11 +1036,12 @@ const CatProductos = () => {
                         onChange={onChangeMap}
                         remoteZoom={zoom}
                       />
-                    </>
+                      </div>
                   ) : (
                     ""
                   )}
-                </div>
+
+
               </div>
             </>
           ) : (

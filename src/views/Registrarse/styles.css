@@ -8,6 +8,7 @@
     padding: 10px;
     background: rgb(20, 96, 172);
     border-radius: 15px;
+    margin:  0 auto;
 }
 
 .grupo-button-registrarse {
@@ -16,11 +17,16 @@
     margin-top: 10px;
   }
 
-.label-grupo {
+.label-registrase-size{
+    font-size: 20px;
+}
+.label-datos-size{
+    font-size: 16px;
+}
+  .label-grupo {
     display: flex;
     flex-direction: column;
     color: whitesmoke;
-    margin-left: 130px;
     margin-top: 15px;
     margin-bottom: 10px;
 }
@@ -48,8 +54,7 @@
     color: aliceblue;
     display: flex;
     justify-content: flex-end;
-    margin-top: 5px;
-    margin-bottom: 5px;
+    margin-top: 10px;
   }
 .registrarse h2 {
     color: aliceblue;
@@ -133,10 +138,8 @@
   .img-registrarse{
     height: 280px;
     width: 247px;
-    margin-left: 98px;
-    margin-top: 4px;
     object-fit: cover;
- }
+    padding-left: 40px; }
  .select-registrarse-plan{
     width: 210px;
     border: none;

@@ -116,7 +116,7 @@
   overflow-y: hidden;
   padding: 5px;
   border-radius: 15px;
-  width: 100%;
+  /*width: 80%;*/
 
 }
 .img-add-foto {
@@ -147,9 +147,9 @@
   align-items: center;
   justify-content: center;
   background-color: rgb(2, 114, 226);
-  min-width: 150px;
-  width: 150px;
-  height: 154px;
+  min-width: 50px;
+/*  width: 150px;
+  height: 154px;*/
   border-radius: 15px;
   object-fit: cover;
   border: 2px solid black;
@@ -171,7 +171,7 @@
 }
 .galeria-fotos-view {
   display: flex;
-  width: 100%;
+  width: 90%;
   align-items: center;
 }
 .addcss {
@@ -179,4 +179,8 @@
 }
 .imagen-borrar{
   position: relative;
+}
+.galeria-frame{
+  background: rgb(20, 96, 172);
+  width: 100%;
 }

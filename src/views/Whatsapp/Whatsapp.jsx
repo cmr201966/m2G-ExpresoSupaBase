@@ -37,6 +37,14 @@ const Whatsapp = () => {
 //  const [lat, setLat] = useState(20.0217583);
 
   async function init() {
+    for (let prop in parsedParams) {
+      sessionStorage.setItem(prop, parsedParams[prop])
+    }
+
+    if ((sessionStorage.getItem("login")===1 || sessionStorage.getItem("login")==='1') && (sessionStorage.getItem("user")==='null' || sessionStorage.getItem("user")===null)){
+      navigate(`/login?login=1&regreso=${sessionStorage.getItem("regreso")}`);
+  }
+
     let resultprovincia = await getprovincias({});
     resultprovincia = await resultprovincia.json();
     if (resultprovincia.error || resultprovincia.length === 0)
@@ -68,12 +76,13 @@ const Whatsapp = () => {
       }
       else{
         ttmunicipios = resultmunicipio.filter((item)=>{if (item.provincia === Number(sessionStorage.getItem("userprovincia"))){return item}});
-      }
+        setLat(ttmunicipios[municipio-1].latitud);
+        setLng(ttmunicipios[municipio-1].longitud)
+     }
     }
     if (ttmunicipios.length!==0)
     {
       setTmunicipios(ttmunicipios);
-      console.log(ttmunicipios);
     }
     else
     {
@@ -88,7 +97,7 @@ const Whatsapp = () => {
     switch (e.target.id) {
       case "provincia":
         setProvincia(Number(e.target.value));
-        ttmunicipio=arraymunicipios.filter((item,i)=>{if (item.provincia === Number(e.target.value)){return item}});
+        ttmunicipio=arraymunicipios.filter((item)=>{if (item.provincia === Number(e.target.value)){return item}});
         setTmunicipios(ttmunicipio);
         if (ttmunicipio.length === 0){
           setTmunicipios(arraydesconocido);
@@ -100,14 +109,8 @@ const Whatsapp = () => {
        break
       case "municipio":
         setMunicipio(Number(e.target.value));
-        console.log(tmunicipios);
-        console.log("Provincia:",provincia);
-        console.log("Municipio:",tmunicipios[Number(e.target.value)-1].desc)
-        console.log("Latitud:", tmunicipios[Number(e.target.value)-1].latitud)
-        console.log("Longitud:",tmunicipios[Number(e.target.value)-1].longitud)
         setLat(tmunicipios[Number(e.target.value)-1].latitud);
         setLng(tmunicipios[Number(e.target.value)-1].longitud);
-        console.log(tmunicipios[Number(e.target.value)-1].longitud);
         break
 
       }
@@ -155,8 +158,7 @@ const Whatsapp = () => {
 
   async function irAproductos(){
     let categoria= await BuscarCategoria(cmd);
-    console.log("##########","Lat:",lat,"Lng:",lng);
-    navigate(`/productos?categoria=${categoria}&nombre=${cmd}&mapa=true&latitud=${lat}&longitud=${lng}`);
+    navigate(`/productos?categoria=${categoria}&nombre=${cmd}&mapa=true&latitud=${lat}&longitud=${lng}&user=${sessionStorage.getItem("user")}`);
   }
 
   async function BuscarProducto(cmd){
@@ -167,7 +169,10 @@ const Whatsapp = () => {
 
   async function irAcatProductos(){
     let result = await BuscarProducto(cmd);
-    navigate(`/catproductos?idproducto=${result.idproducto}&categoria=${result.categoria}`);
+    sessionStorage.removeItem("categoria");
+    sessionStorage.removeItem("login");
+    sessionStorage.removeItem("idproducto");
+    navigate(`/catproductos?idproducto=${result.idproducto}&categoria=${result.categoria}&login=1`); 
   }
 
   useEffect(() => {
@@ -187,12 +192,6 @@ const Whatsapp = () => {
     <>
     <div className="whatsapp-container">
       <Navbar
-        links={[
-          { label: "Inicio", to: "/",tooltips: "Ir a la página principal" },
-          { label: sessionStorage.getItem("user") === null ? "Iniciar sesión" : "Cerrar sesión", to: sessionStorage.getItem("user") === null ? "/login" : "/cerrarsesion", tooltips: sessionStorage.getItem("user") === null ? "Abrir sesión" : "/Cerrar la sesión de " + sessionStorage.getItem("usernombre") },
-          { label: "Registrarse", to: "/registrarse?inserta=true", tooltips: "Crear una cuenta de usuario" },
-          { label: "Acerca de", to: "/Acercade", tooltips: "Acerca de Destodo" },
-        ]}
       />
       <Hero>
 

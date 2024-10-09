@@ -33,7 +33,6 @@ const Home = () => {
   const parsedParams = {};
   const [result, setResult] = useState([]);
   const [inicia, setInicia] = useState(true);
-  const [opcion, setOpcion] = useState("");
   const [nivel, setNivel] = useState(0);
   const [desctmp, setDesctmp] = useState("");
   const [rutatmp, setRutatmp] = useState("");
@@ -47,7 +46,6 @@ const Home = () => {
     setInicia(true);
     let result1;
     setShow(true);
-    setOpcion("");
     sessionStorage.removeItem("categoria");
     const newResult = [];
 

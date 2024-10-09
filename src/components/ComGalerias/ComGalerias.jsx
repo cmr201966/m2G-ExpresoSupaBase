@@ -49,27 +49,21 @@ const ComGalerias = (props) => {
   const [showimg, setShowimg] = useState(false);
 
   async function init() {
-    console.log("1");
     if (rutatmp === "/") {
       return;
     }
     sessionStorage.setItem("nivel", parsedParams.nivel);
-    console.log("2");
     init1(rutatmp, 0);
   }
 
   async function init1(rutatmp, i) {
-    console.log("3");
     let marrayalbum = [];
-    console.log(rutatmp);
     let galeriasfolders = await getgalerias({ruta: rutatmp});
     galeriasfolders = await galeriasfolders.json();
-    console.log("4");
 
     let tarrayalbum = [];
     let tarrayfotos = [];
     let j = 1;
-    console.log("GF",galeriasfolders);
     for (const item of galeriasfolders) {
       if (item.toLowerCase().indexOf(".jpg") <= 0) {
         if (arrayalbum.length === 0 && item.toLowerCase() !== "pedidos") {
@@ -80,10 +74,8 @@ const ComGalerias = (props) => {
           j = j += 1;
           // obtener el contenido del primer jpg de cada album
           carpeta = rutatmp === "" ? "" : rutatmp + "/" + item;
-          console.log("5", carpeta);
           let galeriasfolders = await getgalerias({ruta: carpeta});
           galeriasfolders = await galeriasfolders.json();
-          console.log("6");
 
           if (galeriasfolders.length > 0) {
           let primerjpg = await getJpgFile({ file: "./galerias/app_images/" + carpeta + "/" + galeriasfolders[0]});
@@ -230,7 +222,7 @@ await creafileinfolder({ ruta: folder, file, contenidofoto  });
           />
         </div>
       </Modal>
-
+{/*
       <Box
         sx={{
           background: theme.palette.primary.main,
@@ -240,10 +232,10 @@ await creafileinfolder({ ruta: folder, file, contenidofoto  });
           bottom: 0,
         }}
       >
+      */}
+      <div className="galeria-frame">
         {inicia === false ? (
-          <Box
-            sx={{ paddingRight: "27px", position: "relative", height: "100%" }}
-          >
+          <>
             {botonCerrar ? (
               <Button
                 variant="contained"
@@ -316,11 +308,11 @@ await creafileinfolder({ ruta: folder, file, contenidofoto  });
               ))}
 
             </div>
-          </Box>
+            </>
         ) : (
           ""
         )}
-      </Box>
+        </div>
     </>
   );
 };

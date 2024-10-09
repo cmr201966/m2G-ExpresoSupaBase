@@ -1,12 +1,6 @@
 import Tippy from "@tippyjs/react";
-//import Checkbox from '@mui/material/Checkbox';
-// components
 import Navbar from "../../components/Navbar/Navbar"
-// layouts
 import Hero from "../../layouts/Hero/Hero";
-//
-//
-// styles
 import "./styles.css";
 import { useEffect, useState } from "react";
 import Check from "@mui/icons-material/Check";
@@ -67,6 +61,13 @@ const Aplicaciones = () => {
 
   }
   async function init() {
+    for (let prop in parsedParams) {
+      sessionStorage.setItem(prop, parsedParams[prop])
+    }
+
+    if ((sessionStorage.getItem("login")===1 || sessionStorage.getItem("login")==='1') && (sessionStorage.getItem("user")==='null' || sessionStorage.getItem("user")===null)){
+      navigate(`/login?login=1&regreso=${sessionStorage.getItem("regreso")}`);
+  }
     setContenido("Preparando condiciones...");
     setShow(true);
     let result = await getAplicaciones({});
@@ -136,24 +137,15 @@ const Aplicaciones = () => {
     setNickt(data[i].idapp);
     setDesct(data[i].desc);
     setTtipt(data[i].tooltip);
-    {/*
-    setNaturalezat(data[i].idnaturaleza);
-    setCbocultart(data[i].ocultar);
-    setCbrlogint(data[i].rlogin);
-    setCbadmint(data[i].admin);*/}
     
   }
 
   function restaurardatosproductos() 
   {
-    //setNegocio(negociot);
     setNick(nickt);
     setDesc(desct);
     setTtip(ttipt);
     setCategoria(categoriat);
-    {/*etCbocultar(cbocultart);
-    setCbrlogin(cbrlogint);
-    setCbadmin(cbadmint);*/}
   }
     
   function tcancelar() 
@@ -168,10 +160,6 @@ const Aplicaciones = () => {
        setNick("");
        setDesc("");
        setTtip("");
-       {/*
-       setCbocultar(false);
-       setCbrlogin(false);
-       setCbadmin(false);*/}
 
     }
     const onModalClose = () => 
@@ -189,14 +177,12 @@ const Aplicaciones = () => {
     {
       limpiardatosaplicacion();
       setAgregarsn(true);
-      //setMarca(2);
     }
   
     const eliminar = () => 
     {
       setEliminarsn(true);
       setContenido("¿Está seguro que desea eliminar a " + arrayAplicaciones[aplicacion].desc + "?");
-      //setShow1(true);
     }
 
     async function confirmar() {
@@ -289,14 +275,7 @@ const Aplicaciones = () => {
     </Modal>
 
     <div>
-      <Navbar
-        links={[
-          { label: "Inicio", to: "/",tooltips: "Ir a la página principal" },
-          { label: sessionStorage.getItem("user") === null ? "Iniciar sesión" : "Cerrar sesión", to: sessionStorage.getItem("user") === null ? "/login" : "/cerrarsesion", tooltips: sessionStorage.getItem("user") === null ? "Abrir sesión" : "/Cerrar la sesión de " + sessionStorage.getItem("usernombre") },
-          { label: "Registrarse", to: "/registrarse?inserta=true", tooltips: "Crear una cuenta de usuario" },
-          { label: "Acerca de", to: "/Acercade", tooltips: "Acerca de Destodo" },
-        ]}
-      />
+      <Navbar nivel= {1}/>
       <Hero>
         <div className="div-papa">
         <div className="cabeza">
@@ -370,8 +349,8 @@ const Aplicaciones = () => {
                        </>:""
                       }
                  </div>                 
-          </div> 
-          {nombrefoto !== "" && cbvista ? (
+              </div> 
+              {nombrefoto !== "" && cbvista ? (
                           <div className="img-class">
                               <img
                                 className="img-producto"
@@ -382,7 +361,7 @@ const Aplicaciones = () => {
                             ""
                           )}
 
-          <div className="grupo-button-app">
+             <div className="grupo-button-app">
                    {(agregarsn === true || editarsn === true) && nombrefoto !== "" && nick!=="" && desc!=="" && ttip!==""? (
                       <Tippy content="Vista previa">
                         <button
@@ -455,17 +434,12 @@ const Aplicaciones = () => {
                   }
 
                 </div>
-
-           </div>
-
+            </div>
+          </div>
         </div>
-
-        </div>
-
       </Hero>
     </div>
     </>
-
 );
 };
 
