@@ -1,5 +1,4 @@
 import Tippy from "@tippyjs/react";
-// components
 import Navbar from "../../components/Navbar/Navbar";
 import Hero from "../../layouts/Hero/Hero";
 import IconButton from "@mui/material/IconButton";
@@ -13,60 +12,83 @@ import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Map from "../../components/Map/MapBox";
 import { useLocation } from "react-router-dom";
 
-// styles
-import "./styles.css";
 import marker from "../../assets/images/custom_marker.png";
 import libre from "../../assets/images/libre.png";
 import off from "../../assets/images/ocupado.png";
 import { getinfoproducto, setMovimientosNew, updateOcupado } from "../../servicios/productos";
 import { getJpgFile } from "../../servicios/imagenes";
 import { getParesGpsNaturalezaNew } from "../../servicios/naturalezas";
+import { getFilesInFolder } from "../../servicios/fs";
+import config from "../../config";
+// styles
+import "./styles.css";
 
 
 const InfoProducto = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const parsedParams = {};
-  const [desctmp, setdesctmp] = useState("Galerias");
-  const [showMap, setShowMap] = useState(true);
-  // Estados para la posición GPS del mapa
+  const [desctmp] = useState("Galerias");
+  const [showMap] = useState(true);
+  const [showGalerias, setShowGalerias] = useState(false);
+    // Estados para la posición GPS del mapa
   const [lng, setLng] = useState(-75.829090519);
   const [lat, setLat] = useState(20.0217583);
-  const [zoom, setZoom] = useState(12.5);
+  const [zoom] = useState(12.5);
   const [contenidofoto, setContenidofoto] = useState();
   const [idproducto, setIdproducto] = useState("");
   const [negocio, setNegocio] = useState("");
   const [producto, setProducto] = useState("");
   const [precio, setPrecio] = useState("");
   const [ocupado, setOcupado] = useState(9);
-  const [fecha, setFecha] = useState("");
-  const [hora, setHora] = useState("");
+  const [marca, setMarca] = useState("");
+  const [color, setColor] = useState("");
+  const [chapa, setChapa] = useState("");
+  const [celular, setCelular] = useState("");
   const [inicio, setInicio] = useState(true);
   const [gps, setGps] = useState(true);
   const [puntos, setPuntos] = useState([]);
-  const [categoria, setCategoria] = useState(0);
   const [distancia, setDistancia] = useState(0);
   const [tarifa, setTarifa] = useState(1);
   const [costoDomicilio, setCostoDomicilio] = useState(50);
   const [domicilio, setDomicilio] = useState(50);
   const [puntosState, setPuntosState] = useState(0);
   const [carrera, setCarrera] = useState(0);
-  const [productot, setProductot] = useState("");
-
+//  const [productot, setProductot] = useState("");
+  const [arrayFotos, setArrayFotos] = useState([]);
+  const [arrayFotoInfo, setArrayFotoInfo] = useState([]);
+//  const [duracion, setDuracion] = useState(0);
+    
   async function init() {
-    console.log(parsedParams);
-    setCategoria(parsedParams.categoria);
+    let resultFiles = await getFilesInFolder({folder: "./galerias/app_images/productos/" + parsedParams.idproducto});
+    resultFiles = await resultFiles.json();
+    setArrayFotos(resultFiles);
+    let tarray=[];
+    for(let i=0; i<resultFiles.length; i+=1){
+      let result = await getJpgFile({file: "./galerias/app_images/productos" + "/" + parsedParams.idproducto + "/" +  resultFiles[i]});
+      result = await result.text();
+      if (result.length !== 0 && result.error === undefined) {
+        tarray.push(result);
+      }
+      setArrayFotoInfo(tarray);        
+    }
+
     let result = await getinfoproducto({idproducto: parsedParams.idproducto});
     result = await result.json();
-    console.log(result);
     if (result.length !== 0 && result.error === undefined) {
+      if (result[0].idnegocio===sessionStorage.getItem("user")){
+        setShowGalerias(true)
+      }
+      else setShowGalerias(false);
       setIdproducto(parsedParams.idproducto);
       setNegocio(result[0].negocio);
       setProducto(result[0].producto);
       setPrecio(result[0].precio);
       setOcupado(result[0].ocupado);
-      setFecha(result[0].fecha);
-      setHora(result[0].hora);
+      setMarca(result[0].marca);
+      setColor(result[0].color);
+      setChapa(result[0].chapa);
+      setCelular(result[0].celular);
       setGps(result[0].gpsSN);
       setTarifa(result[0].tarifa);
       setCostoDomicilio(result[0].costoDomicilio);
@@ -102,13 +124,37 @@ const InfoProducto = () => {
   };
 
 
-  const lngLatSelected = (point, lngLat) => {
+  async function calculateDistance(start, end) {
+    const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${start.join(
+//    const url = `https://api.mapbox.com/directions/v5/mapbox/walking/${start.join(
+        ","
+    )};${end.join(",")}?geometries=geojson&access_token=${config.mapBoxAPI}`;
+
+    try {
+      const response = await fetch(url);
+      const data = await response.json();
+      if (data) {
+        const distance = data.routes[0].distance;
+        const duration = data.routes[0].duration;
+        return { distancia: distance / 1000, duracion: duration / 60 };
+      }
+    } catch (error) {
+      console.error("Error:", error);
+    }
+  }
+
+
+const lngLatSelected = async (point, lngLat) => {
+console.log("1")  
     if (ocupado===1) 
       {
         return;
       }
+console.log("1")  
 setLng(lngLat.lng);
 setLat(lngLat.lat);
+let lat1 = puntos[puntos.length - 1].lat;
+let lng1 = puntos[puntos.length - 1].lng;
 let ppuntos=puntosState+1;
 if (puntosState===0 || puntosState===1){
   setPuntosState(puntosState+1);
@@ -116,7 +162,15 @@ if (puntosState===0 || puntosState===1){
   setPuntos([...puntos,{lat: lngLat.lat, lng: lngLat.lng, image: marker, info: info}])
   if (ppuntos===2){
     // Tengo los dos puntos calculo la distancia entre ellos (Desde Origen hasta Destino)
-    setCarrera(distanciaEnKilometros(puntos[1].lat, puntos[1].lng, lngLat.lat, lngLat.lng).toFixed(2));
+//    setCarrera(distanciaEnKilometros(puntos[1].lat, puntos[1].lng, lngLat.lat, lngLat.lng).toFixed(2));
+      const { distancia, duracion } = await calculateDistance(
+        [lng1, lat1],
+        [lngLat.lng, lngLat.lat]
+      );
+      console.log(distancia.toFixed(2));
+      setCarrera(distancia.toFixed(2));
+      //setDuracion(duracion.toFixed(2));
+
   }
 }
 if (puntosState===2){
@@ -161,8 +215,8 @@ if (puntosState===2){
 
   async function shooping(){
     if (showMap===true) {
-      // Insertar el movimiento y poner showmap en false
       let tindex=puntos.length
+      console.log(puntos);
       await setMovimientosNew({idmovimiento: 1, idproducto: idproducto, latOrigen: puntos[tindex-2].lat, latDestino: puntos[tindex-1].lat, 
                           lngOrigen: puntos[tindex-2].lng, lngDestino: puntos[tindex-1].lng, precio: (carrera*tarifa)+costoDomicilio, kms: carrera});
 
@@ -182,7 +236,7 @@ if (puntosState===2){
     }
     if (puntos.length !== 0 && puntosState==1) {
       setDistancia(distanciaEnKilometros(lat, lng, puntos[0].lat, puntos[0].lng).toFixed(2));
-      setProductot(puntos[0].info);
+      //setProductot(puntos[0].info);
     }
   }, [lng]);
 
@@ -199,40 +253,41 @@ if (puntosState===2){
   }, []);
 
   return (
-    <div>
+    <div className="Info-Productos">
       <Navbar
          nivel={1}
       />
       <Hero>
-        <div className="cabeza">
+        <div className="div-papa-1">
+          <div className="cabeza">
           <IconButton
             color="primary"
             onClick={() => {
               navigate(-1);
             }}
           >
-            <ArrowBack />
+          
+           <ArrowBack className="flecha" />
           </IconButton>
-          <h4 className="registrarse-cabeza-1">Informacion del producto</h4>
-          {(distancia !== 0) && (showMap===true && puntosState===2 && domicilio===1) || (domicilio===0 && ocupado===0)? (
-                  <Tippy content="Ordenar este producto">
-                    <button
-                      type="button"
-                      className="car negocio-button primary"
-                      onClick={shooping}
-                    >
-                      <ShoppingCartOutlinedIcon />
-                    </button>
-                  </Tippy>
-                ) : (
-                  ""
-          )}
-        </div>
-
-        <main className="main-info-producto">
+          <h4 className="registrarse-cabeza-1">Atrás</h4>
+         </div>
+        
+         <main className="main-info-producto">
           {showMap === true ? (
             <>
-              <section className="perfil-info-producto">
+              <section className="perfil-info-producto-1">
+                <div>
+                {arrayFotos.map((item, i) => (
+                  item!=="foto-1.jpg" &&
+                  <div key={i} className="producto-fotos">
+                      <img
+                        className="img-info-producto-lateral"
+                        src={arrayFotoInfo[i]}
+                        alt="Imagen del producto"
+                      />
+                </div>
+                ))}
+                </div>
                 <div className="img-class-info-producto">
                   <img
                     className="img-info-producto"
@@ -251,7 +306,8 @@ if (puntosState===2){
                   </Tippy>
                 </div>
 
-                <div className="product-info">
+                <div className="product-info-1">
+                  <p className="strong font-size1"> Datos del producto</p>
                   <div className="parrafo">
                     <p>Negocio:</p>
                     <p>{negocio}</p>
@@ -269,30 +325,85 @@ if (puntosState===2){
                   ) : (
                     ""
                   )}
-                  {fecha !== "undefined" ? (
+                  {marca !== "undefined" ? (
                     <div className="parrafo">
-                      <p>Fecha:</p>
-                      <p>{fecha}</p>
+                      <p>Marca:</p>
+                      <p>{marca}</p>
                     </div>
                   ) : (
                     ""
                   )}
 
-                  {hora !== "undefined" ? (
+                 {color !== "undefined" && color !== undefined && color !== "null" && color !== null && color !== "" ? (
                     <div className="parrafo">
-                      <p>Hora:</p>
-                      <p>{hora}</p>
+                      <p>Color:</p>
+                      <p>{color}</p>
                     </div>
                   ) : (
                     ""
                   )}
-                </div>
+                 {chapa !== "undefined" && chapa !== undefined && chapa !== "null" && chapa !== null && chapa !== "" ? (
+                    <div className="parrafo">
+                      <p>Chapa:</p>
+                      <p>{chapa}</p>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+
+                  {celular !== "undefined" ? (
+                    <div className="parrafo">
+                      <p>Celular:</p>
+                      <p>{celular}</p>
+                    </div>
+                  ) : (
+                    ""
+                  )}
+                  {console.log((domicilio===1 && ocupado===0))}
+                 {(distancia !== 0) && (showMap===true && puntosState===2 && domicilio===1) || (domicilio===1 && ocupado===0)? (
+                  <>
+                  <Tippy content="Ordenar este producto">
+                    <IconButton
+                      sx={{ padding: 0, marginTop: "20px", marginLeft: "50px" }}
+                      id="tool"
+                      color="inherit"
+                      onClick={shooping}
+                    >
+                      <ShoppingCartOutlinedIcon />
+                    </IconButton>                    
+                  </Tippy>
+                  </>
+                ) : (
+                  ""
+          )}
+                   </div>
               </section>
-            </>
+             </>
+            
+          ) : 
+          (
+            ""
+          )}      
+
+          {inicio === false && showGalerias === true ? (
+            <section className="galeria">
+              <ComGalerias
+                rutatmp={"productos/" + idproducto}
+                desctmp={desctmp}
+                perfil={idproducto}
+                permiso={true}
+                deQuien="del producto"
+              />
+            </section>
           ) : (
             ""
           )}
-          {gps === 1 && showMap === true && puntos.length!==0 ? (
+
+        </main>
+        <div className="mapa-1">
+          {console.log(inicio===false && gps === 1 && showMap === true && puntos.length!==0)}
+          {console.log(carrera,tarifa,costoDomicilio)}
+          {inicio===false && gps === 1 && showMap === true && puntos.length!==0 ? (
             <section className="mapa">
               {domicilio===1?
               <div className="parrafo distancia">
@@ -308,7 +419,7 @@ if (puntosState===2){
               }
               <Map
                 points={puntos}
-                sx={{ height: "600px", width: "100%" }}
+                sx={{ height: "400px", width: "100%" }}
                 onMapClick={lngLatSelected}
                 remoteshowMap={showMap}
                 lat={lat}
@@ -320,22 +431,10 @@ if (puntosState===2){
             </section>
           ) : (
             ""
-          )}
-{/*                point={{ lat, lng }} 
-*/}
-          {inicio === false && showMap === true ? (
-            <section className="galeria">
-              <ComGalerias
-                rutatmp={"productos/" + idproducto}
-                desctmp={desctmp}
-                perfil={idproducto}
-                deQuien="del producto"
-              />
-            </section>
-          ) : (
-            ""
-          )}
-        </main>
+          )
+          }
+          </div>
+        </div>
       </Hero>
     </div>
   );

@@ -1,0 +1,77 @@
+.categorias
+{
+    width: 450px;
+    display: flex;
+    flex-direction: column;
+    background: rgb(20, 96, 172);
+    padding: 15px;
+    margin: 0 auto;
+    border-radius: 15px;   
+}
+.container-categorias
+{
+    height: auto;
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+    padding: 10px;
+    border-radius: 15px;
+}
+.grip-categorias{
+    display: grid;
+    grid-template-columns: 25% 75%;
+    width: 100%;
+}
+.flex-categorias{
+    display: flex;
+    flex-direction: column;
+    gap:5px;
+}
+.flex-gap-categorias{
+    gap:19px;
+    color:aliceblue;
+    padding: 5px;
+    
+}
+.select-categorias{
+    width: 100%;
+    height: 32px;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+    padding-left: 7px;
+}
+.input-area-categorias{
+    width: 97%;
+    height: 28px;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+    padding-left: 7px;
+}
+    
+.grupo-button-categorias
+{
+    display: flex;
+    width: 100%;
+    justify-content: flex-end;
+    gap: 20px;
+    margin-top: 20px;
+}
+.div-papa-categorias{
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    width: 70%;
+}
+.flecha-categorias{
+    color: aliceblue;
+}
+.img-categorias {
+    height: 272px;
+    width: 100%;
+    margin-top: 4px;
+    object-fit: cover;
+}
+
+.modal-content-categorias {
+    width: 333px;
+    height: 40px;}

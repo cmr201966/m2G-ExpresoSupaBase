@@ -17,7 +17,7 @@ const Categorias = () => {
               <IconButton color="primary" onClick={() => {
                 navigate(`/?nivel=0`);
               }}>
-                <ArrowBack />
+                <ArrowBack className="flecha"/>
               </IconButton>
 
             <h3 className="acercade-title">Atrás</h3>

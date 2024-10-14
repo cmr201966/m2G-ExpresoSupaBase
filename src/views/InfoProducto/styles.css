@@ -1,17 +1,13 @@
 .main-info-producto {
-  width: calc(100vw - 52px);
-  height: 100vh;
   display: flex;
   flex-direction: column;
   padding: 20px;
   gap: 20px;  
 }
 
-.perfil-info-producto {
+.perfil-info-producto-1 {
   display: flex;
-  margin-bottom: 20px;
   gap:30px;
-  justify-content: space-between;
 }
 
 .img-class-info-producto{
@@ -24,12 +20,12 @@
   /*border-radius: 50%; */
   border-radius: 15px;
 }
-.product-info {
+.product-info-1 {
   display: flex;
   flex-direction: column;
   gap: 7px;
-  width: 100%;
   color: white;
+  margin-top: 30px;
 }
 .mapa-producto{
   position: relative;
@@ -47,10 +43,12 @@ p {
 
 .img-info-producto
 {
-    height: 230px;
-    width: 230px;
-    object-fit: cover;
- }
+  height: 394px;
+  width: 520px;
+  object-fit: cover;
+  margin-top: 10px; 
+}
+
  .offon-info-producto{
   border-radius: 100%;
   background:white;
@@ -69,7 +67,7 @@ p {
   position: absolute;
   z-index: 10;
   right: 3px;
-  margin-top: 3px;}
+  margin-top: 32px;}
 
   .info-image-offon{
   border-radius: 100%;
@@ -89,3 +87,33 @@ p {
   color:white;
   margin-left: 20px;
 }
+.producto-fotos{
+  display: flex;
+  flex-direction: column;
+  }
+  .img-info-producto-lateral{
+    height: 120px;
+    width: 120px;
+    object-fit: cover;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+    margin-top: 13px;
+    margin-left: 25px
+  }
+  .div-papa-1{
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+    width: 70%;
+  }
+  .mapa-1{
+    width: 100%;
+  }
+  .font-size1{
+    font-size: 20px;
+    text-decoration: none;
+  }
+  .car-info{
+    margin-left: 50px;
+    margin-top: 100px ;
+  }

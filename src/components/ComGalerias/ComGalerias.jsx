@@ -9,7 +9,7 @@ import "./styles.css";
 import { useEffect, useState } from "react";
 import Add from "@mui/icons-material/Add";
 import Close from "@mui/icons-material/Close";
-import { Button, Box, useTheme } from "@mui/material";
+import { Button, useTheme } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { getgalerias } from "../../servicios/galerias";
 import { getJpgFile } from "../../servicios/imagenes";
@@ -40,11 +40,10 @@ const ComGalerias = (props) => {
   const [contenidophoto, setContenidophoto] = useState();
   const [selectalbum, setSelectalbum] = useState(0);
   const [selectfoto, setSelectfoto] = useState(0);
-  const [albumtxt, setAlbumtxt] = useState("");
-  let [talbum, setTalbum] = useState("");
-  const [foto, setFoto] = useState();
-  let [carpeta, setCarpeta] = useState("");
-  let [vacia, setVacia] = useState(false);
+  let [talbum] = useState("");
+  const [foto] = useState();
+  let [carpeta] = useState("");
+  let [vacia] = useState(false);
   const tipouser = Number(sessionStorage.getItem("tipouser"));
   const [showimg, setShowimg] = useState(false);
 
@@ -57,7 +56,6 @@ const ComGalerias = (props) => {
   }
 
   async function init1(rutatmp, i) {
-    let marrayalbum = [];
     let galeriasfolders = await getgalerias({ruta: rutatmp});
     galeriasfolders = await galeriasfolders.json();
 
@@ -95,8 +93,6 @@ const ComGalerias = (props) => {
         tarrayfotos.push(item);
       }
     }
-    // llenar el arreglo con las imagenes del album select
-    //    for (let i = 0; i < arrayalbum.length; i += 1) {}
     carpeta = rutatmp === "" ? "" : rutatmp + "/";
     contenidofoto.splice(0, contenidofoto.length);
     let tarray = [];
@@ -108,7 +104,6 @@ const ComGalerias = (props) => {
         tarray.push(resultado);
       }
     }
-    setAlbumtxt(marrayalbum[i]);
     setArrayfotos(tarrayfotos);
     setFile_Name(tarrayfotos.length + 1);
     setContenidofoto(tarray);
@@ -277,7 +272,6 @@ await creafileinfolder({ ruta: folder, file, contenidofoto  });
                 ""
               )}
 
-   
               {contenidofoto.map((item, i) => (
               <div key={i} className="galeria-foto">
                   <div key={i} className="imagen-borrar">
@@ -286,7 +280,7 @@ await creafileinfolder({ ruta: folder, file, contenidofoto  });
                         onClick={() => selectFoto(i)}
                         className={
                           selectfoto === i
-                            ? "image-galeria-border album-foto"
+                            ? "image-galeria-noborder album-foto"
                             : "image-galeria-noborder album-foto"
                         }
                         src={contenidofoto[i]}

@@ -1,5 +1,7 @@
 import Tippy from "@tippyjs/react";
 import InfoIcon from "@mui/icons-material/Info";
+import ShoppingCartCheckoutOutlinedIcon from '@mui/icons-material/ShoppingCartCheckoutOutlined';
+import BusinessCenterOutlinedIcon from '@mui/icons-material/BusinessCenterOutlined';
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import { useState } from "react";
 import { updateOcupado } from "../../servicios/productos";
@@ -17,7 +19,7 @@ const CardRow = (props) => {
         setOcupado(ocupado===0?1:0);
     }
 
-    await updateOcupado({idproducto: item.keyproducto, ocupado: ocupado===0?1:0});
+    await updateOcupado({idproducto: item.idproducto, ocupado: ocupado===0?1:0});
 
     paresGps();
 
@@ -45,11 +47,11 @@ const CardRow = (props) => {
         <div className="card-texts">
           {item.xxxNegocio !== "" && item.xxxNegocio !== undefined ?
             <div>
-              <label className="parrafo_label">Negocio:</label>
+              <label className="parrafo_label"><strong>Negocio:</strong></label>
               <label className="parrafo_texto1">{item.xxxNegocio}</label>
             </div> : ""}
           <div>
-            <label className="parrafo_label">Producto:</label>
+            <label className="parrafo_label"><strong>Producto:</strong></label>
             <label className="parrafo_texto3">{item.Producto}</label>
           </div>
         </div>
@@ -60,12 +62,12 @@ const CardRow = (props) => {
           <>
             <Tippy content={`${ocupado===0?"Datos del producto y ordenar":"Datos del producto"}`}>
               <button onClick={() => verproducto(i, item)}>
-                <InfoIcon /> <span>Producto</span>
+                <ShoppingCartCheckoutOutlinedIcon /> <span>Producto</span>
               </button>
             </Tippy>
             <Tippy content={`Más datos del negocio`}>
               <button onClick={() => vernegocio(i, item)}>
-                <InfoIcon /><span>Negocio</span>
+                <BusinessCenterOutlinedIcon  /><span>Negocio</span>
               </button>
             </Tippy>
           </>

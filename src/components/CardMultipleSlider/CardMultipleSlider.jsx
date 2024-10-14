@@ -5,7 +5,6 @@ import "./styles.css";
 
 const CardMultipleSlider = (props) => {
   const { categoria, link, titulo, imagen, rutatmp, desctmp,  nivel } = props
-
   return (
          <Link 
             className="card-slider"

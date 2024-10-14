@@ -13,7 +13,7 @@ import Map from "../../components/Map/MapBox";
 import libre from "../../assets/images/libre.png";
 import ocupado from "../../assets/images/ocupado.png";
 import marker from "../../assets/images/custom_marker.png";
-import { getproductos, setMovimientosNew, updateOcupado } from "../../servicios/productos";
+import { getproductos, setMovimientosNew, updateOcupado, getProductoNew } from "../../servicios/productos";
 import { getJpgFile } from "../../servicios/imagenes";
 import { getparesgpscategoria } from "../../servicios/catalogos";
 
@@ -36,7 +36,7 @@ const Productos = () => {
   const parsedParams = {};
   const [nivel, setNivel] = useState(0);
   const [noproducto, setNoproducto] = useState(false);
-  const [showrow3, setShowrow3] = useState(false);
+//  const [showrow3, setShowrow3] = useState(false);
   const [result, setResult] = useState([]);
   const [cantidadproductos, setCantidadproductos] = useState(0);
   const [nombre, setNombre] = useState("");
@@ -67,6 +67,11 @@ const Productos = () => {
   const [tarifa, setTarifa] = useState(0);
   const [costoDomicilio, setCostoDomicilio] = useState(0);
   const [index, setIndex] = useState(0);
+  const [marca, setMarca] = useState(0);
+  const [color, setColor] = useState(0);
+  const [chapa, setChapa] = useState(0);
+  const [celular, setCelular] = useState(0);
+
 
   // Estados para la posición GPS del mapa
   const [zoom] = useState(14.0);
@@ -147,15 +152,17 @@ function contains(lat, lon, bbox) {
           imageClassName: "",
         },
       ]);
+      /*
       if (ppuntos === 1) {
         let tpuntos=[...puntos]
         for (let i = 0; i < tpuntos.length; i += 1){
-/*              if (contains(tpuntos[i].latitud, tpuntos[i].longitud, bbox)) tpuntos[i].image=libre
-              else tpuntos[i].image=ocupado;*/
+              if (contains(tpuntos[i].latitud, tpuntos[i].longitud, bbox)) tpuntos[i].image=libre
+              else tpuntos[i].image=ocupado;
           }
         //setPuntos(tpuntos);
     
       }
+        */
 
       if (ppuntos === 2) {
         const { distancia, duracion } = await calculateDistance(
@@ -206,7 +213,7 @@ function contains(lat, lon, bbox) {
         lat: item.latitud,
         lng: item.longitud,
         image: libre,
-        info: item.nombre,
+        info: item.celular,
         distanciaMax: item.distanciaMax,
         sCiudad: item.sCiudad,
         imageClassName: "",
@@ -268,7 +275,7 @@ function contains(lat, lon, bbox) {
 
   function verproducto(i) {
     navigate(
-      `/infoproducto?idproducto=${result[i].keyproducto}&categoria=${sessionStorage.getItem("categoria")}`
+      `/infoproducto?idproducto=${result[i].idproducto}&categoria=${sessionStorage.getItem("categoria")}`
     );
   }
 
@@ -292,11 +299,12 @@ function contains(lat, lon, bbox) {
     let result1 = await getproductos({categoria: sessionStorage.getItem("categoria"), user: sessionStorage.getItem("user"), userAnuncio: sessionStorage.getItem("userAnuncio"), 
                                     buscar: sessionStorage.getItem("buscar")});
     result1 = await result1.json();
+
     const newResult = [];
     if (result1.error || result1.length === 0) {
       newResult.push({
         descnaturaleza: "",
-        keyproducto: 0,
+        idproducto: 0,
         negocio: "",
         categoria: "",
         Producto: " No hay productos",
@@ -306,15 +314,15 @@ function contains(lat, lon, bbox) {
       setNoproducto(true);
     } else {
       setNoproducto(false);
-      result1.forEach((item, i) => {
+      result1.forEach((item) => {
         const obj = {
-          keyproducto: item.keyproducto,
+          idproducto: item.idproducto,
           idnegocio: item.idnegocio,
           xxxNegocio: item.negocio,
           Producto: item.descripcion,
           photo:
             "./galerias/app_images/productos/" +
-            item.keyproducto +
+            item.idproducto +
             "/foto-1.jpg",
           user: item.iduser,
           tipouser: item.tipouser,
@@ -353,7 +361,7 @@ function contains(lat, lon, bbox) {
         lat: item.latitud,
         lng: item.longitud,
         image: libre,
-        info: item.nombre,
+        info: item.celular,
         distanciaMax: item.distanciaMax,
         sCiudad: item.sCiudad,
         imageClassName: "",
@@ -388,7 +396,6 @@ function contains(lat, lon, bbox) {
   }
 
   async function otroPunto() {
-    console.log("Puntos:", puntos);
     let tpuntos = [...puntos];
     let menor = 999999;
     let esta = 0;
@@ -426,17 +433,19 @@ function contains(lat, lon, bbox) {
         );
         esta = distancia.toFixed(2);
         dura = duracion;
-        console.log("Distancia:", esta);
-        console.log("menor:", menor);
-        console.log("distamcia MAX", tpuntos[i].distanciaMax);
-        console.log("distancia menor que menor", Number(esta) < Number(menor),"Esta mas lejos que la distancia minima", (tpuntos[i].distanciaMax===0) || (tpuntos[i].distanciaMax>=esta));
       }
-      console.log((Number(esta) < Number(menor)) && ((tpuntos[i].distanciaMax===0) || (tpuntos[i].distanciaMax<esta)));
       if ((Number(esta) < Number(menor)) && ((tpuntos[i].distanciaMax===0) || (tpuntos[i].distanciaMax>=esta))) {
-        console.log("Entre");
           menor = esta;
           setProductot(tpuntos[i].info);
           setIdroductot(items[i].idproducto);
+          let resultProduct = await getProductoNew({idproducto: items[i].idproducto});
+          resultProduct = await resultProduct.json();
+          if (resultProduct.length !== 0) {
+             setMarca(resultProduct[0].marca);
+             setColor(resultProduct[0].color);
+             setChapa(resultProduct[0].chapa);
+             setCelular(resultProduct[0].celular);
+          }
           setTarifa(items[i].tarifa);
           setCostoDomicilio(items[i].costoDomicilio);
           tpuntos.forEach((item, i) => {
@@ -447,7 +456,6 @@ function contains(lat, lon, bbox) {
           setIndex(i);
           ok=true;
       }
-      console.log("i",i)
     }
     if (ok===false){
       distanciaArriba = distanciaArriba + .2; 
@@ -500,7 +508,7 @@ function contains(lat, lon, bbox) {
                 );
               }}
             >
-              <ArrowBack />
+              <ArrowBack className="flecha"/>
             </IconButton>
 
             <h4 className="h3-cabeza-productos-1">
@@ -549,24 +557,18 @@ function contains(lat, lon, bbox) {
               <CircularProgress color="checkbox" />
             </Box>
           ) : null}
-
-          {(showMap === true && mascerca > 0 && mascerca != 999999) ||
-          (verOtraVez === true && mascerca > 0 && mascerca != 999999) ? (
+          {console.log("Mapa:", showMap)}
+          {console.log("MasCerca:", mascerca)}
+          {console.log("VerOtraVez:", verOtraVez)}
+          {console.log((showMap === true && mascerca > 0 && mascerca != 999999) || (verOtraVez === true && mascerca > 0 && mascerca != 999999))}
+          {(showMap === true && mascerca > 0 && mascerca != 999999) || (verOtraVez === true && mascerca > 0 && mascerca != 999999) ? (
             <>
               <div className="result">
-{/*                {productot}*/}
-                {"Recogida a "}
-                {mascerca}
-                {" Kms "}
-{/*                {duracion1}
-                {" minutos,"}*/}
-                {", carrera  "}
-                {carrera}
-                {" Kms "}
-{/*                {duracion}
-                {" minutos, precio: "}*/}
-                {" , precio: "}
-                {(carrera * tarifa + costoDomicilio).toFixed(2) + ", Marca, Color, Chapa, telefono"}
+                   {mascerca !== 0 && <span>Recogida a {mascerca} Kms </span>}
+                   {carrera !== 0 && <span>, carrera {carrera} Kms</span>}
+                   {(carrera * tarifa).toFixed(2)!=0.00 && <span>, precio: {(carrera * tarifa + costoDomicilio).toFixed(2)}</span>}
+                   {<span>, Marca: {marca}, Color: {color}, Chapa: {chapa}, teléfono: {celular}</span>}
+    
               </div>
             </>
           ) : (
@@ -584,7 +586,6 @@ function contains(lat, lon, bbox) {
                   onMapClick={() => {
                     setLat(item.latitud);
                     setLng(item.longitud);
-                    setShowrow3(true);
                   }}
                   verproducto={verproducto}
                   vernegocio={vernegocio}
@@ -604,7 +605,7 @@ function contains(lat, lon, bbox) {
             <div className="mapa-productos">
                 <Tippy content={`Cerrar mapa`}>
                   <button
-                    className="offon-info-producto"
+                    className="offOn-producto"
                     onClick={() => setShowMap(!showMap)}
                   >
                     <Close />

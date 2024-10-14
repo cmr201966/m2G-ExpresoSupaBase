@@ -11,7 +11,8 @@
     width: 450px;
     height: 25px;
     border-radius: 15px;
-    border: 1px solid aliceblue
+    border: 1px solid aliceblue;
+    padding-left: 10px;
 
 }
 label {
@@ -39,10 +40,12 @@ label {
     margin: 0 auto;
     width: 70%;
 }
-.input-area-registrarse-provincia{
+/*
+.input-area-ws-provincia{
     display: flex;
     align-items: center;
 }
+    */
 .input-area-registrarse-municipio{
     display: flex;
     align-items: center;

@@ -7,6 +7,7 @@ import { Box, IconButton } from "@mui/material";
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 //import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import SettingsIcon from '@mui/icons-material/Settings';
 import PersonIcon from '@mui/icons-material/Person';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';// styles
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
@@ -31,18 +32,21 @@ const Navbar = (props) => {
       label: "Ubicación",
       to: "/ubicacion",
       tooltips: "Donde recibira su producto ó servicio",
-      img: 1, anuncio: null
+      img: 1,
+      anuncio: null,
+      tipo: 1,
+      funcion: props.showModal
     },
   ]);
 {/* depende=0->no depende de nada, 1->nivel, 2-> no autentificado*/} 
   const [menuSegundo] = useState([
-    { label: "Inicio", to: "/", tooltips: "Ir a la página principal", depende: 1, login: 0 },
+    { label: "Inicio", to: "/", tooltips: "Ir a la página principal", depende: 1, login: 0, tipo: 0 },
     {
       label:
         sessionStorage.getItem("user") === null || sessionStorage.getItem("user") === 'null'? "Inicio sesión": "Cerrar sesión",
       to: sessionStorage.getItem("user") === null || sessionStorage.getItem("user") === 'null' ? "/login" : "/cerrarsesion",
       tooltips:
-        sessionStorage.getItem("user") === null || sessionStorage.getItem("user") === 'null'? "Abrir sesión": "Cerrar la sesión de " + sessionStorage.getItem("usernombre"), depende:0, login: 0
+        sessionStorage.getItem("user") === null || sessionStorage.getItem("user") === 'null'? "Abrir sesión": "Cerrar la sesión de " + sessionStorage.getItem("usernombre"), depende:0, login: 0, tipo:0
     },
 
     {
@@ -52,13 +56,14 @@ const Navbar = (props) => {
       depende: 2, 
       login: 0,
       inserta: "inserta=true",
+      tipo:0
     },
-    { label: "Categorias", to: "/categorias", tooltips: "Productos de una categoria", depende: 0, login: 0 },
+    { label: "Categorias", to: "/categorias", tooltips: "Productos de una categoria", depende: 0, login: 0, tipo:0 },
     {
       label: "Vender",
       to: "/catproductos",
       tooltips: "Vender un producto",
-      depende: 0, login: 1
+      depende: 0, login: 1, tipo:0
     },
     {
       label: "Anuncios",
@@ -66,24 +71,19 @@ const Navbar = (props) => {
       tooltips: "Anunciar un negocio",
       depende: 0,
       categoria: "",
-      login: 1
+      login: 1,
+      tipo:0
     },
   ]);
 
   const [menuTercero] = useState([
-    { label: "Acerca de", to: "/acercade", tooltips: "Acerca de Destodo", login: 0 },
+    { label: "Acerca de", to: "/acercade", tooltips: "Acerca de Destodo", login: 0, tipo:0 },
   ]);
 
   async function init() {
     sessionStorage.removeItem("categoria");
     sessionStorage.removeItem("login");
     sessionStorage.removeItem("idproducto");
-    let foto;
-    if (sessionStorage.getItem("user") === null) {
-      foto = "invitado";
-    } else {
-      foto = sessionStorage.getItem("user");
-    }
 
     setInicia(false);
   }
@@ -106,9 +106,19 @@ const Navbar = (props) => {
         break;
     }
   }
+
   function buscaProductos(e){
     e.preventDefault()
     navigate(`/productos?buscar=${buscar}&user=${sessionStorage.getItem("user")}&nombre=Filtro: '${buscar}'`);
+  }
+
+  function validState(state){
+    if (state==null || state==='null' || state===undefined || state==='undefined')  return false
+    else return true;
+  }
+
+  function categorias(){
+    navigate(`/catcategorias?`);
   }
 
   useEffect(() => {
@@ -125,6 +135,7 @@ const Navbar = (props) => {
             </Tippy>
             El Expreso
           </Link>
+
           <div className="input-lupa">
             <form onSubmit={buscaProductos}>
             <input
@@ -145,8 +156,20 @@ const Navbar = (props) => {
             </IconButton>
             </form>
           </div>          
+
           {inicia === false ? (          
-            <div className="menuTercero">
+          <div className="menuTercero">
+               <Tippy content={"Agregar, editar y eliminar categorias"}>
+                  <IconButton
+                     sx={{ padding: 0 }}
+                     id="categorias"
+                     color="inherit"
+                     onClick={categorias}
+                   >
+                     <SettingsIcon />
+                   </IconButton>
+               </Tippy>
+
               <Link className="tools-color" to="/whatsapp?login=1&regreso=/whatsapp" >
               <Tippy content={`Ejecutar pedidos del cliente`}>
                 <IconButton
@@ -159,15 +182,19 @@ const Navbar = (props) => {
                 </Tippy>
               </Link>
 
-              <IconButton
-                sx={{ padding: 0 }}
-                id="user"
-                color="inherit"
-                onClick={updateUserInfo}
-              >
-                <PersonIcon id="user" />
-              </IconButton>
+             {validState(sessionStorage.getItem("user"))?
+              <Tippy content={`Actualizar datos de ${sessionStorage.getItem("user")}`}>
+                 <IconButton
+                   sx={{ padding: 0 }}
+                   id="user"
+                   color="inherit"
+                   onClick={updateUserInfo}
+                 >
+                 <PersonIcon id="user" />
+                 </IconButton>
+              </Tippy>:""
 
+              }
               <IconButton
                 sx={{ padding: 0 }}
                 id="toggle-b"
@@ -192,10 +219,20 @@ const Navbar = (props) => {
                 {menuPrimero.map((item, i) => (
                   <Fragment key={i}>
                     <Tippy content={item.tooltips}>
+                      {item.tipo===0?
                       <Link className="place" key={item.label} to={item.to}>
                         {item.img===1?<PlaceOutlinedIcon sx={{fontSize:"28px"}}/>:""}
                         {item.label}
-                      </Link>
+                      </Link>:
+                      <IconButton
+                         sx={{ padding: 0 }}
+                         id={i}
+                         color="inherit"
+                         onClick={()=>{item.funcion()}}>
+                         {item.img===1?<PlaceOutlinedIcon sx={{color: "aliceblue", fontSize:"28px"}}/>:""}
+                         <span className="ubicacion">{item.label}</span>
+                      </IconButton>
+                    }
                     </Tippy>
                   </Fragment>
                 ))}

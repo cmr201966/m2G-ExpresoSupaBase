@@ -3,7 +3,6 @@
     height: auto;
     width: 333px;
     display: flex;
-    align-items: start;
     flex-direction: column;
     padding: 10px;
     background: rgb(20, 96, 172);
@@ -14,6 +13,8 @@
 .grupo-button-registrarse {
     display: flex;
     flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
     margin-top: 10px;
   }
 
@@ -34,6 +35,9 @@
     color: aliceblue;
     margin-right: 75px;
   }
+  .input-area-registrarse-plan{
+    margin-top: 10px;
+  }
 .input-area-registrarse-provincia label {
     color: aliceblue;
     margin-right: 47px;
@@ -46,14 +50,14 @@
     background: none;
     border: none;
     padding: 7px 15px;
-    color: aliceblue;
     border-radius: 15px;
     border: 1px solid aliceblue;
+    width: 178px;
+    background-color: white;
   }
   .input-area-registrarse {
     color: aliceblue;
     display: flex;
-    justify-content: flex-end;
     margin-top: 10px;
   }
 .registrarse h2 {
@@ -140,13 +144,14 @@
     width: 247px;
     object-fit: cover;
     padding-left: 40px; }
+
  .select-registrarse-plan{
     width: 210px;
     border: none;
     padding: 7px 15px;
     border-radius: 15px;
     border: 1px solid aliceblue;
-    margin-top: 5px;
+   
 }
  .select-registrarse-prov{
     width: 100%;
@@ -187,7 +192,7 @@
     margin-right: 2px;
 }
 .usuario{
-    margin-right: 53px;
+    margin-right: 48px;
 }
 .email{
     margin-right: 68px;
@@ -196,13 +201,13 @@
     margin-right: 56px;
 }
 .pw{
-    margin-right: 2px;
+    margin-right: 34px;
 }
 .rpw{
     margin-right: 27px;
 }
 .nombre{
-    margin-right: 52px;
+    margin-right: 56px;
 }
 .ci{
     margin-right: 85px;
@@ -227,11 +232,23 @@
 }
 .resultado-registrarse
 {
-    background-color: chartreuse;
-    color: black;
+    color: rgb(128, 243, 233);
     margin-left: 120px;
     margin-top: 5px;
+    font-size: 15px;
+}
+.resultadopw-registrarse
+{
+    color: rgb(128, 243, 233);
+    margin-left: 120px;
+    margin-top: 5px;
+    font-size: 15px;
 }
 .confirmar{
     margin-left: 195px;
+}
+.input-area-registrarse-provincia{
+    display: flex;
+    align-items: center;
+    margin-top: 5px;
 }

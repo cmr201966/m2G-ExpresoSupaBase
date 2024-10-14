@@ -17,10 +17,12 @@
   /*border-radius: 50%; */
 }
 
-.product-info {
+.negocio-info {
   width: 100%;
   color: white;
-}
+  gap: 10px;
+  display: flex;
+  flex-direction: column;}
 
 .parrafo {
   display: flex;
@@ -32,11 +34,12 @@ p {
   margin: 1px;
 }
 
-.img-info-producto
+.img-info-negocio
 {
-    height: 230px;
-    width: 230px;
-    object-fit: cover;
+  height: 394px;
+  width: 520px;
+  object-fit: cover;
+  margin-top: 10px; 
  }
  .mapa-negocio{
   position: relative;

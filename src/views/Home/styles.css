@@ -1,9 +1,9 @@
 .span-button {
   cursor: pointer;
 }
-.cmodal {
-  overflow: auto;
+.cmodal-home {
   position: relative important;
+  background-color: rgb(20 96 172) !important;
 }
 
 .h1-1-cabeza-home {
@@ -164,4 +164,28 @@
   align-items: center;
   color: white;
   font-size: 2rem;*/
+}
+.modal-provincia{
+  margin-top: 30px;
+}
+.modal-municipio{
+  margin-top: 5px;
+}
+.select-home-prov-munic{
+  border: none;
+  padding: 7px 15px;
+  border-radius: 15px;
+  border: 1px solid aliceblue;
+  margin-bottom: 5px;
+  margin-left: 8px;
+  width: 250px;
+}
+.grupo-button-modal-home{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 10px;
+  margin-right: auto;  
+
 }

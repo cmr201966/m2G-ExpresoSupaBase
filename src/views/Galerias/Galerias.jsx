@@ -92,7 +92,7 @@ const Galerias = () => {
                 );
               }}
             >
-              <ArrowBack />
+              <ArrowBack className="flecha"/>
             </IconButton>
           )}
           {inicia === false ? (

@@ -56,4 +56,19 @@
 .title-1
 {
     color:aliceblue;
+    margin-bottom: 15px;
+}
+
+.input-area-login{
+    display: flex;
+    justify-content: space-between;
+    margin: 5px 10px 2px 0;
+    align-items: center;
+    width: 100%;
+    gap: 10px;
+}
+.input-area-login input{
+    padding: 7px 22px;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
 }

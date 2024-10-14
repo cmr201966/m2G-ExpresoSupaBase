@@ -19,4 +19,7 @@ export async function creafileinfolder(body) {
     return makeRequest("http://localhost:3001/set_file_in_folder", body);
   }
   
+  export async function getFilesInFolder(body) {
+    return makeRequest("http://localhost:3001/getFilesInFolder", body);
+  }
   

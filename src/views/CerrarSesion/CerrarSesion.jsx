@@ -20,6 +20,7 @@ const Cerrarsesion = () => {
         sessionStorage.removeItem("email");
         sessionStorage.removeItem("dpostal");
         sessionStorage.removeItem("desc");
+        sessionStorage.removeItem("userprovincia")
         navigate("/");
     }
 

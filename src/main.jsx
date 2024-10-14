@@ -20,6 +20,7 @@ import Aplicaciones from "./views/Aplicaciones/Aplicaciones";
 import Whatsapp from "./views/Whatsapp/Whatsapp";
 import Ubicacion from "./views/Ubicacion/Ubicacion";
 import Categorias from "./views/Categorias/Categorias";
+import CatCategorias from "./views/CatCategorias/CatCategorias.jsx";
 
 import "tippy.js/dist/tippy.css";
 import "./index.css";
@@ -45,6 +46,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <Route exact path="/whatsapp" element={<Whatsapp />} />
             <Route exact path="/ubicacion" element={<Ubicacion />} />
             <Route exact path="/categorias" element={<Categorias />} />
+            <Route exact path="/catcategorias" element={<CatCategorias />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

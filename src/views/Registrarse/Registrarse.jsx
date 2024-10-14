@@ -1,10 +1,18 @@
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { Box, CircularProgress } from "@mui/material";
+import Tippy from "@tippyjs/react";
+
 // components
+import Map from "../../components/Map/MapBox";
 import Navbar from "../../components/Navbar/Navbar"
-import Checkbox from '@mui/material/Checkbox';
 import Modal from "../../components/Modal/Modal";
+// Iconos
+import Check from "@mui/icons-material/Check";
+import Close from "@mui/icons-material/Close";
+import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
+import VisibilityIcon from '@mui/icons-material/Visibility';
+import MapIcon from "@mui/icons-material/Map";
 
 // layouts
 import Hero from "../../layouts/Hero/Hero";
@@ -34,25 +42,24 @@ const Registrarse = () => {
   const [provincia, setProvincia] = useState(13);
   const [municipio, setMunicipio] = useState(0);
   const arraydesconocido = [{ provincia: 99, municipio: 99, desc: "Desconocido" }];
-  const arrayplan= [{ plan: 0,  desc: "Gratis", tip:"Explorar, Comprar y Reservar" },{ plan: 1,  desc: "Estandar", tip:"Chofer plan estandar" },{ plan: 2,  desc: "Premiun", tip:"Crear Negocios Plus" }];
+  const arrayplan= [{ plan: 0,  desc: "Gratis", tip:"(Explorar, Comprar y Reservar)" },{ plan: 1,  desc: "Estandar", tip:"Chofer plan estandar" },{ plan: 2,  desc: "Premiun", tip:"Crear Negocios Plus" }];
   const [plan, setPlan] = useState(0);
   const [arrayprovincias, setArrayprovincias] = useState([]);
   const [arraymunicipios, setArraymunicipios] = useState([]);
   const [tmunicipios, setTmunicipios] = useState([]);
-  const [cp1] = useState("Z");
-  const [cp2] = useState("K");
-  const [cp3] = useState("M");
-  const [cp4] = useState("W");
-  const [cp5] = useState("P");
-  const [cp6] = useState();
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
   const [cbvista, setCbvista] = useState(false);
   const [resultado, setResultado] = useState("");
+  const [resultadopw, setResultadopw] = useState("");
   const [contenido, setContenido] = useState("");
   const [inicia, setInicia] = useState(true);
   const [modifica, setModifica] = useState(false);
-  
+  const [showMap, setShowMap] = useState(false);
+  const [lat, setLat] = useState(0);
+  const [lng, setLng] = useState(0);
+  const [zoom] = useState(15.5);
+
   // Otros estados
   const navigate = useNavigate(); 
 
@@ -90,9 +97,8 @@ const Registrarse = () => {
     else
     {
       setArraymunicipios(resultmunicipio);
-      if (sessionStorage.getItem("user") === 'null'){
+      if ((sessionStorage.getItem("user") === 'null' || sessionStorage.getItem("user") === null) && (sessionStorage.getItem("userprovincia") === 'null' || sessionStorage.getItem("userprovincia") === null)){
          ttmunicipios = resultmunicipio.filter((item)=>{if (item.provincia === ttprovincias[0].provincia){return item}});
-         console.log(ttmunicipios);
       }
       else{
         ttmunicipios = resultmunicipio.filter((item)=>{if (item.provincia === ttprovincias[sessionStorage.getItem("userprovincia")-1].provincia){return item}});
@@ -114,17 +120,18 @@ const Registrarse = () => {
 
       let result = await getdatosiduser({user: sessionStorage.getItem("user")});
       result = await result.json();
-  
+      console.log(result);
       setUser(result[0].iduser);
       setPassword(result[0].pw);
       setNombre(result[0].nombre);
       setEmail(result[0].email);
       setFijo(result[0].fijo);
       setPlan(result[0].tipouser);
-      console.log(result[0].tipouser);
       setCelular(result[0].celular);
       setProvincia(result[0].provincia);
       setMunicipio(result[0].municipio);
+      setLat(result[0].latitud);
+      setLng(result[0].longitud)
       let resultado = await getjpg({foto: sessionStorage.getItem("user"), folder: "usuarios"});
       resultado = await resultado.text();
 
@@ -150,6 +157,7 @@ const Registrarse = () => {
   const onModalClose = () => 
   {
   setShow(false)
+  document.getElementById("password").focus();
   }
       
   useEffect(() => {
@@ -174,6 +182,9 @@ const Registrarse = () => {
        }
        setMunicipio(0);
 
+  }
+  function tcancelar() {
+    navigate("/?nivel=0")
   }
 
   async function handleselect(e) {
@@ -237,7 +248,8 @@ const Registrarse = () => {
 
   async function confirmar() {
     if (password !== rpassword ) {
-      setResultado("Las contraseñas no coinciden"); 
+      setContenido("Contraseña incorrecta");
+      setShow(true);
       document.getElementById("password").focus();
     }
     else
@@ -246,21 +258,19 @@ const Registrarse = () => {
       {
         setDesc("");
       }
-    let response = await setregistrarse({user, nombre, password, email, celular, fijo, provincia:provincia,municipio:municipio, contenidofoto,modifica,plan});
-    response = await response.json();
-
-    const data = await response;
-    if (data.error) 
-    {
-      setContenido(data.error);
-      setShow(true);
-    }
-    else {
-      setContenido("El usuario se registró correctamente.");
-      setShow(true);
-    }
-  } // if password
-  } //confirmaregistrarse
+      let response = await setregistrarse({user, nombre, password, email, celular, fijo, provincia:provincia,municipio:municipio, contenidofoto,modifica,plan, lat, lng});
+      response = await response.json();
+      if (response.error) 
+      {
+        setContenido(response.error);
+        setShow(true);
+      }
+      else {
+        setContenido("El usuario se registró correctamente.");
+        setShow(true);
+     }
+   } 
+  } 
 
   const onPhotoChange = (e) => {
     const file = e.target.files[0];
@@ -273,10 +283,22 @@ const Registrarse = () => {
     };
     reader.readAsDataURL(file);
   }
+  
+  const lngLatSelected = (point, lngLat) => {
+    console.log(lngLat.lng, lngLat.lat)
+    setLng(lngLat.lng);
+    setLat(lngLat.lat);
+  };
+
+  const onChangeMap = (which, value) => {
+    if (which === "lng") return setLng(value);
+    return setLat(value);
+  };
+
 
   return (
     <>
-    <Modal visible={show} onClose={onModalClose} className="cmodal wmodal" classContainer="modal-catprod">
+    <Modal visible={show} onClose={onModalClose} className="cmodal" classContainer="modal-catprod">
       <div className="cerrar-button">
         <button className="cerrar" onClick={onModalClose}>X</button>
       </div>
@@ -290,16 +312,17 @@ const Registrarse = () => {
       />
       <Hero>
       <div className="div-papa">
-      <div className="cabeza">
+          <div className="cabeza">
                <IconButton color="primary" onClick={() => 
                {
                   navigate("/?nivel=0");
                }}>
-                <ArrowBack />
+                <ArrowBack className="flecha" />
+                
               </IconButton>
               <h4 className="registrarse-cabeza-1">Atrás</h4>
-      </div>
-      {show1 ? <Box sx={{ width: "100%", height: "300px", display: "flex", alignItems: "center", justifyContent: "center" }}><CircularProgress color="checkbox" /></Box> : null}
+          </div>
+          {show1 ? <Box sx={{ width: "100%", height: "300px", display: "flex", alignItems: "center", justifyContent: "center" }}><CircularProgress color="checkbox" /></Box> : null}
 
         {inicia===false?
         <>
@@ -308,11 +331,11 @@ const Registrarse = () => {
           <label className="label-grupo label-registrase-size strong">Registrarse</label>
           <label className="label-grupo label-datos-size strong">Datos Generales</label>
             <div className="input-area-registrarse">
-              {console.log(modifica)}
-              <label className="usuario" >*Usuario:</label>
+              <label className="usuario" >* Usuario:</label>
               <input
                 id="user"
                 value={user}
+                color="black"
                 disabled={modifica}
                 onChange={handleInput}
                 type="text"
@@ -320,7 +343,7 @@ const Registrarse = () => {
               />
             </div>
             <div className="input-area-registrarse">
-              <label className="pw">*PassWord(PW):</label>
+              <label className="pw">* Password:</label>
               <input
                 id="password"
                 value={password}
@@ -330,7 +353,7 @@ const Registrarse = () => {
               />
             </div>
             <div className="input-area-registrarse">
-              <label className="rpw">*Repetir PW:</label>
+              <label className="rpw">* Repetir Pw:</label>
               <input
                 id="rpassword"
                 value={rpassword}
@@ -339,7 +362,11 @@ const Registrarse = () => {
                 required
               />
             </div>
-{/*}
+            {
+              resultadopw !== "" && <label className="resultadopw-registrarse">{resultadopw}</label>
+            }
+
+            {/*
             <div className="input-area-registrarse">
               <label className="email">*Email:</label>
               <input
@@ -350,9 +377,10 @@ const Registrarse = () => {
                 required
               />
             </div>
-*/}            
+            */}      
+
             <div className="input-area-registrarse">
-              <label className="celular">*Celular:</label>
+              <label className="celular">* Celular:</label>
               <input
                 id="celular"
                 value={celular}
@@ -362,7 +390,7 @@ const Registrarse = () => {
               />
             </div>
             <div className="input-area-registrarse-plan">
-              <label className="plan">*Plan:</label>
+              <label className="plan">* Plan:</label>
               <select  className="select-registrarse-plan"  id="plan" onChange={handleselect} value={plan}>
                 {arrayplan.map((item, i) => {
                   return <option key={i} value={i} >{item.desc}</option>
@@ -383,44 +411,13 @@ const Registrarse = () => {
                 required
               />
             </div>
-{/*
-            <div className="input-area-registrarse">
-              <label className="fijo">Tel. Fijo:</label>
-              <input
-                id="fijo"
-                value={fijo}
-                onChange={handleInput}
-                type="phone"
-                required
-              />
-            </div>
-*/}            
-            <div className="input-area-foto-registrarse">
-                <label className="label-2-registrarse">Foto:</label>
-                <label className="label-2-1-registrarse">
-                <input
-                  id="foto"
-                  value={foto}
-                  onChange={onPhotoChange}
-                  type="file"
-                  required
-                />
-                Añadir foto
-                </label>
-                {(nombrefoto!=="") ? 
-                  <div className="check-vista-1">
-                      <label className="label-vista-registrase-1-1">Vista previa</label>
-                      <Checkbox className="cbox-vista" id="vista" color="checkbox" defaultChecked  checked={cbvista} onClick={handleInput}/>
-                  </div>:""
-                 }                              
-            </div>
+
               {(nombrefoto!=="") && cbvista?
               <div className="img-class">
                   <img className="img-registrarse" src={contenidofoto} />
               </div>:""
               }
-
-            <label className="label-grupo">Ubicación</label>
+            
             <div className="input-area-registrarse-provincia">
               <label>Provincia:</label>
               <select  className="select-registrarse-prov"  id="provincia" onChange={handleselect} value={provincia}>
@@ -438,36 +435,76 @@ const Registrarse = () => {
               </select>
             </div>
 
-{/*
-            <label className="label-grupo">Comprobación</label>
-            <div className="input-cp">
-              <label className="cp" style={{transform:`rotateZ(${35}deg)`}}>{cp1}</label>
-              <label className="cp" style={{transform:`rotateZ(${45}deg)`}}>{cp2}</label>
-              <label className="cp" style={{transform:`rotateZ(${55}deg)`}}>{cp3}</label>
-              <label className="cp" style={{transform:`rotateZ(${45}deg)`}}>{cp4}</label>
-              <label className="cp" style={{transform:`rotateZ(${35}deg)`}}>{cp5}</label>
-            </div>
-            <div className="input-area-registrarse">
-              <label className="label-comprobacion">*Captcha:</label>
-              <input
-                id="cp6"
-                value={cp6}
-                onChange={handleInput}
-                type="text"
-                required
-              />
-            </div>
-*/}
             <div className="grupo-button-registrarse">
-              <button type="button" className="confirmar registrarse-button primary" onClick={confirmar}>
-                Confirmar
+                     <Tippy content="Vista previa">
+                        <button
+                          type="button"
+                          className="producto-button primary"
+                          onClick={()=>setCbvista(!cbvista)}
+                        >
+                          <VisibilityIcon />
+                        </button>
+                      </Tippy>
+               
+                         <label className="producto-button primary label-photo">
+                          <input
+
+                            id="foto"
+                            value={foto}
+                            onChange={onPhotoChange}
+                            type="file"
+                            required
+                            multiple
+
+                          />
+                          <Tippy content="Añadir foto">
+                            <AddPhotoAlternateIcon />
+                          </Tippy>
+                        </label>
+                        {inicia === false  ? (
+                          <Tippy content="Ubicar el negocio en el mapa">
+                            <button
+                              type="button"
+                              className="negocio-button primary"
+                              onClick={() => setShowMap(!showMap)}
+                            >
+                              <MapIcon />
+                            </button>
+                          </Tippy>
+                        ) : (
+                          ""
+                        )}
+                    
+              <button type="button" className="producto-button primary " onClick={confirmar}>
+              <Check />
               </button>
-            </div>
-          </div>
-        </div>
-
-
+              <button type="button" className="producto-button primary" onClick={tcancelar}>
+              <Close />
+              </button>
+            </div>                 
+           </div>
+         </div>
         </>:""}
+
+        <div className="mapa-1">
+           {showMap === true ? (
+                    <div className="mapa-catalogo">
+                      <Map
+                        sx={{ height: "100%", width: "100%" }}
+                        onMapClick={lngLatSelected}
+                        remoteshowMap={showMap}
+                        lat={lat}
+                        lng={lng}
+                        point={{ lat, lng }}
+                        onChange={onChangeMap}
+                        remoteZoom={zoom}
+                      />
+                      </div>
+                  ) : (
+                    ""
+                  )}
+          </div>
+
         </div>
       </Hero>
     </div>

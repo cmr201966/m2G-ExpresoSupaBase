@@ -15,7 +15,6 @@ const Login = () => {
   const [resultado, setResultado] = useState("");
   const parsedParams = {};
   const location = useLocation();
-
   async function init() {
     if (parsedParams.login!== undefined && parsedParams.login!== 'undefined' && parsedParams.login!== null && parsedParams.login!== 'null'){
       sessionStorage.setItem("login", parsedParams.login);
@@ -52,6 +51,7 @@ const Login = () => {
     } 
     else 
     {
+      console.log(result.provincia, result.municipio)
       sessionStorage.setItem("user", result.iduser);
       sessionStorage.setItem("usernombre", result.nombre);
       sessionStorage.setItem("tipouser", result.tipouser);
@@ -68,6 +68,7 @@ const Login = () => {
       
     }  
   } 
+
   useEffect(() => {
     const localParams = location.search.substring(1).split("&");
     localParams.forEach((item) => {
@@ -89,7 +90,7 @@ const Login = () => {
         <div className="login">
           <div className="container-login">
             <h4 className="title-1">Iniciar sesión</h4>
-            <div className="input-area">
+            <div className="input-area-login">
               <label>Usuario:</label>
               <input
                 id="user"
@@ -99,7 +100,7 @@ const Login = () => {
                 required
               />
             </div>
-            <div className="input-area">
+            <div className="input-area-login">
               <label>Contraseña:</label>
               <input
                 id="password"

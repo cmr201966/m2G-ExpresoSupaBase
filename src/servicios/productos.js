@@ -38,3 +38,7 @@ export async function setproducto(body) {
   return makeRequest("http://localhost:3001/setproducto", body);
 }
 
+
+export async function getProductoNew(body) {
+  return makeRequest("http://localhost:3001/getProductoNew", body);
+}

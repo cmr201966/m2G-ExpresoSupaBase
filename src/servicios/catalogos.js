@@ -36,3 +36,11 @@ export async function getCategoriaText(body) {
 export async function getProductoText(body) {
   return makeRequest("http://localhost:3001/getProductoText", body);
 }
+
+export async function getCategoriasNegocios(body) {
+  return makeRequest("http://localhost:3001/getcategoriasnegocios", body);
+}
+
+export async function setCategoriasNegocios(body) {
+  return makeRequest("http://localhost:3001/setcategoriasnegocios", body);
+}

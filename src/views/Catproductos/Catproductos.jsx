@@ -25,7 +25,6 @@ import { useLocation } from "react-router-dom";
 import { getcategoriasnegociosapp } from "../../servicios/negocios";
 import { getproductoscategoria,  setproducto,  delproducto,} from "../../servicios/productos";
 import { getJpgFile } from "../../servicios/imagenes";
-//import { getnaturalezaproducto } from "../../servicios/naturalezas";
 import "./styles.css";
 
 const CatProductos = () => {
@@ -136,7 +135,6 @@ const CatProductos = () => {
       producto,
     });
     resultproductos = await resultproductos.json();
-    console.log("139", resultproductos);
     if (resultproductos.error || resultproductos.length === 0) {
       setArrayproductos(arraynoproductos);
       recuperardatosproducto(arraynoproductos, 0);
@@ -157,7 +155,6 @@ const CatProductos = () => {
         restaurardatosproductosNew(resultproductos, posicionProducto);
         setEditarsn(true);
       }
-console.log("./galerias/app_images/productos/" + resultproductos[0].idproducto + "/" + "foto-1.jpg");
       let resultado = await getJpgFile({file: "./galerias/app_images/productos/" + resultproductos[0].idproducto + "/" + "foto-1.jpg",});
       resultado = await resultado.text();
 
@@ -174,11 +171,8 @@ console.log("./galerias/app_images/productos/" + resultproductos[0].idproducto +
   } //init
 
   const handleProducto = async (_, value) => {
-    console.log("*******************************", value)
     setProducto(value);
-    console.log(arrayproductos);
     recuperardatosproducto(arrayproductos, value.value);
-    console.log("./galerias/app_images/productos" + "/" + arrayproductos[value?.value].idproducto + "/foto-1.jpg");
     let resultado = await getJpgFile({
     file: "./galerias/app_images/productos" + "/" + arrayproductos[value?.value].idproducto + "/foto-1.jpg",});
     resultado = await resultado.text();
@@ -203,10 +197,7 @@ console.log("./galerias/app_images/productos/" + resultproductos[0].idproducto +
       setArrayproductos(arraynoproductos);
       recuperardatosproducto(arraynoproductos, 0);
     } else {
-      console.log(resultproductos);
       setArrayproductos(resultproductos);
-      console.log("./galerias/app_images/productos" + "/" + resultproductos[0].idproducto + "/foto-1.jpg");
-      console.log(resultproductos[0].idproducto);
       setNombrefoto(resultproductos[0].idproducto);
       recuperardatosproducto(resultproductos, 0);
       let resultado = await getJpgFile({file: "./galerias/app_images/productos" + "/" + resultproductos[0].idproducto + "/foto-1.jpg",});
@@ -319,6 +310,7 @@ console.log("./galerias/app_images/productos/" + resultproductos[0].idproducto +
     setModelot(data[i].modelo);
     setTallat(data[i].talla);
     setColort(data[i].color);
+    console.log("314",data[i].domicilio, data[i].domicilio === 0 ? false : true);
     setDomiciliot(data[i].domicilio === 0 ? false : true);
     setOcupadot(data[i].ocupado === 0 ? false : true);
     setGpst(data[i].gpsSN === 1 ? true : false);
@@ -358,8 +350,8 @@ console.log("-------------------",data[posicion].desc,  posicion );
     setColor(colort);
     setDistanciaMax(tdistanciaMax);
     setOcupado(ocupadot===false?0:1);
-    setDomicilio(domiciliot===0?0:1);
-    setCbsCiudad(tcbsCiudad===0?0:1);
+    setDomicilio(domiciliot===false?0:1);
+    setCbsCiudad(tcbsCiudad===false?0:1);
     setCbgps(gpst);
     setLat(latt);
     setLng(lngt);
@@ -379,6 +371,8 @@ console.log("-------------------",data[posicion].desc,  posicion );
   };
 
   async function confirmar() {
+    console.log(domicilio);
+    console.log(domicilio === true ? 1 : 0);
     let mproducto = 0;
     if (producto === null) {
       mproducto = 0;
@@ -698,7 +692,7 @@ console.log("-------------------",data[posicion].desc,  posicion );
                             </div>
                             <div className="input-area2">
                               <label className="label-datos-catproducto">
-                                Chapa:
+                                Modelo/Chapa:
                               </label>
                               <input
                                 className="input-cataproducto-21"
@@ -766,7 +760,6 @@ console.log("-------------------",data[posicion].desc,  posicion );
                                 <label className="label-datos-catproducto input-cataproducto-12 ocupado">
                                   Ocupado:
                                 </label>
-                                {console.log(ocupado)}
                                 <Checkbox
                                   id="ocupado"
                                   sx={{ color: 'white', '&.Mui-checked': { color: 'white',},}}
@@ -894,8 +887,6 @@ console.log("-------------------",data[posicion].desc,  posicion );
                     ) : (
                       ""
                     )}
-                    {console.log("893", arrayproductos)}
-                    {console.log(producto)}
                     {producto &&
                     arrayproductos[producto?.value].desc !== "Desconocido" ? (
                       <>
@@ -963,12 +954,11 @@ console.log("-------------------",data[posicion].desc,  posicion );
                         ) : (
                           ""
                         )}
+
                       </>
                     ) : (
                       ""
                     )}
-{console.log("964", "F:", nombrefoto, "N:",nombrecorto, "D:",descripcion, agregarsn, editarsn)}
-{console.log((agregarsn === true || editarsn === true) && nombrecorto!=="" && descripcion!==""  && nombrefoto !== "")}
                    {(agregarsn === true || editarsn === true) && nombrecorto!=="" && descripcion!==""  && nombrefoto !== "" ? (
                       <Tippy
                         content={
@@ -1022,8 +1012,6 @@ console.log("-------------------",data[posicion].desc,  posicion );
                   ) : (
                     ""
                   )}
-                  {console.log(showMap,showGalerias,cbgps)}
-                  {console.log(showMap === true && showGalerias === false && cbgps === true )}
                   {showMap === true && showGalerias === false && cbgps === true ? (
                     <div className="mapa-catalogo">
                       <Map
@@ -1040,8 +1028,6 @@ console.log("-------------------",data[posicion].desc,  posicion );
                   ) : (
                     ""
                   )}
-
-
               </div>
             </>
           ) : (

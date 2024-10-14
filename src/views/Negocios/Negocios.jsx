@@ -557,7 +557,7 @@ function handleInput(e) {
             <IconButton color="primary" onClick={() => {
               navigate(`/?naturaleza=${naturaleza}&idowner=${idowner}&nivel=${nivel}`);
             }}>
-              <ArrowBack />
+              <ArrowBack className="flecha"/>
             </IconButton>
             <h4 className="h3-1-cabeza-negocios">Negocios</h4>
           </div>
