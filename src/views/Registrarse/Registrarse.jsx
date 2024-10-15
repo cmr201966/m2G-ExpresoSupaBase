@@ -120,7 +120,6 @@ const Registrarse = () => {
 
       let result = await getdatosiduser({user: sessionStorage.getItem("user")});
       result = await result.json();
-      console.log(result);
       setUser(result[0].iduser);
       setPassword(result[0].pw);
       setNombre(result[0].nombre);
@@ -266,8 +265,9 @@ const Registrarse = () => {
         setShow(true);
       }
       else {
-        setContenido("El usuario se registró correctamente.");
+        setContenido("El usuario se registró correctamente.");        
         setShow(true);
+//        tcancelar();
      }
    } 
   } 

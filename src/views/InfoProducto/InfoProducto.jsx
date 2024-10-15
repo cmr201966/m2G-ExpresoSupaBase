@@ -145,7 +145,6 @@ const InfoProducto = () => {
 
 
 const lngLatSelected = async (point, lngLat) => {
-console.log("1")  
     if (ocupado===1) 
       {
         return;

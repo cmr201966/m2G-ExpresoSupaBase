@@ -1,6 +1,9 @@
 import { Fragment } from "react";
 import { Link } from "react-router-dom";
 import Tippy from "@tippyjs/react";
+import Check from "@mui/icons-material/Check";
+import Close from "@mui/icons-material/Close";
+import Modal from "../../components/Modal/Modal";
 
 import { Box, IconButton } from "@mui/material";
 
@@ -11,9 +14,11 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import PersonIcon from '@mui/icons-material/Person';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';// styles
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
-import { useState } from "react";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { setconfig, getconfig  } from "../../servicios/config";
+import { getprovincias, getmunicipios } from "../../servicios/catalogos";
+import { isValid } from "../../Utiles/Utiles";
 
 //import { getJpgFile } from "../../servicios/imagenes";
 import NavigationDrawer from "./Drawer";
@@ -25,8 +30,18 @@ const Navbar = (props) => {
   const foto1=      "http://localhost:3001/app_images/destodo/dtlogo.jpg";
   const [showMenu, setShowMenu] = useState(false);
 
+  const [show1, setShow1] = useState(false);
+  const [arrayprovincias, setArrayprovincias] = useState([]);
+  const [arraymunicipios, setArraymunicipios] = useState([]);
+  const [provincia, setProvincia] = useState(0);
+  const [municipio, setMunicipio] = useState(0);
+  const [tmunicipios, setTmunicipios] = useState([]);
+  const arraydesconocido = [{ provincia: 99, municipio: 99, desc: "Desconocido" }];
+
+
   const [inicia, setInicia] = useState(true);
   const [buscar, setBuscar] = useState("");
+  
   const [menuPrimero] = useState([
     {
       label: "Ubicación",
@@ -35,7 +50,7 @@ const Navbar = (props) => {
       img: 1,
       anuncio: null,
       tipo: 1,
-      funcion: props.showModal
+      funcion: poneModal
     },
   ]);
 {/* depende=0->no depende de nada, 1->nivel, 2-> no autentificado*/} 
@@ -43,10 +58,13 @@ const Navbar = (props) => {
     { label: "Inicio", to: "/", tooltips: "Ir a la página principal", depende: 1, login: 0, tipo: 0 },
     {
       label:
-        sessionStorage.getItem("user") === null || sessionStorage.getItem("user") === 'null'? "Inicio sesión": "Cerrar sesión",
-      to: sessionStorage.getItem("user") === null || sessionStorage.getItem("user") === 'null' ? "/login" : "/cerrarsesion",
+        isValid(sessionStorage.getItem("user"))===false? "Inicio sesión": "Cerrar sesión",
+      to: isValid(sessionStorage.getItem("user"))===false? "/login" : "/cerrarsesion",
       tooltips:
-        sessionStorage.getItem("user") === null || sessionStorage.getItem("user") === 'null'? "Abrir sesión": "Cerrar la sesión de " + sessionStorage.getItem("usernombre"), depende:0, login: 0, tipo:0
+      isValid(sessionStorage.getItem("user"))===false? "Abrir sesión": "Cerrar la sesión de " + sessionStorage.getItem("usernombre"), 
+        depende:0, 
+        login: 0, 
+        tipo:0
     },
 
     {
@@ -63,7 +81,9 @@ const Navbar = (props) => {
       label: "Vender",
       to: "/catproductos",
       tooltips: "Vender un producto",
-      depende: 0, login: 1, tipo:0
+      depende: 0,
+      login: 1,
+      tipo:0
     },
     {
       label: "Anuncios",
@@ -85,7 +105,71 @@ const Navbar = (props) => {
     sessionStorage.removeItem("login");
     sessionStorage.removeItem("idproducto");
 
+    let resultconfig = await getconfig({});
+    resultconfig = await resultconfig.json();
+    if (resultconfig.length!==0){
+       if (resultconfig[0].provincia!=0){
+          setProvincia(resultconfig[0].provincia);
+          setMunicipio(resultconfig[0].municipio);
+          sessionStorage.setItem("ubicacion-provincia", resultconfig[0].provincia);
+          sessionStorage.setItem("ubicacion-municipio", resultconfig[0].municipio);
+             }     
+    }
+    else setShow1(true);
+
+    let resultprovincia = await getprovincias({});
+    resultprovincia = await resultprovincia.json();
+
+    if (resultprovincia.error || resultprovincia.length === 0)
+    {
+      setArrayprovincias(arraydesconocido);
+      //ttprovincias=arraydesconocido;
+    }
+    else
+    {
+      setArrayprovincias(resultprovincia);
+      //ttprovincias=resultprovincia;
+    }
+    if (resultconfig.length===0){
+      setProvincia(14);
+    }
+    let ttmunicipios=[];
+
+    let resultmunicipio = await getmunicipios({});
+    resultmunicipio = await resultmunicipio.json();
+
+    if (resultmunicipio.error || resultmunicipio.length === 0)
+    {
+       setArraymunicipios(arraydesconocido);
+       setTmunicipios(arraydesconocido);
+       ttmunicipios=arraydesconocido;
+    }
+    else
+    {
+      setArraymunicipios(resultmunicipio);
+      if (resultconfig.length===0){
+        setMunicipio(6);
+        ttmunicipios = resultmunicipio.filter((item)=>{if (item.provincia === 14){return item}});
+      }
+      else{
+        ttmunicipios = resultmunicipio.filter((item)=>{if (item.provincia ===resultconfig[0].provincia){return item}});
+      }
+    }
+    if (ttmunicipios.length!==0)
+    {
+      setTmunicipios(ttmunicipios);
+    }
+    else
+    {
+      setTmunicipios(arraydesconocido);
+      ttmunicipios=arraydesconocido;
+    }
+
     setInicia(false);
+  }
+
+  function poneModal(){
+    setShow1(!show1);
   }
 
   function updateUserInfo(e){
@@ -112,14 +196,44 @@ const Navbar = (props) => {
     navigate(`/productos?buscar=${buscar}&user=${sessionStorage.getItem("user")}&nombre=Filtro: '${buscar}'`);
   }
 
-  function validState(state){
-    if (state==null || state==='null' || state===undefined || state==='undefined')  return false
-    else return true;
-  }
-
   function categorias(){
     navigate(`/catcategorias?`);
   }
+
+  const onModalClose = () => 
+    {
+      if(sessionStorage.getItem("ubicacion-provincia")!==null){
+      setShow1(false)
+      }
+      //document.getElementById("password").focus();
+    }
+  
+    async function handleselect(e) {
+      let ttmunicipio=[];
+      switch (e.target.id) {
+        case "provincia":
+          setProvincia(Number(e.target.value));
+          ttmunicipio=arraymunicipios.filter((item,i)=>{if (item.provincia === Number(e.target.value)){return item}});
+          setTmunicipios(ttmunicipio);
+          if (ttmunicipio.length === 0){
+            setTmunicipios(arraydesconocido);
+            ttmunicipio=arraydesconocido;
+          }
+         setMunicipio(0);
+         break
+        case "municipio":
+          setMunicipio(Number(e.target.value));
+          break
+  
+        }
+    }
+  
+    async function confirmar(){
+      await setconfig({provincia, municipio});
+      setShow1(false);
+    }
+  
+
 
   useEffect(() => {
     init();
@@ -127,6 +241,39 @@ const Navbar = (props) => {
 
   return (
     <>
+    <Modal visible={show1} onClose={onModalClose} className="cmodal-home" classContainer="modal-catprod">
+      <div className="cerrar-button">
+        <button className="cerrar" onClick={onModalClose}>X</button>
+      </div>
+      <div className="main-modal">
+           <p className="strong font-size1">Ubicación</p>
+           <div className="modal-provincia">
+                <label>Provincia:</label>
+                <select  className="select-home-prov-munic"  id="provincia" onChange={handleselect} value={provincia}>
+                        {arrayprovincias.map((item, i) => {
+                        return <option key={i} value={item.provincia} >{item.desc}</option>
+                        })}
+                </select>
+            </div>
+            <div className="modal-municipio">
+                 <label>Municipio:</label>
+                 <select className="select-home-prov-munic" id="municipio" onChange={handleselect} value={municipio}>
+                        {tmunicipios.map((item, i) => {
+                        return <option key={i} value={item.municipio} >{item.desc}</option>
+                        })}
+                 </select>
+            </div>
+            <div className="grupo-button-modal-home">          
+                 <button type="button" className="producto-button primary " onClick={confirmar}>
+                     <Check />
+                 </button>
+                 <button type="button" className="producto-button primary" onClick={onModalClose}>
+                     <Close />
+                 </button>
+            </div>                 
+       </div>
+    </Modal>
+
       <div className="navbar-row">
         <div className="logo">
           <Link className="link-logo" to="/acercade">
@@ -182,7 +329,7 @@ const Navbar = (props) => {
                 </Tippy>
               </Link>
 
-             {validState(sessionStorage.getItem("user"))?
+             {isValid(sessionStorage.getItem("user"))?
               <Tippy content={`Actualizar datos de ${sessionStorage.getItem("user")}`}>
                  <IconButton
                    sx={{ padding: 0 }}
@@ -218,7 +365,7 @@ const Navbar = (props) => {
               >
                 {menuPrimero.map((item, i) => (
                   <Fragment key={i}>
-                    <Tippy content={item.tooltips}>
+                  <Tippy content={item.tooltips}>
                       {item.tipo===0?
                       <Link className="place" key={item.label} to={item.to}>
                         {item.img===1?<PlaceOutlinedIcon sx={{fontSize:"28px"}}/>:""}
@@ -228,7 +375,7 @@ const Navbar = (props) => {
                          sx={{ padding: 0 }}
                          id={i}
                          color="inherit"
-                         onClick={()=>{item.funcion()}}>
+                         onClick={() => item.funcion()}>
                          {item.img===1?<PlaceOutlinedIcon sx={{color: "aliceblue", fontSize:"28px"}}/>:""}
                          <span className="ubicacion">{item.label}</span>
                       </IconButton>
@@ -283,7 +430,7 @@ const Navbar = (props) => {
           </Box>
         </div>
       </div>
-      <NavigationDrawer open={showMenu} onClose={() => setShowMenu(false)} />
+      <NavigationDrawer nivel={nivel} open={showMenu} onClose={() => setShowMenu(false)} />
     </>
   );
 };

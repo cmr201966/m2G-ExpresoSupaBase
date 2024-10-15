@@ -39,17 +39,14 @@ const CatCategorias = () => {
   const [contenidofoto, setContenidofoto] = useState();
   const [cbvista, setCbvista] = useState(false);
   const [foto] = useState();
-  const [urlFoto, setUrlFoto] = useState("");
-  const [nick, setNick] = useState("");
-  const [show1, setShow1] = useState();
 
 
   function guardaDatosCategoria(data, i)
   {
     setDesct(data[i].desc);
-    //setCategoriat(data[i].categorianegocio);
 
   }
+
   async function init() {
     for (let prop in parsedParams) {
       sessionStorage.setItem(prop, parsedParams[prop])
@@ -70,17 +67,7 @@ const CatCategorias = () => {
       guardaDatosCategoria(resultcategorias, 0)
       setArrayCategorias(resultcategorias);
       setCategoria(buscaCategoria(resultcategorias, resultcategorias[0].categorianegocio));
-      setUrlFoto("http://localhost:3001/app_images/categorias_de_negocios/" + resultcategorias[0].categorianegocio + "/" + resultcategorias[0].categorianegocio + ".jpg");
-      let resultado = await getJpgFile({ file: "./galerias/app_images/categorias_de_negocios/" + resultcategorias[0].categorianegocio + "/" + resultcategorias[0].categorianegocio + ".jpg"});
-      resultado = await resultado.text();
-
-      if (resultado.length !== 0) {
-        //setContenidofoto(resultado);
-        setNombrefoto("");
-      } else {
-        setNombrefoto("");
-      }
-
+      buscaFoto("./galerias/app_images/categorias_de_negocios/" + resultcategorias[0].categorianegocio + "/" + resultcategorias[0].categorianegocio + ".jpg");
     }
       
     setShow(false);
@@ -175,6 +162,7 @@ const CatCategorias = () => {
   }
 
   async function buscaFoto(foto){
+    console.log(foto);
     let resultado = await getJpgFile({ file: foto});
     resultado = await resultado.text();
     if (resultado.length !== 0) {
@@ -191,16 +179,11 @@ const CatCategorias = () => {
       case "categorianegocio":
           setCategoria(e.target.value);
           guardaDatosCategoria(arrayCategorias, e.target.value)
-          //setCategoriat(buscaCategoria(arrayCategorias, arrayCategorias[e.target.value].categorianegocio));
-          setUrlFoto("http://localhost:3001/app_images/categorias_de_negocios/" + arrayCategorias[e.target.value].categorianegocio + "/" + arrayCategorias[e.target.value].categorianegocio + ".jpeg");
           setCbvista(false);
-          buscaFoto("./galerias/app_images/categorias_de_negocios/" + arrayCategorias[e.target.value].categorianegocio + "/" + arrayCategorias[e.target.value].categorianegocio + ".jpeg");
-              break;
+          buscaFoto("./galerias/app_images/categorias_de_negocios/" + arrayCategorias[e.target.value].categorianegocio + "/" + arrayCategorias[e.target.value].categorianegocio + ".jpg");
+          break;
        case "desc":
             setDesc(e.target.value);
-            break;
-       case "nick":
-            setNick(e.target.value);
             break;
        case "vista":
            setCbvista(e.target.checked);
@@ -228,14 +211,6 @@ const CatCategorias = () => {
     init()
   }, [])
 
-  function poneModal(){
-    setShow1(!show1);
-  }
-  const onModalClose1 = () => 
-    {
-      setShow1(false)
-      //document.getElementById("password").focus();
-    }
   
   return (
 
@@ -250,7 +225,7 @@ const CatCategorias = () => {
     </Modal>
 
     <div>
-      <Navbar nivel= {1}  showModal={poneModal}/>
+      <Navbar nivel= {1}/>
       <Hero>
         <div className="div-papa-categorias">
         <div className="cabeza">

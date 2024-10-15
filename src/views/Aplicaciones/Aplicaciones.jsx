@@ -48,7 +48,6 @@ const Aplicaciones = () => {
   const [contenidofoto, setContenidofoto] = useState();
   const [cbvista, setCbvista] = useState(false);
   const [foto] = useState();
-  const [show1, setShow1] = useState();
 
 
   function guardaDatosAplicacion(data, i)
@@ -265,14 +264,6 @@ const Aplicaciones = () => {
     init()
   }, [])
 
-  function poneModal(){
-    setShow1(!show1);
-  }
-  const onModalClose1 = () => 
-    {
-      setShow1(false)
-      //document.getElementById("password").focus();
-    }
   
   return (
 
@@ -286,18 +277,8 @@ const Aplicaciones = () => {
       </div>
     </Modal>
 
-    <Modal visible={show1} onClose={onModalClose1} className="cmodal" classContainer="modal-catprod">
-      <div className="cerrar-button">
-        <button className="cerrar" onClick={onModalClose1}>X</button>
-      </div>
-      <div className="main-modal">
-        <p>Provincia</p>
-        <p>Municipio</p>
-      </div>
-    </Modal>
-
     <div>
-      <Navbar nivel= {1}  showModal={poneModal}/>
+      <Navbar nivel= {1}/>
       <Hero>
         <div className="div-papa">
         <div className="cabeza">
@@ -414,7 +395,7 @@ const Aplicaciones = () => {
                       ""
                     )}
                 {(agregarsn === false && editarsn === false) ?
-                    <Tippy content="Añadir Producto">
+                    <Tippy content="Añadir Anuncio">
                       <button type="button" className="producto-button primary" onClick={agregar}>
                       <Add />
                       </button>
@@ -423,7 +404,7 @@ const Aplicaciones = () => {
                   {inicia===false?
                   <>
                   {(agregarsn === false && editarsn === false && arrayAplicaciones[aplicacion].desc!=="Desconocida") ?
-                    <Tippy content="Clic para editar el producto">
+                    <Tippy content="Clic para editar el anuncio">
                       <button type="button" className="producto-button primary" disabled={arrayAplicaciones[aplicacion].desc === "Desconocida"} onClick={editar}>
                       <Edit />
                       </button>
@@ -431,7 +412,7 @@ const Aplicaciones = () => {
                   }
 
                   {(agregarsn === false && editarsn === false  && arrayAplicaciones[aplicacion].desc!=="Desconocida") ?
-                    <Tippy content="Clic para eliminar el producto">
+                    <Tippy content="Clic para eliminar el anuncio">
                       <button type="button" className="producto-button primary" disabled={arrayAplicaciones[aplicacion].desc === "Desconocida"} onClick={eliminar}>
                       <Delete />
                       </button>
@@ -440,7 +421,7 @@ const Aplicaciones = () => {
 
                   </>:""}
                   {inicia===false && (agregarsn || editarsn) && (nick?.length!==0 && desc?.length!==0) ?
-                    <Tippy content={nick.length !== 0 && desc.length !== 0 ? "Registrar el producto" : "Complete los datos necesarios"}>
+                    <Tippy content={nick.length !== 0 && desc.length !== 0 ? "Registrar el anuncio" : "Complete los datos necesarios"}>
                       <button type="button" className="producto-button primary" onClick={nick.length !== 0 && desc.length !== 0 ? confirmar : ""}>
                       <Check />
                       </button>
@@ -448,7 +429,7 @@ const Aplicaciones = () => {
                   }
 
                   {inicia===false && (agregarsn || editarsn) ?
-                    <Tippy content="Cancelar, agregar ó editar producto">
+                    <Tippy content="Cancelar, agregar ó editar anuncio">
                       <button type="button" className="producto-button primary" onClick={tcancelar}>
                       <Close />
                       </button>

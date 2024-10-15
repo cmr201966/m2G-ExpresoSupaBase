@@ -160,7 +160,6 @@ const CatProductos = () => {
 
       if (resultado.length !== 0) {
         setContenidofoto(resultado);
-        console.log(resultproductos[0].idproducto);
         setNombrefoto("166", resultproductos[0].idproducto);
       } else {
         setNombrefoto("");
@@ -299,9 +298,6 @@ const CatProductos = () => {
 
   function recuperardatosproducto(data, i) {
     let index = buscarEnArreglo(data, data[i].idproducto, "idproducto");
-    console.log("+++++++++++++++++++++++++++", index)
-    console.log(i);
-    console.log(data)
     setProducto({ label: data[i].desc, value: index });
     setNombrecortot(data[i].nick);
     setDescripciont(data[i].desc);
@@ -310,7 +306,6 @@ const CatProductos = () => {
     setModelot(data[i].modelo);
     setTallat(data[i].talla);
     setColort(data[i].color);
-    console.log("314",data[i].domicilio, data[i].domicilio === 0 ? false : true);
     setDomiciliot(data[i].domicilio === 0 ? false : true);
     setOcupadot(data[i].ocupado === 0 ? false : true);
     setGpst(data[i].gpsSN === 1 ? true : false);
@@ -321,7 +316,6 @@ const CatProductos = () => {
     setTdistanciaMax(data[i].distanciaMax);
   }
   function restaurardatosproductosNew(data, posicion) {
-console.log("-------------------",data[posicion].desc,  posicion );   
     setProducto({ label: data[posicion].desc, value: posicion });
     setNombrecorto(data[posicion].nick);
     setDescripcion(data[posicion].desc);
@@ -371,8 +365,6 @@ console.log("-------------------",data[posicion].desc,  posicion );
   };
 
   async function confirmar() {
-    console.log(domicilio);
-    console.log(domicilio === true ? 1 : 0);
     let mproducto = 0;
     if (producto === null) {
       mproducto = 0;
@@ -586,7 +578,6 @@ console.log("-------------------",data[posicion].desc,  posicion );
                           <label className="label-datos-catproducto">
                             Producto:{" "}
                           </label>
-                          {console.log(arrayproductos)}
                           <Autocomplete
                             disablePortal
                             disabled={agregarsn || editarsn}

@@ -1,5 +1,4 @@
 import Tippy from "@tippyjs/react";
-import InfoIcon from "@mui/icons-material/Info";
 import ShoppingCartCheckoutOutlinedIcon from '@mui/icons-material/ShoppingCartCheckoutOutlined';
 import BusinessCenterOutlinedIcon from '@mui/icons-material/BusinessCenterOutlined';
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
