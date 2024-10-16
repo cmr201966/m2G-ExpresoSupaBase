@@ -42,7 +42,8 @@ const Registrarse = () => {
   const [provincia, setProvincia] = useState(13);
   const [municipio, setMunicipio] = useState(0);
   const arraydesconocido = [{ provincia: 99, municipio: 99, desc: "Desconocido" }];
-  const arrayplan= [{ plan: 0,  desc: "Gratis", tip:"(Explorar, Comprar y Reservar)" },{ plan: 1,  desc: "Estandar", tip:"Chofer plan estandar" },{ plan: 2,  desc: "Premiun", tip:"Crear Negocios Plus" }];
+  //,{ plan: 3,  desc: "administrador", tip:"Super administrador" }
+  const arrayplan= [{ plan: 0,  desc: "Gratis", tip:"(Comprar y reservar)" },{ plan: 1,  desc: "Estandar", tip:"Negocio estandar" },{ plan: 2,  desc: "Premiun", tip:"Negocio Plus" }];
   const [plan, setPlan] = useState(0);
   const [arrayprovincias, setArrayprovincias] = useState([]);
   const [arraymunicipios, setArraymunicipios] = useState([]);
@@ -51,7 +52,7 @@ const Registrarse = () => {
   const [show1, setShow1] = useState(false);
   const [cbvista, setCbvista] = useState(false);
   const [resultado, setResultado] = useState("");
-  const [resultadopw, setResultadopw] = useState("");
+  const [resultadopw] = useState("");
   const [contenido, setContenido] = useState("");
   const [inicia, setInicia] = useState(true);
   const [modifica, setModifica] = useState(false);

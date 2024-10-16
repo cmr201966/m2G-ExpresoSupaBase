@@ -25,6 +25,9 @@ import { useLocation } from "react-router-dom";
 import { getcategoriasnegociosapp } from "../../servicios/negocios";
 import { getproductoscategoria,  setproducto,  delproducto,} from "../../servicios/productos";
 import { getJpgFile } from "../../servicios/imagenes";
+import { getusuarios } from "../../servicios/registrarse";
+import { isValid } from "../../Utiles/Utiles";
+
 import "./styles.css";
 
 const CatProductos = () => {
@@ -38,15 +41,10 @@ const CatProductos = () => {
   const [contenidofoto, setContenidofoto] = useState();
   const [contenido, setContenido] = useState("");
   const [arraytnegocios, setArraytnegocios] = useState([]);
+  const [arrayUsuarios, setArrayUsuarios] = useState([]);
+  const arrayNoUsuarios = [{iduser: 99999999, desc: "Desconocido"}];
   const [arrayproductos, setArrayproductos] = useState([]);
-  const arraynoproductos = [
-    {
-      idproducto: 99999999,
-      marca: 999999,
-      desc: "Desconocido",
-      nick: "Desconocido",
-    },
-  ];
+  const arraynoproductos = [{idproducto: 99999999, marca: 999999, desc: "Desconocido", nick: "Desconocido",}];
 
   const arraynonegocios = [{ categorianegocio: 999999, desc: "Desconocido" }];
   const [marca, setMarca] = useState("");
@@ -56,6 +54,7 @@ const CatProductos = () => {
   const [latt, setLatt] = useState(0);
   const [lngt, setLngt] = useState(0);
   const [foto] = useState();
+  const [usuario, setUsuario] = useState("");
   const [nombrefoto, setNombrefoto] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [nombrecorto, setNombrecorto] = useState("");
@@ -103,7 +102,19 @@ const CatProductos = () => {
     return index;
   };
 
+  const buscarEnArregloString = (arreglo, valor, atributo) => {
+    let index = -1;
+    arreglo.forEach((item, i) => {
+      if (item[atributo].toUpperCase() === valor.toUpperCase()) {
+        index = i;
+      }
+    });
+    return index;
+  };
+
+
   async function init() {
+    console.log("1")
     setShow(true);
     for (let prop in parsedParams) {
       sessionStorage.setItem(prop, parsedParams[prop])
@@ -129,6 +140,19 @@ const CatProductos = () => {
     );
     posicion = posicion === -1 ? 0 : posicion;
     setTnegocio(posicion);
+    console.log("2")
+    let resultusuarios = await getusuarios({});
+    resultusuarios = await resultusuarios.json();
+    console.log("3")
+    if (resultusuarios.error || resultusuarios.length === 0) {
+      setArrayUsuarios(arrayNoUsuarios);
+    } 
+    else {
+      console.log(buscarEnArregloString(resultusuarios, resultusuarios[0].iduser, "iduser"));
+      setUsuario(buscarEnArregloString(resultusuarios, resultusuarios[0].iduser, "iduser"));
+      setArrayUsuarios(resultusuarios);
+    }
+
     let resultproductos = await getproductoscategoria({
       user: sessionStorage.getItem("user"),
       categoria: ttarraytnegocios[posicion].categorianegocio,
@@ -139,12 +163,7 @@ const CatProductos = () => {
       setArrayproductos(arraynoproductos);
       recuperardatosproducto(arraynoproductos, 0);
     } else {
-      const posicionProducto = buscarEnArreglo(
-        resultproductos,
-        parsedParams.idproducto,
-        "idproducto"
-      );
-
+      const posicionProducto = buscarEnArreglo(resultproductos, parsedParams.idproducto, "idproducto");
       setArrayproductos(resultproductos);
       if (
         parsedParams.idproducto !== null &&
@@ -165,6 +184,7 @@ const CatProductos = () => {
         setNombrefoto("");
       }
     }
+
     setInicia(false);
     setShow(false);
   } //init
@@ -214,11 +234,12 @@ const CatProductos = () => {
   function handleselect(e) {
     switch (e.target.id) {
       case "tnegocio":
-        setTnegocio(e.target.value);
-        getProductos(e.target.value);
-        break;
-      case "producto":
-        break;
+          setTnegocio(e.target.value);
+          getProductos(e.target.value);
+          break;
+      case "usuario":
+          setUsuario(e.target.value);
+          break;
     }
   }
 
@@ -234,6 +255,9 @@ const CatProductos = () => {
 
   function handleInput(e) {
     switch (e.target.id) {
+      case "usuario":
+        setUsuario(e.target.value);
+        break;
       case "nombrecorto":
         setNombrecorto(e.target.value);
         break;
@@ -286,6 +310,7 @@ const CatProductos = () => {
     setNombrecorto("");
     setDescripcion("");
     setPrecio(0);
+    setCbgps(true);
   }
 
   useEffect(() => {
@@ -372,7 +397,7 @@ const CatProductos = () => {
       mproducto = arrayproductos[producto?.value].idproducto;
     }
     let result = await setproducto({
-      user: sessionStorage.getItem("user"),
+      user: sessionStorage.getItem("tipouser")==='3'?arrayUsuarios[usuario].iduser:sessionStorage.getItem("user"),
       producto: mproducto,
       categoria: arraytnegocios[tnegocio].categorianegocio,
       nick: nombrecorto,
@@ -429,8 +454,6 @@ const CatProductos = () => {
         editar: editarsn ? true : false,
       });
 
-      //recuperardatosproducto(tarrayproductos, 0);
-      //productot = arrayproductos[producto?.value].idproducto;
     }
     //
     setContenido(
@@ -576,7 +599,7 @@ const CatProductos = () => {
 
                         <div className="input-area1-producto">
                           <label className="label-datos-catproducto">
-                            Producto:{" "}
+                            Producto:
                           </label>
                           <Autocomplete
                             disablePortal
@@ -634,14 +657,35 @@ const CatProductos = () => {
                     ""
                   )}
 
-                  {showMap === false || showMap === true ? (
-                    <>
                       {agregarsn || editarsn ? (
                         <>
                           <div className="container-producto-datos">
                             <div className="label-datos-catproducto-1 strong">
                               Datos del nuevo producto{" "}
                             </div>
+                            {sessionStorage.getItem("tipouser")==='3'?
+                            <div className="input-area1-producto">
+                            <label className="label-datos-catproducto">
+                                Dueño:
+                           </label>
+                           <select
+                             className="select-usuario"
+                             id="usuario"
+                             onChange={handleselect}
+                             value={usuario}
+                           >
+                            {arrayUsuarios.map((item, i) => {
+                              return (
+                                <option key={i} value={i}>
+                                  {item.nombre}
+                                </option>
+                              );
+                            })}
+                          </select>
+                        </div>:""
+                        }
+
+
                             <div className="input-area1-producto">
                               <label className="label-datos-catproducto">
                                 *Nombre:
@@ -824,10 +868,6 @@ const CatProductos = () => {
                       ) : (
                         ""
                       )}
-                    </>
-                  ) : (
-                    ""
-                  )}
 
                   <div className="producto-grupo-button">
 
