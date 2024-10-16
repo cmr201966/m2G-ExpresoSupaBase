@@ -9,11 +9,13 @@ import Delete from "@mui/icons-material/Delete";
 import Close from "@mui/icons-material/Close";
 import Edit from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
+import CircularProgress from "@mui/material/IconButton";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useNavigate } from "react-router-dom";
 import Modal from "../../components/Modal/Modal";
+import Snackbar from '@mui/material/Snackbar';
 import { useLocation } from "react-router-dom";
 import { getCategoriasNegocios, setCategoriasNegocios } from "../../servicios/catalogos";
 import { getJpgFile  } from "../../servicios/imagenes";
@@ -24,36 +26,33 @@ const CatCategorias = () => {
   const location = useLocation();
   const parsedParams = {}
   const [show, setShow] = useState(false);
+  const [open, setOpen] = useState(false);
   const [desc, setDesc] = useState("");
   const [desct, setDesct] = useState("");
   const [descold, setDescold] = useState("");
   const [inicia, setInicia] = useState(true);
   const [agregarsn, setAgregarsn] = useState(false);
   const [editarsn, setEditarsn] = useState(false);
+  const [eliminarsn, setEliminarsn] = useState(false);
   const [categoria, setCategoria] = useState(0);
   const [arrayCategorias, setArrayCategorias] = useState([]);
   const arraynoCategorias = [{ categorianegocio: 99999999, desc: "Desconocida" }];
   // Estados para almacenar los datos del negocio activo
   const [contenido, setContenido] = useState("");
+  const [message, setMessage] = useState("");
   const [nombrefoto, setNombrefoto] = useState("");
   const [contenidofoto, setContenidofoto] = useState();
   const [cbvista, setCbvista] = useState(false);
   const [foto] = useState();
 
 
-  function guardaDatosCategoria(data, i)
-  {
-    setDesct(data[i].desc);
-
-  }
-
   async function init() {
     for (let prop in parsedParams) {
       sessionStorage.setItem(prop, parsedParams[prop])
     }
 
-    setContenido("Preparando condiciones...");
-    setShow(true);
+    setMessage("Preparando condiciones...");
+    setOpen(true);
     let resultcategorias = await getCategoriasNegocios({});
     resultcategorias = await resultcategorias.json();
 
@@ -70,9 +69,14 @@ const CatCategorias = () => {
       buscaFoto("./galerias/app_images/categorias_de_negocios/" + resultcategorias[0].categorianegocio + "/" + resultcategorias[0].categorianegocio + ".jpg");
     }
       
+    setOpen(false);
     setShow(false);
     setInicia(false);
-  } // init
+  } 
+
+  function guardaDatosCategoria(data, i)
+  {setDesct(data[i].desc)}
+
 
   useEffect(() => {
     const localParams = location.search.substring(1).split("&");
@@ -112,6 +116,7 @@ const CatCategorias = () => {
        setAgregarsn(true);
        setEditarsn(false);
        }
+
     const onModalClose = () => 
     {
     setShow(false)
@@ -147,22 +152,20 @@ const CatCategorias = () => {
     let result = await setCategoriasNegocios({categorianegocio: arrayCategorias[categoria].categorianegocio, desc: desc, descold, link: "productos", inserta: agregarsn, modifica: editarsn, contenidofoto });
     result = await result.json();
     if (result.error!==undefined){
-        setContenido(result.error);
-        setShow(true);
+        setMessage(result.error);
+        setOpen(true);
   
     }
     else{
       
-        setContenido("La aplicacion se agrego correctamente.");
-        setShow(true);
-        //limpiardatosaplicacion;
+        setMessage("La categoria se agrego correctamente.");
+        setOpen(true);
   
     }
     tcancelar();
   }
 
   async function buscaFoto(foto){
-    console.log(foto);
     let resultado = await getJpgFile({ file: foto});
     resultado = await resultado.text();
     if (resultado.length !== 0) {
@@ -213,8 +216,15 @@ const CatCategorias = () => {
 
   
   return (
-
     <>    
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        autoHideDuration={4000}
+        open={open}
+        onClose={()=>setOpen(!open)}
+        message={message}
+      />
+
     <Modal visible={show} onClose={onModalClose} className="cmodal wmodal modal-content-categorias" classContainer="modal-catprod">
       <div className="cerrar-button">
         <button className="cerrar" onClick={onModalClose}>X</button>
@@ -267,17 +277,6 @@ const CatCategorias = () => {
                           })}
                         </select>
                       </div>:""}
-{/*
-                      {inicia===false && (agregarsn || editarsn)?
-                         <input className="input-area-categorias"
-                                id="desc"
-                                value={desc}
-                                onChange={handleInput}
-                                type="text"
-                                required
-                         />:""
-                      }
-*/}
                  </div>                 
               </div> 
               {nombrefoto !== "" && cbvista ? (
@@ -285,7 +284,6 @@ const CatCategorias = () => {
                               <img
                                 className="img-producto"
                                 src={contenidofoto}
-/*                                src={urlFoto}*/
                               />
                           </div>
                           ) : (

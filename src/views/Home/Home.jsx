@@ -66,7 +66,7 @@ const Home = () => {
       setCategorys(category1);
       setUsers(users1);
       setNombres(nombres1);
-      let result = await getCategoriasNew({user: sessionStorage.getItem("user"),});
+      let result = await getCategoriasNew({user: sessionStorage.getItem("user"), tipouser: sessionStorage.getItem("tipouser")});
       result1 = await result.json();
       let arrayContenidoFoto=[];
       for(let i=0;i<result1.length; i+=1){

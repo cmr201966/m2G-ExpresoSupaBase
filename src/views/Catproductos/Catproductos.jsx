@@ -6,6 +6,7 @@ import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Map from "../../components/Map/MapBox";
 import Tippy from "@tippyjs/react";
 import Modal from "../../components/Modal/Modal";
+import Snackbar from '@mui/material/Snackbar';
 import Navbar from "../../components/Navbar/Navbar";
 import Hero from "../../layouts/Hero/Hero";
 import { useNavigate } from "react-router-dom";
@@ -26,7 +27,6 @@ import { getcategoriasnegociosapp } from "../../servicios/negocios";
 import { getproductoscategoria,  setproducto,  delproducto,} from "../../servicios/productos";
 import { getJpgFile } from "../../servicios/imagenes";
 import { getusuarios } from "../../servicios/registrarse";
-import { isValid } from "../../Utiles/Utiles";
 
 import "./styles.css";
 
@@ -75,6 +75,7 @@ const CatProductos = () => {
   const [lng, setLng] = useState(-75.829090519);
   const [lat, setLat] = useState(20.0217583);
   const [ocupado, setOcupado] = useState(true);
+  const [open, setOpen] = useState(false);
 
   //Estados para recuperar los datos del producto
 
@@ -358,6 +359,10 @@ const CatProductos = () => {
     setDistanciaMax(data[posicion].distanciaMax);
   }
 
+  function handleClose(){
+    setOpen(!open);
+  }
+
   function restaurardatosproductos() {
     //setNombrefoto(productot);
     setNombrecorto(nombrecortot);
@@ -455,11 +460,12 @@ const CatProductos = () => {
       });
 
     }
-    //
+    /*
     setContenido(
       "El producto '" + descripcion + "' se registró correctamente."
     );
-    setShow1(true);
+    */
+    setOpen(true);
     setShowMap(false);
     setAgregarsn(false);
     setEditarsn(false);
@@ -513,6 +519,14 @@ const CatProductos = () => {
 
   return (
     <>
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        autoHideDuration={5000}
+        open={open}
+        onClose={handleClose}
+        message={"El producto '" + descripcion + "' se registró correctamente."}
+      />
+
       <Modal
         visible={show1}
         onClose={onModalClose1}
@@ -540,6 +554,7 @@ const CatProductos = () => {
           )}
         </div>
       </Modal>
+      
       <div>
         <Navbar />
         <Hero>
