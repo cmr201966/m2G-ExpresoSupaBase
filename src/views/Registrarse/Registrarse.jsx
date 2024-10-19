@@ -7,12 +7,14 @@ import Tippy from "@tippyjs/react";
 import Map from "../../components/Map/MapBox";
 import Navbar from "../../components/Navbar/Navbar"
 import Modal from "../../components/Modal/Modal";
+import Snackbar from '@mui/material/Snackbar';
+
 // Iconos
 import Check from "@mui/icons-material/Check";
 import Close from "@mui/icons-material/Close";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import VisibilityIcon from '@mui/icons-material/Visibility';
-import MapIcon from "@mui/icons-material/Map";
+import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
 
 // layouts
 import Hero from "../../layouts/Hero/Hero";
@@ -24,17 +26,18 @@ import ArrowBack from "@mui/icons-material/ArrowBack";
 import { getprovincias, getmunicipios  } from "../../servicios/catalogos";
 import { getdatosiduser, setregistrarse  } from "../../servicios/registrarse";
 import { getjpg  } from "../../servicios/imagenes";
+import { isValid } from "../../Utiles/Utiles";
 
 const Registrarse = () => {
   const location = useLocation();
   const parsedParams = {}
   const [user, setUser] = useState("");
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
   const [password, setPassword] = useState();
   const [rpassword, setRpassword] = useState();
   const [nombre, setNombre] = useState("");
-  const [fijo, setFijo] = useState("");
   const [celular, setCelular] = useState("");
-  const [email, setEmail] = useState("");
   const [foto] = useState();
   const [nombrefoto, setNombrefoto] = useState("");
   const [contenidofoto, setContenidofoto] = useState();
@@ -43,7 +46,7 @@ const Registrarse = () => {
   const [municipio, setMunicipio] = useState(0);
   const arraydesconocido = [{ provincia: 99, municipio: 99, desc: "Desconocido" }];
   //,{ plan: 3,  desc: "administrador", tip:"Super administrador" }
-  const arrayplan= [{ plan: 0,  desc: "Gratis", tip:"(Comprar y reservar)" },{ plan: 1,  desc: "Estandar", tip:"Negocio estandar" },{ plan: 2,  desc: "Premiun", tip:"Negocio Plus" }];
+  const arrayplan= [{ plan: 0,  desc: "Gratis", tip:"(Comprar y reservar)" },{ plan: 1,  desc: "Estandar", tip:"Negocio estandar" },{ plan: 2,  desc: "Premiun", tip:"Negocio Plus" },{ plan: 3,  desc: "Administrador", tip:"Administrador" }];
   const [plan, setPlan] = useState(0);
   const [arrayprovincias, setArrayprovincias] = useState([]);
   const [arraymunicipios, setArraymunicipios] = useState([]);
@@ -53,7 +56,7 @@ const Registrarse = () => {
   const [cbvista, setCbvista] = useState(false);
   const [resultado, setResultado] = useState("");
   const [resultadopw] = useState("");
-  const [contenido, setContenido] = useState("");
+  const [contenido] = useState("");
   const [inicia, setInicia] = useState(true);
   const [modifica, setModifica] = useState(false);
   const [showMap, setShowMap] = useState(false);
@@ -68,6 +71,7 @@ const Registrarse = () => {
     setShow1(true);
     setResultado(arrayplan[0].tip);
     setModifica(!(parsedParams.inserta==="true"));
+    console.log(parsedParams);
     
     let ttprovincias=[];
     let resultprovincia = await getprovincias({});
@@ -116,16 +120,13 @@ const Registrarse = () => {
     }
 
     setMunicipio(ttmunicipios[0].municipio);
-    if (sessionStorage.getItem("user") !== 'null' && sessionStorage.getItem("user") !== null)
+    if (isValid(sessionStorage.getItem("user")) === true && (parsedParams.where!=='true'))
     {
-
       let result = await getdatosiduser({user: sessionStorage.getItem("user")});
       result = await result.json();
       setUser(result[0].iduser);
       setPassword(result[0].pw);
       setNombre(result[0].nombre);
-      setEmail(result[0].email);
-      setFijo(result[0].fijo);
       setPlan(result[0].tipouser);
       setCelular(result[0].celular);
       setProvincia(result[0].provincia);
@@ -166,9 +167,9 @@ const Registrarse = () => {
   }, [location])
 
   useEffect(() => {
-    init()
-  }, [])
-
+    init();
+  }, [location]);
+  
 
   function provinciachange(cambia, provinciadata, municipiodata)
   {
@@ -181,6 +182,12 @@ const Registrarse = () => {
           ttmunicipio=arraydesconocido;
        }
        setMunicipio(0);
+       setUser("");
+       setPassword("");
+       setRpassword("");
+       setNombre("");
+       setCelular("");
+     
 
   }
   function tcancelar() {
@@ -212,12 +219,15 @@ const Registrarse = () => {
   }
 
   function handleInput(e) {
+    console.log(arrayplan);
+    console.log(plan);
     setResultado(arrayplan[plan].tip);
     switch (e.target.id) {
       case "user":
         setUser(e.target.value);
         break;
       case "password":
+        console.log(e.target.id);
         setPassword(e.target.value);
         break;
       case "rpassword":
@@ -225,12 +235,6 @@ const Registrarse = () => {
         break;
       case "nombre":
         setNombre(e.target.value);
-        break;
-      case "email":
-        setEmail(e.target.value);
-        break;
-      case "fijo":
-        setFijo(e.target.value);
         break;
       case "celular":
         setCelular(e.target.value);
@@ -248,8 +252,9 @@ const Registrarse = () => {
 
   async function confirmar() {
     if (password !== rpassword ) {
-      setContenido("Contraseña incorrecta");
-      setShow(true);
+      setMessage("Contraseña incorrecta");
+      setOpen(true);
+  
       document.getElementById("password").focus();
     }
     else
@@ -258,17 +263,18 @@ const Registrarse = () => {
       {
         setDesc("");
       }
-      let response = await setregistrarse({user, nombre, password, email, celular, fijo, provincia:provincia,municipio:municipio, contenidofoto,modifica,plan, lat, lng});
+      let response = await setregistrarse({user, nombre, password, celular, provincia:provincia,municipio:municipio, contenidofoto,modifica,plan, lat, lng});
       response = await response.json();
       if (response.error) 
       {
-        setContenido(response.error);
-        setShow(true);
+        setMessage(response.error);
+        setOpen(true);
+          
       }
       else {
-        setContenido("El usuario se registró correctamente.");        
-        setShow(true);
-//        tcancelar();
+        setMessage("El usuario se registró correctamente.");
+        setOpen(true);
+        tcancelar();
      }
    } 
   } 
@@ -286,7 +292,6 @@ const Registrarse = () => {
   }
   
   const lngLatSelected = (point, lngLat) => {
-    console.log(lngLat.lng, lngLat.lat)
     setLng(lngLat.lng);
     setLat(lngLat.lat);
   };
@@ -299,6 +304,14 @@ const Registrarse = () => {
 
   return (
     <>
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        autoHideDuration={4000}
+        open={open}
+        onClose={()=>setOpen(!open)}
+        message={message}
+      />
+
     <Modal visible={show} onClose={onModalClose} className="cmodal" classContainer="modal-catprod">
       <div className="cerrar-button">
         <button className="cerrar" onClick={onModalClose}>X</button>
@@ -367,19 +380,6 @@ const Registrarse = () => {
               resultadopw !== "" && <label className="resultadopw-registrarse">{resultadopw}</label>
             }
 
-            {/*
-            <div className="input-area-registrarse">
-              <label className="email">*Email:</label>
-              <input
-                id="email"
-                value={email}
-                onChange={handleInput}
-                type="text"
-                required
-              />
-            </div>
-            */}      
-
             <div className="input-area-registrarse">
               <label className="celular">* Celular:</label>
               <input
@@ -437,6 +437,7 @@ const Registrarse = () => {
             </div>
 
             <div className="grupo-button-registrarse">
+                     {nombrefoto!==""?
                      <Tippy content="Vista previa">
                         <button
                           type="button"
@@ -445,7 +446,8 @@ const Registrarse = () => {
                         >
                           <VisibilityIcon />
                         </button>
-                      </Tippy>
+                      </Tippy>:""
+                    }
                
                          <label className="producto-button primary label-photo">
                           <input
@@ -469,16 +471,17 @@ const Registrarse = () => {
                               className="negocio-button primary"
                               onClick={() => setShowMap(!showMap)}
                             >
-                              <MapIcon />
+                              <PlaceOutlinedIcon/>
                             </button>
                           </Tippy>
                         ) : (
                           ""
                         )}
-                    
+              {user!=="" && password!=="" && rpassword!=="" && celular!==""?
               <button type="button" className="producto-button primary " onClick={confirmar}>
               <Check />
-              </button>
+              </button>:""
+              }
               <button type="button" className="producto-button primary" onClick={tcancelar}>
               <Close />
               </button>

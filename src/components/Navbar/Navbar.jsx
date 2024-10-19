@@ -14,8 +14,10 @@ import SettingsIcon from '@mui/icons-material/Settings';
 import PersonIcon from '@mui/icons-material/Person';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';// styles
 import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
+import { useLocation } from "react-router-dom";
 import { setconfig, getconfig  } from "../../servicios/config";
 import { getprovincias, getmunicipios } from "../../servicios/catalogos";
 import { isValid } from "../../Utiles/Utiles";
@@ -26,8 +28,9 @@ import "./styles.css";
 
 const Navbar = (props) => {
   const navigate = useNavigate();
+  const location = useLocation();
   const { nivel } = props;
-  const foto1=      "http://localhost:3001/app_images/destodo/dtlogo.jpg";
+  const foto1=      "http://localhost:3001/app_images/destodo/logo3.jpg";
   const [showMenu, setShowMenu] = useState(false);
 
   const [show1, setShow1] = useState(false);
@@ -73,7 +76,7 @@ const Navbar = (props) => {
       tooltips: "Crear una cuenta de usuario",
       depende: 2, 
       login: 0,
-      inserta: "inserta=true",
+      inserta: "inserta=true&where=false",
       tipo:0
     },
     { label: "Categorias", to: "/categorias", tooltips: "Productos de una categoria", depende: 0, login: 0, tipo:0 },
@@ -174,7 +177,7 @@ const Navbar = (props) => {
 
   function updateUserInfo(e){
     e.preventDefault()
-    navigate(`/registrarse?inserta=false`);
+    navigate(`/registrarse?inserta=false&where=false`);
 
   }
   function toggleMenu() {
@@ -197,7 +200,7 @@ const Navbar = (props) => {
   }
 
   function categorias(){
-    navigate(`/catcategorias?`);
+    navigate(`/categorias?`);
   }
 
   const onModalClose = () => 
@@ -233,11 +236,13 @@ const Navbar = (props) => {
       setShow1(false);
     }
   
+function registrarseWhere(){
+  navigate("/registrarse?inserta=true&where=true")
+}
 
-
-  useEffect(() => {
-    init();
-  }, []);
+useEffect(() => {
+  init();
+}, [location]);
 
   return (
     <>
@@ -342,6 +347,20 @@ const Navbar = (props) => {
               </Tippy>:""
 
               }
+             {Number(sessionStorage.getItem("tipouser"))===3?
+              <Tippy content={"Registrarse un usuario"}>
+                 <IconButton
+                   sx={{ padding: 0 }}
+                   id="user"
+                   color="inherit"
+                   onClick={registrarseWhere}
+                 >
+                 <PersonAddAlt1Icon />
+                 </IconButton>
+              </Tippy>:""
+
+              }
+
               <IconButton
                 sx={{ padding: 0 }}
                 id="toggle-b"

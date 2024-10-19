@@ -46,7 +46,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <Route exact path="/whatsapp" element={<Whatsapp />} />
             <Route exact path="/ubicacion" element={<Ubicacion />} />
             <Route exact path="/categorias" element={<Categorias />} />
-            <Route exact path="/catcategorias" element={<CatCategorias />} />
+            <Route exact path="/categorias" element={<CatCategorias />} />
           </Routes>
         </BrowserRouter>
       </ThemeProvider>

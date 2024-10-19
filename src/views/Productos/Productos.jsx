@@ -508,11 +508,11 @@ function contains(lat, lon, bbox) {
                 );
               }}
             >
-              <ArrowBack className="flecha"/>
+            <ArrowBack className="flecha"/>
             </IconButton>
+            <h4 className="h3-1-catproductos-cabeza">Atrás</h4>
 
             <h4 className="h3-cabeza-productos-1">
-              {nombre} - ({cantidadproductos})
             </h4>{(puntosState === 2 && viewCarrito && showMap===true) || (showMap === false && puntos.length !== 0 && viewCarrito)? (
                 <Tippy content={`Ordenar un producto`}>
                 <button
@@ -520,7 +520,7 @@ function contains(lat, lon, bbox) {
                   className="car negocio-button primary"
                   onClick={shooping}
                 >
-                  <ShoppingCartOutlinedIcon />
+            <ShoppingCartOutlinedIcon />
                 </button>
               </Tippy>
             ) : (
@@ -557,10 +557,6 @@ function contains(lat, lon, bbox) {
               <CircularProgress color="checkbox" />
             </Box>
           ) : null}
-          {console.log("Mapa:", showMap)}
-          {console.log("MasCerca:", mascerca)}
-          {console.log("VerOtraVez:", verOtraVez)}
-          {console.log((showMap === true && mascerca > 0 && mascerca != 999999) || (verOtraVez === true && mascerca > 0 && mascerca != 999999))}
           {(showMap === true && mascerca > 0 && mascerca != 999999) || (verOtraVez === true && mascerca > 0 && mascerca != 999999) ? (
             <>
               <div className="result">
@@ -574,7 +570,9 @@ function contains(lat, lon, bbox) {
           ) : (
             ""
           )}
-
+          <div className="productos-nombre">
+              <p >{nombre} - ({cantidadproductos})</p>
+          </div>
           {inicia === false && showMap !== true ? (
             <div className="product-flex">
               {result.map((item, i) => (

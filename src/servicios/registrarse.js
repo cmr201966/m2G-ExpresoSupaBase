@@ -1,7 +1,6 @@
 import config from "../config";
 
 export async function makeRequest(url, body, method = "POST") {
-  console.log("51", body)
   return await fetch(url, {
     method,
     headers: {
@@ -20,6 +19,5 @@ export async function setregistrarse(body) {
 }
 
 export async function getusuarios(body) {
-  console.log("50")
   return makeRequest("http://localhost:3001/getusuarios", body);
 }

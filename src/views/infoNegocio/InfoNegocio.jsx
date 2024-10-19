@@ -28,8 +28,8 @@ const InfoNegocio = () => {
   const [contenidofoto, setContenidofoto] = useState();
   const [idnegocio, setIdnegocio]=useState("");
   const [negocio, setNegocio]=useState("");
-  const [email, setEmail]=useState("");
   const [celular, setCelular]=useState("");
+  const [tipoUser, setTipoUser]=useState("Desconocido");
   const [provincia, setProvincia]=useState("");
   const [municipio, setMunicipio]=useState("");
   const [inicio, setInicio]=useState(true);
@@ -66,9 +66,14 @@ const InfoNegocio = () => {
       setArrayFotoInfo(tarray);        
     }
     if (result.length !== 0 && result.error === undefined) {
+      console.log(result[0].tipouser, result[0].tipouser===1);
+      if (result[0].tipouser===0) setTipoUser("Gratis");
+      if (result[0].tipouser===1) {setTipoUser("Estandar");console.log("1")}
+      if (result[0].tipouser===2) setTipoUser("Premiun");
+      if (result[0].tipouser===3) setTipoUser("Administrador");
+
       setIdnegocio(parsedParams.idnegocio);
       setNegocio(result[0].negocio);
-      setEmail(result[0].email);
       setCelular(result[0].celular);
       setProvincia(result[0].provincia);
       setMunicipio(result[0].municipio);
@@ -147,10 +152,10 @@ useEffect(() => {
                  </div>
                  <div className="parrafo">
                      <p>
-                       Email:
+                       Plan:
                      </p>
                      <p>
-                       {email}
+                       {tipoUser}
                      </p>
                  </div>
                  <div className="parrafo">

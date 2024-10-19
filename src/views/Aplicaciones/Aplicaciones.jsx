@@ -14,10 +14,13 @@ import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useNavigate } from "react-router-dom";
 import Modal from "../../components/Modal/Modal";
+import Snackbar from '@mui/material/Snackbar';
 import { useLocation } from "react-router-dom";
 import { getAplicaciones, setAplicaciones } from "../../servicios/aplicaciones";
 import { getcategoriasnegocios } from "../../servicios/negocios";
 import { getJpgFile  } from "../../servicios/imagenes";
+import { delAnuncio  } from "../../servicios/catalogos";
+import { buscarEnArreglo, buscarEnArregloString } from "../../Utiles/Utiles";
 
 
 const Aplicaciones = () => {
@@ -25,11 +28,13 @@ const Aplicaciones = () => {
   const location = useLocation();
   const parsedParams = {}
   const [show, setShow] = useState(false);
+  const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
   const [nick, setNick] = useState("");
   const [desc, setDesc] = useState("");
   const [ttip, setTtip] = useState("");
   const [arrayCategorias, setArrayCategorias] = useState([]);
-  const arraynoCategorias = [{ idcategoria: 8, desc: "Desconocida" }];
+  const arraynoCategorias = [{ categorianegocio: 8, desc: "Desconocida" }];
   const [categoria, setCategoria] = useState("");
   const [inicia, setInicia] = useState(true);
   const [agregarsn, setAgregarsn] = useState(false);
@@ -43,24 +48,12 @@ const Aplicaciones = () => {
   const [desct, setDesct] = useState("");
   const [ttipt, setTtipt] = useState("");
   const [contenido, setContenido] = useState("");
-  const [categoriat, setCategoriat] = useState(9999);
   const [nombrefoto, setNombrefoto] = useState("");
   const [contenidofoto, setContenidofoto] = useState();
   const [cbvista, setCbvista] = useState(false);
   const [foto] = useState();
 
 
-  function guardaDatosAplicacion(data, i)
-  {
-    setArrayAplicaciones(data);
-    recuperardatosproducto(data, 0);
-    setNick(data[0].idapp);
-    setDesc(data[0].desc);
-    setTtip(data[0].tooltip);
-    setCategoria(data[0].idcategoria);
-    setAplicacion(0);
-
-  }
   async function init() {
     for (let prop in parsedParams) {
       sessionStorage.setItem(prop, parsedParams[prop])
@@ -69,20 +62,21 @@ const Aplicaciones = () => {
     if ((sessionStorage.getItem("login")===1 || sessionStorage.getItem("login")==='1') && (sessionStorage.getItem("user")==='null' || sessionStorage.getItem("user")===null)){
       navigate(`/login?login=1&regreso=${sessionStorage.getItem("regreso")}`);
   }
+
     setContenido("Preparando condiciones...");
     setShow(true);
+
     let result = await getAplicaciones({});
     result = await result.json();
-
     if (result.error || result.length === 0) 
     {
       setArrayAplicaciones(arraynoaplicaciones);
-      setAplicacion(arraynoaplicaciones[0].id);
+      setAplicacion(buscarEnArreglo(arraynoaplicaciones, arraynoaplicaciones[0].id, "id"));
     }
     else 
     {
       guardaDatosAplicacion(result, 0)
-      setCategoria(result[0].idcategoria);
+      setAplicacion(buscarEnArreglo(result, result[0].id, "id"));
   
     }
      let resultcategorias = await getcategoriasnegocios({});
@@ -91,12 +85,16 @@ const Aplicaciones = () => {
       if (resultcategorias.error || resultcategorias.length === 0) 
       {
         setArrayCategorias(arraynoCategorias);
+        setCategoria(buscarEnArreglo(arraynoCategorias, arraynoCategorias[0].categorianegocio, "categorianegocio"));
       }
       else 
       {
         setArrayCategorias(resultcategorias);
         if (result.length>0){
-           setCategoriat(buscaCategoria(resultcategorias, result[0].idcategoria));
+          console.log(buscarEnArreglo(result, result[0].id, "id"))
+          console.log(result[buscarEnArreglo(result, result[0].id, "id")].idcategoria);
+          console.log(result);
+           setCategoria(buscarEnArreglo(resultcategorias, result[buscarEnArreglo(result, result[0].id, "id")].idcategoria, "categorianegocio"));
            let resultado = await getJpgFile({ file: "./galerias/app_images/aplicaciones/" + result[0].id + "/" + result[0].id + ".jpg"});
            resultado = await resultado.text();
      
@@ -104,16 +102,30 @@ const Aplicaciones = () => {
              setContenidofoto(resultado);
              setNombrefoto("");
            } else {
-             setNombrefoto("");
+             setNombrefoto("123");
            }
  
         }        
           }
-  
-      
+        
     setShow(false);
     setInicia(false);
   } // init
+
+  function guardaDatosAplicacion(data, i)
+  {
+    console.log(data);
+    console.log(arrayCategorias)
+    setArrayAplicaciones(data);
+    recuperardatosproducto(data, i);
+    setNick(data[i].idapp);
+    setDesc(data[i].desc);
+    setTtip(data[i].tooltip);
+    setCategoria(buscarEnArreglo(arrayCategorias, data[i].idcategoria, "categorianegocio"));
+    setAplicacion(i);
+
+  }
+
 
   useEffect(() => {
     const localParams = location.search.substring(1).split("&");
@@ -146,7 +158,7 @@ const Aplicaciones = () => {
     setNick(nickt);
     setDesc(desct);
     setTtip(ttipt);
-    setCategoria(categoriat);
+    //setCategoria(categoriat);
   }
     
   function tcancelar() 
@@ -184,6 +196,7 @@ const Aplicaciones = () => {
     {
       setEliminarsn(true);
       setContenido("¿Está seguro que desea eliminar a " + arrayAplicaciones[aplicacion].desc + "?");
+      setShow(true);
     }
 
     async function confirmar() {
@@ -192,14 +205,12 @@ const Aplicaciones = () => {
       result = await result.json();
 
     if (result.ok!=="ok"){
-        setContenido("Error al agregar la aplicacion");
-        setShow(true);
-  
-    }
+        setMessage("Error al agregar la aplicacion")
+        setOpen(true);
+      }
     else{
-      
-        setContenido("La aplicacion se agrego correctamente.");
-        setShow(true);
+        setMessage("La aplicacion se agrego correctamente.")
+        setOpen(true);       
         limpiardatosaplicacion;
   
     }
@@ -226,7 +237,7 @@ const Aplicaciones = () => {
       case "idapp":
           setAplicacion(e.target.value);
           recuperardatosproducto(arrayAplicaciones, e.target.value);
-          setCategoriat(buscaCategoria(arrayCategorias, arrayAplicaciones[e.target.value].idcategoria));
+          setCategoria(buscarEnArreglo(arrayCategorias, arrayAplicaciones[e.target.value].idcategoria, "categorianegocio"));
           buscaFoto("./galerias/app_images/aplicaciones/" + arrayAplicaciones[e.target.value].id + "/" + arrayAplicaciones[e.target.value].id + ".jpg");
               break;
        case "desc":
@@ -259,6 +270,14 @@ const Aplicaciones = () => {
     setCbvista(true);
   };
 
+  async function sino() {
+    await delAnuncio({ id: arrayAplicaciones[aplicacion].id });
+    setMessage("Se eliminó el anuncio " + arrayAplicaciones[aplicacion].desc);
+    setOpen(true);
+    setShow(false);
+    setEliminarsn(false);
+    init;
+  }
 
   useEffect(() => {
     init()
@@ -268,14 +287,41 @@ const Aplicaciones = () => {
   return (
 
     <>    
-    <Modal visible={show} onClose={onModalClose} className="cmodal wmodal" classContainer="modal-catprod">
-      <div className="cerrar-button">
-        <button className="cerrar" onClick={onModalClose}>X</button>
-      </div>
-      <div className="main-modal">
-           <label>{contenido}</label>
-      </div>
-    </Modal>
+      <Snackbar
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+        autoHideDuration={4000}
+        open={open}
+        onClose={()=>setOpen(!open)}
+        message={message}
+      />
+
+      <Modal
+        visible={show}
+        onClose={onModalClose}
+        className="cmodal wmodal"
+        classContainer="modal-catalogo-productos"
+      >
+        <div className="cerrar-button">
+          <button className="cerrar" onClick={onModalClose}>
+            X
+          </button>
+        </div>
+        <div className="main-modal">
+          <label>{contenido}</label>
+          {eliminarsn ? (
+            <>
+              <button className="si" onClick={sino}>
+                Si
+              </button>
+              <button className="no" onClick={onModalClose}>
+                No
+              </button>
+            </>
+          ) : (
+            ""
+          )}
+        </div>
+      </Modal>
 
     <div>
       <Navbar nivel= {1}/>
@@ -322,7 +368,6 @@ const Aplicaciones = () => {
                           })}
                         </select>
                       </div>:""}
-
 
                       {inicia===false && (agregarsn || editarsn)?
                          <>

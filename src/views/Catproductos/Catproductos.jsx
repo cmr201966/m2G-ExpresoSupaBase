@@ -27,6 +27,7 @@ import { getcategoriasnegociosapp } from "../../servicios/negocios";
 import { getproductoscategoria,  setproducto,  delproducto,} from "../../servicios/productos";
 import { getJpgFile } from "../../servicios/imagenes";
 import { getusuarios } from "../../servicios/registrarse";
+import { buscarEnArreglo, buscarEnArregloString } from "../../Utiles/Utiles";
 
 import "./styles.css";
 
@@ -36,10 +37,12 @@ const CatProductos = () => {
   const parsedParams = {};
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
+  const [open, setOpen] = useState(false);
   const [showGalerias, setShowGalerias] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [contenidofoto, setContenidofoto] = useState();
   const [contenido, setContenido] = useState("");
+  const [message, setMessage] = useState("");
   const [arraytnegocios, setArraytnegocios] = useState([]);
   const [arrayUsuarios, setArrayUsuarios] = useState([]);
   const arrayNoUsuarios = [{iduser: 99999999, desc: "Desconocido"}];
@@ -75,11 +78,9 @@ const CatProductos = () => {
   const [lng, setLng] = useState(-75.829090519);
   const [lat, setLat] = useState(20.0217583);
   const [ocupado, setOcupado] = useState(true);
-  const [open, setOpen] = useState(false);
 
   //Estados para recuperar los datos del producto
 
-  const [productot] = useState("");
   const [nombrecortot, setNombrecortot] = useState("");
   const [descripciont, setDescripciont] = useState("");
   const [preciot, setPreciot] = useState("");
@@ -93,29 +94,8 @@ const CatProductos = () => {
   const [tallat, setTallat] = useState("");
   const [colort, setColort] = useState("");
 
-  const buscarEnArreglo = (arreglo, valor, atributo) => {
-    let index = -1;
-    arreglo.forEach((item, i) => {
-      if (Number(item[atributo]) === Number(valor)) {
-        index = i;
-      }
-    });
-    return index;
-  };
-
-  const buscarEnArregloString = (arreglo, valor, atributo) => {
-    let index = -1;
-    arreglo.forEach((item, i) => {
-      if (item[atributo].toUpperCase() === valor.toUpperCase()) {
-        index = i;
-      }
-    });
-    return index;
-  };
-
 
   async function init() {
-    console.log("1")
     setShow(true);
     for (let prop in parsedParams) {
       sessionStorage.setItem(prop, parsedParams[prop])
@@ -141,21 +121,20 @@ const CatProductos = () => {
     );
     posicion = posicion === -1 ? 0 : posicion;
     setTnegocio(posicion);
-    console.log("2")
+
     let resultusuarios = await getusuarios({});
     resultusuarios = await resultusuarios.json();
-    console.log("3")
     if (resultusuarios.error || resultusuarios.length === 0) {
       setArrayUsuarios(arrayNoUsuarios);
     } 
     else {
-      console.log(buscarEnArregloString(resultusuarios, resultusuarios[0].iduser, "iduser"));
       setUsuario(buscarEnArregloString(resultusuarios, resultusuarios[0].iduser, "iduser"));
       setArrayUsuarios(resultusuarios);
     }
 
     let resultproductos = await getproductoscategoria({
       user: sessionStorage.getItem("user"),
+      tipouser: sessionStorage.getItem("tipouser"),
       categoria: ttarraytnegocios[posicion].categorianegocio,
       producto,
     });
@@ -166,6 +145,7 @@ const CatProductos = () => {
     } else {
       const posicionProducto = buscarEnArreglo(resultproductos, parsedParams.idproducto, "idproducto");
       setArrayproductos(resultproductos);
+      setProducto({ label: resultproductos[0].desc, value: 0 });
       if (
         parsedParams.idproducto !== null &&
         parsedParams.idproducto !== "null" &&
@@ -188,7 +168,29 @@ const CatProductos = () => {
 
     setInicia(false);
     setShow(false);
-  } //init
+  } 
+
+/*  
+  const buscarEnArreglo = (arreglo, valor, atributo) => {
+    let index = -1;
+    arreglo.forEach((item, i) => {
+      if (Number(item[atributo]) === Number(valor)) {
+        index = i;
+      }
+    });
+    return index;
+  };
+
+  const buscarEnArregloString = (arreglo, valor, atributo) => {
+    let index = -1;
+    arreglo.forEach((item, i) => {
+      if (item[atributo].toUpperCase() === valor.toUpperCase()) {
+        index = i;
+      }
+    });
+    return index;
+  };
+*/
 
   const handleProducto = async (_, value) => {
     setProducto(value);
@@ -208,6 +210,7 @@ const CatProductos = () => {
   async function getProductos(value) {
     let resultproductos = await getproductoscategoria({
       user: sessionStorage.getItem("user"),
+      tipouser: sessionStorage.getItem("tipouser"),
       categoria: arraytnegocios[value].categorianegocio,
     });
     resultproductos = await resultproductos.json();
@@ -364,7 +367,6 @@ const CatProductos = () => {
   }
 
   function restaurardatosproductos() {
-    //setNombrefoto(productot);
     setNombrecorto(nombrecortot);
     setDescripcion(descripciont);
     setPrecio(preciot);
@@ -426,15 +428,14 @@ const CatProductos = () => {
     result = await result.json();
 
     if (result.error) {
-      setContenido(result.error);
-      setShow1(true);
+      setMessage(result.error)
+      setOpen(true);
       return;
     }
     if (agregarsn) {
-      var productot = result.productot;
       arrayproductos.push({
         user: sessionStorage.getItem("user"),
-        idproducto: productot,
+        idproducto: result.productot,
         foto: nombrecortofoto,
         nick: nombrecorto,
         desc: descripcion,
@@ -448,7 +449,7 @@ const CatProductos = () => {
       let tarrayproductos = [];
       tarrayproductos.push({
         user: sessionStorage.getItem("user"),
-        idproducto: productot,
+        idproducto: mproducto,
         foto: nombrecortofoto,
         nick: nombrecorto,
         desc: descripcion,
@@ -460,16 +461,13 @@ const CatProductos = () => {
       });
 
     }
-    /*
-    setContenido(
-      "El producto '" + descripcion + "' se registró correctamente."
-    );
-    */
+    setMessage("El producto '" + descripcion + "' se registró correctamente.")
     setOpen(true);
     setShowMap(false);
     setAgregarsn(false);
     setEditarsn(false);
-  } //confirma
+    init
+  } 
 
   function editar() {
     restaurardatosproductos();
@@ -479,7 +477,6 @@ const CatProductos = () => {
   function agregar() {
     iniciadatosgenerales();
     setAgregarsn(true);
-    //setMarca(2);
   }
 
   const eliminar = () => {
@@ -494,10 +491,12 @@ const CatProductos = () => {
 
   async function sino() {
     await delproducto({ producto: arrayproductos[producto?.value].idproducto });
-
     iniciadatosgenerales();
+    setMessage("Se eliminó el producto " + arrayproductos[producto?.value].desc);
+    setOpen(true);
     setShow1(false);
     setEliminarsn(false);
+    init;
   }
 
   function tcancelar() {
@@ -520,11 +519,11 @@ const CatProductos = () => {
   return (
     <>
       <Snackbar
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
         autoHideDuration={5000}
         open={open}
-        onClose={handleClose}
-        message={"El producto '" + descripcion + "' se registró correctamente."}
+        onClose={()=>setOpen(!open)}
+        message={message}
       />
 
       <Modal

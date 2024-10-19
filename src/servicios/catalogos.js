@@ -44,3 +44,11 @@ export async function getCategoriasNegocios(body) {
 export async function setCategoriasNegocios(body) {
   return makeRequest("http://localhost:3001/setcategoriasnegocios", body);
 }
+
+export async function delCategoria(body) {
+  return makeRequest("http://localhost:3001/delcategorianegocio", body);
+}
+
+export async function delAnuncio(body) {
+  return makeRequest("http://localhost:3001/delAnuncio", body);
+}

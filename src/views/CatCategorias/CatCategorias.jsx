@@ -1,7 +1,6 @@
 import Tippy from "@tippyjs/react";
 import Navbar from "../../components/Navbar/Navbar"
 import Hero from "../../layouts/Hero/Hero";
-import "./styles.css";
 import { useEffect, useState } from "react";
 import Check from "@mui/icons-material/Check";
 import Add from "@mui/icons-material/Add";
@@ -9,7 +8,7 @@ import Delete from "@mui/icons-material/Delete";
 import Close from "@mui/icons-material/Close";
 import Edit from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
-import CircularProgress from "@mui/material/IconButton";
+//import CircularProgress from "@mui/material/IconButton";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import VisibilityIcon from '@mui/icons-material/Visibility';
@@ -17,8 +16,9 @@ import { useNavigate } from "react-router-dom";
 import Modal from "../../components/Modal/Modal";
 import Snackbar from '@mui/material/Snackbar';
 import { useLocation } from "react-router-dom";
-import { getCategoriasNegocios, setCategoriasNegocios } from "../../servicios/catalogos";
+import { getCategoriasNegocios, setCategoriasNegocios, delCategoria } from "../../servicios/catalogos";
 import { getJpgFile  } from "../../servicios/imagenes";
+import "./styles.css";
 
 
 const CatCategorias = () => {
@@ -27,6 +27,7 @@ const CatCategorias = () => {
   const parsedParams = {}
   const [show, setShow] = useState(false);
   const [open, setOpen] = useState(false);
+  const [message, setMessage] = useState("");
   const [desc, setDesc] = useState("");
   const [desct, setDesct] = useState("");
   const [descold, setDescold] = useState("");
@@ -39,7 +40,6 @@ const CatCategorias = () => {
   const arraynoCategorias = [{ categorianegocio: 99999999, desc: "Desconocida" }];
   // Estados para almacenar los datos del negocio activo
   const [contenido, setContenido] = useState("");
-  const [message, setMessage] = useState("");
   const [nombrefoto, setNombrefoto] = useState("");
   const [contenidofoto, setContenidofoto] = useState();
   const [cbvista, setCbvista] = useState(false);
@@ -146,6 +146,7 @@ const CatCategorias = () => {
     {
       setEliminarsn(true);
       setContenido("¿Está seguro que desea eliminar a " + arrayCategorias[categoria].desc + "?");
+      setShow(true);
     }
 
     async function confirmar() {
@@ -209,6 +210,14 @@ const CatCategorias = () => {
     setCbvista(true);
   };
 
+  async function sino() {
+    await delCategoria({ categorianegocio: arrayCategorias[categoria].categorianegocio });
+    setMessage("Se eliminó la categoria " + arrayCategorias[categoria].desc);
+    setOpen(true);
+    setShow(false);
+    setEliminarsn(false);
+    init;
+  }
 
   useEffect(() => {
     init()
@@ -225,14 +234,33 @@ const CatCategorias = () => {
         message={message}
       />
 
-    <Modal visible={show} onClose={onModalClose} className="cmodal wmodal modal-content-categorias" classContainer="modal-catprod">
-      <div className="cerrar-button">
-        <button className="cerrar" onClick={onModalClose}>X</button>
-      </div>
-      <div className="main-modal">
-           <label>{contenido}</label>
-      </div>
-    </Modal>
+      <Modal
+        visible={show}
+        onClose={onModalClose}
+        className="cmodal wmodal"
+        classContainer="modal-catalogo-productos"
+      >
+        <div className="cerrar-button">
+          <button className="cerrar" onClick={onModalClose}>
+            X
+          </button>
+        </div>
+        <div className="main-modal">
+          <label>{contenido}</label>
+          {eliminarsn ? (
+            <>
+              <button className="si" onClick={sino}>
+                Si
+              </button>
+              <button className="no" onClick={onModalClose}>
+                No
+              </button>
+            </>
+          ) : (
+            ""
+          )}
+        </div>
+      </Modal>
 
     <div>
       <Navbar nivel= {1}/>
@@ -253,11 +281,6 @@ const CatCategorias = () => {
             <div className="grip-categorias">
                 <div className="flex-categorias flex-gap-categorias">
                      <label>Categoria:</label>
-                     {inicia===false && (agregarsn || editarsn)?
-                      <>
-{/*                     <label>Descripcion:</label>*/}
-                     </>:""
-                     }
                  </div>
                  <div className="flex-categorias">
                       {agregarsn===true || editarsn===true?
