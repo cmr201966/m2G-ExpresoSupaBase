@@ -71,7 +71,6 @@ const Registrarse = () => {
     setShow1(true);
     setResultado(arrayplan[0].tip);
     setModifica(!(parsedParams.inserta==="true"));
-    console.log(parsedParams);
     
     let ttprovincias=[];
     let resultprovincia = await getprovincias({});
@@ -199,7 +198,7 @@ const Registrarse = () => {
     switch (e.target.id) {
       case "provincia":
         setProvincia(Number(e.target.value));
-        ttmunicipio=arraymunicipios.filter((item,i)=>{if (item.provincia === Number(e.target.value)){return item}});
+        ttmunicipio=arraymunicipios.filter((item)=>{if (item.provincia === Number(e.target.value)){return item}});
         setTmunicipios(ttmunicipio);
         if (ttmunicipio.length === 0){
           setTmunicipios(arraydesconocido);
@@ -219,15 +218,12 @@ const Registrarse = () => {
   }
 
   function handleInput(e) {
-    console.log(arrayplan);
-    console.log(plan);
     setResultado(arrayplan[plan].tip);
     switch (e.target.id) {
       case "user":
         setUser(e.target.value);
         break;
       case "password":
-        console.log(e.target.id);
         setPassword(e.target.value);
         break;
       case "rpassword":
@@ -393,9 +389,7 @@ const Registrarse = () => {
             <div className="input-area-registrarse-plan">
               <label className="plan">* Plan:</label>
               <select  className="select-registrarse-plan"  id="plan" onChange={handleselect} value={plan}>
-                {arrayplan.map((item, i) => {
-                  return <option key={i} value={i} >{item.desc}</option>
-                })}
+                {arrayplan.filter((item,i)=>{if (i<3){return item}}).map((item1,i)=>{return <option key={i} value={i} >{item1.desc}</option>})}
               </select>
             </div>
             {
