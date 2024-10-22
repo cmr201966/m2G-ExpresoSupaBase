@@ -8,26 +8,23 @@ import Delete from "@mui/icons-material/Delete";
 import Close from "@mui/icons-material/Close";
 import Edit from "@mui/icons-material/Edit";
 import IconButton from "@mui/material/IconButton";
-//import CircularProgress from "@mui/material/IconButton";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useNavigate } from "react-router-dom";
+import { useNotification } from "../../context/NotificationProvider";
 import Modal from "../../components/Modal/Modal";
-import Snackbar from '@mui/material/Snackbar';
 import { useLocation } from "react-router-dom";
 import { getCategoriasNegocios, setCategoriasNegocios, delCategoria } from "../../servicios/catalogos";
 import { getJpgFile  } from "../../servicios/imagenes";
 import "./styles.css";
 
-
 const CatCategorias = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const parsedParams = {}
+  const {setOpen, setMessage} = useNotification();
   const [show, setShow] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState("");
   const [desc, setDesc] = useState("");
   const [desct, setDesct] = useState("");
   const [descold, setDescold] = useState("");
@@ -226,14 +223,6 @@ const CatCategorias = () => {
   
   return (
     <>    
-      <Snackbar
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        autoHideDuration={4000}
-        open={open}
-        onClose={()=>setOpen(!open)}
-        message={message}
-      />
-
       <Modal
         visible={show}
         onClose={onModalClose}

@@ -7,7 +7,6 @@ import Tippy from "@tippyjs/react";
 import Map from "../../components/Map/MapBox";
 import Navbar from "../../components/Navbar/Navbar"
 import Modal from "../../components/Modal/Modal";
-import Snackbar from '@mui/material/Snackbar';
 
 // Iconos
 import Check from "@mui/icons-material/Check";
@@ -15,11 +14,9 @@ import Close from "@mui/icons-material/Close";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
+import { useNotification } from "../../context/NotificationProvider";
 
-// layouts
 import Hero from "../../layouts/Hero/Hero";
-// styles
-import "./styles.css";
 import { useEffect, useState } from "react";
 import IconButton from "@mui/material/IconButton"
 import ArrowBack from "@mui/icons-material/ArrowBack";
@@ -27,13 +24,13 @@ import { getprovincias, getmunicipios  } from "../../servicios/catalogos";
 import { getdatosiduser, setregistrarse  } from "../../servicios/registrarse";
 import { getjpg  } from "../../servicios/imagenes";
 import { isValid } from "../../Utiles/Utiles";
+import "./styles.css";
 
 const Registrarse = () => {
   const location = useLocation();
   const parsedParams = {}
+  const {setOpen, setMessage} = useNotification();
   const [user, setUser] = useState("");
-  const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState("");
   const [password, setPassword] = useState();
   const [rpassword, setRpassword] = useState();
   const [nombre, setNombre] = useState("");
@@ -51,12 +48,10 @@ const Registrarse = () => {
   const [arrayprovincias, setArrayprovincias] = useState([]);
   const [arraymunicipios, setArraymunicipios] = useState([]);
   const [tmunicipios, setTmunicipios] = useState([]);
-  const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
   const [cbvista, setCbvista] = useState(false);
   const [resultado, setResultado] = useState("");
   const [resultadopw] = useState("");
-  const [contenido] = useState("");
   const [inicia, setInicia] = useState(true);
   const [modifica, setModifica] = useState(false);
   const [showMap, setShowMap] = useState(false);
@@ -156,7 +151,6 @@ const Registrarse = () => {
 
   const onModalClose = () => 
   {
-  setShow(false)
   document.getElementById("password").focus();
   }
       
@@ -300,22 +294,6 @@ const Registrarse = () => {
 
   return (
     <>
-      <Snackbar
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        autoHideDuration={4000}
-        open={open}
-        onClose={()=>setOpen(!open)}
-        message={message}
-      />
-
-    <Modal visible={show} onClose={onModalClose} className="cmodal" classContainer="modal-catprod">
-      <div className="cerrar-button">
-        <button className="cerrar" onClick={onModalClose}>X</button>
-      </div>
-      <div className="main-modal">
-           <label>{contenido}</label>
-      </div>
-    </Modal>
 
     <div>
       <Navbar

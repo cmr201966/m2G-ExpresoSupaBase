@@ -14,13 +14,13 @@ import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useNavigate } from "react-router-dom";
 import Modal from "../../components/Modal/Modal";
-import Snackbar from '@mui/material/Snackbar';
 import { useLocation } from "react-router-dom";
 import { getAplicaciones, setAplicaciones } from "../../servicios/aplicaciones";
 import { getcategoriasnegocios } from "../../servicios/negocios";
 import { getJpgFile  } from "../../servicios/imagenes";
 import { delAnuncio  } from "../../servicios/catalogos";
-import { buscarEnArreglo, buscarEnArregloString } from "../../Utiles/Utiles";
+import { buscarEnArreglo } from "../../Utiles/Utiles";
+import { useNotification } from "../../context/NotificationProvider";
 
 
 const Aplicaciones = () => {
@@ -28,8 +28,7 @@ const Aplicaciones = () => {
   const location = useLocation();
   const parsedParams = {}
   const [show, setShow] = useState(false);
-  const [open, setOpen] = useState(false);
-  const [message, setMessage] = useState("");
+  const {setOpen, setMessage} = useNotification();
   const [nick, setNick] = useState("");
   const [desc, setDesc] = useState("");
   const [ttip, setTtip] = useState("");
@@ -114,8 +113,6 @@ const Aplicaciones = () => {
 
   function guardaDatosAplicacion(data, i)
   {
-    console.log(data);
-    console.log(arrayCategorias)
     setArrayAplicaciones(data);
     recuperardatosproducto(data, i);
     setNick(data[i].idapp);
@@ -136,15 +133,6 @@ const Aplicaciones = () => {
   }, [location]);
 
 
-  function buscaCategoria(data, categoria){
-    let j=999999;
-    for(let i=0; i<data.length; i+=1){
-        if (data[i].categorianegocio===categoria){
-          j=i;
-        }
-    }
-    return(j);
-  }
   function recuperardatosproducto(data, i) 
   {
     setNickt(data[i].idapp);
@@ -287,14 +275,6 @@ const Aplicaciones = () => {
   return (
 
     <>    
-      <Snackbar
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        autoHideDuration={4000}
-        open={open}
-        onClose={()=>setOpen(!open)}
-        message={message}
-      />
-
       <Modal
         visible={show}
         onClose={onModalClose}

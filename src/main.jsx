@@ -4,6 +4,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { FilterProvider } from "./context/FilterProvider";
 import { ThemeProvider } from "@mui/material";
 import dark from "./assets/theme/tema";
+import { NotificationProvider } from './context/NotificationProvider';
+import  Notification  from './components/Notification/Notification';
 
 import Login from "./views/Login/Login";
 import Productos from "./views/Productos/Productos";
@@ -29,8 +31,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
   <Suspense>
     <FilterProvider>
       <ThemeProvider theme={dark}>
-        <BrowserRouter>
-          <Routes>
+        <NotificationProvider>
+          <Notification/>
+          <BrowserRouter>
+           <Routes>
             <Route exact path="/" element={<Home />} />
             <Route exact path="/login" element={<Login />} />
             <Route exact path="/productos" element={<Productos />} />
@@ -46,9 +50,10 @@ ReactDOM.createRoot(document.getElementById("root")).render(
             <Route exact path="/whatsapp" element={<Whatsapp />} />
             <Route exact path="/ubicacion" element={<Ubicacion />} />
             <Route exact path="/categorias" element={<Categorias />} />
-            <Route exact path="/categorias" element={<CatCategorias />} />
-          </Routes>
-        </BrowserRouter>
+            <Route exact path="/catcategorias" element={<CatCategorias />} />
+           </Routes>
+          </BrowserRouter>
+        </NotificationProvider>
       </ThemeProvider>
     </FilterProvider>
   </Suspense>

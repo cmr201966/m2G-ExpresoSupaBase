@@ -9,7 +9,6 @@ import { Box, IconButton } from "@mui/material";
 
 import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
-//import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import SettingsIcon from '@mui/icons-material/Settings';
 import PersonIcon from '@mui/icons-material/Person';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';// styles
@@ -22,7 +21,6 @@ import { setconfig, getconfig  } from "../../servicios/config";
 import { getprovincias, getmunicipios } from "../../servicios/catalogos";
 import { isValid } from "../../Utiles/Utiles";
 
-//import { getJpgFile } from "../../servicios/imagenes";
 import NavigationDrawer from "./Drawer";
 import "./styles.css";
 
@@ -200,7 +198,7 @@ const Navbar = (props) => {
   }
 
   function categorias(){
-    navigate(`/categorias?`);
+    navigate(`/catcategorias?`);
   }
 
   const onModalClose = () => 

@@ -6,7 +6,6 @@ import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Map from "../../components/Map/MapBox";
 import Tippy from "@tippyjs/react";
 import Modal from "../../components/Modal/Modal";
-import Snackbar from '@mui/material/Snackbar';
 import Navbar from "../../components/Navbar/Navbar";
 import Hero from "../../layouts/Hero/Hero";
 import { useNavigate } from "react-router-dom";
@@ -28,6 +27,7 @@ import { getproductoscategoria,  setproducto,  delproducto,} from "../../servici
 import { getJpgFile } from "../../servicios/imagenes";
 import { getusuarios } from "../../servicios/registrarse";
 import { buscarEnArreglo, buscarEnArregloString } from "../../Utiles/Utiles";
+import { useNotification } from "../../context/NotificationProvider";
 
 import "./styles.css";
 
@@ -35,14 +35,13 @@ const CatProductos = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const parsedParams = {};
+  const {setOpen, setMessage} = useNotification();
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
-  const [open, setOpen] = useState(false);
   const [showGalerias, setShowGalerias] = useState(false);
   const [showMap, setShowMap] = useState(false);
   const [contenidofoto, setContenidofoto] = useState();
   const [contenido, setContenido] = useState("");
-  const [message, setMessage] = useState("");
   const [arraytnegocios, setArraytnegocios] = useState([]);
   const [arrayUsuarios, setArrayUsuarios] = useState([]);
   const arrayNoUsuarios = [{iduser: 99999999, desc: "Desconocido"}];
@@ -362,10 +361,6 @@ const CatProductos = () => {
     setDistanciaMax(data[posicion].distanciaMax);
   }
 
-  function handleClose(){
-    setOpen(!open);
-  }
-
   function restaurardatosproductos() {
     setNombrecorto(nombrecortot);
     setDescripcion(descripciont);
@@ -518,14 +513,6 @@ const CatProductos = () => {
 
   return (
     <>
-      <Snackbar
-        anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
-        autoHideDuration={5000}
-        open={open}
-        onClose={()=>setOpen(!open)}
-        message={message}
-      />
-
       <Modal
         visible={show1}
         onClose={onModalClose1}
