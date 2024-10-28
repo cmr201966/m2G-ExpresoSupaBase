@@ -1,9 +1,9 @@
 import Navbar from "../../components/Navbar/Navbar"
 import Hero from "../../layouts/Hero/Hero";
 import { useNavigate } from "react-router-dom"
-import { login } from "../../servicios/login";
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
+import { ApiBaseDatos, isValid } from "../../Utiles/Utiles";
 import "./styles.css";
 
 
@@ -16,16 +16,17 @@ const Login = () => {
   const parsedParams = {};
   const location = useLocation();
   async function init() {
-    if (parsedParams.login!== undefined && parsedParams.login!== 'undefined' && parsedParams.login!== null && parsedParams.login!== 'null'){
+    if (isValid(parsedParams.login)=== true){
       sessionStorage.setItem("login", parsedParams.login);
    }
    else sessionStorage.setItem("login", null);
-   if (parsedParams.regreso!== undefined && parsedParams.regreso!== 'undefined' && parsedParams.regreso!== null && parsedParams.regreso!== 'null'){
+   if (isValid(parsedParams.regreso)=== true){
     sessionStorage.setItem("ruta", parsedParams.regreso);
- }
- else sessionStorage.setItem("regreso", null);
+   }
+   else sessionStorage.setItem("regreso", null);
 
   }
+
   function handleInput(e) {
     switch (e.target.id) {
       case "user":
@@ -41,28 +42,22 @@ const Login = () => {
 
   async function confirmalogin(e) {
     e.preventDefault();
-
-    let result = await login({user, password});
-    result = await result.json();
-
-    if (result.error) 
+    let result = await ApiBaseDatos("login", user, password);
+    if (result.err)
     {
-      setResultado(result.error);
+      setResultado(result.err);
     } 
     else 
     {
-      console.log(result.provincia, result.municipio)
-      sessionStorage.setItem("user", result.iduser);
-      sessionStorage.setItem("usernombre", result.nombre);
-      sessionStorage.setItem("tipouser", result.tipouser);
-      sessionStorage.setItem("usercelular", result.celular);
-      sessionStorage.setItem("userfijo", result.fijo);
-      sessionStorage.setItem("useremail", result.email);
-      sessionStorage.setItem("userprovincia", result.provincia);
-      sessionStorage.setItem("usermunicipio", result.municipio);
+      sessionStorage.setItem("user", result[0].iduser);
+      sessionStorage.setItem("usernombre", result[0].nombre);
+      sessionStorage.setItem("tipouser", result[0].tipouser);
+      sessionStorage.setItem("usercelular", result[0].celular);
+      sessionStorage.setItem("userprovincia", result[0].provincia);
+      sessionStorage.setItem("usermunicipio", result[0].municipio);
       const ruta = sessionStorage.getItem("regreso") + "?regreso=1";
-      if ((sessionStorage.getItem("login")==="1") || (sessionStorage.getItem("login")===1)){
-         navegar(ruta)
+      if ((sessionStorage.getItem("login")==="1")){
+        navegar(ruta)
       } else
          navegar("/?nivel=0"); 
       
@@ -80,10 +75,7 @@ const Login = () => {
     init();
   }, []);
 
-
-
   return (
-
     <div>
       <Navbar nivel={1} />
       <Hero>

@@ -60,21 +60,35 @@ const InfoProducto = () => {
 //  const [duracion, setDuracion] = useState(0);
     
   async function init() {
+
+
+
     let resultFiles = await getFilesInFolder({folder: "./galerias/app_images/productos/" + parsedParams.idproducto});
     resultFiles = await resultFiles.json();
+
+
+
     setArrayFotos(resultFiles);
     let tarray=[];
     for(let i=0; i<resultFiles.length; i+=1){
+
+
       let result = await getJpgFile({file: "./galerias/app_images/productos" + "/" + parsedParams.idproducto + "/" +  resultFiles[i]});
       result = await result.text();
+
+
       if (result.length !== 0 && result.error === undefined) {
         tarray.push(result);
       }
       setArrayFotoInfo(tarray);        
     }
 
+
     let result = await getinfoproducto({idproducto: parsedParams.idproducto});
     result = await result.json();
+
+
+
     if (result.length !== 0 && result.error === undefined) {
       if (result[0].idnegocio===sessionStorage.getItem("user")){
         setShowGalerias(true)
@@ -95,8 +109,12 @@ const InfoProducto = () => {
       setDomicilio(result[0].domicilio);
     }
 
+
+
     result = await getParesGpsNaturalezaNew({categoria: parsedParams.categoria,  idproducto: parsedParams.idproducto});
     result = await result.json();
+
+
 
     let paresGps = [];
     result.forEach((item) => {
@@ -109,8 +127,12 @@ const InfoProducto = () => {
     });
     setPuntos(paresGps);
 
+
+
     result = await getJpgFile({file: "./galerias/app_images/productos" + "/" + parsedParams.idproducto + "/foto-1.jpg"});
     result = await result.text();
+
+
 
     if (result.length !== 0 && result.error === undefined) {
       setContenidofoto(result);
@@ -149,7 +171,6 @@ const lngLatSelected = async (point, lngLat) => {
       {
         return;
       }
-console.log("1")  
 setLng(lngLat.lng);
 setLat(lngLat.lat);
 let lat1 = puntos[puntos.length - 1].lat;
@@ -161,12 +182,10 @@ if (puntosState===0 || puntosState===1){
   setPuntos([...puntos,{lat: lngLat.lat, lng: lngLat.lng, image: marker, info: info}])
   if (ppuntos===2){
     // Tengo los dos puntos calculo la distancia entre ellos (Desde Origen hasta Destino)
-//    setCarrera(distanciaEnKilometros(puntos[1].lat, puntos[1].lng, lngLat.lat, lngLat.lng).toFixed(2));
       const { distancia, duracion } = await calculateDistance(
         [lng1, lat1],
         [lngLat.lng, lngLat.lat]
       );
-      console.log(distancia.toFixed(2));
       setCarrera(distancia.toFixed(2));
       //setDuracion(duracion.toFixed(2));
 
@@ -215,10 +234,15 @@ if (puntosState===2){
   async function shooping(){
     if (showMap===true) {
       let tindex=puntos.length
-      console.log(puntos);
+
+
+
       await setMovimientosNew({idmovimiento: 1, idproducto: idproducto, latOrigen: puntos[tindex-2].lat, latDestino: puntos[tindex-1].lat, 
                           lngOrigen: puntos[tindex-2].lng, lngDestino: puntos[tindex-1].lng, precio: (carrera*tarifa)+costoDomicilio, kms: carrera});
 
+
+
+                          
       setOcupado(true);
 
       await updateOcupado({idproducto: idproducto, ocupado: 1});

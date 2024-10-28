@@ -15,9 +15,10 @@ import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../context/NotificationProvider";
 import Modal from "../../components/Modal/Modal";
 import { useLocation } from "react-router-dom";
-import { getCategoriasNegocios, setCategoriasNegocios, delCategoria } from "../../servicios/catalogos";
-import { getJpgFile  } from "../../servicios/imagenes";
+import { setCategoriasNegocios, delCategoria } from "../../servicios/catalogos";
 import "./styles.css";
+import { isValid, obtenerImagen, ApiBaseDatos, buscaFoto } from "../../Utiles/Utiles";
+import { Box, CircularProgress } from "@mui/material";
 
 const CatCategorias = () => {
   const navigate = useNavigate();
@@ -48,12 +49,22 @@ const CatCategorias = () => {
       sessionStorage.setItem(prop, parsedParams[prop])
     }
 
-    setMessage("Preparando condiciones...");
-    setOpen(true);
-    let resultcategorias = await getCategoriasNegocios({});
-    resultcategorias = await resultcategorias.json();
+    if ((sessionStorage.getItem("login")===1 || sessionStorage.getItem("login")==='1') && (isValid(sessionStorage.getItem("user"))===false)){
+        navigate(`/login?login=1&regreso=${sessionStorage.getItem("regreso")}`);
+        return
+    }
 
-    if (resultcategorias.error || resultcategorias.length === 0) 
+    if (sessionStorage.getItem("tipouser")!=='1' && sessionStorage.getItem("tipouser")!=='2' && sessionStorage.getItem("tipouser")!=='3'){
+      setMessage("No tiene derechos para crear, editar o eliminar productos")
+      setOpen(true);
+      navigate(`/`);
+      return
+    }
+    if (isValid(sessionStorage.getItem("sgbd"))===false) sessionStorage.setItem("sgbd","MYSQL");
+    let resultcategorias = await ApiBaseDatos("getCategoriasNegocios")
+    
+
+    if (resultcategorias.err || resultcategorias.length === 0)
     {
       setArrayCategorias(arraynoCategorias);
       setCategoria(arraynoCategorias[0].categorianegocio);
@@ -63,10 +74,32 @@ const CatCategorias = () => {
       guardaDatosCategoria(resultcategorias, 0)
       setArrayCategorias(resultcategorias);
       setCategoria(buscaCategoria(resultcategorias, resultcategorias[0].categorianegocio));
-      buscaFoto("./galerias/app_images/categorias_de_negocios/" + resultcategorias[0].categorianegocio + "/" + resultcategorias[0].categorianegocio + ".jpg");
+      if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
+        let resultado= await buscaFoto("./galerias/app_images/categorias_de_negocios/" + resultcategorias[0].categorianegocio + "/" + resultcategorias[0].categorianegocio + ".jpg");
+        resultado = await resultado.text();
+        if (resultado.length !== 0) {
+          setContenidofoto(resultado);
+          setNombrefoto("Foto");
+        } else {
+          setNombrefoto("");
+        }        
+
+      }
+      else{
+        const resultado = await obtenerImagen('galerias', "categorias_de_negocios/" + resultcategorias[0].categorianegocio + "/" + resultcategorias[0].categorianegocio + ".jpg" )
+        if (isValid(resultado.error)===false){
+          setNombrefoto("1235");
+          setContenidofoto(resultado.url);
+        }
+        else{
+          setMessage('Error al recuperar la imagen de la categoria de negocio');
+          setOpen(true);
+        }
+  
+      }   
+
     }
       
-    setOpen(false);
     setShow(false);
     setInicia(false);
   } 
@@ -147,22 +180,29 @@ const CatCategorias = () => {
     }
 
     async function confirmar() {
-    let result = await setCategoriasNegocios({categorianegocio: arrayCategorias[categoria].categorianegocio, desc: desc, descold, link: "productos", inserta: agregarsn, modifica: editarsn, contenidofoto });
-    result = await result.json();
-    if (result.error!==undefined){
-        setMessage(result.error);
-        setOpen(true);
-  
-    }
+    let result;
+    let err="";
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
+       result = await setCategoriasNegocios({categorianegocio: arrayCategorias[categoria].categorianegocio, desc: desc, descold, link: "productos", inserta: agregarsn, modifica: editarsn, contenidofoto });
+       result = await result.json();
+       err=result.error;
+      }
     else{
-      
+      err= await ApiBaseDatos("CategoriasInsertUpdate", agregarsn, desc, "productos", arrayCategorias[categoria].categorianegocio, contenidofoto);
+
+    }   
+    if (isValid(err)===true){
+        setMessage("Ocurrido un error al registrar la categoria");
+        setOpen(true);
+    }
+    else{      
         setMessage("La categoria se agrego correctamente.");
         setOpen(true);
-  
     }
     tcancelar();
   }
 
+  /*
   async function buscaFoto(foto){
     let resultado = await getJpgFile({ file: foto});
     resultado = await resultado.text();
@@ -174,14 +214,37 @@ const CatCategorias = () => {
     }
      return
   }
-
+*/
   async function handleInput(e) {
     switch (e.target.id) {
       case "categorianegocio":
           setCategoria(e.target.value);
           guardaDatosCategoria(arrayCategorias, e.target.value)
           setCbvista(false);
-          buscaFoto("./galerias/app_images/categorias_de_negocios/" + arrayCategorias[e.target.value].categorianegocio + "/" + arrayCategorias[e.target.value].categorianegocio + ".jpg");
+          if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
+             let resultado= await buscaFoto("./galerias/app_images/categorias_de_negocios/" + arrayCategorias[e.target.value].categorianegocio + "/" + arrayCategorias[e.target.value].categorianegocio + ".jpg");
+             resultado = await resultado.text();
+             if (resultado.length !== 0) {
+               setContenidofoto(resultado);
+               setNombrefoto("Foto");
+             } else {
+               setNombrefoto("");
+             }        
+            }
+            else{
+              const resultado = await obtenerImagen('galerias', "categorias_de_negocios/" + arrayCategorias[e.target.value].categorianegocio + "/" + arrayCategorias[e.target.value].categorianegocio + ".jpg" )
+              if (isValid(resultado.error)===false){
+                setNombrefoto("1235");
+                setContenidofoto(resultado.url);
+              }
+              else{
+                setNombrefoto("");
+                setMessage('Error al recuperar la imagen de la categoria de negocio');
+                setOpen(true);
+              }
+        
+            }   
+      
           break;
        case "desc":
             setDesc(e.target.value);
@@ -254,6 +317,20 @@ const CatCategorias = () => {
     <div>
       <Navbar nivel= {1}/>
       <Hero>
+      {inicia===true ? (
+            <Box
+              sx={{
+                width: "100%",
+                height: "300px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CircularProgress color="checkbox" />
+            </Box>
+          ) : ""}
+
         <div className="div-papa-categorias">
         <div className="cabeza">
             <IconButton color="primary" onClick={() => {

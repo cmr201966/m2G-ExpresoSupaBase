@@ -18,7 +18,6 @@ import { getJpgFile } from "../../servicios/imagenes";
 import { getparesgpscategoria } from "../../servicios/catalogos";
 
 import { useEffect, useState } from "react";
-import { useFilter } from "../../context/FilterProvider";
 
 import CardRow from "../../components/CardRow/CardRow";
 
@@ -31,22 +30,18 @@ const Productos = () => {
   const navigate = useNavigate();
   const [mapLoading] = useState(true);
   const [puntos, setPuntos] = useState([]);
-  const { filterState } = useFilter();
   const location = useLocation();
   const parsedParams = {};
   const [nivel, setNivel] = useState(0);
   const [noproducto, setNoproducto] = useState(false);
-//  const [showrow3, setShowrow3] = useState(false);
   const [result, setResult] = useState([]);
   const [cantidadproductos, setCantidadproductos] = useState(0);
   const [nombre, setNombre] = useState("");
   const [inicia, setInicia] = useState(true);
-  const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
   const [botones, setBotones] = useState(false);
   const [contenidofoto] = useState([]);
   const [mascerca, setMascerca] = useState(0);
-  const [productot, setProductot] = useState();
   const [idproductot, setIdroductot] = useState();
   const [items, setItems] = useState([]);
   const [puntosState, setPuntosState] = useState(0);
@@ -152,17 +147,6 @@ function contains(lat, lon, bbox) {
           imageClassName: "",
         },
       ]);
-      /*
-      if (ppuntos === 1) {
-        let tpuntos=[...puntos]
-        for (let i = 0; i < tpuntos.length; i += 1){
-              if (contains(tpuntos[i].latitud, tpuntos[i].longitud, bbox)) tpuntos[i].image=libre
-              else tpuntos[i].image=ocupado;
-          }
-        //setPuntos(tpuntos);
-    
-      }
-        */
 
       if (ppuntos === 2) {
         const { distancia, duracion } = await calculateDistance(
@@ -436,7 +420,6 @@ function contains(lat, lon, bbox) {
       }
       if ((Number(esta) < Number(menor)) && ((tpuntos[i].distanciaMax===0) || (tpuntos[i].distanciaMax>=esta))) {
           menor = esta;
-          setProductot(tpuntos[i].info);
           setIdroductot(items[i].idproducto);
           let resultProduct = await getProductoNew({idproducto: items[i].idproducto});
           resultProduct = await resultProduct.json();
@@ -473,10 +456,6 @@ function contains(lat, lon, bbox) {
       if (puntosState==1) otroPunto();
     }
   }, [lng]);
-
-  useEffect(() => {
-    setShow(filterState.show);
-  }, [filterState]);
 
   useEffect(() => {
     const localParams = location.search.substring(1).split("&");

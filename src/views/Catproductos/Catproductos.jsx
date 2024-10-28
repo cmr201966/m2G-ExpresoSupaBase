@@ -94,15 +94,24 @@ const CatProductos = () => {
   const [colort, setColort] = useState("");
 
 
-  async function init() {
+  async function init() {    
     setShow(true);
     for (let prop in parsedParams) {
       sessionStorage.setItem(prop, parsedParams[prop])
     }
     if ((sessionStorage.getItem("login")===1 || sessionStorage.getItem("login")==='1') && (sessionStorage.getItem("user")==='null' || sessionStorage.getItem("user")===null)){
         navigate(`/login?login=1&regreso=${sessionStorage.getItem("regreso")}`);
+        return
+    }
+    if (sessionStorage.getItem("tipouser")!=='1' && sessionStorage.getItem("tipouser")!=='2' && sessionStorage.getItem("tipouser")!=='3'){
+      setMessage("No tiene derechos para crear, editar o eliminar productos")
+      setOpen(true);
+      navigate(`/`);
+      return
     }
     let ttarraytnegocios;
+
+
     let resulttnegocios = await getcategoriasnegociosapp({});
     resulttnegocios = await resulttnegocios.json();
 
@@ -123,6 +132,8 @@ const CatProductos = () => {
 
     let resultusuarios = await getusuarios({});
     resultusuarios = await resultusuarios.json();
+
+
     if (resultusuarios.error || resultusuarios.length === 0) {
       setArrayUsuarios(arrayNoUsuarios);
     } 
@@ -131,6 +142,7 @@ const CatProductos = () => {
       setArrayUsuarios(resultusuarios);
     }
 
+
     let resultproductos = await getproductoscategoria({
       user: sessionStorage.getItem("user"),
       tipouser: sessionStorage.getItem("tipouser"),
@@ -138,6 +150,8 @@ const CatProductos = () => {
       producto,
     });
     resultproductos = await resultproductos.json();
+
+
     if (resultproductos.error || resultproductos.length === 0) {
       setArrayproductos(arraynoproductos);
       recuperardatosproducto(arraynoproductos, 0);
@@ -154,8 +168,11 @@ const CatProductos = () => {
         restaurardatosproductosNew(resultproductos, posicionProducto);
         setEditarsn(true);
       }
+
+
       let resultado = await getJpgFile({file: "./galerias/app_images/productos/" + resultproductos[0].idproducto + "/" + "foto-1.jpg",});
       resultado = await resultado.text();
+
 
       if (resultado.length !== 0) {
         setContenidofoto(resultado);
@@ -169,31 +186,12 @@ const CatProductos = () => {
     setShow(false);
   } 
 
-/*  
-  const buscarEnArreglo = (arreglo, valor, atributo) => {
-    let index = -1;
-    arreglo.forEach((item, i) => {
-      if (Number(item[atributo]) === Number(valor)) {
-        index = i;
-      }
-    });
-    return index;
-  };
-
-  const buscarEnArregloString = (arreglo, valor, atributo) => {
-    let index = -1;
-    arreglo.forEach((item, i) => {
-      if (item[atributo].toUpperCase() === valor.toUpperCase()) {
-        index = i;
-      }
-    });
-    return index;
-  };
-*/
 
   const handleProducto = async (_, value) => {
     setProducto(value);
     recuperardatosproducto(arrayproductos, value.value);
+
+
     let resultado = await getJpgFile({
     file: "./galerias/app_images/productos" + "/" + arrayproductos[value?.value].idproducto + "/foto-1.jpg",});
     resultado = await resultado.text();
@@ -207,12 +205,16 @@ const CatProductos = () => {
   };
 
   async function getProductos(value) {
+
+
     let resultproductos = await getproductoscategoria({
       user: sessionStorage.getItem("user"),
       tipouser: sessionStorage.getItem("tipouser"),
       categoria: arraytnegocios[value].categorianegocio,
     });
     resultproductos = await resultproductos.json();
+
+
     setProducto(null);
 
     if (resultproductos.error || resultproductos.length === 0) {
@@ -222,8 +224,11 @@ const CatProductos = () => {
       setArrayproductos(resultproductos);
       setNombrefoto(resultproductos[0].idproducto);
       recuperardatosproducto(resultproductos, 0);
+
+
       let resultado = await getJpgFile({file: "./galerias/app_images/productos" + "/" + resultproductos[0].idproducto + "/foto-1.jpg",});
       resultado = await resultado.text();
+
 
       if (resultado.length !== 0) {
         setContenidofoto(resultado);
@@ -398,6 +403,9 @@ const CatProductos = () => {
     } else {
       mproducto = arrayproductos[producto?.value].idproducto;
     }
+
+
+
     let result = await setproducto({
       user: sessionStorage.getItem("tipouser")==='3'?arrayUsuarios[usuario].iduser:sessionStorage.getItem("user"),
       producto: mproducto,
@@ -421,6 +429,9 @@ const CatProductos = () => {
       distanciaMax: distanciaMax,
     });
     result = await result.json();
+
+
+
 
     if (result.error) {
       setMessage(result.error)
@@ -485,7 +496,11 @@ const CatProductos = () => {
   };
 
   async function sino() {
+
+
     await delproducto({ producto: arrayproductos[producto?.value].idproducto });
+
+
     iniciadatosgenerales();
     setMessage("Se eliminó el producto " + arrayproductos[producto?.value].desc);
     setOpen(true);

@@ -71,7 +71,7 @@ useEffect(() => {
             </Link>
             <h3>Acerca de</h3>
           </div>
-              <p1>m2G-Destodo Versión 1.0</p1>
+              <p1>m2G-Expreso Versión 1.0</p1>
               <p1>Desarrollado por m2G-Software.</p1>
               <p1>Celular: +5352675359 Fijo: +5322657241 </p1>
               <p1>Email: cmr201966@gmail.com </p1>

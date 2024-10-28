@@ -48,27 +48,37 @@ const InfoNegocio = () => {
   };
 
   async function init(){
+
     let result = await getinfonegocio({ idnegocio: parsedParams.idnegocio });
     result = await result.json();
+
+
     if (result[0].idnegocio===sessionStorage.getItem("user")){
       setShowGalerias(true)
     }
+
+
     let resultFiles = await getFilesInFolder({folder: "./galerias/app_images/usuarios/" + parsedParams.idnegocio});
     resultFiles = await resultFiles.json();
+
+
     setArrayFotos(resultFiles);
     let tarray=[];
     for(let i=0; i<resultFiles.length; i+=1){
+
+
       let result = await getJpgFile({file: "./galerias/app_images/usuarios" + "/" + parsedParams.idnegocio + "/" +  resultFiles[i]});
       result = await result.text();
+
+
       if (result.length !== 0 && result.error === undefined) {
         tarray.push(result);
       }
       setArrayFotoInfo(tarray);        
     }
     if (result.length !== 0 && result.error === undefined) {
-      console.log(result[0].tipouser, result[0].tipouser===1);
       if (result[0].tipouser===0) setTipoUser("Gratis");
-      if (result[0].tipouser===1) {setTipoUser("Estandar");console.log("1")}
+      if (result[0].tipouser===1) setTipoUser("Estandar")
       if (result[0].tipouser===2) setTipoUser("Premiun");
       if (result[0].tipouser===3) setTipoUser("Administrador");
 
@@ -81,6 +91,8 @@ const InfoNegocio = () => {
       setLng(result[0].longitud);
       setGps(result[0].gpsSN);
     }
+
+    
    result = await getJpgFile({ file: "./galerias/app_images/usuarios" + "/" + parsedParams.idnegocio + "/foto-1.jpg"});
    result = await result.text();
 

@@ -5,6 +5,8 @@ import "./styles.css";
 import { Link } from "react-router-dom";
 
 import { getJpgFile  } from "../../servicios/imagenes";
+import { isValid, obtenerImagen } from "../../Utiles/Utiles";
+import { useNotification } from "../../context/NotificationProvider";
 
 
 const BigSlider = (props) => {
@@ -15,7 +17,8 @@ const BigSlider = (props) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [transition, setTransition] = useState(true);
   const [inicia, setInicia] = useState(true);
-  const [imagenes, setImagenes] = useState([]);
+  const [imagenes] = useState([]);
+  const {setOpen, setMessage} = useNotification();
   const toLeft = useCallback(() => {
     if (currentIndex < imgs.length) {
       setCurrentIndex(currentIndex + 1);
@@ -30,9 +33,24 @@ const BigSlider = (props) => {
   async function init() {
     setInicia(true);
     for (let i=0; i<imgs.length; i += 1)  {
+        if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
         let resultado = await getJpgFile({ file: imgs[i]});
         resultado = await resultado.text();
-        imagenes.push(resultado);
+        imagenes.push(resultado)
+        }
+        else{
+          
+          const resultado = await obtenerImagen('galerias', imgs[i] )
+          if (isValid(resultado.error)===false){
+            imagenes.push(resultado.url);
+          }
+          else{
+            setMessage('Error al recuperar la imagen de la categoria de negocio');
+            setOpen(true);
+          }
+
+        }
+
     }
     setInicia(false);
   }

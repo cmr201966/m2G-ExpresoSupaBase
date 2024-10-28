@@ -19,30 +19,6 @@ const BigSlider = (props) => {
     [currentIndex]
   );
 
-  {/*
-  useEffect(() => {
-    if (currentIndex === imgs.length) {
-      setTimeout(() => {
-        setTransition(false);
-        setCurrentIndex(0);
-        setTimeout(() => {
-          setTransition(true);
-        }, 100);
-      }, 700);
-    }
-  }, [currentIndex, imgs.length]);
-*/}
-{/*
-  useEffect(() => {
-    setTimeout(() => {
-      toLeft();
-    }, 3000);
-  }, [currentIndex, toLeft]);
-
-          transform: `translateX(${currentIndex * -1 * 100}vw)`,
-
-
-  */}
   return (
     <div className={`multiple-slider`}>
         <button onClick={() => toRight()} className="multiple-slider-nav left">

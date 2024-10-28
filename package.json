@@ -16,6 +16,7 @@
     "@loadable/component": "^5.16.4",
     "@mui/icons-material": "^5.16.4",
     "@mui/material": "^5.16.4",
+    "@supabase/supabase-js": "^2.45.6",
     "@tippyjs/react": "^4.2.6",
     "axios": "^1.7.2",
     "mapbox-gl": "^3.5.1",

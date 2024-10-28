@@ -13,14 +13,15 @@ import CardMultipleSlider from "../../components/CardMultipleSlider/CardMultiple
 import { useNavigate } from "react-router-dom";
 import Hero from "../../layouts/Hero/Hero";
 import { useEffect, useMemo, useState } from "react";
-import { getCategoriasNew } from "../../servicios/home";
-import { getAplicaciones } from "../../servicios/aplicaciones";
 import { getJpgFile  } from "../../servicios/imagenes";
+import { isValid, obtenerImagen, ApiBaseDatos } from "../../Utiles/Utiles";
+import { useNotification } from "../../context/NotificationProvider";
 
 import "./styles.css";
 
 const Home = () => {
   const navigate = useNavigate();
+  const {setOpen, setMessage} = useNotification();
   const location = useLocation();
   const parsedParams = {};
   const [result, setResult] = useState([]);
@@ -37,7 +38,6 @@ const Home = () => {
 
   async function init() {
     setInicia(true);
-    let result1;
     setShow(true);
     sessionStorage.removeItem("categoria");
     sessionStorage.removeItem("ubicacion-provincia");
@@ -50,14 +50,14 @@ const Home = () => {
       parsedParams.nivel === "0"
     ) {
       setNivel(0);
-      let resultApp = await getAplicaciones({});
-      resultApp = await resultApp.json();
+      let resultApp = await ApiBaseDatos("anuncios");
       let imgs1=[];
       let category1=[];
       let users1=[];
       let nombres1=[];
+      let ruta=sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL'?"./galerias/app_images/aplicaciones/":"aplicaciones/"
       resultApp.forEach((item) => {
-        imgs1.push("./galerias/app_images/aplicaciones/" + item.id + "/" + item.id + ".jpg");
+        imgs1.push(ruta + item.id + "/" + item.id + ".jpg");
         category1.push(item.idcategoria);
         users1.push(item.iduser)
         nombres1.push(item.desc)
@@ -66,16 +66,27 @@ const Home = () => {
       setCategorys(category1);
       setUsers(users1);
       setNombres(nombres1);
-      let result = await getCategoriasNew({user: sessionStorage.getItem("user"), tipouser: sessionStorage.getItem("tipouser")});
-      result1 = await result.json();
+      let result = await ApiBaseDatos("getcategoriasnew")
       let arrayContenidoFoto=[];
-      for(let i=0;i<result1.length; i+=1){
-        let resultado = await getJpgFile({ file: "./galerias/app_images/categorias_de_negocios/" + result1[i].idcategoria + "/" + result1[i].idcategoria + ".jpg"});
-        resultado = await resultado.text();
-        arrayContenidoFoto.push(resultado);
+      let resultado;
+      for(let i=0;i<result.length; i+=1){
+        if (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL'){
+           resultado = await getJpgFile({ file: "./galerias/app_images/categorias_de_negocios/" + result[i].idcategoria + "/" + result[i].idcategoria + ".jpg"});
+           resultado = await resultado.text();
+           arrayContenidoFoto.push(resultado);
+          }
+        else{ 
+          const resultado = await obtenerImagen('galerias', "categorias_de_negocios/" + result[i].idcategoria + "/" + result[i].idcategoria + ".jpg" )
+          if (isValid(resultado.error)===false){ 
+            arrayContenidoFoto.push(resultado.url);  
+          }
+          else{
+            setMessage('Error al recuperar la imagen de la categoria de negocio');
+            setOpen(true);
+          }
+        }   
       }
-
-      result1.forEach((item, i) => {
+      result.forEach((item, i) => {
         newResult.push({
           categoria: item.idcategoria,
           name: item.categoria,

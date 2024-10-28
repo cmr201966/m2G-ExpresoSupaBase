@@ -11,8 +11,8 @@ import MenuIcon from "@mui/icons-material/Menu";
 import SearchIcon from "@mui/icons-material/Search";
 import SettingsIcon from '@mui/icons-material/Settings';
 import PersonIcon from '@mui/icons-material/Person';
-import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';// styles
-import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
+import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
+//import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -118,8 +118,14 @@ const Navbar = (props) => {
     }
     else setShow1(true);
 
+
+
+
     let resultprovincia = await getprovincias({});
     resultprovincia = await resultprovincia.json();
+
+
+
 
     if (resultprovincia.error || resultprovincia.length === 0)
     {
@@ -136,8 +142,14 @@ const Navbar = (props) => {
     }
     let ttmunicipios=[];
 
+
+
+
     let resultmunicipio = await getmunicipios({});
     resultmunicipio = await resultmunicipio.json();
+
+
+
 
     if (resultmunicipio.error || resultmunicipio.length === 0)
     {
@@ -198,7 +210,7 @@ const Navbar = (props) => {
   }
 
   function categorias(){
-    navigate(`/catcategorias?`);
+    navigate("/catcategorias?login=1&regreso=/catcategorias");
   }
 
   const onModalClose = () => 
@@ -214,7 +226,7 @@ const Navbar = (props) => {
       switch (e.target.id) {
         case "provincia":
           setProvincia(Number(e.target.value));
-          ttmunicipio=arraymunicipios.filter((item,i)=>{if (item.provincia === Number(e.target.value)){return item}});
+          ttmunicipio=arraymunicipios.filter((item)=>{if (item.provincia === Number(e.target.value)){return item}});
           setTmunicipios(ttmunicipio);
           if (ttmunicipio.length === 0){
             setTmunicipios(arraydesconocido);
@@ -230,7 +242,13 @@ const Navbar = (props) => {
     }
   
     async function confirmar(){
+
+
+
       await setconfig({provincia, municipio});
+
+
+      
       setShow1(false);
     }
   
@@ -319,7 +337,7 @@ useEffect(() => {
                      <SettingsIcon />
                    </IconButton>
                </Tippy>
-
+{/*
               <Link className="tools-color" to="/whatsapp?login=1&regreso=/whatsapp" >
               <Tippy content={`Ejecutar pedidos del cliente`}>
                 <IconButton
@@ -331,7 +349,7 @@ useEffect(() => {
                 </IconButton>
                 </Tippy>
               </Link>
-
+*/}
              {isValid(sessionStorage.getItem("user"))?
               <Tippy content={`Actualizar datos de ${sessionStorage.getItem("user")}`}>
                  <IconButton

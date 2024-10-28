@@ -6,7 +6,7 @@ import Tippy from "@tippyjs/react";
 // components
 import Map from "../../components/Map/MapBox";
 import Navbar from "../../components/Navbar/Navbar"
-import Modal from "../../components/Modal/Modal";
+//import Modal from "../../components/Modal/Modal";
 
 // Iconos
 import Check from "@mui/icons-material/Check";
@@ -20,10 +20,7 @@ import Hero from "../../layouts/Hero/Hero";
 import { useEffect, useState } from "react";
 import IconButton from "@mui/material/IconButton"
 import ArrowBack from "@mui/icons-material/ArrowBack";
-import { getprovincias, getmunicipios  } from "../../servicios/catalogos";
-import { getdatosiduser, setregistrarse  } from "../../servicios/registrarse";
-import { getjpg  } from "../../servicios/imagenes";
-import { isValid } from "../../Utiles/Utiles";
+import { isValid, obtenerImagen, ApiBaseDatos, buscaFoto } from "../../Utiles/Utiles";
 import "./styles.css";
 
 const Registrarse = () => {
@@ -40,10 +37,10 @@ const Registrarse = () => {
   const [contenidofoto, setContenidofoto] = useState();
   const [desc, setDesc] = useState("");
   const [provincia, setProvincia] = useState(13);
-  const [municipio, setMunicipio] = useState(0);
+  const [municipio, setMunicipio] = useState(5);
   const arraydesconocido = [{ provincia: 99, municipio: 99, desc: "Desconocido" }];
-  //,{ plan: 3,  desc: "administrador", tip:"Super administrador" }
-  const arrayplan= [{ plan: 0,  desc: "Gratis", tip:"(Comprar y reservar)" },{ plan: 1,  desc: "Estandar", tip:"Negocio estandar" },{ plan: 2,  desc: "Premiun", tip:"Negocio Plus" },{ plan: 3,  desc: "Administrador", tip:"Administrador" }];
+  const arrayplan= [{ plan: 0,  desc: "Gratis", tip:"(Comprar y reservar)" },{ plan: 1,  desc: "Estandar", tip:"Negocio estandar" },
+                    { plan: 2,  desc: "Premiun", tip:"Negocio Plus" },{ plan: 3,  desc: "Administrador", tip:"Administrador" }];
   const [plan, setPlan] = useState(0);
   const [arrayprovincias, setArrayprovincias] = useState([]);
   const [arraymunicipios, setArraymunicipios] = useState([]);
@@ -68,10 +65,9 @@ const Registrarse = () => {
     setModifica(!(parsedParams.inserta==="true"));
     
     let ttprovincias=[];
-    let resultprovincia = await getprovincias({});
-    resultprovincia = await resultprovincia.json();
+    let resultprovincia = await ApiBaseDatos("provincias")
 
-    if (resultprovincia.error || resultprovincia.length === 0)
+    if (resultprovincia.err || resultprovincia.length === 0)
     {
       setArrayprovincias(arraydesconocido);
       ttprovincias=arraydesconocido;
@@ -83,11 +79,8 @@ const Registrarse = () => {
     }
     setProvincia(ttprovincias[0].provincia);
     let ttmunicipios=[];
-
-    let resultmunicipio = await getmunicipios({});
-    resultmunicipio = await resultmunicipio.json();
-
-    if (resultmunicipio.error || resultmunicipio.length === 0)
+    let resultmunicipio = await ApiBaseDatos("municipios");
+    if (resultmunicipio.err || resultmunicipio.length === 0)
     {
        setArraymunicipios(arraydesconocido);
        setTmunicipios(arraydesconocido);
@@ -116,8 +109,8 @@ const Registrarse = () => {
     setMunicipio(ttmunicipios[0].municipio);
     if (isValid(sessionStorage.getItem("user")) === true && (parsedParams.where!=='true'))
     {
-      let result = await getdatosiduser({user: sessionStorage.getItem("user")});
-      result = await result.json();
+      let result = await ApiBaseDatos("getdatosuser", sessionStorage.getItem("user"));
+
       setUser(result[0].iduser);
       setPassword(result[0].pw);
       setNombre(result[0].nombre);
@@ -126,34 +119,42 @@ const Registrarse = () => {
       setProvincia(result[0].provincia);
       setMunicipio(result[0].municipio);
       setLat(result[0].latitud);
-      setLng(result[0].longitud)
-      let resultado = await getjpg({foto: sessionStorage.getItem("user"), folder: "usuarios"});
-      resultado = await resultado.text();
+      setLng(result[0].longitud);
 
-             if (resultado.length!==0)
-              {
-                 setContenidofoto(resultado);
-                 setNombrefoto(sessionStorage.getItem("user"));
-              }
-              else
-              {
-                setNombrefoto("");
-              }
-      }
-      else
-      {
-        provinciachange(14, resultprovincia, resultmunicipio)
-      }
 
+      if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
+        let resultado= await buscaFoto("./galerias/app_images/usuarios/" + sessionStorage.getItem("user") + "/" + "foto-1.jpg");
+        resultado = await resultado.text();
+        if (resultado.length !== 0) {
+          setContenidofoto(resultado);
+          setNombrefoto("Foto");
+        } else {
+          setNombrefoto("");
+          setMessage('Error al recuperar la imagen del usuario');
+          setOpen(true);
+        }
+      }
+      else{
+        const resultado = await obtenerImagen('galerias', "usuarios/" + sessionStorage.getItem("user") + "/" + "foto-1.jpg" )
+        if (isValid(resultado.error)===false){
+          setNombrefoto("1235");
+          setContenidofoto(resultado.url);
+        }
+        else{
+          setMessage('Error al recuperar la imagen del usuario');
+          setOpen(true);
+          setNombrefoto("");
+        }
+        }   
+}
+else
+{
+   provinciachange(14,6, resultprovincia, resultmunicipio)
+}
     setInicia(false);
     setShow1(false);
   }
-
-  const onModalClose = () => 
-  {
-  document.getElementById("password").focus();
-  }
-      
+     
   useEffect(() => {
     const localParams = location.search.substring(1).split("&");
     localParams.forEach((item) => { const [paramName, paramValue] = item.split("="); parsedParams[paramName] = paramValue });
@@ -164,7 +165,7 @@ const Registrarse = () => {
   }, [location]);
   
 
-  function provinciachange(cambia, provinciadata, municipiodata)
+  function provinciachange(cambia, municipio, provinciadata, municipiodata)
   {
     let ttmunicipio=[];
         setProvincia(cambia);
@@ -174,7 +175,7 @@ const Registrarse = () => {
           setTmunicipios(arraydesconocido);
           ttmunicipio=arraydesconocido;
        }
-       setMunicipio(0);
+       setMunicipio(municipio);
        setUser("");
        setPassword("");
        setRpassword("");
@@ -253,11 +254,12 @@ const Registrarse = () => {
       {
         setDesc("");
       }
-      let response = await setregistrarse({user, nombre, password, celular, provincia:provincia,municipio:municipio, contenidofoto,modifica,plan, lat, lng});
-      response = await response.json();
-      if (response.error) 
+
+      let response = await ApiBaseDatos("setregistrarse", user, nombre, password, celular, provincia, municipio, contenidofoto, modifica, plan, lat, lng)
+
+      if (isValid(response)===true) 
       {
-        setMessage(response.error);
+        setMessage("Ocurrio un error mientras se registraba el usuario.");
         setOpen(true);
           
       }
