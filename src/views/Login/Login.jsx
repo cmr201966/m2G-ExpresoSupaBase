@@ -3,7 +3,7 @@ import Hero from "../../layouts/Hero/Hero";
 import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { ApiBaseDatos, isValid } from "../../Utiles/Utiles";
+import { apiBaseDatos, isValid } from "../../Utiles/Utiles";
 import "./styles.css";
 
 
@@ -42,7 +42,7 @@ const Login = () => {
 
   async function confirmalogin(e) {
     e.preventDefault();
-    let result = await ApiBaseDatos("login", user, password);
+    let result = await apiBaseDatos("login", user, password);
     if (result.err)
     {
       setResultado(result.err);

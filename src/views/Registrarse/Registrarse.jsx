@@ -20,7 +20,7 @@ import Hero from "../../layouts/Hero/Hero";
 import { useEffect, useState } from "react";
 import IconButton from "@mui/material/IconButton"
 import ArrowBack from "@mui/icons-material/ArrowBack";
-import { isValid, obtenerImagen, ApiBaseDatos, buscaFoto } from "../../Utiles/Utiles";
+import { isValid, obtenerImagen, apiBaseDatos, buscaFoto } from "../../Utiles/Utiles";
 import "./styles.css";
 
 const Registrarse = () => {
@@ -65,7 +65,7 @@ const Registrarse = () => {
     setModifica(!(parsedParams.inserta==="true"));
     
     let ttprovincias=[];
-    let resultprovincia = await ApiBaseDatos("provincias")
+    let resultprovincia = await apiBaseDatos("provincias")
 
     if (resultprovincia.err || resultprovincia.length === 0)
     {
@@ -79,7 +79,7 @@ const Registrarse = () => {
     }
     setProvincia(ttprovincias[0].provincia);
     let ttmunicipios=[];
-    let resultmunicipio = await ApiBaseDatos("municipios");
+    let resultmunicipio = await apiBaseDatos("municipios");
     if (resultmunicipio.err || resultmunicipio.length === 0)
     {
        setArraymunicipios(arraydesconocido);
@@ -109,7 +109,7 @@ const Registrarse = () => {
     setMunicipio(ttmunicipios[0].municipio);
     if (isValid(sessionStorage.getItem("user")) === true && (parsedParams.where!=='true'))
     {
-      let result = await ApiBaseDatos("getdatosuser", sessionStorage.getItem("user"));
+      let result = await apiBaseDatos("getdatosuser", sessionStorage.getItem("user"));
 
       setUser(result[0].iduser);
       setPassword(result[0].pw);
@@ -255,7 +255,7 @@ else
         setDesc("");
       }
 
-      let response = await ApiBaseDatos("setregistrarse", user, nombre, password, celular, provincia, municipio, contenidofoto, modifica, plan, lat, lng)
+      let response = await apiBaseDatos("setregistrarse", user, nombre, password, celular, provincia, municipio, contenidofoto, modifica, plan, lat, lng)
 
       if (isValid(response)===true) 
       {

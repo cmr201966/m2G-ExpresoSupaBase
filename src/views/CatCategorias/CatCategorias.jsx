@@ -17,7 +17,7 @@ import Modal from "../../components/Modal/Modal";
 import { useLocation } from "react-router-dom";
 import { setCategoriasNegocios, delCategoria } from "../../servicios/catalogos";
 import "./styles.css";
-import { isValid, obtenerImagen, ApiBaseDatos, buscaFoto } from "../../Utiles/Utiles";
+import { isValid, obtenerImagen, apiBaseDatos, buscaFoto } from "../../Utiles/Utiles";
 import { Box, CircularProgress } from "@mui/material";
 
 const CatCategorias = () => {
@@ -61,7 +61,7 @@ const CatCategorias = () => {
       return
     }
     if (isValid(sessionStorage.getItem("sgbd"))===false) sessionStorage.setItem("sgbd","MYSQL");
-    let resultcategorias = await ApiBaseDatos("getCategoriasNegocios")
+    let resultcategorias = await apiBaseDatos("getCategoriasNegocios")
     
 
     if (resultcategorias.err || resultcategorias.length === 0)
@@ -188,7 +188,7 @@ const CatCategorias = () => {
        err=result.error;
       }
     else{
-      err= await ApiBaseDatos("CategoriasInsertUpdate", agregarsn, desc, "productos", arrayCategorias[categoria].categorianegocio, contenidofoto);
+      err= await apiBaseDatos("CategoriasInsertUpdate", agregarsn, desc, "productos", arrayCategorias[categoria].categorianegocio, contenidofoto);
 
     }   
     if (isValid(err)===true){

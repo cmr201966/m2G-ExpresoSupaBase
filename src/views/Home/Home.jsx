@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import Hero from "../../layouts/Hero/Hero";
 import { useEffect, useMemo, useState } from "react";
 import { getJpgFile  } from "../../servicios/imagenes";
-import { isValid, obtenerImagen, ApiBaseDatos } from "../../Utiles/Utiles";
+import { isValid, obtenerImagen, apiBaseDatos, creaBucket } from "../../Utiles/Utiles";
 import { useNotification } from "../../context/NotificationProvider";
 
 import "./styles.css";
@@ -39,6 +39,7 @@ const Home = () => {
   async function init() {
     setInicia(true);
     setShow(true);
+    if (sessionStorage.getItem("sgbd").toLocaleUpperCase()!=="SUPABASE") creaBucket('galerias')
     sessionStorage.removeItem("categoria");
     sessionStorage.removeItem("ubicacion-provincia");
     sessionStorage.removeItem("ubicacion-municipio");
@@ -50,7 +51,7 @@ const Home = () => {
       parsedParams.nivel === "0"
     ) {
       setNivel(0);
-      let resultApp = await ApiBaseDatos("anuncios");
+      let resultApp = await apiBaseDatos("anuncios");
       let imgs1=[];
       let category1=[];
       let users1=[];
@@ -66,7 +67,7 @@ const Home = () => {
       setCategorys(category1);
       setUsers(users1);
       setNombres(nombres1);
-      let result = await ApiBaseDatos("getcategoriasnew")
+      let result = await apiBaseDatos("getcategoriasnew")
       let arrayContenidoFoto=[];
       let resultado;
       for(let i=0;i<result.length; i+=1){

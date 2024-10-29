@@ -15,10 +15,7 @@ import { useLocation } from "react-router-dom";
 import marker from "../../assets/images/custom_marker.png";
 import libre from "../../assets/images/libre.png";
 import off from "../../assets/images/ocupado.png";
-import { getinfoproducto, setMovimientosNew, updateOcupado } from "../../servicios/productos";
-import { getJpgFile } from "../../servicios/imagenes";
-import { getParesGpsNaturalezaNew } from "../../servicios/naturalezas";
-import { getFilesInFolder } from "../../servicios/fs";
+import { apiBaseDatos, getFilesInFolderSB, getJpgFileSB, getInfoProducto, getParesGpsProducto  } from "../../Utiles/Utiles";
 import config from "../../config";
 // styles
 import "./styles.css";
@@ -60,33 +57,20 @@ const InfoProducto = () => {
 //  const [duracion, setDuracion] = useState(0);
     
   async function init() {
-
-
-
-    let resultFiles = await getFilesInFolder({folder: "./galerias/app_images/productos/" + parsedParams.idproducto});
-    resultFiles = await resultFiles.json();
-
-
-
+    let resultFiles = await getFilesInFolderSB("./galerias/app_images/productos/" + parsedParams.idproducto, "");
     setArrayFotos(resultFiles);
     let tarray=[];
     for(let i=0; i<resultFiles.length; i+=1){
-
-
-      let result = await getJpgFile({file: "./galerias/app_images/productos" + "/" + parsedParams.idproducto + "/" +  resultFiles[i]});
-      result = await result.text();
-
-
-      if (result.length !== 0 && result.error === undefined) {
+      /* param1 file para MYSQL, param2 file para SUPABASE*/
+      let result= await getJpgFileSB("./galerias/app_images/productos/" + parsedParams.idproducto + "/" +  resultFiles[i], "productos/" + parsedParams.idproducto + "/" +  resultFiles[i]);
+      if (result.url === "") {
         tarray.push(result);
       }
-      setArrayFotoInfo(tarray);        
+      setArrayFotoInfo(tarray);
     }
 
-
-    let result = await getinfoproducto({idproducto: parsedParams.idproducto});
-    result = await result.json();
-
+    let result= await getInfoProducto(parsedParams.idproducto);
+    console.log(result);
 
 
     if (result.length !== 0 && result.error === undefined) {
@@ -109,12 +93,7 @@ const InfoProducto = () => {
       setDomicilio(result[0].domicilio);
     }
 
-
-
-    result = await getParesGpsNaturalezaNew({categoria: parsedParams.categoria,  idproducto: parsedParams.idproducto});
-    result = await result.json();
-
-
+    result= getParesGpsProducto(parsedParams.categoria,  parsedParams.idproducto);
 
     let paresGps = [];
     result.forEach((item) => {
@@ -128,11 +107,7 @@ const InfoProducto = () => {
     setPuntos(paresGps);
 
 
-
-    result = await getJpgFile({file: "./galerias/app_images/productos" + "/" + parsedParams.idproducto + "/foto-1.jpg"});
-    result = await result.text();
-
-
+    result = getJpgFileSB("./galerias/app_images/productos" + "/" + parsedParams.idproducto + "/foto-1.jpg", "productos" + "/" + parsedParams.idproducto + "/foto-1.jpg")
 
     if (result.length !== 0 && result.error === undefined) {
       setContenidofoto(result);
@@ -234,15 +209,10 @@ if (puntosState===2){
   async function shooping(){
     if (showMap===true) {
       let tindex=puntos.length
+      // hay que pasar el user del chofer
+      apiBaseDatos("setMovimientosNew", 1, idproducto, puntos(tindex-2).lat, puntos[tindex-1].lat, puntos[tindex-2].lng, puntos[tindex-1], (carrera*tarifa)+costoDomicilio, carrera)
 
-
-
-      await setMovimientosNew({idmovimiento: 1, idproducto: idproducto, latOrigen: puntos[tindex-2].lat, latDestino: puntos[tindex-1].lat, 
-                          lngOrigen: puntos[tindex-2].lng, lngDestino: puntos[tindex-1].lng, precio: (carrera*tarifa)+costoDomicilio, kms: carrera});
-
-
-
-                          
+                         
       setOcupado(true);
 
       await updateOcupado({idproducto: idproducto, ocupado: 1});
@@ -382,7 +352,6 @@ if (puntosState===2){
                   ) : (
                     ""
                   )}
-                  {console.log((domicilio===1 && ocupado===0))}
                  {(distancia !== 0) && (showMap===true && puntosState===2 && domicilio===1) || (domicilio===1 && ocupado===0)? (
                   <>
                   <Tippy content="Ordenar este producto">
@@ -424,8 +393,6 @@ if (puntosState===2){
 
         </main>
         <div className="mapa-1">
-          {console.log(inicio===false && gps === 1 && showMap === true && puntos.length!==0)}
-          {console.log(carrera,tarifa,costoDomicilio)}
           {inicio===false && gps === 1 && showMap === true && puntos.length!==0 ? (
             <section className="mapa">
               {domicilio===1?

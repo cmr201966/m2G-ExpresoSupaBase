@@ -6,6 +6,10 @@ import { login } from "../servicios/login";
 import { getprovincias, getmunicipios  } from "../servicios/catalogos";
 import { getdatosiduser, setregistrarse  } from "../servicios/registrarse";
 import { getJpgFile  } from "../servicios/imagenes";
+import { getFilesInFolder } from "../servicios/fs";
+import { getinfoproducto } from "../servicios/productos";
+import { getParesGpsNaturalezaNew } from "../servicios/naturalezas";
+import { setMovimientosNew, updateOcupado } from "../../servicios/productos";
 
 const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co', 
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJudWJ5cXZnbXJqbHh5Z3hhcHFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjgzMDM3NDksImV4cCI6MjA0Mzg3OTc0OX0.3oGjEFdILLMO46DYrAbgWUmVHwP_Z_oH6Oo_j8oEt-c')
@@ -366,7 +370,96 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
     return (err);
   }
 
-  const ApiBaseDatos = async (ruta, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11) => {
+
+  async function creaBucket(bucket){
+    const { data } = await supabase.storage.listBuckets(); 
+    const bucketExists = data.some(bucket => bucket.name === bucket);
+    if (bucketExists===false){
+      await supabase.storage.createBucket(bucket);
+    }
+
+  }
+
+  async function getFilesInFolderSB(folder, bucket ){
+    let resultFiles=[];
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
+       resultFiles = await getFilesInFolder({folder});
+       resultFiles = await resultFiles.json()
+    }
+    else{
+      const { data } = await supabase
+      .storage
+      .from(bucket)
+      .list(folder, {
+          limit: 1000,
+          offset: 0,  
+          sortBy: { column: 'name', order: 'asc' } 
+      });
+      resultFiles=data;
+    }
+    return resultFiles;
+
+  }
+
+  async function getJpgFileSB(fileMysql, fileSupabase){
+    let result=[]
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
+       result = await getJpgFile({file: fileMysql});
+       result = await result.text();
+       return result;
+    }
+    else{
+      return result = await obtenerImagen('galerias', fileSupabase)      
+    }
+  }
+
+  async function getInfoProducto(producto){
+    let result=[];
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
+       result = await getinfoproducto({idproducto: producto});
+       result = await result.json();
+    }
+    else{
+      const { data } = await supabase
+      .from('getInfoProductos')
+      .select('*')
+      .eq('idproducto', producto)
+      result=data;
+   }
+   return result;
+  }
+
+  async function getParesGpsProducto(categoria, producto){
+    let result=[];
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
+       result = await getParesGpsNaturalezaNew({categoria: categoria,  idproducto: producto});
+       result = await result.json();
+    }
+    else{
+      const { data } = await supabase
+      .from('getParesGpsProducto')
+      .select('*')
+      .eq('idproducto', producto)
+      result=data;
+    }
+    return result;
+
+  }
+
+  async function setmovimientosNew(idmovimiento, idproducto, latOrigen, latDestino, lngOrigen, lngDestino, precio, kms, user){
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL')
+      await setMovimientosNew({idmovimiento, idproducto, latOrigen, latDestino, lngOrigen, lngDestino, precio, kms, user})
+    else{
+      await supabase
+      .from('tablamovimientos')
+      .update({ desc: param2, link: param3 })
+      .eq('iduser', user)
+
+    }
+
+  }
+
+  const apiBaseDatos = async (ruta, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11) => {
     switch (ruta) {
       case "anuncios":
         return anuncios();
@@ -389,18 +482,12 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
       case "getAplicaciones":
         return getAplicacionesSB();
       case "setAplicaciones":
-        return setAplicacionesSB(param1, param2, param3, param4, param5, param6, param7, param8)  
+        return setAplicacionesSB(param1, param2, param3, param4, param5, param6, param7, param8)
+      case "setmovimientosNew"  :
+        return setMovimientosNew();
     }
       
   };  
 
-  async function creaBucket(bucket){
-    const { data } = await supabase.storage.listBuckets(); 
-    const bucketExists = data.some(bucket => bucket.name === bucket);
-    if (bucketExists===false){
-      await supabase.storage.createBucket(bucket);
-    }
-
-  }
-
-  export {isValid, buscarEnArreglo, buscarEnArregloString, obtenerImagen, uploadBase64Image, ApiBaseDatos, buscaFoto, creaBucket}
+  export {isValid, buscarEnArreglo, buscarEnArregloString, obtenerImagen, uploadBase64Image, apiBaseDatos, buscaFoto, creaBucket, getFilesInFolderSB, getJpgFileSB, getInfoProducto}
+  export {getParesGpsProducto, setmovimientosNew}

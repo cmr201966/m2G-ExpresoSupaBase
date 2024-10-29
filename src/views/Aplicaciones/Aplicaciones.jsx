@@ -18,7 +18,7 @@ import { useLocation } from "react-router-dom";
 import { delAnuncio  } from "../../servicios/catalogos";
 import { buscarEnArreglo } from "../../Utiles/Utiles";
 import { useNotification } from "../../context/NotificationProvider";
-import { isValid, obtenerImagen, ApiBaseDatos, buscaFoto, creaBucket } from "../../Utiles/Utiles";
+import { isValid, obtenerImagen, apiBaseDatos, buscaFoto  } from "../../Utiles/Utiles";
 import { Box, CircularProgress } from "@mui/material";
 
 const Aplicaciones = () => {
@@ -54,8 +54,6 @@ const Aplicaciones = () => {
 
 
   async function init() {
-    // Crea un bucket sino existe
-    creaBucket('galerias')
 
     for (let prop in parsedParams) {
       sessionStorage.setItem(prop, parsedParams[prop])
@@ -71,24 +69,18 @@ const Aplicaciones = () => {
     navigate(`/`);
     return
   }
-    if(isValid(sessionStorage.getItem("sgbd"))===false) sessionStorage.setItem("sgbd","MYSQL");
-
-    let result = await ApiBaseDatos("getAplicaciones")
-
-    if (result.error || result.length === 0) 
-    {
-      setArrayAplicaciones(arraynoaplicaciones);
-      setAplicacion(buscarEnArreglo(arraynoaplicaciones, arraynoaplicaciones[0].id, "id"));
-    }
-    else 
-    {
-      guardaDatosAplicacion(result, 0)
-      setAplicacion(buscarEnArreglo(result, result[0].id, "id"));
-  
-    }
-    let resultcategorias= await ApiBaseDatos("getCategoriasNegocios");
-    
-
+      let result = await apiBaseDatos("getAplicaciones")
+      if (result.error || result.length === 0) 
+      {
+         setArrayAplicaciones(arraynoaplicaciones);
+         setAplicacion(buscarEnArreglo(arraynoaplicaciones, arraynoaplicaciones[0].id, "id"));
+      }
+      else 
+      {
+        guardaDatosAplicacion(result, 0)
+        setAplicacion(buscarEnArreglo(result, result[0].id, "id"));  
+      }
+      let resultcategorias= await apiBaseDatos("getCategoriasNegocios");
 
       if (resultcategorias.err || resultcategorias.length === 0) 
       {
@@ -207,7 +199,7 @@ const Aplicaciones = () => {
     }
      
     async function confirmar() {
-      let result= await ApiBaseDatos("setAplicaciones", arrayAplicaciones[aplicacion].id, sessionStorage.getItem("user"), nick, desc,
+      let result= await apiBaseDatos("setAplicaciones", arrayAplicaciones[aplicacion].id, sessionStorage.getItem("user"), nick, desc,
        ttip, arrayCategorias[categoria].categorianegocio, agregarsn, contenidofoto);
  
     if (isValid(result.err)===true){
