@@ -9,7 +9,7 @@ import { getJpgFile  } from "../servicios/imagenes";
 import { getFilesInFolder } from "../servicios/fs";
 import { getinfoproducto } from "../servicios/productos";
 import { getParesGpsNaturalezaNew } from "../servicios/naturalezas";
-import { setMovimientosNew, updateOcupado } from "../../servicios/productos";
+import { setMovimientosNew, updateOcupado } from "../servicios/productos";
 
 const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co', 
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJudWJ5cXZnbXJqbHh5Z3hhcHFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjgzMDM3NDksImV4cCI6MjA0Mzg3OTc0OX0.3oGjEFdILLMO46DYrAbgWUmVHwP_Z_oH6Oo_j8oEt-c')
@@ -446,17 +446,44 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
 
   }
 
-  async function setmovimientosNew(idmovimiento, idproducto, latOrigen, latDestino, lngOrigen, lngDestino, precio, kms, user){
+  async function setmovimientosNew(idmovimiento, producto, latOrigen, latDestino, lngOrigen, lngDestino, precio, kms, user){
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL')
-      await setMovimientosNew({idmovimiento, idproducto, latOrigen, latDestino, lngOrigen, lngDestino, precio, kms, user})
+      await setMovimientosNew({idmovimiento, producto, latOrigen, latDestino, lngOrigen, lngDestino, precio, kms, user})
+    else{
+      // SUPABASE
+      // Busca que dinero tiene el user en su billetera
+      const { data } = await supabase
+            .from('getbilleteracup')
+            .select('*')
+            .eq('idproducto', producto)
+      let pagado=0;
+      if (data[0].billeteracup>=data[0].costodomicilio) pagado=1;
+      // Conforma fecha y hora del viaje
+      const fechaNow= new Date();
+      const fecha= fechaNow.getFullYear() + "-" + (fechaNow.getMonth()+1) + "-" + fechaNow.getDate()
+      const hora= fechaNow.getHours() + ":" + fechaNow.getMinutes();
+      await supabase
+           .from('tablamovimientos')
+           .insert({ idmovimiento, producto, precio, kms, fecha, hora, latOrigen, latDestino, lngOrigen, lngDestino, pagado, user })           
+      if (pagado===1){
+        // Rebaja del dinero que tenga el costo del domicilio
+         await supabase
+              .from('tablamovimientos')
+              .update({ billeteraCUP: supabase.raw('billeteraCUP - ?', [data[0].costodomicilio]) })
+              .eq('iduser', user);
+        }       
+    }
+  }
+
+  async function updateOcupadoSB(idproducto, ocupado){
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL')
+      await updateOcupado({idproducto, ocupado})
     else{
       await supabase
-      .from('tablamovimientos')
-      .update({ desc: param2, link: param3 })
-      .eq('iduser', user)
-
+      .from('tablaCatProductos')
+      .update({ ocupado: ocupado})
+      .eq('iduproducto', idproducto);
     }
-
   }
 
   const apiBaseDatos = async (ruta, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11) => {
@@ -484,7 +511,9 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
       case "setAplicaciones":
         return setAplicacionesSB(param1, param2, param3, param4, param5, param6, param7, param8)
       case "setmovimientosNew"  :
-        return setMovimientosNew();
+        return setMovimientosNew(param1, param2, param3, param4, param5, param6, param7, param8, param9);
+      case "updateOcupado"  :
+        updateOcupadoSB(param1, param2)
     }
       
   };  

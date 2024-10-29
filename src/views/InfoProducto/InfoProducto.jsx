@@ -51,7 +51,7 @@ const InfoProducto = () => {
   const [domicilio, setDomicilio] = useState(50);
   const [puntosState, setPuntosState] = useState(0);
   const [carrera, setCarrera] = useState(0);
-//  const [productot, setProductot] = useState("");
+  const [usert, setUsert] = useState("");
   const [arrayFotos, setArrayFotos] = useState([]);
   const [arrayFotoInfo, setArrayFotoInfo] = useState([]);
 //  const [duracion, setDuracion] = useState(0);
@@ -70,15 +70,15 @@ const InfoProducto = () => {
     }
 
     let result= await getInfoProducto(parsedParams.idproducto);
-    console.log(result);
-
 
     if (result.length !== 0 && result.error === undefined) {
       if (result[0].idnegocio===sessionStorage.getItem("user")){
         setShowGalerias(true)
       }
       else setShowGalerias(false);
+      console.log(result);
       setIdproducto(parsedParams.idproducto);
+      setUsert(result[0].idnegocio)
       setNegocio(result[0].negocio);
       setProducto(result[0].producto);
       setPrecio(result[0].precio);
@@ -93,7 +93,7 @@ const InfoProducto = () => {
       setDomicilio(result[0].domicilio);
     }
 
-    result= getParesGpsProducto(parsedParams.categoria,  parsedParams.idproducto);
+    result= await getParesGpsProducto(parsedParams.categoria,  parsedParams.idproducto);
 
     let paresGps = [];
     result.forEach((item) => {
@@ -107,8 +107,8 @@ const InfoProducto = () => {
     setPuntos(paresGps);
 
 
-    result = getJpgFileSB("./galerias/app_images/productos" + "/" + parsedParams.idproducto + "/foto-1.jpg", "productos" + "/" + parsedParams.idproducto + "/foto-1.jpg")
-
+    result = await getJpgFileSB("./galerias/app_images/productos" + "/" + parsedParams.idproducto + "/foto-1.jpg", "productos" + "/" + parsedParams.idproducto + "/foto-1.jpg")
+   
     if (result.length !== 0 && result.error === undefined) {
       setContenidofoto(result);
     }
@@ -210,12 +210,9 @@ if (puntosState===2){
     if (showMap===true) {
       let tindex=puntos.length
       // hay que pasar el user del chofer
-      apiBaseDatos("setMovimientosNew", 1, idproducto, puntos(tindex-2).lat, puntos[tindex-1].lat, puntos[tindex-2].lng, puntos[tindex-1], (carrera*tarifa)+costoDomicilio, carrera)
-
-                         
+      apiBaseDatos("setMovimientosNew", 1, idproducto, puntos[tindex-2].lat, puntos[tindex-1].lat, puntos[tindex-2].lng, puntos[tindex-1], (carrera*tarifa)+costoDomicilio, carrera, usert)                        
       setOcupado(true);
-
-      await updateOcupado({idproducto: idproducto, ocupado: 1});
+      apiBaseDatos("updateOcupado", idproducto, 1)
     }
 
     setPuntos([]);
@@ -235,7 +232,7 @@ if (puntosState===2){
 
   useEffect(() => {
     const localParams = location.search.substring(1).split("&");
-    localParams.forEach((item, i) => {
+    localParams.forEach((item) => {
       const [paramName, paramValue] = item.split("=");
       parsedParams[paramName] = paramValue;
     });
