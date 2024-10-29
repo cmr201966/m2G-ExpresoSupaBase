@@ -14,7 +14,6 @@ import {getJpgFile  } from "../../servicios/imagenes";
 import { getFilesInFolder } from "../../servicios/fs";
 import "./styles.css";
 
-
 const InfoNegocio = () => {
   const navigate = useNavigate();
   const location = useLocation();

@@ -15,6 +15,8 @@ export async function getinfoproducto(body) {
   return makeRequest("http://localhost:3001/get-info-producto", body);
 }
 export async function setMovimientosNew(body) {
+  console.log("5")
+  console.log(body);
   return makeRequest("http://localhost:3001/setmovimiento-new", body);
 }
 

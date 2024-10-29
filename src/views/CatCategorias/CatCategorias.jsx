@@ -60,7 +60,6 @@ const CatCategorias = () => {
       navigate(`/`);
       return
     }
-    if (isValid(sessionStorage.getItem("sgbd"))===false) sessionStorage.setItem("sgbd","MYSQL");
     let resultcategorias = await apiBaseDatos("getCategoriasNegocios")
     
 

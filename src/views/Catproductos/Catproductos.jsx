@@ -142,7 +142,6 @@ const CatProductos = () => {
       setArrayUsuarios(resultusuarios);
     }
 
-
     let resultproductos = await getproductoscategoria({
       user: sessionStorage.getItem("user"),
       tipouser: sessionStorage.getItem("tipouser"),
@@ -169,10 +168,8 @@ const CatProductos = () => {
         setEditarsn(true);
       }
 
-
       let resultado = await getJpgFile({file: "./galerias/app_images/productos/" + resultproductos[0].idproducto + "/" + "foto-1.jpg",});
       resultado = await resultado.text();
-
 
       if (resultado.length !== 0) {
         setContenidofoto(resultado);

@@ -210,7 +210,9 @@ if (puntosState===2){
     if (showMap===true) {
       let tindex=puntos.length
       // hay que pasar el user del chofer
-      apiBaseDatos("setMovimientosNew", 1, idproducto, puntos[tindex-2].lat, puntos[tindex-1].lat, puntos[tindex-2].lng, puntos[tindex-1], (carrera*tarifa)+costoDomicilio, carrera, usert)                        
+      console.log("1");
+      apiBaseDatos("setmovimientosNew", 1, idproducto, puntos[tindex-2].lat, puntos[tindex-1].lat, puntos[tindex-2].lng, puntos[tindex-1], (carrera*tarifa)+costoDomicilio, carrera, usert)                        
+      console.log("2");
       setOcupado(true);
       apiBaseDatos("updateOcupado", idproducto, 1)
     }

@@ -446,16 +446,16 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
 
   }
 
-  async function setmovimientosNew(idmovimiento, producto, latOrigen, latDestino, lngOrigen, lngDestino, precio, kms, user){
+  async function setMovimientosNewSB(idmovimiento, idproducto, latOrigen, latDestino, lngOrigen, lngDestino, precio, kms, user){
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL')
-      await setMovimientosNew({idmovimiento, producto, latOrigen, latDestino, lngOrigen, lngDestino, precio, kms, user})
+      await setMovimientosNew({idmovimiento, idproducto, latOrigen, latDestino, lngOrigen, lngDestino, precio, kms, user})
     else{
       // SUPABASE
       // Busca que dinero tiene el user en su billetera
       const { data } = await supabase
             .from('getbilleteracup')
             .select('*')
-            .eq('idproducto', producto)
+            .eq('idproducto', idproducto)
       let pagado=0;
       if (data[0].billeteracup>=data[0].costodomicilio) pagado=1;
       // Conforma fecha y hora del viaje
@@ -464,7 +464,7 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
       const hora= fechaNow.getHours() + ":" + fechaNow.getMinutes();
       await supabase
            .from('tablamovimientos')
-           .insert({ idmovimiento, producto, precio, kms, fecha, hora, latOrigen, latDestino, lngOrigen, lngDestino, pagado, user })           
+           .insert({ idmovimiento, idproducto, precio, kms, fecha, hora, latOrigen, latDestino, lngOrigen, lngDestino, pagado, user })           
       if (pagado===1){
         // Rebaja del dinero que tenga el costo del domicilio
          await supabase
@@ -487,6 +487,7 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
   }
 
   const apiBaseDatos = async (ruta, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11) => {
+    console.log("3")
     switch (ruta) {
       case "anuncios":
         return anuncios();
@@ -511,12 +512,13 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
       case "setAplicaciones":
         return setAplicacionesSB(param1, param2, param3, param4, param5, param6, param7, param8)
       case "setmovimientosNew"  :
-        return setMovimientosNew(param1, param2, param3, param4, param5, param6, param7, param8, param9);
+        console.log("4")
+        return setMovimientosNewSB(param1, param2, param3, param4, param5, param6, param7, param8, param9);
       case "updateOcupado"  :
         updateOcupadoSB(param1, param2)
     }
       
   };  
 
-  export {isValid, buscarEnArreglo, buscarEnArregloString, obtenerImagen, uploadBase64Image, apiBaseDatos, buscaFoto, creaBucket, getFilesInFolderSB, getJpgFileSB, getInfoProducto}
-  export {getParesGpsProducto, setmovimientosNew}
+  export {isValid, buscarEnArreglo, buscarEnArregloString, obtenerImagen, uploadBase64Image, apiBaseDatos, buscaFoto, creaBucket}
+  export { getFilesInFolderSB, getJpgFileSB, getInfoProducto, getParesGpsProducto, setMovimientosNewSB}
