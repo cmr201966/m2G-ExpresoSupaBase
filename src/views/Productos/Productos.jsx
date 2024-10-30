@@ -14,7 +14,7 @@ import libre from "../../assets/images/libre.png";
 import ocupado from "../../assets/images/ocupado.png";
 import marker from "../../assets/images/custom_marker.png";
 import { getproductos, setMovimientosNew, updateOcupado, getProductoNew } from "../../servicios/productos";
-import { getJpgFile } from "../../servicios/imagenes";
+import { isValid, getJpgFileSB, apiBaseDatos } from "../../Utiles/Utiles";
 import { getparesgpscategoria } from "../../servicios/catalogos";
 
 import { useEffect, useState } from "react";
@@ -188,8 +188,10 @@ function contains(lat, lon, bbox) {
   }
 
   async function paresGps() {
+//*
     let resultgps = await getparesgpscategoria({ categoria: sessionStorage.getItem("categoria")});
     resultgps = await resultgps.json();
+//*
     let paresgps = [];
     let itemst = [];
     resultgps.forEach((item) => {
@@ -216,37 +218,37 @@ function contains(lat, lon, bbox) {
   //
 
   function init() {
-    if (parsedParams.mapa==='true'){
-      setShowMap(true);
-    }
+    if (parsedParams.mapa==='true') setShowMap(true);
     setNivel(parsedParams.nivel !== undefined ? parsedParams.nivel : nivel);
     setNombre(parsedParams.nombre !== undefined ? decodeURIComponent(parsedParams.nombre) : nombre);
-    if (parsedParams.categoria !== undefined && parsedParams.categoria !== null && parsedParams.categoria !== 0){
+
+    if (isValid(parsedParams.categoria) === true && parsedParams.categoria !== 0){
        sessionStorage.setItem("categoria", parsedParams.categoria);
     }
     else sessionStorage.setItem("categoria", null);
-    if (parsedParams.user !== undefined && parsedParams.user !== null && parsedParams.user !== ""){
+
+    if (isValid(parsedParams.user) === true  && parsedParams.user !== ""){
       sessionStorage.setItem("user", parsedParams.user);
     }
     else sessionStorage.setItem("user", null);
 
-    if (parsedParams.userAnuncio !== undefined && parsedParams.userAnuncio !== null && parsedParams.userAnuncio !== ""){
+    if (isValid(parsedParams.userAnuncio) === true && parsedParams.userAnuncio !== ""){
       sessionStorage.setItem("userAnuncio", parsedParams.userAnuncio);
     }
     else sessionStorage.setItem("userAnuncio", null);  
 
-    if (parsedParams.buscar !== undefined && parsedParams.buscar !== null && parsedParams.buscar !== ""){
+    if (isValid(parsedParams.buscar) === true  && parsedParams.buscar !== ""){
       sessionStorage.setItem("buscar",decodeURIComponent(parsedParams.buscar));``
     }
     else sessionStorage.setItem("buscar", null);
 
-    if (parsedParams.latitud !== undefined && parsedParams.latitud !== null && parsedParams.latitud !== '0'){
+    if (isValid(parsedParams.latitud) === true  && parsedParams.latitud !== '0'){
       sessionStorage.setItem("latitud",decodeURIComponent(parsedParams.latitud));``
       setLat(Number(parsedParams.latitud));
     }
     else sessionStorage.setItem("latitud", null);
 
-    if (parsedParams.longitud !== undefined && parsedParams.longitud !== null && parsedParams.longitud !== '0'){
+    if (isValid(parsedParams.longitud) === true  && parsedParams.longitud !== '0'){
       sessionStorage.setItem("longitud",decodeURIComponent(parsedParams.longitud));``
       setLng(Number(parsedParams.longitud));
     }
@@ -280,10 +282,8 @@ function contains(lat, lon, bbox) {
   async function init1() {
     setShow1(true);
     setInicia(true);
-    let result1 = await getproductos({categoria: sessionStorage.getItem("categoria"), user: sessionStorage.getItem("user"), userAnuncio: sessionStorage.getItem("userAnuncio"), 
-                                    buscar: sessionStorage.getItem("buscar")});
-    result1 = await result1.json();
-
+    console.log("1");
+    let result1 = await apiBaseDatos("getProductos", sessionStorage.getItem("categoria"), sessionStorage.getItem("userAnuncio"), sessionStorage.getItem("buscar"));
     const newResult = [];
     if (result1.error || result1.length === 0) {
       newResult.push({
@@ -304,10 +304,8 @@ function contains(lat, lon, bbox) {
           idnegocio: item.idnegocio,
           xxxNegocio: item.negocio,
           Producto: item.descripcion,
-          photo:
-            "./galerias/app_images/productos/" +
-            item.idproducto +
-            "/foto-1.jpg",
+          photo: "./galerias/app_images/productos/" + item.idproducto + "/foto-1.jpg",
+          photoSB: ".productos/" + item.idproducto + "/foto-1.jpg",
           user: item.iduser,
           tipouser: item.tipouser,
           ocupado: item.ocupado,
@@ -328,16 +326,13 @@ function contains(lat, lon, bbox) {
     // Obtener el contenido de la foto de perfil
     contenidofoto.splice(0, contenidofoto.length);
     for (let i = 0; i < newResult.length; i += 1) {
-        let resultado = await getJpgFile({ file: newResult[i].photo, i });
-        resultado = await resultado.text();
-
-      if (resultado.length !== 0 && resultado.error === undefined) {
+      let resultado= await getJpgFileSB(newResult[i].photo, newResult[i].photoSB);
+      if (resultado.length !== 0) {
         contenidofoto.push(resultado);
       }
     }
     sessionStorage.setItem("carditem", 0);
-    let resultgps = await getparesgpscategoria({ categoria: sessionStorage.getItem("categoria"), user: sessionStorage.getItem("user"), userAnuncio: sessionStorage.getItem("userAnuncio")});
-    resultgps = await resultgps.json();
+    let resultgps = await apiBaseDatos("getparesgpscategoria", sessionStorage.getItem("categoria"), sessionStorage.getItem("user"));
     let paresgps = [];
     let itemst = [];
     resultgps.forEach((item) => {
@@ -367,11 +362,11 @@ function contains(lat, lon, bbox) {
     if (showMap === true) {
       // Insertar el movimiento y poner showmap en false
       let tindex = puntos.length;
-
+      //*
         setMovimientosNew({ idmovimiento: 1, idproducto: idproductot, latOrigen: puntos[tindex - 2].lat, latDestino: puntos[tindex - 1].lat, lngOrigen: puntos[tindex - 2].lng,
         lngDestino: puntos[tindex - 1].lng, precio: carrera * items[index].tarifa + items[index].costoDomicilio, kms: carrera, user: users,});
         await updateOcupado({idproducto: idproductot, ocupado: 1 });
-  
+      //*
         init1();
         }
 
@@ -421,8 +416,7 @@ function contains(lat, lon, bbox) {
       if ((Number(esta) < Number(menor)) && ((tpuntos[i].distanciaMax===0) || (tpuntos[i].distanciaMax>=esta))) {
           menor = esta;
           setIdroductot(items[i].idproducto);
-          let resultProduct = await getProductoNew({idproducto: items[i].idproducto});
-          resultProduct = await resultProduct.json();
+          let resultProduct = await apiBaseDatos("getProductoNew", items[i].idproducto);
           if (resultProduct.length !== 0) {
              setMarca(resultProduct[0].marca);
              setColor(resultProduct[0].color);

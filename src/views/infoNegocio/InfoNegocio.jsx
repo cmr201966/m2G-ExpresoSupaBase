@@ -8,10 +8,7 @@ import { useEffect, useState } from "react";
 import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Map from "../../components/Map/MapBox";
 import { useLocation } from "react-router-dom";
-
-import {getinfonegocio  } from "../../servicios/negocios";
-import {getJpgFile  } from "../../servicios/imagenes";
-import { getFilesInFolder } from "../../servicios/fs";
+import { isValid, getFilesInFolderSB, getJpgFileSB, getInfoNegocio } from "../../Utiles/Utiles";
 import "./styles.css";
 
 const InfoNegocio = () => {
@@ -48,32 +45,18 @@ const InfoNegocio = () => {
 
   async function init(){
 
-    let result = await getinfonegocio({ idnegocio: parsedParams.idnegocio });
-    result = await result.json();
-
-
+    let result = await getInfoNegocio(parsedParams.idnegocio);
+    console.log(result);
     if (result[0].idnegocio===sessionStorage.getItem("user")){
       setShowGalerias(true)
     }
-
-
-    let resultFiles = await getFilesInFolder({folder: "./galerias/app_images/usuarios/" + parsedParams.idnegocio});
-    resultFiles = await resultFiles.json();
-
-
+    let resultFiles = await getFilesInFolderSB("./galerias/app_images/usuarios/" + parsedParams.idnegocio, "galerias");
     setArrayFotos(resultFiles);
     let tarray=[];
     for(let i=0; i<resultFiles.length; i+=1){
-
-
-      let result = await getJpgFile({file: "./galerias/app_images/usuarios" + "/" + parsedParams.idnegocio + "/" +  resultFiles[i]});
-      result = await result.text();
-
-
-      if (result.length !== 0 && result.error === undefined) {
-        tarray.push(result);
-      }
-      setArrayFotoInfo(tarray);        
+      let result= await getJpgFileSB("./galerias/app_images/usuarios" + "/" + parsedParams.idnegocio + "/" +  resultFiles[i], "usuarios/" + parsedParams.idnegocio + "/" +  resultFiles[i]);
+      if (result.url === "") tarray.push(result);
+      setArrayFotoInfo(tarray);
     }
     if (result.length !== 0 && result.error === undefined) {
       if (result[0].tipouser===0) setTipoUser("Gratis");
@@ -90,16 +73,11 @@ const InfoNegocio = () => {
       setLng(result[0].longitud);
       setGps(result[0].gpsSN);
     }
-
-    
-   result = await getJpgFile({ file: "./galerias/app_images/usuarios" + "/" + parsedParams.idnegocio + "/foto-1.jpg"});
-   result = await result.text();
-
-
-  if (result.length !== 0 && result.error === undefined) {
-    setContenidofoto(result);
-  }
-  setInicio(false);
+   result = await getJpgFileSB("./galerias/app_images/usuarios" + "/" + parsedParams.idnegocio + "/foto-1.jpg", "usuarios" + "/" + parsedParams.idnegocio + "/foto-1.jpg")   
+   if (result.length !== 0 && isValid(result.error) === false) {
+      setContenidofoto(result);
+   }
+   setInicio(false);
 }
 
 useEffect(() => {

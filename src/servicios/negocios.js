@@ -12,6 +12,7 @@ export async function makeRequest(url, body, method = "POST") {
 }
 
 export async function getinfonegocio(body) {
+  console.log(body);
   return makeRequest("http://localhost:3001/get-info-negocio", body);
 }
 

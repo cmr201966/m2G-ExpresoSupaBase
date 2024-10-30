@@ -3,7 +3,7 @@ import ShoppingCartCheckoutOutlinedIcon from '@mui/icons-material/ShoppingCartCh
 import BusinessCenterOutlinedIcon from '@mui/icons-material/BusinessCenterOutlined';
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import { useState } from "react";
-import { updateOcupado } from "../../servicios/productos";
+import { apiBaseDatos  } from "../../Utiles/Utiles";
 
 // styles
 import "./styles.css";
@@ -17,8 +17,8 @@ const CardRow = (props) => {
     if (user!=="" && user!==null && user!==undefined){
         setOcupado(ocupado===0?1:0);
     }
-
-    await updateOcupado({idproducto: item.idproducto, ocupado: ocupado===0?1:0});
+    apiBaseDatos("updateOcupado", item.idproducto, ocupado===0?1:0)
+//    await updateOcupado({idproducto: item.idproducto, ocupado: ocupado===0?1:0});
 
     paresGps();
 

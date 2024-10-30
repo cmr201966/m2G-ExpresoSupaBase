@@ -57,20 +57,17 @@ const InfoProducto = () => {
 //  const [duracion, setDuracion] = useState(0);
     
   async function init() {
-    let resultFiles = await getFilesInFolderSB("./galerias/app_images/productos/" + parsedParams.idproducto, "");
+    let resultFiles = await getFilesInFolderSB("./galerias/app_images/productos/" + parsedParams.idproducto, "galerias");
     setArrayFotos(resultFiles);
     let tarray=[];
     for(let i=0; i<resultFiles.length; i+=1){
-      /* param1 file para MYSQL, param2 file para SUPABASE*/
       let result= await getJpgFileSB("./galerias/app_images/productos/" + parsedParams.idproducto + "/" +  resultFiles[i], "productos/" + parsedParams.idproducto + "/" +  resultFiles[i]);
       if (result.url === "") {
         tarray.push(result);
       }
       setArrayFotoInfo(tarray);
     }
-
     let result= await getInfoProducto(parsedParams.idproducto);
-
     if (result.length !== 0 && result.error === undefined) {
       if (result[0].idnegocio===sessionStorage.getItem("user")){
         setShowGalerias(true)
@@ -210,12 +207,14 @@ if (puntosState===2){
     if (showMap===true) {
       let tindex=puntos.length
       // hay que pasar el user del chofer
-      console.log("1");
-      apiBaseDatos("setmovimientosNew", 1, idproducto, puntos[tindex-2].lat, puntos[tindex-1].lat, puntos[tindex-2].lng, puntos[tindex-1], (carrera*tarifa)+costoDomicilio, carrera, usert)                        
-      console.log("2");
+      let latOrigen=tindex<3?0:puntos[tindex-2].lat;
+      let latDestino=tindex<3?0:puntos[tindex-1].lat;
+      let lngOrigen=tindex<3?0:puntos[tindex-2].lng;
+      let lngDestino=tindex<3?0:puntos[tindex-1].lng;
+      apiBaseDatos("setmovimientosNew", 1, idproducto, latOrigen, latDestino, lngOrigen, lngDestino, (carrera*tarifa)+costoDomicilio, carrera, usert)
       setOcupado(true);
       apiBaseDatos("updateOcupado", idproducto, 1)
-    }
+    } 
 
     setPuntos([]);
     setPuntosState(0);

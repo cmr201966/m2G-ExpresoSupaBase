@@ -9,7 +9,9 @@ import { getJpgFile  } from "../servicios/imagenes";
 import { getFilesInFolder } from "../servicios/fs";
 import { getinfoproducto } from "../servicios/productos";
 import { getParesGpsNaturalezaNew } from "../servicios/naturalezas";
-import { setMovimientosNew, updateOcupado } from "../servicios/productos";
+import {getinfonegocio  } from "../servicios/negocios";
+import { getparesgpscategoria } from "../servicios/catalogos";
+import { getproductos, setMovimientosNew, updateOcupado, getProductoNew } from "../servicios/productos";
 
 const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co', 
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJudWJ5cXZnbXJqbHh5Z3hhcHFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjgzMDM3NDksImV4cCI6MjA0Mzg3OTc0OX0.3oGjEFdILLMO46DYrAbgWUmVHwP_Z_oH6Oo_j8oEt-c')
@@ -429,6 +431,27 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
    return result;
   }
 
+  async function getInfoNegocio(idnegocio){
+    console.log(idnegocio);
+    let result=[];
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
+      console.log("MYSQL");
+      result = await getinfonegocio({ idnegocio });
+      result = await result.json();
+      console.log(result);
+        }
+    else{
+      const { data } = await supabase
+      .from('getInfoNegocio')
+      .select('*')
+      .eq('idnegocio', idnegocio)
+      result=data;
+   }
+   return result;
+  }
+
+
+
   async function getParesGpsProducto(categoria, producto){
     let result=[];
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
@@ -447,8 +470,11 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
   }
 
   async function setMovimientosNewSB(idmovimiento, idproducto, latOrigen, latDestino, lngOrigen, lngDestino, precio, kms, user){
-    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL')
+    console.log(idmovimiento, idproducto, latOrigen, latDestino, lngOrigen, lngDestino, precio, kms, user);
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
+      console.log("setMovimientosSB:MYSQL")
       await setMovimientosNew({idmovimiento, idproducto, latOrigen, latDestino, lngOrigen, lngDestino, precio, kms, user})
+    }
     else{
       // SUPABASE
       // Busca que dinero tiene el user en su billetera
@@ -476,8 +502,9 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
   }
 
   async function updateOcupadoSB(idproducto, ocupado){
-    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL')
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
       await updateOcupado({idproducto, ocupado})
+    }
     else{
       await supabase
       .from('tablaCatProductos')
@@ -486,8 +513,89 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
     }
   }
 
+  async function getparesgpscategoriaSB(categoria, user, anuncio){
+    let resultgps=[];
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
+      resultgps = await getparesgpscategoria({ categoria: categoria, user: user, userAnuncio: anuncio});
+      resultgps = await resultgps.json();
+        }
+    else{
+      await supabase
+      .from('getparesgpscategoria')
+      .select('*')
+      .eq('categorianegocio', categoria)
+      .eq('iduser', user);
+    }
+  return resultgps;
+  }
+
+
+  function GeneraVistaSN(categoria, userAnuncio, buscar){
+    let condicion1=categoria==='0' || isValid(categoria)===false || categoria===''?"":" and (tablacatproductos.categorianegocio=" + categoria + ")"
+    let condicion2=isValid(userAnuncio)===false || userAnuncio===''?"":" and (tablacatproductos.iduser='" + userAnuncio + "')";
+    let condicion3="";
+    if (isValid(buscar)===true && buscar!==''){
+       let busquedas=buscar.split(" ");
+       busquedas.forEach(item => {
+          if (item.toUpperCase().indexOf("PLAZAS")!==-1){
+             let plazas=item.toUpperCase().split("P");
+             condicion3= condicion3 + " and (tablacatproductos.talla>=" + plazas[0] + ")";
+          }
+          else
+             condicion3= condicion3 + " and (POSITION('" + item.toUpperCase() + `' IN UPPER(tablacatproductos."desc"))>0)`
+       });
+    }
+       let SQL= "CREATE VIEW getProductos AS SELECT DISTINCT tablacatproductos.idproducto as idproducto,tablacatproductos.nick as producto,tablacatproductos.desc as descripcion," +
+        " tablausuarios.nombre as negocio, tablausuarios.iduser as idnegocio, ocupado, tipouser, tablausuarios.iduser, tarifa, costoDomicilio, domicilio" +
+        " FROM tablacatproductos, tablausuarios, tablacatprovincias,tablacatmunicipios " +
+        " WHERE (tablacatproductos.iduser=tablausuarios.iduser) and (tablacatprovincias.provincia=tablausuarios.provincia) and (tablacatmunicipios.provincia=" + 
+        "tablausuarios.provincia) and (tablacatmunicipios.municipio=tablausuarios.municipio)"  + condicion1  + condicion2 + condicion3;
+        return SQL;
+  
+  }
+  async function getProductosSB(categoria, userAnuncio, buscar){
+    let result1=[];
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
+      result1 = await getproductos({categoria, userAnuncio, buscar});
+      result1 = await result1.json();
+          }
+    else{
+      // Generar VISTA con API en SUPABASE
+      let sql=GeneraVistaSN(categoria, userAnuncio, buscar);
+      await supabase
+      .rpc('pg_exec', { sql });
+      
+      // Ejecutar VISTA
+      const { data } =await supabase
+      .from('getProductos')
+      .select('*')
+      result1=data;
+    //  Borrar VISTA antes de salir
+    await supabase
+        .rpc('borrarVistaGetProductos');
+  }
+    console.log(result1);
+    return result1;
+
+  }
+
+  async function getProductosNew(idproducto){
+    let resultProduct=[];
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
+      resultProduct = await getProductoNew({idproducto});
+      resultProduct = await resultProduct.json();
+          }
+    else{
+      const { data } =await supabase
+      .from('getproductonew')
+      .select('*')
+      .eq('idproducto', idproducto)
+      resultProduct=data;
+    }
+    return resultProduct;
+  }
   const apiBaseDatos = async (ruta, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11) => {
-    console.log("3")
+    console.log("2");
     switch (ruta) {
       case "anuncios":
         return anuncios();
@@ -512,13 +620,19 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
       case "setAplicaciones":
         return setAplicacionesSB(param1, param2, param3, param4, param5, param6, param7, param8)
       case "setmovimientosNew"  :
-        console.log("4")
         return setMovimientosNewSB(param1, param2, param3, param4, param5, param6, param7, param8, param9);
       case "updateOcupado"  :
-        updateOcupadoSB(param1, param2)
+        return updateOcupadoSB(param1, param2);
+      case "getparesgpscategoria":
+        return getparesgpscategoriaSB(param1, param2, param3);
+      case "getProductos"  :
+        console.log("3")
+        return getProductosSB(param1, param2, param3);
+      case "getProductosNew"  :
+         return getProductosNew(param1);
     }
       
   };  
 
   export {isValid, buscarEnArreglo, buscarEnArregloString, obtenerImagen, uploadBase64Image, apiBaseDatos, buscaFoto, creaBucket}
-  export { getFilesInFolderSB, getJpgFileSB, getInfoProducto, getParesGpsProducto, setMovimientosNewSB}
+  export { getFilesInFolderSB, getJpgFileSB, getInfoProducto, getParesGpsProducto, setMovimientosNewSB, getInfoNegocio}
