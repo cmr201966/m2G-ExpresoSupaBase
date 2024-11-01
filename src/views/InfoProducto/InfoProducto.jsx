@@ -55,7 +55,7 @@ const InfoProducto = () => {
   const [arrayFotos, setArrayFotos] = useState([]);
   const [arrayFotoInfo, setArrayFotoInfo] = useState([]);
 //  const [duracion, setDuracion] = useState(0);
-    
+
   async function init() {
     let resultFiles = await getFilesInFolderSB("./galerias/app_images/productos/" + parsedParams.idproducto, "galerias");
     setArrayFotos(resultFiles);
@@ -73,7 +73,6 @@ const InfoProducto = () => {
         setShowGalerias(true)
       }
       else setShowGalerias(false);
-      console.log(result);
       setIdproducto(parsedParams.idproducto);
       setUsert(result[0].idnegocio)
       setNegocio(result[0].negocio);
@@ -139,10 +138,7 @@ const InfoProducto = () => {
 
 
 const lngLatSelected = async (point, lngLat) => {
-    if (ocupado===1) 
-      {
-        return;
-      }
+if (ocupado===1) return;
 setLng(lngLat.lng);
 setLat(lngLat.lat);
 let lat1 = puntos[puntos.length - 1].lat;

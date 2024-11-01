@@ -12,6 +12,10 @@ import { getParesGpsNaturalezaNew } from "../servicios/naturalezas";
 import {getinfonegocio  } from "../servicios/negocios";
 import { getparesgpscategoria } from "../servicios/catalogos";
 import { getproductos, setMovimientosNew, updateOcupado, getProductoNew } from "../servicios/productos";
+import { setCategoriasNegocios, delCategoria } from "../servicios/catalogos";
+import { getcategoriasnegociosapp } from "../servicios/negocios";
+import { getproductoscategoria,  setproducto,  delproducto,} from "../servicios/productos";
+import { getusuarios } from "../servicios/registrarse";
 
 const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co', 
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJudWJ5cXZnbXJqbHh5Z3hhcHFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjgzMDM3NDksImV4cCI6MjA0Mzg3OTc0OX0.3oGjEFdILLMO46DYrAbgWUmVHwP_Z_oH6Oo_j8oEt-c')
@@ -23,6 +27,7 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
   }
 
   function buscarEnArreglo (arreglo, valor, atributo) {
+    console.log(arreglo, valor, atributo);
     let index = -1;
     arreglo.forEach((item, i) => {
       if (Number(item[atributo]) === Number(valor)) {
@@ -151,13 +156,13 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
 
   }
 
-  async function CategoriasInsertUpdate(param1, param2, param3, param4, param5){
+  async function CategoriasInsertUpdate(insertar, desc, link, categorianegocio, contenido){
     /*param1: insertar, param2: desc, param3: link, param4: categorianegocio, param5: contenido*/
     let err;
-    if(param1===true){/*insertar*/
+    if(insertar===true){/*insertar*/
       const { error } = await supabase
       .from('tablaCategorias')
-      .insert({ desc: param2, link: param3 }) /* desc y link*/
+      .insert({ desc, link }) /* desc y link*/
       if (isValid(error)===false){
          const { data } = await supabase
                .from('tablaCategorias')
@@ -165,7 +170,7 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
                .order('id', { ascending: false })
                .limit(1);
 
-         err=uploadBase64Image(param5, 'galerias', "categorias_de_negocios/" + data[0].id + "/" + data[0].id + ".jpg")
+         err=uploadBase64Image(contenido, 'galerias', "categorias_de_negocios/" + data[0].id + "/" + data[0].id + ".jpg")
 
       }
       return (err);
@@ -173,10 +178,10 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
     else{
       const { error } = await supabase
       .from('tablaCategorias')
-      .update({ desc: param2, link: param3 })
-      .eq('categorianegocio', param4)
+      .update({ desc, link })
+      .eq('categorianegocio', categorianegocio)
       if (isValid(error)===false)
-         err=uploadBase64Image(param5, 'galerias', "categorias_de_negocios/" + param4 + "/" + param4 + ".jpg")
+         err=uploadBase64Image(contenido, 'galerias', "categorias_de_negocios/" + categorianegocio + "/" + categorianegocio + ".jpg")
     }
     return err;
   }
@@ -432,13 +437,10 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
   }
 
   async function getInfoNegocio(idnegocio){
-    console.log(idnegocio);
     let result=[];
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
-      console.log("MYSQL");
       result = await getinfonegocio({ idnegocio });
       result = await result.json();
-      console.log(result);
         }
     else{
       const { data } = await supabase
@@ -470,9 +472,7 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
   }
 
   async function setMovimientosNewSB(idmovimiento, idproducto, latOrigen, latDestino, lngOrigen, lngDestino, precio, kms, user){
-    console.log(idmovimiento, idproducto, latOrigen, latDestino, lngOrigen, lngDestino, precio, kms, user);
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
-      console.log("setMovimientosSB:MYSQL")
       await setMovimientosNew({idmovimiento, idproducto, latOrigen, latDestino, lngOrigen, lngDestino, precio, kms, user})
     }
     else{
@@ -529,8 +529,7 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
   return resultgps;
   }
 
-
-  function GeneraVistaSN(categoria, userAnuncio, buscar){
+  function GeneraVistaGetProductos(categoria, userAnuncio, buscar){
     let condicion1=categoria==='0' || isValid(categoria)===false || categoria===''?"":" and (tablacatproductos.categorianegocio=" + categoria + ")"
     let condicion2=isValid(userAnuncio)===false || userAnuncio===''?"":" and (tablacatproductos.iduser='" + userAnuncio + "')";
     let condicion3="";
@@ -545,15 +544,16 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
              condicion3= condicion3 + " and (POSITION('" + item.toUpperCase() + `' IN UPPER(tablacatproductos."desc"))>0)`
        });
     }
-       let SQL= "CREATE VIEW getProductos AS SELECT DISTINCT tablacatproductos.idproducto as idproducto,tablacatproductos.nick as producto,tablacatproductos.desc as descripcion," +
+       let sql= "CREATE OR REPLACE VIEW getProductos AS SELECT DISTINCT tablacatproductos.idproducto as idproducto,tablacatproductos.nick as producto,tablacatproductos.desc as descripcion," +
         " tablausuarios.nombre as negocio, tablausuarios.iduser as idnegocio, ocupado, tipouser, tablausuarios.iduser, tarifa, costoDomicilio, domicilio" +
         " FROM tablacatproductos, tablausuarios, tablacatprovincias,tablacatmunicipios " +
         " WHERE (tablacatproductos.iduser=tablausuarios.iduser) and (tablacatprovincias.provincia=tablausuarios.provincia) and (tablacatmunicipios.provincia=" + 
         "tablausuarios.provincia) and (tablacatmunicipios.municipio=tablausuarios.municipio)"  + condicion1  + condicion2 + condicion3;
-        return SQL;
-  
+        return sql;
   }
+
   async function getProductosSB(categoria, userAnuncio, buscar){
+    console.log("10");
     let result1=[];
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
       result1 = await getproductos({categoria, userAnuncio, buscar});
@@ -561,20 +561,16 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
           }
     else{
       // Generar VISTA con API en SUPABASE
-      let sql=GeneraVistaSN(categoria, userAnuncio, buscar);
+      console.log("SUPABASE");
+      let sql=GeneraVistaGetProductos(categoria, userAnuncio, buscar);
       await supabase
-      .rpc('pg_exec', { sql });
-      
+      .rpc('execute_query', { query: sql});
       // Ejecutar VISTA
-      const { data } =await supabase
-      .from('getProductos')
+      const { data, error } = await supabase
+      .from('getproductos')
       .select('*')
       result1=data;
-    //  Borrar VISTA antes de salir
-    await supabase
-        .rpc('borrarVistaGetProductos');
   }
-    console.log(result1);
     return result1;
 
   }
@@ -594,17 +590,185 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
     }
     return resultProduct;
   }
-  const apiBaseDatos = async (ruta, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11) => {
-    console.log("2");
+
+  async function setCategoriasNegociosSB(categorianegocio, desc, descold, link, inserta, contenidofoto ){
+    let result=[];
+    let err="";        
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
+      result = await setCategoriasNegocios({categorianegocio, desc, descold, link, inserta, contenidofoto });
+      result = await result.json();
+      err=result.error;
+     }
+   else{
+    err= await CategoriasInsertUpdate(categorianegocio, desc, descold, "productos", inserta, contenidofoto);
+
+   }
+   return err;
+  }
+
+  async function delCategoriaSB(categorianegocio){
+    let err="";
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL') {
+      const {error} = await delCategoria({categorianegocio });
+      err=error;
+    }else{
+      const { error } = await supabase.from('tablacategorias').delete().eq('id', categorianegocio)
+      err=error;
+    }
+    return err;
+  }
+
+  async function delAnuncio(id){
+    let err="";
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL') {
+      const {error} = await delAnuncio({id});
+      err=error;
+    }else{
+      const { error } = await supabase.from('tablaAnuncios').delete().eq('id', id)
+      err=error;
+    }
+    return err;
+
+  }
+
+  async function getcategoriasnegociosappSB(){
+    let resulttnegocios=[];
+    let err="";
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL') {
+      resulttnegocios = await getcategoriasnegociosapp({});
+      resulttnegocios = await resulttnegocios.json();
+    }
+    else{
+      const { data, error } =await supabase
+      .from('tablacategorias')
+      .select('*')
+      .order('desc', { ascending: true })
+      resulttnegocios=data;
+      err=error;
+    }
+    return {err, resulttnegocios};
+  }
+
+  function generaVistaGetProductosCategoria(producto, categoria, user, tipouser){
+  let condicion = "";
+  if (isValid(producto)===true ) {
+     condicion = condicion===""?" where (tablacatproductos.idproducto=" + producto + ")":" and (tablacatproductos.idproducto=" + producto + ")";
+  }
+  if (isValid(categoria)===true && categoria!=="0") {
+    condicion = condicion===""?" where (tablacatproductos.categorianegocio=" + categoria + ")":" and (tablacatproductos.categorianegocio=" + categoria + ")";
+  }
+  if (isValid(user)===true && tipouser!=='3') {
+    condicion = condicion===""?" where (tablacatproductos.iduser='" + user + "')" : condicion + " and (tablacatproductos.iduser='" + user + "')";
+  }
+
+  let sql="CREATE OR REPLACE VIEW getproductoscategoria AS select tablacatproductos.*  from tablacatproductos" + condicion;
+
+  return sql;
+
+  }
+
+  async function getproductoscategoriaSB(user, tipouser, categoria, producto){
+    console.log(user, tipouser, categoria, producto);
+    let resultproductos=[];
+    let err="";
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL') {
+       resultproductos = await getproductoscategoria({user, tipouser, categoria, producto});
+       resultproductos = await resultproductos.json();
+    }
+    else{
+      // Generar VISTA con API en SUPABASE
+      let sql=generaVistaGetProductosCategoria(producto, categoria, user, tipouser);
+      await supabase
+      .rpc('execute_query', { query: sql });      
+      // Ejecutar VISTA
+      const { data, error } =await supabase
+      .from('getproductoscategoria')
+      .select('*')
+      resultproductos=data;
+      err=error;
+      console.log(data)
+      console.log(err);
+    }
+    return resultproductos;
+  }
+
+  async function delProducto(producto){
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL') await delproducto({ producto: producto })
+      else
+    await supabase.from('tablacatproductos').delete().eq('idproducto', producto)      
+  }
+
+  async function setProductoSB(user, producto, categoria, nick, contenidofoto, desc, precio, ocupado, domicilio, agregar, marca, modelo, talla, color, gps, latitud, longitud, sciudad, distanciamax){
+    console.log(contenidofoto)
+    let err="";
+    let result=[];
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL') {
+       await setproducto({ user, categoria, nick, desc, precio, domicilio, marca, modelo, talla, color, gps, latitud,longitud, ocupado,  sciudad, distanciamax});
+    }
+    else{
+      if (agregar===true){
+        const { error } = await supabase
+        .from('tablacatproductos')
+        .insert({ iduser: user, categorianegocio: categoria, nick, desc, precio, domicilio, marca, modelo, talla, color, gpssn: gps, latitud, longitud, ocupado, distanciamax, sciudad })
+        if (isValid(error)===true && error.length===0) {
+           err=error
+        }
+        else{
+          const { data, error } = await supabase
+          .from('tablacatproductos')
+          .select('*')
+          .order('idproducto', { ascending: false })
+          .limit(1);
+          result=data;
+          console.log(data);
+          console.log(error);
+          if (isValid(error)===false){
+             await uploadBase64Image(contenidofoto, 'galerias', "productos/" + data[0].idproductos + "/" + data[0].idproductos + ".jpg")
+             err=error;
+          }
+        }
+      }
+      else{
+        const { error } = await supabase
+        .from('tablaCatProductos')
+        .update({ categorianegocio: categoria, nick, desc, precio, domicilio, marca, modelo, talla, color, gps, latitud, longitud, ocupado, distanciamax, sciudad })
+        .eq('idproducto', producto)
+        console.log(producto);
+        if (isValid(error)===false) uploadBase64Image(contenidofoto, 'galerias', "productos/" + producto + "/" + producto + ".jpg")
+        err=error;       
+      }
+    }
+    return {err, result};
+  }
+
+  async function getUsuariosSB(){
+    let resultusuarios=[];
+    let err="";
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL') {
+       resultusuarios = await getusuarios({});
+       resultusuarios = await resultusuarios.json();
+       err=resultusuarios.error;
+    }
+    else{
+      const { data, error } = await supabase
+      .from('tablausuarios')
+      .select('*')
+      err=error;
+      resultusuarios=data;
+    }
+    return {resultusuarios, err};
+  }
+
+  const apiBaseDatos = async (ruta, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13, param14, param15, param16, param17, param18, param19) => {
     switch (ruta) {
       case "anuncios":
         return anuncios();
       case "getcategoriasnew":
-        return getcategoriasnew()
+        return getcategoriasnew()            
       case "getCategoriasNegocios":
         return getCategoriasNegociosSB();
-      case "CategoriasInsertUpdate":
-        return CategoriasInsertUpdate(param1, param2, param3, param4, param5);
+      case "setCategoriasNegocios":
+        return setCategoriasNegociosSB(param1, param2, param3, param4, param5, param6);
       case "login":
         return await loginSB(param1, param2);
       case "provincias"  :
@@ -626,13 +790,27 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
       case "getparesgpscategoria":
         return getparesgpscategoriaSB(param1, param2, param3);
       case "getProductos"  :
-        console.log("3")
+        console.log("9");
         return getProductosSB(param1, param2, param3);
-      case "getProductosNew"  :
+      case "getProductoNew"  :
          return getProductosNew(param1);
-    }
-      
+      case "delCategoria" :
+        return delCategoriaSB(param1);
+      case "delAnuncio"  :
+        return delAnuncio(param1);
+      case "getcategoriasnegociosapp":
+        return getcategoriasnegociosappSB();
+      case "getproductoscategoria":
+        return getproductoscategoriaSB(param1, param2, param3, param4);
+      case "delProducto"  :
+        return delproducto(param1);
+      case "setProducto"  :
+        return setProductoSB(param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13, param14, param15, param16, param17, param18, param19, param19)
+      case "getUsuarios"  :
+        return getUsuariosSB();
+    }      
   };  
 
   export {isValid, buscarEnArreglo, buscarEnArregloString, obtenerImagen, uploadBase64Image, apiBaseDatos, buscaFoto, creaBucket}
-  export { getFilesInFolderSB, getJpgFileSB, getInfoProducto, getParesGpsProducto, setMovimientosNewSB, getInfoNegocio}
+  export { getFilesInFolderSB, getJpgFileSB, getInfoProducto, getParesGpsProducto, setMovimientosNewSB, getInfoNegocio, getcategoriasnegociosappSB}
+  export {delProducto}

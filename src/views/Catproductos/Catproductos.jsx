@@ -22,11 +22,7 @@ import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { getcategoriasnegociosapp } from "../../servicios/negocios";
-import { getproductoscategoria,  setproducto,  delproducto,} from "../../servicios/productos";
-import { getJpgFile } from "../../servicios/imagenes";
-import { getusuarios } from "../../servicios/registrarse";
-import { buscarEnArreglo, buscarEnArregloString } from "../../Utiles/Utiles";
+import { isValid, buscarEnArreglo, buscarEnArregloString, apiBaseDatos, getJpgFileSB } from "../../Utiles/Utiles";
 import { useNotification } from "../../context/NotificationProvider";
 
 import "./styles.css";
@@ -99,7 +95,8 @@ const CatProductos = () => {
     for (let prop in parsedParams) {
       sessionStorage.setItem(prop, parsedParams[prop])
     }
-    if ((sessionStorage.getItem("login")===1 || sessionStorage.getItem("login")==='1') && (sessionStorage.getItem("user")==='null' || sessionStorage.getItem("user")===null)){
+
+    if ((sessionStorage.getItem("login")===1 || sessionStorage.getItem("login")==='1') && (isValid(sessionStorage.getItem("user"))===false)){
         navigate(`/login?login=1&regreso=${sessionStorage.getItem("regreso")}`);
         return
     }
@@ -111,47 +108,30 @@ const CatProductos = () => {
     }
     let ttarraytnegocios;
 
+    let resulttnegocios = await apiBaseDatos("getcategoriasnegociosapp");
 
-    let resulttnegocios = await getcategoriasnegociosapp({});
-    resulttnegocios = await resulttnegocios.json();
-
-    if (resulttnegocios.error || resulttnegocios.length === 0) {
+    if (isValid(resulttnegocios.err)===true) {
       setArraytnegocios(arraynonegocios);
       ttarraytnegocios = arraynonegocios;
     } else {
-      setArraytnegocios(resulttnegocios);
-      ttarraytnegocios = resulttnegocios;
+      setArraytnegocios(resulttnegocios.resulttnegocios);
+      ttarraytnegocios = resulttnegocios.resulttnegocios;
     }
-    let posicion = buscarEnArreglo(
-      ttarraytnegocios,
-      parsedParams.categoria,
-      "categorianegocio"
+    let posicion = buscarEnArreglo(ttarraytnegocios, parsedParams.categoria, "categorianegocio"
     );
     posicion = posicion === -1 ? 0 : posicion;
     setTnegocio(posicion);
-
-    let resultusuarios = await getusuarios({});
-    resultusuarios = await resultusuarios.json();
-
-
-    if (resultusuarios.error || resultusuarios.length === 0) {
+    let resultusuarios1 = await apiBaseDatos("getUsuarios");
+    let resultusuarios=resultusuarios1.resultusuarios;
+    if (isValid(resultusuarios1.err)===true) {
       setArrayUsuarios(arrayNoUsuarios);
     } 
     else {
       setUsuario(buscarEnArregloString(resultusuarios, resultusuarios[0].iduser, "iduser"));
       setArrayUsuarios(resultusuarios);
     }
-
-    let resultproductos = await getproductoscategoria({
-      user: sessionStorage.getItem("user"),
-      tipouser: sessionStorage.getItem("tipouser"),
-      categoria: ttarraytnegocios[posicion].categorianegocio,
-      producto,
-    });
-    resultproductos = await resultproductos.json();
-
-
-    if (resultproductos.error || resultproductos.length === 0) {
+    let resultproductos = await apiBaseDatos("getproductoscategoria", sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), ttarraytnegocios[posicion].categorianegocio, producto);
+    if (isValid(resultproductos.err)===true) {
       setArrayproductos(arraynoproductos);
       recuperardatosproducto(arraynoproductos, 0);
     } else {
@@ -168,12 +148,11 @@ const CatProductos = () => {
         setEditarsn(true);
       }
 
-      let resultado = await getJpgFile({file: "./galerias/app_images/productos/" + resultproductos[0].idproducto + "/" + "foto-1.jpg",});
-      resultado = await resultado.text();
-
+      let resultado = await getJpgFileSB("./galerias/app_images/productos/" + resultproductos[0].idproducto + "/" + "foto-1.jpg", 
+                                         "productos/" + resultproductos[0].idproducto + "/" + "foto-1.jpg");
       if (resultado.length !== 0) {
         setContenidofoto(resultado);
-        setNombrefoto("166", resultproductos[0].idproducto);
+        setNombrefoto(resultproductos[0].idproducto);
       } else {
         setNombrefoto("");
       }
@@ -187,12 +166,8 @@ const CatProductos = () => {
   const handleProducto = async (_, value) => {
     setProducto(value);
     recuperardatosproducto(arrayproductos, value.value);
-
-
-    let resultado = await getJpgFile({
-    file: "./galerias/app_images/productos" + "/" + arrayproductos[value?.value].idproducto + "/foto-1.jpg",});
-    resultado = await resultado.text();
-
+    let resultado = await getJpgFileSB("./galerias/app_images/productos" + "/" + arrayproductos[value?.value].idproducto + "/foto-1.jpg", 
+                                       "productos" + "/" + arrayproductos[value?.value].idproducto + "/foto-1.jpg");
     if (resultado.length !== 0) {
       setContenidofoto(resultado);
       setNombrefoto(arrayproductos[value?.value].idproducto);
@@ -202,31 +177,17 @@ const CatProductos = () => {
   };
 
   async function getProductos(value) {
-
-
-    let resultproductos = await getproductoscategoria({
-      user: sessionStorage.getItem("user"),
-      tipouser: sessionStorage.getItem("tipouser"),
-      categoria: arraytnegocios[value].categorianegocio,
-    });
-    resultproductos = await resultproductos.json();
-
-
+    let resultproductos = await apiBaseDatos("getproductoscategoria", sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), arraytnegocios[value].categorianegocio);
     setProducto(null);
-
-    if (resultproductos.error || resultproductos.length === 0) {
+    if (isValid(resultproductos)===false || resultproductos.length===0) {
       setArrayproductos(arraynoproductos);
       recuperardatosproducto(arraynoproductos, 0);
     } else {
       setArrayproductos(resultproductos);
       setNombrefoto(resultproductos[0].idproducto);
       recuperardatosproducto(resultproductos, 0);
-
-
-      let resultado = await getJpgFile({file: "./galerias/app_images/productos" + "/" + resultproductos[0].idproducto + "/foto-1.jpg",});
-      resultado = await resultado.text();
-
-
+      let resultado = await getJpgFileSB("./galerias/app_images/productos" + "/" + resultproductos[0].idproducto + "/foto-1.jpg", 
+                                         "productos" + "/" + resultproductos[0].idproducto + "/foto-1.jpg");
       if (resultado.length !== 0) {
         setContenidofoto(resultado);
         setNombrefoto(resultproductos[0].idproducto);
@@ -235,7 +196,6 @@ const CatProductos = () => {
       }
     }
   }
-
   function handleselect(e) {
     switch (e.target.id) {
       case "tnegocio":
@@ -395,43 +355,14 @@ const CatProductos = () => {
 
   async function confirmar() {
     let mproducto = 0;
-    if (producto === null) {
-      mproducto = 0;
-    } else {
-      mproducto = arrayproductos[producto?.value].idproducto;
-    }
-
-
-
-    let result = await setproducto({
-      user: sessionStorage.getItem("tipouser")==='3'?arrayUsuarios[usuario].iduser:sessionStorage.getItem("user"),
-      producto: mproducto,
-      categoria: arraytnegocios[tnegocio].categorianegocio,
-      nick: nombrecorto,
-      contenidofoto,
-      desc: descripcion,
-      precio,
-      ocupado: ocupado === true ? 1 : 0,
-      domicilio: domicilio === true ? 1 : 0,
-      agregar: agregarsn ? true : false,
-      editar: editarsn ? true : false,
-      marca,
-      modelo,
-      talla,
-      color,
-      gps: cbgps === true || domicilio === true ? 1 : 0,
-      latitud: lat,
-      longitud: lng,
-      sCiudad: cbsCiudad === true ? 1 : 0,
-      distanciaMax: distanciaMax,
-    });
-    result = await result.json();
-
-
-
-
-    if (result.error) {
-      setMessage(result.error)
+    if (producto === null) mproducto = 0 
+    else mproducto = arrayproductos[producto?.value].idproducto;
+    let result = await apiBaseDatos("setProducto",
+      sessionStorage.getItem("tipouser")==='3'?arrayUsuarios[usuario].iduser:sessionStorage.getItem("user"), mproducto, arraytnegocios[tnegocio].categorianegocio,
+      nombrecorto, contenidofoto, descripcion, precio, ocupado === true ? 1 : 0, domicilio === true ? 1 : 0, agregarsn ? true : false, 
+      marca, modelo, talla, color, cbgps === true || domicilio === true ? 1 : 0, lat, lng, cbsCiudad === true ? 1 : 0, distanciaMax);
+    if (isValid(result?.err)===true) {
+      setMessage("Ocurrio un error mientras se registraba el producto")
       setOpen(true);
       return;
     }
@@ -462,7 +393,6 @@ const CatProductos = () => {
         agregar: agregarsn ? true : false,
         editar: editarsn ? true : false,
       });
-
     }
     setMessage("El producto '" + descripcion + "' se registró correctamente.")
     setOpen(true);
@@ -493,11 +423,7 @@ const CatProductos = () => {
   };
 
   async function sino() {
-
-
-    await delproducto({ producto: arrayproductos[producto?.value].idproducto });
-
-
+    await apiBaseDatos("delproducto", arrayproductos[producto?.value].idproducto);
     iniciadatosgenerales();
     setMessage("Se eliminó el producto " + arrayproductos[producto?.value].desc);
     setOpen(true);

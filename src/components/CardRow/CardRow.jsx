@@ -3,7 +3,7 @@ import ShoppingCartCheckoutOutlinedIcon from '@mui/icons-material/ShoppingCartCh
 import BusinessCenterOutlinedIcon from '@mui/icons-material/BusinessCenterOutlined';
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import { useState } from "react";
-import { apiBaseDatos  } from "../../Utiles/Utiles";
+import { isValid, apiBaseDatos  } from "../../Utiles/Utiles";
 
 // styles
 import "./styles.css";
@@ -12,13 +12,11 @@ const CardRow = (props) => {
   const { tipouser, user, mapLoading, noproducto, i, item, selectcard, contenidofoto, verproducto, vernegocio, paresGps, onMapClick } = props
   const [ocupado, setOcupado]=useState(item.ocupado);
 
-
   async function powerSettings(){
-    if (user!=="" && user!==null && user!==undefined){
+    if (user!=="" && isValid(user)===true){
         setOcupado(ocupado===0?1:0);
     }
     apiBaseDatos("updateOcupado", item.idproducto, ocupado===0?1:0)
-//    await updateOcupado({idproducto: item.idproducto, ocupado: ocupado===0?1:0});
 
     paresGps();
 

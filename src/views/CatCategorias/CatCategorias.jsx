@@ -15,10 +15,9 @@ import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../context/NotificationProvider";
 import Modal from "../../components/Modal/Modal";
 import { useLocation } from "react-router-dom";
-import { setCategoriasNegocios, delCategoria } from "../../servicios/catalogos";
-import "./styles.css";
 import { isValid, obtenerImagen, apiBaseDatos, buscaFoto } from "../../Utiles/Utiles";
 import { Box, CircularProgress } from "@mui/material";
+import "./styles.css";
 
 const CatCategorias = () => {
   const navigate = useNavigate();
@@ -94,11 +93,8 @@ const CatCategorias = () => {
           setMessage('Error al recuperar la imagen de la categoria de negocio');
           setOpen(true);
         }
-  
       }   
-
-    }
-      
+    }      
     setShow(false);
     setInicia(false);
   } 
@@ -179,17 +175,7 @@ const CatCategorias = () => {
     }
 
     async function confirmar() {
-    let result;
-    let err="";
-    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
-       result = await setCategoriasNegocios({categorianegocio: arrayCategorias[categoria].categorianegocio, desc: desc, descold, link: "productos", inserta: agregarsn, modifica: editarsn, contenidofoto });
-       result = await result.json();
-       err=result.error;
-      }
-    else{
-      err= await apiBaseDatos("CategoriasInsertUpdate", agregarsn, desc, "productos", arrayCategorias[categoria].categorianegocio, contenidofoto);
-
-    }   
+    let err= await apiBaseDatos("setCategoriasNegocios", arrayCategorias[categoria].categorianegocio, desc, descold, "productos", agregarsn, contenidofoto );
     if (isValid(err)===true){
         setMessage("Ocurrido un error al registrar la categoria");
         setOpen(true);
@@ -201,19 +187,6 @@ const CatCategorias = () => {
     tcancelar();
   }
 
-  /*
-  async function buscaFoto(foto){
-    let resultado = await getJpgFile({ file: foto});
-    resultado = await resultado.text();
-    if (resultado.length !== 0) {
-      setContenidofoto(resultado);
-      setNombrefoto("Foto");
-    } else {
-      setNombrefoto("");
-    }
-     return
-  }
-*/
   async function handleInput(e) {
     switch (e.target.id) {
       case "categorianegocio":
@@ -270,7 +243,7 @@ const CatCategorias = () => {
   };
 
   async function sino() {
-    await delCategoria({ categorianegocio: arrayCategorias[categoria].categorianegocio });
+    await apiBaseDatos("delCategoria", arrayCategorias[categoria].categorianegocio);
     setMessage("Se eliminó la categoria " + arrayCategorias[categoria].desc);
     setOpen(true);
     setShow(false);
@@ -329,7 +302,7 @@ const CatCategorias = () => {
               <CircularProgress color="checkbox" />
             </Box>
           ) : ""}
-
+        {inicia===false?
         <div className="div-papa-categorias">
         <div className="cabeza">
             <IconButton color="primary" onClick={() => {
@@ -454,6 +427,9 @@ const CatCategorias = () => {
             </div>
           </div>
         </div>
+        :""}
+
+
       </Hero>
     </div>
     </>

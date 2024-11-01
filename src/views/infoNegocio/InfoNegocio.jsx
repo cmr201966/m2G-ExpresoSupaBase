@@ -46,7 +46,6 @@ const InfoNegocio = () => {
   async function init(){
 
     let result = await getInfoNegocio(parsedParams.idnegocio);
-    console.log(result);
     if (result[0].idnegocio===sessionStorage.getItem("user")){
       setShowGalerias(true)
     }

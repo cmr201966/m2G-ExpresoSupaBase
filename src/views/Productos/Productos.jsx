@@ -13,9 +13,7 @@ import Map from "../../components/Map/MapBox";
 import libre from "../../assets/images/libre.png";
 import ocupado from "../../assets/images/ocupado.png";
 import marker from "../../assets/images/custom_marker.png";
-import { getproductos, setMovimientosNew, updateOcupado, getProductoNew } from "../../servicios/productos";
 import { isValid, getJpgFileSB, apiBaseDatos } from "../../Utiles/Utiles";
-import { getparesgpscategoria } from "../../servicios/catalogos";
 
 import { useEffect, useState } from "react";
 
@@ -75,6 +73,49 @@ const Productos = () => {
   // Estados para la posición GPS del mapa
   const [lng, setLng] = useState();
   const [lat, setLat] = useState();
+
+  function init() {
+    if (parsedParams.mapa==='true') setShowMap(true);
+    setNivel(parsedParams.nivel !== undefined ? parsedParams.nivel : nivel);
+    setNombre(parsedParams.nombre !== undefined ? decodeURIComponent(parsedParams.nombre) : nombre);
+
+    if (isValid(parsedParams.categoria) === true && parsedParams.categoria !== 0){
+       sessionStorage.setItem("categoria", parsedParams.categoria);
+    }
+    else sessionStorage.setItem("categoria", null);
+
+    if (isValid(parsedParams.user) === true  && parsedParams.user !== ""){
+      sessionStorage.setItem("user", parsedParams.user);
+    }
+    else sessionStorage.setItem("user", null);
+
+    if (isValid(parsedParams.userAnuncio) === true && parsedParams.userAnuncio !== ""){
+      sessionStorage.setItem("userAnuncio", parsedParams.userAnuncio);
+    }
+    else sessionStorage.setItem("userAnuncio", null);  
+
+    if (isValid(parsedParams.buscar) === true  && parsedParams.buscar !== ""){
+      sessionStorage.setItem("buscar",decodeURIComponent(parsedParams.buscar));
+    }
+    else sessionStorage.setItem("buscar", null);
+
+    if (isValid(parsedParams.latitud) === true  && parsedParams.latitud !== '0'){
+      sessionStorage.setItem("latitud",decodeURIComponent(parsedParams.latitud));
+      setLat(Number(parsedParams.latitud));
+    }
+    else sessionStorage.setItem("latitud", null);
+
+    if (isValid(parsedParams.longitud) === true  && parsedParams.longitud !== '0'){
+      sessionStorage.setItem("longitud",decodeURIComponent(parsedParams.longitud));
+      setLng(Number(parsedParams.longitud));
+    }
+    else sessionStorage.setItem("longitud", null);
+ 
+    sessionStorage.setItem("nivel", parsedParams.nivel);
+
+    init1();
+  }
+
 
   /////
 const kmToDegrees = (km) => {
@@ -189,8 +230,8 @@ function contains(lat, lon, bbox) {
 
   async function paresGps() {
 //*
-    let resultgps = await getparesgpscategoria({ categoria: sessionStorage.getItem("categoria")});
-    resultgps = await resultgps.json();
+    let resultgps = await apiBaseDatos("getparesgpscategoria", sessionStorage.getItem("categoria"),"");
+//    let resultgps = await apiBaseDatos("getparesgpscategoria", sessionStorage.getItem("categoria"),"");
 //*
     let paresgps = [];
     let itemst = [];
@@ -217,48 +258,6 @@ function contains(lat, lon, bbox) {
   }
   //
 
-  function init() {
-    if (parsedParams.mapa==='true') setShowMap(true);
-    setNivel(parsedParams.nivel !== undefined ? parsedParams.nivel : nivel);
-    setNombre(parsedParams.nombre !== undefined ? decodeURIComponent(parsedParams.nombre) : nombre);
-
-    if (isValid(parsedParams.categoria) === true && parsedParams.categoria !== 0){
-       sessionStorage.setItem("categoria", parsedParams.categoria);
-    }
-    else sessionStorage.setItem("categoria", null);
-
-    if (isValid(parsedParams.user) === true  && parsedParams.user !== ""){
-      sessionStorage.setItem("user", parsedParams.user);
-    }
-    else sessionStorage.setItem("user", null);
-
-    if (isValid(parsedParams.userAnuncio) === true && parsedParams.userAnuncio !== ""){
-      sessionStorage.setItem("userAnuncio", parsedParams.userAnuncio);
-    }
-    else sessionStorage.setItem("userAnuncio", null);  
-
-    if (isValid(parsedParams.buscar) === true  && parsedParams.buscar !== ""){
-      sessionStorage.setItem("buscar",decodeURIComponent(parsedParams.buscar));``
-    }
-    else sessionStorage.setItem("buscar", null);
-
-    if (isValid(parsedParams.latitud) === true  && parsedParams.latitud !== '0'){
-      sessionStorage.setItem("latitud",decodeURIComponent(parsedParams.latitud));``
-      setLat(Number(parsedParams.latitud));
-    }
-    else sessionStorage.setItem("latitud", null);
-
-    if (isValid(parsedParams.longitud) === true  && parsedParams.longitud !== '0'){
-      sessionStorage.setItem("longitud",decodeURIComponent(parsedParams.longitud));``
-      setLng(Number(parsedParams.longitud));
-    }
-    else sessionStorage.setItem("longitud", null);
- 
-    sessionStorage.setItem("nivel", parsedParams.nivel);
-
-    init1();
-  }
-
   function verproducto(i) {
     navigate(
       `/infoproducto?idproducto=${result[i].idproducto}&categoria=${sessionStorage.getItem("categoria")}`
@@ -282,10 +281,10 @@ function contains(lat, lon, bbox) {
   async function init1() {
     setShow1(true);
     setInicia(true);
-    console.log("1");
     let result1 = await apiBaseDatos("getProductos", sessionStorage.getItem("categoria"), sessionStorage.getItem("userAnuncio"), sessionStorage.getItem("buscar"));
+    console.log(result1);
     const newResult = [];
-    if (result1.error || result1.length === 0) {
+    if (isValid(result1.error)) {
       newResult.push({
         descnaturaleza: "",
         idproducto: 0,
@@ -332,7 +331,7 @@ function contains(lat, lon, bbox) {
       }
     }
     sessionStorage.setItem("carditem", 0);
-    let resultgps = await apiBaseDatos("getparesgpscategoria", sessionStorage.getItem("categoria"), sessionStorage.getItem("user"));
+    let resultgps = await apiBaseDatos("getparesgpscategoria", sessionStorage.getItem("categoria"));
     let paresgps = [];
     let itemst = [];
     resultgps.forEach((item) => {
@@ -362,13 +361,14 @@ function contains(lat, lon, bbox) {
     if (showMap === true) {
       // Insertar el movimiento y poner showmap en false
       let tindex = puntos.length;
-      //*
-        setMovimientosNew({ idmovimiento: 1, idproducto: idproductot, latOrigen: puntos[tindex - 2].lat, latDestino: puntos[tindex - 1].lat, lngOrigen: puntos[tindex - 2].lng,
-        lngDestino: puntos[tindex - 1].lng, precio: carrera * items[index].tarifa + items[index].costoDomicilio, kms: carrera, user: users,});
-        await updateOcupado({idproducto: idproductot, ocupado: 1 });
-      //*
-        init1();
-        }
+      let latOrigen=tindex<3?0:puntos[tindex-2].lat;
+      let latDestino=tindex<3?0:puntos[tindex-1].lat;
+      let lngOrigen=tindex<3?0:puntos[tindex-2].lng;
+      let lngDestino=tindex<3?0:puntos[tindex-1].lng;
+      await apiBaseDatos("setmovimientosNew", 1, idproductot, latOrigen, latDestino, lngOrigen, lngDestino, carrera * items[index].tarifa + items[index].costoDomicilio, carrera, users)
+      await apiBaseDatos("updateOcupado", idproductot, 1)
+      init1();
+    }
 
     setPuntosState(0);
     setShowMap(!showMap);

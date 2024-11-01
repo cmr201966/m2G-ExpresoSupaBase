@@ -15,10 +15,8 @@ import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useNavigate } from "react-router-dom";
 import Modal from "../../components/Modal/Modal";
 import { useLocation } from "react-router-dom";
-import { delAnuncio  } from "../../servicios/catalogos";
-import { buscarEnArreglo } from "../../Utiles/Utiles";
 import { useNotification } from "../../context/NotificationProvider";
-import { isValid, obtenerImagen, apiBaseDatos, buscaFoto  } from "../../Utiles/Utiles";
+import { isValid, obtenerImagen, apiBaseDatos, buscaFoto, buscarEnArreglo  } from "../../Utiles/Utiles";
 import { Box, CircularProgress } from "@mui/material";
 
 const Aplicaciones = () => {
@@ -282,7 +280,8 @@ const Aplicaciones = () => {
   };
 
   async function sino() {
-    await delAnuncio({ id: arrayAplicaciones[aplicacion].id });
+
+    await apiBaseDatos("delAnuncio", arrayAplicaciones[aplicacion].id);
     setMessage("Se eliminó el anuncio " + arrayAplicaciones[aplicacion].desc);
     setOpen(true);
     setShow(false);
