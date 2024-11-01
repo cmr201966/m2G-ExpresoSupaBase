@@ -43,7 +43,6 @@ const CatProductos = () => {
   const arrayNoUsuarios = [{iduser: 99999999, desc: "Desconocido"}];
   const [arrayproductos, setArrayproductos] = useState([]);
   const arraynoproductos = [{idproducto: 99999999, marca: 999999, desc: "Desconocido", nick: "Desconocido",}];
-
   const arraynonegocios = [{ categorianegocio: 999999, desc: "Desconocido" }];
   const [marca, setMarca] = useState("");
   const [modelo, setModelo] = useState("");
@@ -73,6 +72,7 @@ const CatProductos = () => {
   const [lng, setLng] = useState(-75.829090519);
   const [lat, setLat] = useState(20.0217583);
   const [ocupado, setOcupado] = useState(true);
+  const [isBase64ToBlob, setIsBase64ToBlob]=useState(true);
 
   //Estados para recuperar los datos del producto
 
@@ -109,55 +109,55 @@ const CatProductos = () => {
     let ttarraytnegocios;
 
     let resulttnegocios = await apiBaseDatos("getcategoriasnegociosapp");
+    console.log(resulttnegocios);
 
-    if (isValid(resulttnegocios.err)===true) {
+    if (resulttnegocios.length===0) {
       setArraytnegocios(arraynonegocios);
       ttarraytnegocios = arraynonegocios;
     } else {
-      setArraytnegocios(resulttnegocios.resulttnegocios);
-      ttarraytnegocios = resulttnegocios.resulttnegocios;
+      setArraytnegocios(resulttnegocios);
+      ttarraytnegocios = resulttnegocios;
     }
     let posicion = buscarEnArreglo(ttarraytnegocios, parsedParams.categoria, "categorianegocio"
     );
     posicion = posicion === -1 ? 0 : posicion;
     setTnegocio(posicion);
-    let resultusuarios1 = await apiBaseDatos("getUsuarios");
-    let resultusuarios=resultusuarios1.resultusuarios;
-    if (isValid(resultusuarios1.err)===true) {
-      setArrayUsuarios(arrayNoUsuarios);
-    } 
+    let resultusuarios = await apiBaseDatos("getUsuarios");
+    if (resultusuarios.length===0) setArrayUsuarios(arrayNoUsuarios)
     else {
       setUsuario(buscarEnArregloString(resultusuarios, resultusuarios[0].iduser, "iduser"));
       setArrayUsuarios(resultusuarios);
     }
+    console.log("333333333333333")
     let resultproductos = await apiBaseDatos("getproductoscategoria", sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), ttarraytnegocios[posicion].categorianegocio, producto);
-    if (isValid(resultproductos.err)===true) {
+    console.log(resultproductos);
+
+    if (resultproductos.length===0) {
       setArrayproductos(arraynoproductos);
       recuperardatosproducto(arraynoproductos, 0);
     } else {
-      const posicionProducto = buscarEnArreglo(resultproductos, parsedParams.idproducto, "idproducto");
+      const posicionProducto = buscarEnArreglo(resultproductos, resultproductos[0].idproducto, "idproducto");
       setArrayproductos(resultproductos);
       setProducto({ label: resultproductos[0].desc, value: 0 });
-      if (
-        parsedParams.idproducto !== null &&
-        parsedParams.idproducto !== "null" &&
-        parsedParams.idproducto !== undefined &&
-        parsedParams.idproducto !== "undefined"
-      ) {
+
+      if (isValid(resultproductos[0].idproducto)===true) {
         restaurardatosproductosNew(resultproductos, posicionProducto);
         setEditarsn(true);
       }
-
-      let resultado = await getJpgFileSB("./galerias/app_images/productos/" + resultproductos[0].idproducto + "/" + "foto-1.jpg", 
-                                         "productos/" + resultproductos[0].idproducto + "/" + "foto-1.jpg");
-      if (resultado.length !== 0) {
+      setIsBase64ToBlob(true);
+      let resultado = await getJpgFileSB("./galerias/app_images/productos/" + resultproductos[0].idproducto + "/" + resultproductos[0].idproducto + ".jpg", 
+                                         "productos/" + resultproductos[0].idproducto + "/" + resultproductos[0].idproducto + ".jpg");
+      if (resultado!==undefined || resultado!==null``) {
+        setIsBase64ToBlob(true);
         setContenidofoto(resultado);
         setNombrefoto(resultproductos[0].idproducto);
       } else {
+        setIsBase64ToBlob(false);
         setNombrefoto("");
+        setMessage('Error al recuperar la imagen del usuario');
+        setOpen(true);
       }
     }
-
     setInicia(false);
     setShow(false);
   } 
@@ -166,12 +166,15 @@ const CatProductos = () => {
   const handleProducto = async (_, value) => {
     setProducto(value);
     recuperardatosproducto(arrayproductos, value.value);
-    let resultado = await getJpgFileSB("./galerias/app_images/productos" + "/" + arrayproductos[value?.value].idproducto + "/foto-1.jpg", 
-                                       "productos" + "/" + arrayproductos[value?.value].idproducto + "/foto-1.jpg");
+    setIsBase64ToBlob(true);
+    let resultado = await getJpgFileSB("./galerias/app_images/productos" + "/" + arrayproductos[value?.value].idproducto + arrayproductos[value?.value].idproducto + ".jpg", 
+                                       "productos" + "/" + arrayproductos[value?.value].idproducto + arrayproductos[value?.value].idproducto + ".jpg");
+    console.log(resultado);
     if (resultado.length !== 0) {
       setContenidofoto(resultado);
       setNombrefoto(arrayproductos[value?.value].idproducto);
     } else {
+      setIsBase64ToBlob(false);
       setNombrefoto("");
     }
   };
@@ -287,6 +290,8 @@ const CatProductos = () => {
   }, [location]);
 
   function recuperardatosproducto(data, i) {
+    console.log(data);
+    console.log(i);
     let index = buscarEnArreglo(data, data[i].idproducto, "idproducto");
     setProducto({ label: data[i].desc, value: index });
     setNombrecortot(data[i].nick);
@@ -306,6 +311,8 @@ const CatProductos = () => {
     setTdistanciaMax(data[i].distanciaMax);
   }
   function restaurardatosproductosNew(data, posicion) {
+    console.log(data);
+    console.log(posicion);
     setProducto({ label: data[posicion].desc, value: posicion });
     setNombrecorto(data[posicion].nick);
     setDescripcion(data[posicion].desc);
@@ -319,8 +326,8 @@ const CatProductos = () => {
     setCbgps(data[posicion].gpsSN === 1 ? true : false);
     setLat(data[posicion].latitud === 0 ? null : data[posicion].latitud);
     setLng(data[posicion].longitud === 0 ? null : data[posicion].longitud);
-    setCbsCiudad(data[posicion].sCiudad === 1 ? true : false);
-    setDistanciaMax(data[posicion].distanciaMax);
+    setCbsCiudad(data[posicion].sciudad === 1 ? true : false);
+    setDistanciaMax(data[posicion].distanciamax);
   }
 
   function restaurardatosproductos() {
@@ -348,6 +355,7 @@ const CatProductos = () => {
     reader.onload = (e) => {
       const content = e.target.result;
       setContenidofoto(content);
+      setIsBase64ToBlob(false);
     };
     reader.readAsDataURL(file);
     setCbvista(true);
@@ -355,12 +363,14 @@ const CatProductos = () => {
 
   async function confirmar() {
     let mproducto = 0;
+    console.log(cbsCiudad === true ? 1 : 0, distanciaMax);
     if (producto === null) mproducto = 0 
     else mproducto = arrayproductos[producto?.value].idproducto;
     let result = await apiBaseDatos("setProducto",
       sessionStorage.getItem("tipouser")==='3'?arrayUsuarios[usuario].iduser:sessionStorage.getItem("user"), mproducto, arraytnegocios[tnegocio].categorianegocio,
       nombrecorto, contenidofoto, descripcion, precio, ocupado === true ? 1 : 0, domicilio === true ? 1 : 0, agregarsn ? true : false, 
-      marca, modelo, talla, color, cbgps === true || domicilio === true ? 1 : 0, lat, lng, cbsCiudad === true ? 1 : 0, distanciaMax);
+      marca, modelo, talla, color, cbgps === true || domicilio === true ? 1 : 0, lat, lng, cbsCiudad === true ? 1 : 0, distanciaMax, isBase64ToBlob);
+      console.log(result?.err);
     if (isValid(result?.err)===true) {
       setMessage("Ocurrio un error mientras se registraba el producto")
       setOpen(true);

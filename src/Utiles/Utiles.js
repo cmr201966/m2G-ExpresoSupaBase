@@ -20,14 +20,12 @@ import { getusuarios } from "../servicios/registrarse";
 const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co', 
   'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImJudWJ5cXZnbXJqbHh5Z3hhcHFwIiwicm9sZSI6ImFub24iLCJpYXQiOjE3MjgzMDM3NDksImV4cCI6MjA0Mzg3OTc0OX0.3oGjEFdILLMO46DYrAbgWUmVHwP_Z_oH6Oo_j8oEt-c')
 
-
   function isValid(state){
     if (state==null || state==='null' || state===undefined || state==='undefined')  return false
     else return true;
   }
 
   function buscarEnArreglo (arreglo, valor, atributo) {
-    console.log(arreglo, valor, atributo);
     let index = -1;
     arreglo.forEach((item, i) => {
       if (Number(item[atributo]) === Number(valor)) {
@@ -48,16 +46,19 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
   }
 
   const obtenerImagen = async (bucket, carpeta) => {
+    console.log(bucket, carpeta);
     const { data, error } = await supabase
       .storage
       .from(bucket)
       .download(carpeta);
-      if (isValid(error)===false){
-        const url = URL.createObjectURL(data);
-        return {error, url};
+      let url;
+      console.log(error);
+      if (isValid(data)===true){
+         url = URL.createObjectURL(data);
+         return url;
       }
       else
-         return {error: "No existe la imagen", url: ""}
+         return  url;
   };
 
   const cleanBase64String = (base64String) => {
@@ -65,9 +66,14 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
     return index !== -1 ? base64String.substring(index + 1) : base64String;
   };
 
-
-  const base64ToBlob = (base64, contentType = '') => {
-    const byteCharacters = atob(cleanBase64String(base64));
+  const base64ToBlob = (base64, contentType = '', isBase64ToBlob) => {
+    let byteCharacters;
+    if (isBase64ToBlob===true) {
+      byteCharacters = base64
+    }
+      else{
+         byteCharacters = atob(cleanBase64String(base64))
+        }
     const byteArrays = [];
   
     for (let offset = 0; offset < byteCharacters.length; offset += 512) {
@@ -85,9 +91,19 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
     return new Blob(byteArrays, { type: contentType });
   };
 
+  async function deleteFileInFolder(bucket, carpeta){
+    const { error } = await supabase.storage
+    .from(bucket)
+    .remove([carpeta]);
+    console.log(error);
 
-  const uploadBase64Image = async (base64String, bucket, carpeta) => {
-    const blob = base64ToBlob(base64String, 'image/jpeg');
+  }
+  const uploadBase64Image = async (base64String, bucket, carpeta, isBase64ToBlob) => {
+    console.log(bucket, carpeta)
+    console.log(isBase64ToBlob);
+    if (isBase64ToBlob===true) return {}
+    deleteFileInFolder(bucket, carpeta);
+    const blob = base64ToBlob(base64String, 'image/jpeg', isBase64ToBlob);
     const { error } = await supabase.storage
       .from(bucket)
       .upload(carpeta, blob);
@@ -134,54 +150,54 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
      }
      return datos;
     }
-
   }
   async function getCategoriasNegociosSB(){
     let datos;
-    let err;
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
       datos = await getCategoriasNegocios({});
       datos = await datos.json();
-      err=datos.error;
    }
    else{
-     const { data, error} = await supabase
+     const { data} = await supabase
           .from('tablacategorias')
           .select('*')
           .order('desc', { ascending: true })
     datos=data;
-    err=error;
    }
-   return (err, datos)
+   return  datos;
 
   }
-
-  async function CategoriasInsertUpdate(insertar, desc, link, categorianegocio, contenido){
-    /*param1: insertar, param2: desc, param3: link, param4: categorianegocio, param5: contenido*/
+                                       
+  async function CategoriasInsertUpdate(categorianegocio, desc, descold, link, insertar, contenidofoto, isBase64ToBlob){
     let err;
-    if(insertar===true){/*insertar*/
+    if(insertar===true){
       const { error } = await supabase
       .from('tablaCategorias')
-      .insert({ desc, link }) /* desc y link*/
-      if (isValid(error)===false){
+      .insert({ desc, link })
+      console.log(err);
+      if (error.length===undefined || error.length===null){
          const { data } = await supabase
                .from('tablaCategorias')
                .select('*')
                .order('id', { ascending: false })
                .limit(1);
-
-         err=uploadBase64Image(contenido, 'galerias', "categorias_de_negocios/" + data[0].id + "/" + data[0].id + ".jpg")
-
+         err=uploadBase64Image(contenidofoto, 'galerias', "categorias_de_negocios/" + data[0].id + "/" + data[0].id + ".jpg", isBase64ToBlob)
       }
       return (err);
     }
     else{
-      const { error } = await supabase
+      console.log("Actualiza cn")
+      const  {error} = await supabase
       .from('tablaCategorias')
-      .update({ desc, link })
+      .update({ desc: desc, link: link })
       .eq('categorianegocio', categorianegocio)
-      if (isValid(error)===false)
-         err=uploadBase64Image(contenido, 'galerias', "categorias_de_negocios/" + categorianegocio + "/" + categorianegocio + ".jpg")
+      console.log(error);
+      console.log(error.length);
+      console.log(contenidofoto);
+      console.log(error.length===undefined);
+      console.log("categorias_de_negocios/" + categorianegocio + "/" + categorianegocio + ".jpg");
+      if (error.length===undefined)
+         err=uploadBase64Image(contenidofoto, 'galerias', "categorias_de_negocios/" + categorianegocio + "/" + categorianegocio + ".jpg", isBase64ToBlob)
     }
     return err;
   }
@@ -210,69 +226,64 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
 
   async function provinciasSB(){
     let resultprovincia=[];
-    let err=undefined;
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
       resultprovincia = await getprovincias({});
       resultprovincia = await resultprovincia.json();
-      err=resultprovincia.error;
-      return (err, resultprovincia);
+      return (resultprovincia);
     }
     else{
-      const { data, error } = await supabase
+      const { data } = await supabase
       .from('tablacatprovincias')
       .select('*')
       .order('"desc"', { ascending: true })
       resultprovincia= data;
-      err=error;
-      return (err, resultprovincia)
+      return (resultprovincia)
     }
 
   }
 
   async function municipiosSB(){
     let resultmunicipio=[];
-    let err=undefined;
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
       resultmunicipio = await getmunicipios({});
       resultmunicipio = await resultmunicipio.json();
-      err=resultmunicipio.error;
-      return (err, resultmunicipio);
+      return (resultmunicipio);
     }
     else{
-      const { data, error } = await supabase
+      const { data } = await supabase
       .from('tablacatmunicipios')
       .select('*')
       .order('"desc"', { ascending: true })
       resultmunicipio= data;
-      err=error;
-      return (err, resultmunicipio)
+      return (resultmunicipio)
     }
 
   }
 
   async function getdatosuser(user){
+    console.log("99999999999", user);
     let result=[];
-    let err;
+    console.log(sessionStorage.getItem("sgbd").toUpperCase());
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
        result = await getdatosiduser({user});
        result = await result.json();
-       err=result.error;
-       return (err, result);
+       console.log(result);
+       return (result);
      }
     else{
-      const { data, error } = await supabase
+      console.log("SUPABASE");
+      const { data } = await supabase
       .from('tablausuarios')
       .select('*')
       .eq('iduser', user)
       .order('nombre', { ascending: true })
       result= data;
-      err=error;
-      return (err, result)
+      console.log(data);
+      return (result)
     }
-
   }
-
-  async function setregistrarseSB(user, nombre, password, celular, provincia, municipio, contenidofoto, modifica,plan, lat, lng){
+  async function setregistrarseSB(user, nombre, password, celular, provincia, municipio, contenidofoto, modifica,plan, lat, lng, isBase64ToBlob){
+    console.log("444444444")
     let response=[];
     let err;
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
@@ -287,6 +298,7 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
         .from('tablausuarios')
         .insert({ iduser: user, nombre: nombre, pw: password, celular: celular, provincia: provincia, municipio: municipio, tipouser: plan, latitud: lat, longitud: lng })
         .eq('iduser', user)
+        console.log(error);
         err=error;
         if (isValid(error)===false){          
           const {error,  data } = await supabase
@@ -294,8 +306,13 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
           .select('*')
           .order('id', { ascending: false })
           .limit(1);
+          console.log(error);
+          console.log((error)===false);
           if (isValid(error)===false) {
-            err= uploadBase64Image(contenidofoto, 'galerias', "usuarios/" + data[0].iduser + "/foto1.jpg");
+            console.log("Aqui...")
+            console.log("usuarios/" + data[0].iduser + "/foto1.jpg");
+            console.log(contenidofoto);
+            err= uploadBase64Image(contenidofoto, 'galerias', "usuarios/" + data[0].iduser + "/foto-1.jpg", isBase64ToBlob);
           }
         }
         return (err);
@@ -306,13 +323,17 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
       .update({ nombre: nombre, pw: password, celular: celular, provincia: provincia, municipio: municipio, tipouser: plan, latitud: lat, longitud: lng })
       .eq('iduser', user)
       err=error;
-      if (isValid(error)===false) err= uploadBase64Image(contenidofoto, 'galerias', "usuarios/" + user + "/foto1.jpg")
+      console.log(error===undefined);
+      console.log(error===null);
+      console.log(error);
+      if (error===undefined || error===null){ 
+        console.log("555555555")
+        err= uploadBase64Image(contenidofoto, 'galerias', "usuarios/" + user + "/foto-1.jpg", isBase64ToBlob);
+      }
       return (err);
     }
-
-    }
-
-  }
+   }
+ }
 
   async function buscaFoto(foto){
     let resultado = await getJpgFile({ file: foto});
@@ -321,33 +342,31 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
 
   async function getAplicacionesSB(){
     let result=[];
-    let err;
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
       result = await getAplicaciones({});
       result = await result.json(); 
-      err=result.error;
     }
     else{
-      const { data, error } = await supabase
+      const { data } = await supabase
       .from('tablaAnuncios')
       .select('*')
       result=data;
-      err=error;
     }
-    return (err, result);
-
+    return result;
   }
 
-  async function setAplicacionesSB(id, user, nick, desc, tooltip, categoria, agregarsn, contenidofoto){
-    let result=[];
+  async function setAplicacionesSB(id, user, nick, desc, tooltip, categoria, agregarsn, contenidofoto, isBase64ToBlob){
     let err="";
+    console.log("10");
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
-      result = await setAplicaciones({id, iduser: user, nick, desc, tooltip, categoria, agregarsn, contenidofoto});
+      let result = await setAplicaciones({id, iduser: user, nick, desc, tooltip, categoria, agregarsn, contenidofoto});
       result = await result.json();
       err=result.error;
     }
     else{
+      console.log("11");
       if (agregarsn===true){
+        console.log("12");
         const { error } = await supabase
         .from('tablaAnuncios')
         .insert({ idapp: nick, iduser: user, desc, categoria, tooltip })
@@ -359,17 +378,20 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
           .select('*')
           .order('id', { ascending: false })
           .limit(1);
+          console.log(contenidofoto);
           if (isValid(error)===false){
-             uploadBase64Image(contenidofoto, 'galerias', "aplicaciones/" + data[0].id + "/" + data[0].id + ".jpg")
+             await uploadBase64Image(contenidofoto, 'galerias', "aplicaciones/" + data[0].id + "/" + data[0].id + ".jpg", isBase64ToBlob)
              err=error;
           }
         }
       }
       else{
+        console.log("13");
         const { error } = await supabase
         .from('tablaAnuncios')
         .update({ idapp: nick, iduser: user, desc: desc, categoria, tooltip })
         .eq('id', id)
+        console.log(contenidofoto);
         if (isValid(error)===false) uploadBase64Image(contenidofoto, 'galerias', "aplicaciones/" + id + "/" + id + ".jpg")
         err=error;       
       }
@@ -416,7 +438,7 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
        return result;
     }
     else{
-      return result = await obtenerImagen('galerias', fileSupabase)      
+      return result = await obtenerImagen('galerias', fileSupabase);
     }
   }
 
@@ -553,7 +575,6 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
   }
 
   async function getProductosSB(categoria, userAnuncio, buscar){
-    console.log("10");
     let result1=[];
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
       result1 = await getproductos({categoria, userAnuncio, buscar});
@@ -566,7 +587,7 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
       await supabase
       .rpc('execute_query', { query: sql});
       // Ejecutar VISTA
-      const { data, error } = await supabase
+      const { data } = await supabase
       .from('getproductos')
       .select('*')
       result1=data;
@@ -591,7 +612,7 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
     return resultProduct;
   }
 
-  async function setCategoriasNegociosSB(categorianegocio, desc, descold, link, inserta, contenidofoto ){
+  async function setCategoriasNegociosSB(categorianegocio, desc, descold, link, inserta, contenidofoto, isBase64ToBlob ){
     let result=[];
     let err="";        
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
@@ -600,9 +621,9 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
       err=result.error;
      }
    else{
-    err= await CategoriasInsertUpdate(categorianegocio, desc, descold, "productos", inserta, contenidofoto);
-
+    err= await CategoriasInsertUpdate(categorianegocio, desc, descold, "productos", inserta, contenidofoto, isBase64ToBlob);
    }
+   console.log(err);
    return err;
   }
 
@@ -615,6 +636,7 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
       const { error } = await supabase.from('tablacategorias').delete().eq('id', categorianegocio)
       err=error;
     }
+    console.log(err);
     return err;
   }
 
@@ -633,20 +655,18 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
 
   async function getcategoriasnegociosappSB(){
     let resulttnegocios=[];
-    let err="";
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL') {
       resulttnegocios = await getcategoriasnegociosapp({});
       resulttnegocios = await resulttnegocios.json();
     }
     else{
-      const { data, error } =await supabase
+      const { data } =await supabase
       .from('tablacategorias')
       .select('*')
       .order('desc', { ascending: true })
       resulttnegocios=data;
-      err=error;
     }
-    return {err, resulttnegocios};
+    return resulttnegocios;
   }
 
   function generaVistaGetProductosCategoria(producto, categoria, user, tipouser){
@@ -668,9 +688,7 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
   }
 
   async function getproductoscategoriaSB(user, tipouser, categoria, producto){
-    console.log(user, tipouser, categoria, producto);
     let resultproductos=[];
-    let err="";
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL') {
        resultproductos = await getproductoscategoria({user, tipouser, categoria, producto});
        resultproductos = await resultproductos.json();
@@ -681,13 +699,10 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
       await supabase
       .rpc('execute_query', { query: sql });      
       // Ejecutar VISTA
-      const { data, error } =await supabase
+      const { data} =await supabase
       .from('getproductoscategoria')
       .select('*')
       resultproductos=data;
-      err=error;
-      console.log(data)
-      console.log(err);
     }
     return resultproductos;
   }
@@ -698,13 +713,9 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
     await supabase.from('tablacatproductos').delete().eq('idproducto', producto)      
   }
 
-  async function setProductoSB(user, producto, categoria, nick, contenidofoto, desc, precio, ocupado, domicilio, agregar, marca, modelo, talla, color, gps, latitud, longitud, sciudad, distanciamax){
-    console.log(contenidofoto)
+  async function setProductoSB(user, producto, categoria, nick, contenidofoto, desc, precio, ocupado, domicilio, agregar, marca, modelo, talla, color, gps, latitud, longitud, sciudad, distanciamax, isBase64ToBlob){
     let err="";
-    let result=[];
-    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL') {
-       await setproducto({ user, categoria, nick, desc, precio, domicilio, marca, modelo, talla, color, gps, latitud,longitud, ocupado,  sciudad, distanciamax});
-    }
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL') await setproducto({ user, categoria, nick, desc, precio, domicilio, marca, modelo, talla, color, gps, latitud,longitud, ocupado,  sciudad, distanciamax, agregar, contenidofoto})
     else{
       if (agregar===true){
         const { error } = await supabase
@@ -719,47 +730,45 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
           .select('*')
           .order('idproducto', { ascending: false })
           .limit(1);
-          result=data;
-          console.log(data);
-          console.log(error);
           if (isValid(error)===false){
-             await uploadBase64Image(contenidofoto, 'galerias', "productos/" + data[0].idproductos + "/" + data[0].idproductos + ".jpg")
+             await uploadBase64Image(contenidofoto, 'galerias', "productos/" + data[0].idproductos + "/" + data[0].idproductos + ".jpg", isBase64ToBlob)
              err=error;
           }
         }
       }
       else{
+        let distanciamaxT=Number(distanciamax)
         const { error } = await supabase
-        .from('tablaCatProductos')
-        .update({ categorianegocio: categoria, nick, desc, precio, domicilio, marca, modelo, talla, color, gps, latitud, longitud, ocupado, distanciamax, sciudad })
+        .from('tablacatproductos')
+        .update({ categorianegocio: categoria, nick: nick, desc: desc, precio: precio, domicilio: domicilio, marca: marca, modelo: modelo, talla: talla, 
+                  color: color, gpssn: gps, latitud: latitud, longitud: longitud, ocupado: ocupado, distanciamax: distanciamaxT, sciudad: sciudad })
         .eq('idproducto', producto)
-        console.log(producto);
-        if (isValid(error)===false) uploadBase64Image(contenidofoto, 'galerias', "productos/" + producto + "/" + producto + ".jpg")
+        console.log(error);
+        if (error!==undefined  && error!==null) uploadBase64Image(contenidofoto, 'galerias', "productos/" + producto + "/" + producto + ".jpg", isBase64ToBlob)
         err=error;       
       }
     }
-    return {err, result};
+    return err;
   }
 
   async function getUsuariosSB(){
     let resultusuarios=[];
-    let err="";
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL') {
        resultusuarios = await getusuarios({});
        resultusuarios = await resultusuarios.json();
-       err=resultusuarios.error;
     }
     else{
-      const { data, error } = await supabase
+      const { data } = await supabase
       .from('tablausuarios')
       .select('*')
-      err=error;
       resultusuarios=data;
+      console.log(data);
     }
-    return {resultusuarios, err};
+    return resultusuarios;
   }
 
-  const apiBaseDatos = async (ruta, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13, param14, param15, param16, param17, param18, param19) => {
+  const apiBaseDatos = async (ruta, param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13, param14, param15, param16, param17, param18, param19, param20) => {
+    console.log("666666666", ruta);
     switch (ruta) {
       case "anuncios":
         return anuncios();
@@ -768,7 +777,7 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
       case "getCategoriasNegocios":
         return getCategoriasNegociosSB();
       case "setCategoriasNegocios":
-        return setCategoriasNegociosSB(param1, param2, param3, param4, param5, param6);
+        return setCategoriasNegociosSB(param1, param2, param3, param4, param5, param6, param7);
       case "login":
         return await loginSB(param1, param2);
       case "provincias"  :
@@ -778,11 +787,12 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
       case "getdatosuser"  :
         return getdatosuser(param1);
       case "setregistrarse":
-        return setregistrarseSB(param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11);
+        return setregistrarseSB(param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12);
       case "getAplicaciones":
         return getAplicacionesSB();
       case "setAplicaciones":
-        return setAplicacionesSB(param1, param2, param3, param4, param5, param6, param7, param8)
+        console.log("88888888888888888")
+        return setAplicacionesSB(param1, param2, param3, param4, param5, param6, param7, param8, param9)
       case "setmovimientosNew"  :
         return setMovimientosNewSB(param1, param2, param3, param4, param5, param6, param7, param8, param9);
       case "updateOcupado"  :
@@ -790,7 +800,6 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
       case "getparesgpscategoria":
         return getparesgpscategoriaSB(param1, param2, param3);
       case "getProductos"  :
-        console.log("9");
         return getProductosSB(param1, param2, param3);
       case "getProductoNew"  :
          return getProductosNew(param1);
@@ -805,7 +814,7 @@ const supabase = createClient('https://bnubyqvgmrjlxygxapqp.supabase.co',
       case "delProducto"  :
         return delproducto(param1);
       case "setProducto"  :
-        return setProductoSB(param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13, param14, param15, param16, param17, param18, param19, param19)
+        return setProductoSB(param1, param2, param3, param4, param5, param6, param7, param8, param9, param10, param11, param12, param13, param14, param15, param16, param17, param18, param19, param20)
       case "getUsuarios"  :
         return getUsuariosSB();
     }      

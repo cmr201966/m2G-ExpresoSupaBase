@@ -79,8 +79,8 @@ const Home = () => {
           }
         else{ 
           const resultado = await obtenerImagen('galerias', "categorias_de_negocios/" + result[i].idcategoria + "/" + result[i].idcategoria + ".jpg" )
-          if (isValid(resultado.error)===false){ 
-            arrayContenidoFoto.push(resultado.url);  
+          if (isValid(resultado)===true){ 
+            arrayContenidoFoto.push(resultado);  
           }
           else{
             setMessage('Error al recuperar la imagen de la categoria de negocio');

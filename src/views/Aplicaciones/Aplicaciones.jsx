@@ -16,7 +16,7 @@ import { useNavigate } from "react-router-dom";
 import Modal from "../../components/Modal/Modal";
 import { useLocation } from "react-router-dom";
 import { useNotification } from "../../context/NotificationProvider";
-import { isValid, obtenerImagen, apiBaseDatos, buscaFoto, buscarEnArreglo  } from "../../Utiles/Utiles";
+import { isValid, apiBaseDatos, buscarEnArreglo, getJpgFileSB  } from "../../Utiles/Utiles";
 import { Box, CircularProgress } from "@mui/material";
 
 const Aplicaciones = () => {
@@ -40,6 +40,7 @@ const Aplicaciones = () => {
   const [aplicacion, setAplicacion] = useState(0);
   const [arrayAplicaciones, setArrayAplicaciones] = useState([]);
   const arraynoaplicaciones = [{ id: 0, desc: "Desconocida" }];
+  const [isBase64ToBlob, setIsBase64ToBlob]=useState(true);
   // Estados para almacenar los datos del negocio activo
   const [nickt, setNickt] = useState("");
   const [desct, setDesct] = useState("");
@@ -68,7 +69,7 @@ const Aplicaciones = () => {
     return
   }
       let result = await apiBaseDatos("getAplicaciones")
-      if (result.error || result.length === 0) 
+      if (result.length === 0) 
       {
          setArrayAplicaciones(arraynoaplicaciones);
          setAplicacion(buscarEnArreglo(arraynoaplicaciones, arraynoaplicaciones[0].id, "id"));
@@ -80,7 +81,7 @@ const Aplicaciones = () => {
       }
       let resultcategorias= await apiBaseDatos("getCategoriasNegocios");
 
-      if (resultcategorias.err || resultcategorias.length === 0) 
+      if (resultcategorias.length === 0) 
       {
         setArrayCategorias(arraynoCategorias);
         setCategoria(buscarEnArreglo(arraynoCategorias, arraynoCategorias[0].categorianegocio, "categorianegocio"));
@@ -90,31 +91,21 @@ const Aplicaciones = () => {
         setArrayCategorias(resultcategorias);
         if (result.length>0){
            setCategoria(buscarEnArreglo(resultcategorias, result[buscarEnArreglo(result, result[0].id, "id")].idcategoria, "categorianegocio"));
-           if (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL'){
-            let resultado= await buscaFoto("./galerias/app_images/aplicaciones/" + result[0].id + "/" + result[0].id + ".jpg");
-            resultado = await resultado.text();
-            if (resultado.length !== 0) {
+           setIsBase64ToBlob(true);
+           let resultado = await getJpgFileSB("./galerias/app_images/aplicaciones/" +  result[0].id + "/" + result[0].id + ".jpg", 
+                                          "aplicaciones/" +  result[0].id + "/" + result[0].id + ".jpg");
+          console.log(resultado);
+          if (resultado!== undefined && resultado!==null) {
+             setIsBase64ToBlob(true);
              setContenidofoto(resultado);
-             setNombrefoto("1235");
-            } else {
-              setNombrefoto("");
-              setMessage('Error al recuperar la imagen de la categoria de negocio');
-              setOpen(true);
-            }
-          }
-          else{
-            const resultado = await obtenerImagen('galerias', "aplicaciones/" + result[0].id + "/" + result[0].id + ".jpg" )
-            if (isValid(resultado.error)===false){
-              setContenidofoto(resultado.url);
-              setNombrefoto("1235");
-            }
-            else{
-              setNombrefoto("");
-              setMessage('Error al recuperar la imagen de la categoria de negocio');
-              setOpen(true);
-            }    
-          } 
-        }        
+             setNombrefoto(result[0].id);
+          } else {
+            setIsBase64ToBlob(false);
+            setNombrefoto("");
+             setMessage('Error al recuperar la imagen del usuario');
+             setOpen(true);
+          }            
+        }    
       }
 
     setShow(false);
@@ -198,7 +189,7 @@ const Aplicaciones = () => {
      
     async function confirmar() {
       let result= await apiBaseDatos("setAplicaciones", arrayAplicaciones[aplicacion].id, sessionStorage.getItem("user"), nick, desc,
-       ttip, arrayCategorias[categoria].categorianegocio, agregarsn, contenidofoto);
+       ttip, arrayCategorias[categoria].categorianegocio, agregarsn, contenidofoto, isBase64ToBlob);
  
     if (isValid(result.err)===true){
         setMessage("Ocurrio un error al registrar el anuncio")
@@ -213,6 +204,7 @@ const Aplicaciones = () => {
   }
 
   async function handleInput(e) {
+    let resultado={};
     switch (e.target.id) {
       case "nick":
           setNick(e.target.value);
@@ -223,31 +215,19 @@ const Aplicaciones = () => {
           setCategoria(buscarEnArreglo(arrayCategorias, arrayAplicaciones[e.target.value].idcategoria, "categorianegocio"));
 
 
-          if (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL'){
-            let resultado= await buscaFoto("./galerias/app_images/aplicaciones/" + arrayAplicaciones[e.target.value].id + "/" + arrayAplicaciones[e.target.value].id + ".jpg");
-            resultado = await resultado.text();
-            if (resultado.length !== 0) {
-             setContenidofoto(resultado);
-             setNombrefoto("1235");
-            } else {
-              setNombrefoto("");
-              setMessage('Error al recuperar la imagen de la categoria de negocio');
-              setOpen(true);
-            }
-          }
-          else{
-            const resultado = await obtenerImagen('galerias', "aplicaciones/" + arrayAplicaciones[e.target.value].id + "/" + arrayAplicaciones[e.target.value].id + ".jpg" )
-            if (isValid(resultado.error)===false){
-              setContenidofoto(resultado.url);
-              setNombrefoto("1235");
-            }
-            else{
-              setNombrefoto("");
-              setMessage('Error al recuperar la imagen de la categoria de negocio');
-              setOpen(true);
-            }    
-          } 
-  
+
+      resultado = await getJpgFileSB("./galerias/app_images/aplicaciones/" + arrayAplicaciones[e.target.value].id + "/" + arrayAplicaciones[e.target.value].id + ".jpg", 
+                                    "aplicaciones/" + arrayAplicaciones[e.target.value].id + "/" + arrayAplicaciones[e.target.value].id + "jpg");
+      console.log(resultado);
+      if (resultado!== undefined && resultado!==null) {
+        setIsBase64ToBlob(true);
+        setContenidofoto(resultado);
+        setNombrefoto(arrayAplicaciones[e.target.value].id);
+      } else {
+        setNombrefoto("");
+        setMessage('Error al recuperar la imagen del usuario');
+        setOpen(true);
+      }  
               break;
        case "desc":
             setDesc(e.target.value);
@@ -274,6 +254,7 @@ const Aplicaciones = () => {
     reader.onload = (e) => {
       const content = e.target.result;
       setContenidofoto(content);
+      setIsBase64ToBlob(false);
     };
     reader.readAsDataURL(file);
     setCbvista(true);

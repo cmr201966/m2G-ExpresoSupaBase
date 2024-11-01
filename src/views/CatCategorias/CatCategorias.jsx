@@ -15,7 +15,7 @@ import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../context/NotificationProvider";
 import Modal from "../../components/Modal/Modal";
 import { useLocation } from "react-router-dom";
-import { isValid, obtenerImagen, apiBaseDatos, buscaFoto } from "../../Utiles/Utiles";
+import { isValid, apiBaseDatos, getJpgFileSB } from "../../Utiles/Utiles";
 import { Box, CircularProgress } from "@mui/material";
 import "./styles.css";
 
@@ -35,6 +35,7 @@ const CatCategorias = () => {
   const [categoria, setCategoria] = useState(0);
   const [arrayCategorias, setArrayCategorias] = useState([]);
   const arraynoCategorias = [{ categorianegocio: 99999999, desc: "Desconocida" }];
+  const [isBase64ToBlob, setIsBase64ToBlob]=useState(true);
   // Estados para almacenar los datos del negocio activo
   const [contenido, setContenido] = useState("");
   const [nombrefoto, setNombrefoto] = useState("");
@@ -72,28 +73,22 @@ const CatCategorias = () => {
       guardaDatosCategoria(resultcategorias, 0)
       setArrayCategorias(resultcategorias);
       setCategoria(buscaCategoria(resultcategorias, resultcategorias[0].categorianegocio));
-      if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
-        let resultado= await buscaFoto("./galerias/app_images/categorias_de_negocios/" + resultcategorias[0].categorianegocio + "/" + resultcategorias[0].categorianegocio + ".jpg");
-        resultado = await resultado.text();
-        if (resultado.length !== 0) {
-          setContenidofoto(resultado);
-          setNombrefoto("Foto");
-        } else {
-          setNombrefoto("");
-        }        
 
-      }
-      else{
-        const resultado = await obtenerImagen('galerias', "categorias_de_negocios/" + resultcategorias[0].categorianegocio + "/" + resultcategorias[0].categorianegocio + ".jpg" )
-        if (isValid(resultado.error)===false){
-          setNombrefoto("1235");
-          setContenidofoto(resultado.url);
-        }
-        else{
-          setMessage('Error al recuperar la imagen de la categoria de negocio');
-          setOpen(true);
-        }
-      }   
+      setIsBase64ToBlob(true);
+      let resultado = await getJpgFileSB("./galerias/app_images/categorias_de_negocios/" + resultcategorias[0].categorianegocio + "/" + resultcategorias[0].categorianegocio + ".jpg", 
+                                     "categorias_de_negocios/" + resultcategorias[0].categorianegocio + "/" + resultcategorias[0].categorianegocio + ".jpg", isBase64ToBlob);
+console.log(resultado);
+     if (resultado!== undefined && resultado!==null) {
+        setIsBase64ToBlob(true);
+        setContenidofoto(resultado);
+        setNombrefoto(resultcategorias[0].categorianegocio);
+     } else {
+       setIsBase64ToBlob(false);
+       setNombrefoto("");
+        setMessage('Error al recuperar la imagen del usuario');
+        setOpen(true);
+     }  
+      
     }      
     setShow(false);
     setInicia(false);
@@ -175,8 +170,10 @@ const CatCategorias = () => {
     }
 
     async function confirmar() {
-    let err= await apiBaseDatos("setCategoriasNegocios", arrayCategorias[categoria].categorianegocio, desc, descold, "productos", agregarsn, contenidofoto );
-    if (isValid(err)===true){
+      console.log(contenidofoto);
+    let err= await apiBaseDatos("setCategoriasNegocios", arrayCategorias[categoria].categorianegocio, desc, descold, "productos", agregarsn, contenidofoto, isBase64ToBlob );
+    console.log(err.length);
+    if (err.length!==undefined && err.length!==null){
         setMessage("Ocurrido un error al registrar la categoria");
         setOpen(true);
     }
@@ -188,35 +185,26 @@ const CatCategorias = () => {
   }
 
   async function handleInput(e) {
+     let resultado;
     switch (e.target.id) {
       case "categorianegocio":
           setCategoria(e.target.value);
           guardaDatosCategoria(arrayCategorias, e.target.value)
           setCbvista(false);
-          if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
-             let resultado= await buscaFoto("./galerias/app_images/categorias_de_negocios/" + arrayCategorias[e.target.value].categorianegocio + "/" + arrayCategorias[e.target.value].categorianegocio + ".jpg");
-             resultado = await resultado.text();
-             if (resultado.length !== 0) {
-               setContenidofoto(resultado);
-               setNombrefoto("Foto");
-             } else {
-               setNombrefoto("");
-             }        
-            }
-            else{
-              const resultado = await obtenerImagen('galerias', "categorias_de_negocios/" + arrayCategorias[e.target.value].categorianegocio + "/" + arrayCategorias[e.target.value].categorianegocio + ".jpg" )
-              if (isValid(resultado.error)===false){
-                setNombrefoto("1235");
-                setContenidofoto(resultado.url);
-              }
-              else{
-                setNombrefoto("");
-                setMessage('Error al recuperar la imagen de la categoria de negocio');
-                setOpen(true);
-              }
-        
-            }   
-      
+          setIsBase64ToBlob(true);
+          resultado = await getJpgFileSB("./galerias/app_images/categorias_de_negocios/" + arrayCategorias[e.target.value].categorianegocio + "/" + arrayCategorias[e.target.value].categorianegocio + ".jpg", 
+                                         "categorias_de_negocios/" + arrayCategorias[e.target.value].categorianegocio + "/" + arrayCategorias[e.target.value].categorianegocio + ".jpg", isBase64ToBlob);
+         console.log(resultado);
+         if (resultado!== undefined && resultado!==null) {
+            setIsBase64ToBlob(true);
+            setContenidofoto(resultado);
+            setNombrefoto(arrayCategorias[e.target.value].categorianegocio);
+         } else {
+           setIsBase64ToBlob(false);
+           setNombrefoto("");
+            setMessage('Error al recuperar la imagen del usuario');
+            setOpen(true);
+         }  
           break;
        case "desc":
             setDesc(e.target.value);
@@ -237,6 +225,7 @@ const CatCategorias = () => {
     reader.onload = (e) => {
       const content = e.target.result;
       setContenidofoto(content);
+      setIsBase64ToBlob(false);
     };
     reader.readAsDataURL(file);
     setCbvista(true);

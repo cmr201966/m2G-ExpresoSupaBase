@@ -20,7 +20,7 @@ import Hero from "../../layouts/Hero/Hero";
 import { useEffect, useState } from "react";
 import IconButton from "@mui/material/IconButton"
 import ArrowBack from "@mui/icons-material/ArrowBack";
-import { isValid, obtenerImagen, apiBaseDatos, buscaFoto } from "../../Utiles/Utiles";
+import { isValid, apiBaseDatos, getJpgFileSB } from "../../Utiles/Utiles";
 import "./styles.css";
 
 const Registrarse = () => {
@@ -55,6 +55,7 @@ const Registrarse = () => {
   const [lat, setLat] = useState(0);
   const [lng, setLng] = useState(0);
   const [zoom] = useState(15.5);
+  const [isBase64ToBlob, setIsBase64ToBlob]=useState(true);
 
   // Otros estados
   const navigate = useNavigate(); 
@@ -67,7 +68,7 @@ const Registrarse = () => {
     let ttprovincias=[];
     let resultprovincia = await apiBaseDatos("provincias")
 
-    if (resultprovincia.err || resultprovincia.length === 0)
+    if (resultprovincia === undefined)
     {
       setArrayprovincias(arraydesconocido);
       ttprovincias=arraydesconocido;
@@ -80,7 +81,7 @@ const Registrarse = () => {
     setProvincia(ttprovincias[0].provincia);
     let ttmunicipios=[];
     let resultmunicipio = await apiBaseDatos("municipios");
-    if (resultmunicipio.err || resultmunicipio.length === 0)
+    if (resultmunicipio === true)
     {
        setArraymunicipios(arraydesconocido);
        setTmunicipios(arraydesconocido);
@@ -89,7 +90,7 @@ const Registrarse = () => {
     else
     {
       setArraymunicipios(resultmunicipio);
-      if ((sessionStorage.getItem("user") === 'null' || sessionStorage.getItem("user") === null) && (sessionStorage.getItem("userprovincia") === 'null' || sessionStorage.getItem("userprovincia") === null)){
+      if ((isValid(sessionStorage.getItem("user")) === false) && (isValid(sessionStorage.getItem("userprovincia")) === false)){
          ttmunicipios = resultmunicipio.filter((item)=>{if (item.provincia === ttprovincias[0].provincia){return item}});
       }
       else{
@@ -110,6 +111,7 @@ const Registrarse = () => {
     if (isValid(sessionStorage.getItem("user")) === true && (parsedParams.where!=='true'))
     {
       let result = await apiBaseDatos("getdatosuser", sessionStorage.getItem("user"));
+      console.log(result);
 
       setUser(result[0].iduser);
       setPassword(result[0].pw);
@@ -120,32 +122,18 @@ const Registrarse = () => {
       setMunicipio(result[0].municipio);
       setLat(result[0].latitud);
       setLng(result[0].longitud);
-
-
-      if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
-        let resultado= await buscaFoto("./galerias/app_images/usuarios/" + sessionStorage.getItem("user") + "/" + "foto-1.jpg");
-        resultado = await resultado.text();
-        if (resultado.length !== 0) {
-          setContenidofoto(resultado);
-          setNombrefoto("Foto");
-        } else {
-          setNombrefoto("");
-          setMessage('Error al recuperar la imagen del usuario');
-          setOpen(true);
-        }
+      setIsBase64ToBlob(true);
+      let resultado = await getJpgFileSB("./galerias/app_images/usuarios/" + result[0].iduser + "/foto-1.jpg", "usuarios/" + result[0].iduser + "/foto-1.jpg");
+      console.log(resultado);
+      if (resultado!== undefined && resultado!==null) {
+        setContenidofoto(resultado);
+        setNombrefoto(result[0].iduser);
+      } else {
+        setIsBase64ToBlob(false);
+        setNombrefoto("");
+        setMessage('Error al recuperar la imagen del usuario');
+        setOpen(true);
       }
-      else{
-        const resultado = await obtenerImagen('galerias', "usuarios/" + sessionStorage.getItem("user") + "/" + "foto-1.jpg" )
-        if (isValid(resultado.error)===false){
-          setNombrefoto("1235");
-          setContenidofoto(resultado.url);
-        }
-        else{
-          setMessage('Error al recuperar la imagen del usuario');
-          setOpen(true);
-          setNombrefoto("");
-        }
-        }   
 }
 else
 {
@@ -254,8 +242,9 @@ else
       {
         setDesc("");
       }
-
-      let response = await apiBaseDatos("setregistrarse", user, nombre, password, celular, provincia, municipio, contenidofoto, modifica, plan, lat, lng)
+      let latT=lat===null || lat===undefined?0:lat;
+      let lngT=lat===null || lng===undefined?0:lng;
+      let response = await apiBaseDatos("setregistrarse", user, nombre, password, celular, provincia, municipio, contenidofoto, modifica, plan, latT, lngT, isBase64ToBlob)
 
       if (isValid(response)===true) 
       {

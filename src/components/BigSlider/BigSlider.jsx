@@ -41,8 +41,8 @@ const BigSlider = (props) => {
         else{
           
           const resultado = await obtenerImagen('galerias', imgs[i] )
-          if (isValid(resultado.error)===false){
-            imagenes.push(resultado.url);
+          if (resultado.length!==0){
+            imagenes.push(resultado);
           }
           else{
             setMessage('Error al recuperar la imagen de la categoria de negocio');
