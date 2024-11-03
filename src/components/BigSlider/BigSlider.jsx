@@ -3,9 +3,7 @@ import { useCallback, useEffect, useState } from "react";
 import { css } from "@emotion/css";
 import "./styles.css";
 import { Link } from "react-router-dom";
-
-import { getJpgFile  } from "../../servicios/imagenes";
-import { isValid, obtenerImagen } from "../../Utiles/Utiles";
+import {  getJpgFileSB } from "../../Utiles/Utiles";
 import { useNotification } from "../../context/NotificationProvider";
 
 
@@ -33,24 +31,13 @@ const BigSlider = (props) => {
   async function init() {
     setInicia(true);
     for (let i=0; i<imgs.length; i += 1)  {
-        if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
-        let resultado = await getJpgFile({ file: imgs[i]});
-        resultado = await resultado.text();
+      let resultado = await getJpgFileSB(imgs[i], imgs[i]);
+     if (resultado!== undefined && resultado!==null) {
         imagenes.push(resultado)
-        }
-        else{
-          
-          const resultado = await obtenerImagen('galerias', imgs[i] )
-          if (resultado.length!==0){
-            imagenes.push(resultado);
-          }
-          else{
-            setMessage('Error al recuperar la imagen de la categoria de negocio');
-            setOpen(true);
-          }
-
-        }
-
+     } else {
+       setMessage('Error al recuperar la imagen del anuncio');
+       setOpen(true);
+     }   
     }
     setInicia(false);
   }

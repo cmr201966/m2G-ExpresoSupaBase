@@ -44,25 +44,22 @@ const InfoNegocio = () => {
   };
 
   async function init(){
-
     let result = await getInfoNegocio(parsedParams.idnegocio);
-    if (result[0].idnegocio===sessionStorage.getItem("user")){
-      setShowGalerias(true)
-    }
+    //if (isValid(result)===true) 
+      //if (result[0].idnegocio===sessionStorage.getItem("user")) setShowGalerias(true);
     let resultFiles = await getFilesInFolderSB("./galerias/app_images/usuarios/" + parsedParams.idnegocio, "galerias");
     setArrayFotos(resultFiles);
     let tarray=[];
     for(let i=0; i<resultFiles.length; i+=1){
-      let result= await getJpgFileSB("./galerias/app_images/usuarios" + "/" + parsedParams.idnegocio + "/" +  resultFiles[i], "usuarios/" + parsedParams.idnegocio + "/" +  resultFiles[i]);
-      if (result.url === "") tarray.push(result);
+      let resultFotos= await getJpgFileSB("./galerias/app_images/usuarios" + "/" + parsedParams.idnegocio + "/" +  resultFiles[i], "usuarios/" + parsedParams.idnegocio + "/" +  resultFiles[i]);
+      if (result === "") tarray.push(resultFotos);
       setArrayFotoInfo(tarray);
     }
-    if (result.length !== 0 && result.error === undefined) {
+    if (isValid(result)===true) {
       if (result[0].tipouser===0) setTipoUser("Gratis");
       if (result[0].tipouser===1) setTipoUser("Estandar")
       if (result[0].tipouser===2) setTipoUser("Premiun");
       if (result[0].tipouser===3) setTipoUser("Administrador");
-
       setIdnegocio(parsedParams.idnegocio);
       setNegocio(result[0].negocio);
       setCelular(result[0].celular);
@@ -70,10 +67,10 @@ const InfoNegocio = () => {
       setMunicipio(result[0].municipio);
       setLat(result[0].latitud);
       setLng(result[0].longitud);
-      setGps(result[0].gpsSN);
+      setGps(result[0].gpssn);
     }
-   result = await getJpgFileSB("./galerias/app_images/usuarios" + "/" + parsedParams.idnegocio + "/foto-1.jpg", "usuarios" + "/" + parsedParams.idnegocio + "/foto-1.jpg")   
-   if (result.length !== 0 && isValid(result.error) === false) {
+   result = await getJpgFileSB("./galerias/app_images/usuarios" + "/" + parsedParams.idnegocio + "/" + parsedParams.idnegocio + ".jpg", "usuarios" + "/" + parsedParams.idnegocio + "/" + parsedParams.idnegocio + ".jpg")
+   if (isValid(result) === true) {
       setContenidofoto(result);
    }
    setInicio(false);
@@ -81,7 +78,7 @@ const InfoNegocio = () => {
 
 useEffect(() => {
   const localParams = location.search.substring(1).split("&");
-  localParams.forEach((item, i) => {
+  localParams.forEach((item) => {
     const [paramName, paramValue] = item.split("=");
     parsedParams[paramName] = paramValue;
   });
@@ -175,7 +172,7 @@ useEffect(() => {
           </section>
           {inicio===false && showGalerias===true?
              <section className="galeria">
-                <ComGalerias rutatmp={"usuarios/" + idnegocio} desctmp={desctmp} perfil={idnegocio} permiso={true} deQuien="del negocio" />
+                {/*<ComGalerias rutatmp={"usuarios/" + idnegocio} desctmp={desctmp} perfil={idnegocio} permiso={true} deQuien="del negocio" />*/}
              </section>:""
           }
           {gps===1 || gps===true?

@@ -14,13 +14,10 @@ import libre from "../../assets/images/libre.png";
 import ocupado from "../../assets/images/ocupado.png";
 import marker from "../../assets/images/custom_marker.png";
 import { isValid, getJpgFileSB, apiBaseDatos } from "../../Utiles/Utiles";
-
 import { useEffect, useState } from "react";
-
 import CardRow from "../../components/CardRow/CardRow";
-
-import "./styles.css";
 import config from "../../config";
+import "./styles.css";
 
 const Productos = () => {
   
@@ -44,8 +41,8 @@ const Productos = () => {
   const [items, setItems] = useState([]);
   const [puntosState, setPuntosState] = useState(0);
   const [carrera, setCarrera] = useState(0);
-  const [duracion, setDuracion] = useState(0);
-  const [duracion1, setDuracion1] = useState(0);
+  //const [duracion, setDuracion] = useState(0);
+  //const [duracion1, setDuracion1] = useState(0);
   const [verOtraVez] = useState(true);
   const [viewCarrito, setViewCarrito] = useState(false);
   const [toFly] = useState(null);
@@ -65,7 +62,6 @@ const Productos = () => {
   const [chapa, setChapa] = useState(0);
   const [celular, setCelular] = useState(0);
 
-
   // Estados para la posición GPS del mapa
   const [zoom] = useState(14.0);
   const [showMap, setShowMap] = useState(false);
@@ -76,52 +72,39 @@ const Productos = () => {
 
   function init() {
     if (parsedParams.mapa==='true') setShowMap(true);
-    setNivel(parsedParams.nivel !== undefined ? parsedParams.nivel : nivel);
-    setNombre(parsedParams.nombre !== undefined ? decodeURIComponent(parsedParams.nombre) : nombre);
+    setNivel(isValid(parsedParams.nivel)=== true ? parsedParams.nivel : nivel);
+    setNombre(isValid(parsedParams.nombre)=== true ? decodeURIComponent(parsedParams.nombre) : nombre);
+    sessionStorage.setItem("nivel", parsedParams.nivel);
 
-    if (isValid(parsedParams.categoria) === true && parsedParams.categoria !== 0){
-       sessionStorage.setItem("categoria", parsedParams.categoria);
-    }
+    if (isValid(parsedParams.categoria) === true && parsedParams.categoria !== 0) sessionStorage.setItem("categoria", parsedParams.categoria)
     else sessionStorage.setItem("categoria", null);
 
-    if (isValid(parsedParams.user) === true  && parsedParams.user !== ""){
-      sessionStorage.setItem("user", parsedParams.user);
-    }
+    if (isValid(parsedParams.user) === true  && parsedParams.user !== "") sessionStorage.setItem("user", parsedParams.user);
     else sessionStorage.setItem("user", null);
 
-    if (isValid(parsedParams.userAnuncio) === true && parsedParams.userAnuncio !== ""){
-      sessionStorage.setItem("userAnuncio", parsedParams.userAnuncio);
-    }
+    if (isValid(parsedParams.userAnuncio) === true && parsedParams.userAnuncio !== "") sessionStorage.setItem("userAnuncio", parsedParams.userAnuncio);
     else sessionStorage.setItem("userAnuncio", null);  
 
-    if (isValid(parsedParams.buscar) === true  && parsedParams.buscar !== ""){
-      sessionStorage.setItem("buscar",decodeURIComponent(parsedParams.buscar));
-    }
+    if (isValid(parsedParams.buscar) === true  && parsedParams.buscar !== "") sessionStorage.setItem("buscar", decodeURIComponent(parsedParams.buscar));
     else sessionStorage.setItem("buscar", null);
 
     if (isValid(parsedParams.latitud) === true  && parsedParams.latitud !== '0'){
-      sessionStorage.setItem("latitud",decodeURIComponent(parsedParams.latitud));
+      sessionStorage.setItem("latitud", decodeURIComponent(parsedParams.latitud));
       setLat(Number(parsedParams.latitud));
     }
     else sessionStorage.setItem("latitud", null);
 
     if (isValid(parsedParams.longitud) === true  && parsedParams.longitud !== '0'){
-      sessionStorage.setItem("longitud",decodeURIComponent(parsedParams.longitud));
+      sessionStorage.setItem("longitud", decodeURIComponent(parsedParams.longitud));
       setLng(Number(parsedParams.longitud));
     }
     else sessionStorage.setItem("longitud", null);
- 
-    sessionStorage.setItem("nivel", parsedParams.nivel);
-
     init1();
   }
 
-
-  /////
-const kmToDegrees = (km) => {
+  const kmToDegrees = (km) => {
   return km / 111.32; // Aproximación para convertir km a grados
 };
-
 
 const createBoundingBox = (centerPoint, distanciaArriba, distanciaAbajo, distanciaIzquierda, distanciaDerecha) => {
   const [lat, lon] = centerPoint;
@@ -229,10 +212,7 @@ function contains(lat, lon, bbox) {
   }
 
   async function paresGps() {
-//*
     let resultgps = await apiBaseDatos("getparesgpscategoria", sessionStorage.getItem("categoria"),"");
-//    let resultgps = await apiBaseDatos("getparesgpscategoria", sessionStorage.getItem("categoria"),"");
-//*
     let paresgps = [];
     let itemst = [];
     resultgps.forEach((item) => {
@@ -256,7 +236,6 @@ function contains(lat, lon, bbox) {
     });
     setViewCarrito(paresgps.length > 0);
   }
-  //
 
   function verproducto(i) {
     navigate(
@@ -282,7 +261,6 @@ function contains(lat, lon, bbox) {
     setShow1(true);
     setInicia(true);
     let result1 = await apiBaseDatos("getProductos", sessionStorage.getItem("categoria"), sessionStorage.getItem("userAnuncio"), sessionStorage.getItem("buscar"));
-    console.log(result1);
     const newResult = [];
     if (isValid(result1.error)) {
       newResult.push({
@@ -324,10 +302,9 @@ function contains(lat, lon, bbox) {
     }
     // Obtener el contenido de la foto de perfil
     contenidofoto.splice(0, contenidofoto.length);
-    console.log(newResult);
     for (let i = 0; i < newResult.length; i += 1) {
       let resultado= await getJpgFileSB(newResult[i].photo, newResult[i].photoSB);
-      if (resultado.length !== 0) {
+      if (resultado!==undefined && resultado!==null) {
         contenidofoto.push(resultado);
       }
     }
@@ -544,9 +521,11 @@ function contains(lat, lon, bbox) {
           ) : (
             ""
           )}
+          {inicia===false?
           <div className="productos-nombre">
               <p >{nombre} - ({cantidadproductos})</p>
-          </div>
+          </div>:""
+          }
           {inicia === false && showMap !== true ? (
             <div className="product-flex">
               {result.map((item, i) => (

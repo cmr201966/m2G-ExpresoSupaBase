@@ -17,18 +17,18 @@ import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
-import { setconfig, getconfig  } from "../../servicios/config";
-import { getprovincias, getmunicipios } from "../../servicios/catalogos";
-import { isValid } from "../../Utiles/Utiles";
-
+import { isValid, apiBaseDatos, borraSessionStorage } from "../../Utiles/Utiles";
 import NavigationDrawer from "./Drawer";
+import config from "../../config";
+
 import "./styles.css";
 
 const Navbar = (props) => {
+  const { nivel } = props;
   const navigate = useNavigate();
   const location = useLocation();
-  const { nivel } = props;
-  const foto1=      "http://localhost:3001/app_images/destodo/logo3.jpg";
+  const urlMYSQL= config.urlmysql;
+  const urlSUPABASE= config.urlsupabase
   const [showMenu, setShowMenu] = useState(false);
 
   const [show1, setShow1] = useState(false);
@@ -102,82 +102,53 @@ const Navbar = (props) => {
   ]);
 
   async function init() {
-    sessionStorage.removeItem("categoria");
-    sessionStorage.removeItem("login");
-    sessionStorage.removeItem("idproducto");
-
-    let resultconfig = await getconfig({});
-    resultconfig = await resultconfig.json();
-    if (resultconfig.length!==0){
-       if (resultconfig[0].provincia!=0){
-          setProvincia(resultconfig[0].provincia);
-          setMunicipio(resultconfig[0].municipio);
-          sessionStorage.setItem("ubicacion-provincia", resultconfig[0].provincia);
-          sessionStorage.setItem("ubicacion-municipio", resultconfig[0].municipio);
-             }     
-    }
-    else setShow1(true);
-
-
-
-
-    let resultprovincia = await getprovincias({});
-    resultprovincia = await resultprovincia.json();
-
-
-
-
-    if (resultprovincia.error || resultprovincia.length === 0)
-    {
-      setArrayprovincias(arraydesconocido);
-      //ttprovincias=arraydesconocido;
-    }
-    else
-    {
-      setArrayprovincias(resultprovincia);
-      //ttprovincias=resultprovincia;
-    }
-    if (resultconfig.length===0){
-      setProvincia(14);
-    }
+    borraSessionStorage(["categoria", "login", "idproducto"]);
+    let resultprovincia;
+    let resultmunicipio;
     let ttmunicipios=[];
-
-
-
-
-    let resultmunicipio = await getmunicipios({});
-    resultmunicipio = await resultmunicipio.json();
-
-
-
-
-    if (resultmunicipio.error || resultmunicipio.length === 0)
-    {
-       setArraymunicipios(arraydesconocido);
-       setTmunicipios(arraydesconocido);
-       ttmunicipios=arraydesconocido;
-    }
-    else
-    {
-      setArraymunicipios(resultmunicipio);
-      if (resultconfig.length===0){
-        setMunicipio(6);
-        ttmunicipios = resultmunicipio.filter((item)=>{if (item.provincia === 14){return item}});
+    resultprovincia= await apiBaseDatos("provincias");
+    if (isValid(resultprovincia) === false) setArrayprovincias(arraydesconocido);
+    else{
+      setArrayprovincias(resultprovincia);
+      resultmunicipio = await apiBaseDatos("municipios");
+      if (isValid(resultmunicipio) === false)
+      {
+        setArraymunicipios(arraydesconocido);
+        setTmunicipios(arraydesconocido);
+        ttmunicipios=arraydesconocido;
       }
-      else{
-        ttmunicipios = resultmunicipio.filter((item)=>{if (item.provincia ===resultconfig[0].provincia){return item}});
+      else
+        if (resultmunicipio.length!==0) setArraymunicipios(resultmunicipio);
+    }
+    let resultconfig = await apiBaseDatos("getConfig");
+    if (resultconfig.length===undefined || resultconfig.length===null || resultconfig.length===0){
+      setProvincia(14);
+      setMunicipio(6);
+      ttmunicipios = resultmunicipio.filter((item)=>{if (item.provincia === 14){return item}});
+      if (ttmunicipios.length!==0){ 
+          // setear sessionStorage con gps del municipio con el que se va a trabajar
+          setTmunicipios(ttmunicipios)
       }
+      else
+         setTmunicipios(arraydesconocido);
+      setShow1(true)
     }
-    if (ttmunicipios.length!==0)
-    {
-      setTmunicipios(ttmunicipios);
+    else{
+      if (resultconfig[0].provincia!=0){
+        setProvincia(resultconfig[0].provincia);
+        setMunicipio(resultconfig[0].municipio);
+        sessionStorage.setItem("ubicacion-provincia", resultconfig[0].provincia);
+        sessionStorage.setItem("ubicacion-municipio", resultconfig[0].municipio);
+        ttmunicipios = resultmunicipio.filter((item)=>{if (item.provincia === resultconfig[0].provincia){return item}});
+        if (ttmunicipios.length!==0){ 
+          // setear sessionStorage con gps del municipio con el que se va a trabajar
+          setTmunicipios(ttmunicipios)
+          console.log(ttmunicipios);
+        }
+        else
+            setTmunicipios(arraydesconocido);
+        }     
     }
-    else
-    {
-      setTmunicipios(arraydesconocido);
-      ttmunicipios=arraydesconocido;
-    }
-
     setInicia(false);
   }
 
@@ -188,7 +159,6 @@ const Navbar = (props) => {
   function updateUserInfo(e){
     e.preventDefault()
     navigate(`/registrarse?inserta=false&where=false`);
-
   }
   function toggleMenu() {
     setShowMenu(!showMenu);
@@ -227,14 +197,15 @@ const Navbar = (props) => {
         case "provincia":
           setProvincia(Number(e.target.value));
           ttmunicipio=arraymunicipios.filter((item)=>{if (item.provincia === Number(e.target.value)){return item}});
-          setTmunicipios(ttmunicipio);
           if (ttmunicipio.length === 0){
             setTmunicipios(arraydesconocido);
-            ttmunicipio=arraydesconocido;
           }
+          else
+            setTmunicipios(ttmunicipio);
          setMunicipio(0);
          break
         case "municipio":
+          console.log(e.target.value);
           setMunicipio(Number(e.target.value));
           break
   
@@ -242,16 +213,10 @@ const Navbar = (props) => {
     }
   
     async function confirmar(){
-
-
-
-      await setconfig({provincia, municipio});
-
-
-      
+      await apiBaseDatos("setConfig", provincia, municipio);
       setShow1(false);
     }
-  
+ 
 function registrarseWhere(){
   navigate("/registrarse?inserta=true&where=true")
 }
@@ -263,9 +228,11 @@ useEffect(() => {
   return (
     <>
     <Modal visible={show1} onClose={onModalClose} className="cmodal-home" classContainer="modal-catprod">
+{/*
       <div className="cerrar-button">
         <button className="cerrar" onClick={onModalClose}>X</button>
       </div>
+*/}
       <div className="main-modal">
            <p className="strong font-size1">Ubicación</p>
            <div className="modal-provincia">
@@ -288,9 +255,11 @@ useEffect(() => {
                  <button type="button" className="producto-button primary " onClick={confirmar}>
                      <Check />
                  </button>
+  {/*
                  <button type="button" className="producto-button primary" onClick={onModalClose}>
                      <Close />
                  </button>
+  */}
             </div>                 
        </div>
     </Modal>
@@ -299,7 +268,7 @@ useEffect(() => {
         <div className="logo">
           <Link className="link-logo" to="/acercade">
             <Tippy content="Acerca de M2G-Expreso">
-              <img className="logo-img-one" src={foto1} />
+              <img className="logo-img-one" src={sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'?urlMYSQL:urlSUPABASE} />
             </Tippy>
             El Expreso
           </Link>

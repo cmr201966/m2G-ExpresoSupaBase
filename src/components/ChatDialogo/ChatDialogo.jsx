@@ -44,7 +44,7 @@ const ChatDialogo = (props) => {
     get_chat = await get_chat.json();
     setMsgs(get_chat);
     let fotobuffer = await getJpgFile({
-      file: "./galerias/app_images/usuarios/" + user + "/foto-1.jpg",
+      file: "./galerias/app_images/usuarios/" + user + "/" + user + ".jpg",
     });
     fotobuffer = await fotobuffer.text();
 

@@ -14,7 +14,7 @@ import { useNavigate } from "react-router-dom";
 import Hero from "../../layouts/Hero/Hero";
 import { useEffect, useMemo, useState } from "react";
 import { getJpgFile  } from "../../servicios/imagenes";
-import { isValid, obtenerImagen, apiBaseDatos, creaBucket } from "../../Utiles/Utiles";
+import { isValid, obtenerImagen, apiBaseDatos, creaBucket, borraSessionStorage } from "../../Utiles/Utiles";
 import { useNotification } from "../../context/NotificationProvider";
 
 import "./styles.css";
@@ -39,12 +39,8 @@ const Home = () => {
   async function init() {
     setInicia(true);
     setShow(true);
-    console.log(sessionStorage.getItem("sgbd").toUpperCase());
-    if (sessionStorage.getItem("sgbd").toLocaleUpperCase()!=="SUPABASE") creaBucket('galerias')
-    sessionStorage.removeItem("categoria");
-    sessionStorage.removeItem("ubicacion-provincia");
-    sessionStorage.removeItem("ubicacion-municipio");
-
+    if (sessionStorage.getItem("sgbd").toLocaleUpperCase()!=="SUPABASE") creaBucket('galerias');
+    borraSessionStorage(["categoria", "ubicacion-provincia", "ubicacion-municipio"]);
     const newResult = [];
     if (
       parsedParams.nivel === undefined ||
@@ -69,9 +65,10 @@ const Home = () => {
       setUsers(users1);
       setNombres(nombres1);
       let result = await apiBaseDatos("getcategoriasnew")
+      let longitug=isValid(result)===true?result.length:0;
       let arrayContenidoFoto=[];
       let resultado;
-      for(let i=0;i<result.length; i+=1){
+      for(let i=0;i<longitug; i+=1){
         if (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL'){
            resultado = await getJpgFile({ file: "./galerias/app_images/categorias_de_negocios/" + result[i].idcategoria + "/" + result[i].idcategoria + ".jpg"});
            resultado = await resultado.text();
@@ -88,6 +85,7 @@ const Home = () => {
           }
         }   
       }
+      if (longitug!==0){
       result.forEach((item, i) => {
         newResult.push({
           categoria: item.idcategoria,
@@ -98,6 +96,7 @@ const Home = () => {
         });
       });
       setResult(newResult);
+    }
     } 
 
     sessionStorage.getItem("user") === null

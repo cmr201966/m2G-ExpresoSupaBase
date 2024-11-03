@@ -1,12 +1,12 @@
 // styles
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useState } from "react";
 import { css } from "@emotion/css";
 import "./styles.css";
 
 const BigSlider = (props) => {
   const { imgs = [] } = props;
   const [currentIndex, setCurrentIndex] = useState(0);
-  const [transition, setTransition] = useState(true);
+  const [transition] = useState(true);
 
   const toLeft = useCallback(() => {
     if (currentIndex < imgs.length) {

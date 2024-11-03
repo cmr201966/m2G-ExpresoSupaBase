@@ -111,8 +111,6 @@ const Registrarse = () => {
     if (isValid(sessionStorage.getItem("user")) === true && (parsedParams.where!=='true'))
     {
       let result = await apiBaseDatos("getdatosuser", sessionStorage.getItem("user"));
-      console.log(result);
-
       setUser(result[0].iduser);
       setPassword(result[0].pw);
       setNombre(result[0].nombre);
@@ -123,8 +121,7 @@ const Registrarse = () => {
       setLat(result[0].latitud);
       setLng(result[0].longitud);
       setIsBase64ToBlob(true);
-      let resultado = await getJpgFileSB("./galerias/app_images/usuarios/" + result[0].iduser + "/foto-1.jpg", "usuarios/" + result[0].iduser + "/foto-1.jpg");
-      console.log(resultado);
+      let resultado = await getJpgFileSB("./galerias/app_images/usuarios/" + result[0].iduser + "/" + result[0].iduser + ".jpg", "usuarios/" + result[0].iduser + "/" + result[0].iduser + ".jpg");
       if (resultado!== undefined && resultado!==null) {
         setContenidofoto(resultado);
         setNombrefoto(result[0].iduser);

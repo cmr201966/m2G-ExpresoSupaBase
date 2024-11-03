@@ -27,15 +27,12 @@ const ComGalerias = (props) => {
   } = props;
   const location = useLocation();
   const parsedParams = {};
-  const [arrayalbum, setArrayalbum] = useState([]);
+  const [arrayalbum] = useState([]);
   const [arrayfotos, setArrayfotos] = useState([]);
-  //const [nombre_album, setNombre_album] = useState("");
   const [inicia, setInicia] = useState(true);
   const [contenidofoto, setContenidofoto] = useState([]);
   const [contenidoalbum, setContenidoalbum] = useState([]);
-  const [contenido, setContenido] = useState([]);
-  const [show, setShow] = useState(false);
-  const [album_add, setAlbum_add] = useState(false);
+  const [album_add] = useState(false);
   const [file_Name, setFile_Name] = useState(0);
   const [contenidophoto, setContenidophoto] = useState();
   const [selectalbum, setSelectalbum] = useState(0);
@@ -46,6 +43,7 @@ const ComGalerias = (props) => {
   let [vacia] = useState(false);
   const tipouser = Number(sessionStorage.getItem("tipouser"));
   const [showimg, setShowimg] = useState(false);
+  const [isBase64ToBlob, setIsBase64ToBlob]=useState(true);
 
   async function init() {
     if (rutatmp === "/") {
@@ -56,8 +54,13 @@ const ComGalerias = (props) => {
   }
 
   async function init1(rutatmp, i) {
+
+
+
     let galeriasfolders = await getgalerias({ruta: rutatmp});
     galeriasfolders = await galeriasfolders.json();
+
+
 
     let tarrayalbum = [];
     let tarrayfotos = [];
@@ -72,19 +75,37 @@ const ComGalerias = (props) => {
           j = j += 1;
           // obtener el contenido del primer jpg de cada album
           carpeta = rutatmp === "" ? "" : rutatmp + "/" + item;
+
+
+
           let galeriasfolders = await getgalerias({ruta: carpeta});
           galeriasfolders = await galeriasfolders.json();
 
+
+
+
           if (galeriasfolders.length > 0) {
+
+
+
           let primerjpg = await getJpgFile({ file: "./galerias/app_images/" + carpeta + "/" + galeriasfolders[0]});
           primerjpg = await primerjpg.text();
-          if (primerjpg.length !== 0 && primerjpg.error === undefined) {
+
+
+
+          if (primerjpg===true) {
               contenidoalbum.push(primerjpg);
             }
           } else {
+
+
+
               let primerjpg = await getJpgFile({ file: "./galerias/app_images/" + carpeta + "/nada.nada" });
               primerjpg = await primerjpg.text();
-            if (primerjpg.length !== 0 && primerjpg.error === undefined) {
+
+
+
+            if (primerjpg===true) {
               contenidoalbum.push(primerjpg);
             }
           }
@@ -97,9 +118,14 @@ const ComGalerias = (props) => {
     contenidofoto.splice(0, contenidofoto.length);
     let tarray = [];
     for (const item of tarrayfotos) {
+
+
+
       let resultado = await getJpgFile({ file: "./galerias/app_images/" + carpeta + item  });
       resultado = await resultado.text();
 
+
+      
       if (resultado.length !== 0 && resultado.error === undefined) {
         tarray.push(resultado);
       }
@@ -126,6 +152,7 @@ await creafileinfolder({ ruta: folder, file, contenidofoto  });
     const reader = new FileReader();
     reader.onload = (e) => {
       setContenidophoto(e.target.result);
+      setIsBase64ToBlob(false);
     };
     reader.readAsDataURL(file);
   }
@@ -142,9 +169,8 @@ await creafileinfolder({ ruta: folder, file, contenidofoto  });
 
   function borrarFoto(i) {
 
-      del_file_in_folder(
-        "./galerias/app_images/" + rutatmp, arrayfotos[i]
-      );
+      del_file_in_folder("./galerias/app_images/" + rutatmp, arrayfotos[i]);
+
       init1(rutatmp, 0);
   
   }
@@ -195,7 +221,7 @@ await creafileinfolder({ ruta: folder, file, contenidofoto  });
     init();
   }, []);
 
-  const theme = useTheme();
+//  const theme = useTheme();
 
   return (
     <>
@@ -217,17 +243,7 @@ await creafileinfolder({ ruta: folder, file, contenidofoto  });
           />
         </div>
       </Modal>
-{/*
-      <Box
-        sx={{
-          background: theme.palette.primary.main,
-          width: "100vw",
-          position: !fixed ? "relative" : "fixed",
-          left: 0,
-          bottom: 0,
-        }}
-      >
-      */}
+
       <div className="galeria-frame">
         {inicia === false ? (
           <>

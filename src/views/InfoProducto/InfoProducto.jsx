@@ -15,7 +15,7 @@ import { useLocation } from "react-router-dom";
 import marker from "../../assets/images/custom_marker.png";
 import libre from "../../assets/images/libre.png";
 import off from "../../assets/images/ocupado.png";
-import { apiBaseDatos, getFilesInFolderSB, getJpgFileSB, getInfoProducto, getParesGpsProducto  } from "../../Utiles/Utiles";
+import { isValid, apiBaseDatos, getFilesInFolderSB, getJpgFileSB, getInfoProducto, getParesGpsProducto  } from "../../Utiles/Utiles";
 import config from "../../config";
 // styles
 import "./styles.css";
@@ -68,7 +68,7 @@ const InfoProducto = () => {
       setArrayFotoInfo(tarray);
     }
     let result= await getInfoProducto(parsedParams.idproducto);
-    if (result.length !== 0 && result.error === undefined) {
+    if (isValid(result)=== true) {
       if (result[0].idnegocio===sessionStorage.getItem("user")){
         setShowGalerias(true)
       }
@@ -83,14 +83,12 @@ const InfoProducto = () => {
       setColor(result[0].color);
       setChapa(result[0].chapa);
       setCelular(result[0].celular);
-      setGps(result[0].gpsSN);
+      setGps(result[0].gpssn);
       setTarifa(result[0].tarifa);
       setCostoDomicilio(result[0].costoDomicilio);
       setDomicilio(result[0].domicilio);
     }
-
     result= await getParesGpsProducto(parsedParams.categoria,  parsedParams.idproducto);
-
     let paresGps = [];
     result.forEach((item) => {
       paresGps.push({
@@ -101,11 +99,8 @@ const InfoProducto = () => {
       });
     });
     setPuntos(paresGps);
-
-
-    result = await getJpgFileSB("./galerias/app_images/productos" + "/" + parsedParams.idproducto + "/foto-1.jpg", "productos" + "/" + parsedParams.idproducto + "/foto-1.jpg")
-   
-    if (result.length !== 0 && result.error === undefined) {
+   result = await getJpgFileSB("./galerias/app_images/productos" + "/" + parsedParams.idproducto + "/" + parsedParams.idproducto + ".jpg", "productos" + "/" + parsedParams.idproducto + "/" + parsedParams.idproducto + ".jpg")
+    if (isValid(result) === true) {
       setContenidofoto(result);
     }
     setInicio(false);
@@ -115,7 +110,6 @@ const InfoProducto = () => {
     if (which === "lng") return setLng(value);
     return setLat(value);
   };
-
 
   async function calculateDistance(start, end) {
     const url = `https://api.mapbox.com/directions/v5/mapbox/driving/${start.join(
@@ -135,7 +129,6 @@ const InfoProducto = () => {
       console.error("Error:", error);
     }
   }
-
 
 const lngLatSelected = async (point, lngLat) => {
 if (ocupado===1) return;
@@ -373,13 +366,14 @@ if (puntosState===2){
 
           {inicio === false && showGalerias === true ? (
             <section className="galeria">
+              {/*
               <ComGalerias
                 rutatmp={"productos/" + idproducto}
                 desctmp={desctmp}
                 perfil={idproducto}
                 permiso={true}
                 deQuien="del producto"
-              />
+              />*/}
             </section>
           ) : (
             ""

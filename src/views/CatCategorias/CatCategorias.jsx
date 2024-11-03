@@ -170,9 +170,7 @@ console.log(resultado);
     }
 
     async function confirmar() {
-      console.log(contenidofoto);
     let err= await apiBaseDatos("setCategoriasNegocios", arrayCategorias[categoria].categorianegocio, desc, descold, "productos", agregarsn, contenidofoto, isBase64ToBlob );
-    console.log(err.length);
     if (err.length!==undefined && err.length!==null){
         setMessage("Ocurrido un error al registrar la categoria");
         setOpen(true);

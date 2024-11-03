@@ -94,8 +94,7 @@ const Aplicaciones = () => {
            setIsBase64ToBlob(true);
            let resultado = await getJpgFileSB("./galerias/app_images/aplicaciones/" +  result[0].id + "/" + result[0].id + ".jpg", 
                                           "aplicaciones/" +  result[0].id + "/" + result[0].id + ".jpg");
-          console.log(resultado);
-          if (resultado!== undefined && resultado!==null) {
+          if (isValid(resultado)=== true) {
              setIsBase64ToBlob(true);
              setContenidofoto(resultado);
              setNombrefoto(result[0].id);
@@ -104,7 +103,9 @@ const Aplicaciones = () => {
             setNombrefoto("");
              setMessage('Error al recuperar la imagen del usuario');
              setOpen(true);
-          }            
+          }   
+          
+          
         }    
       }
 
@@ -218,8 +219,7 @@ const Aplicaciones = () => {
 
       resultado = await getJpgFileSB("./galerias/app_images/aplicaciones/" + arrayAplicaciones[e.target.value].id + "/" + arrayAplicaciones[e.target.value].id + ".jpg", 
                                     "aplicaciones/" + arrayAplicaciones[e.target.value].id + "/" + arrayAplicaciones[e.target.value].id + "jpg");
-      console.log(resultado);
-      if (resultado!== undefined && resultado!==null) {
+      if (isValid(resultado)=== true) {
         setIsBase64ToBlob(true);
         setContenidofoto(resultado);
         setNombrefoto(arrayAplicaciones[e.target.value].id);

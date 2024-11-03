@@ -158,11 +158,11 @@ const CatNegocios = () => {
       setArraynegocios(resultnegocios);
       recuperadatosnegocio(resultnegocios[0]);
       
-      let resultado = await getJpgFile({file: "./galerias/app_images/negocios/" + resultnegocios[0].idnegocio + "/" + "foto-1.jpg" });
+      let resultado = await getJpgFile({file: "./galerias/app_images/negocios/" + resultnegocios[0].idnegocio + "/" + resultnegocios[0].idnegocio + ".jpg" });
       resultado = await resultado.text();
       if (resultado.length !== 0) {
         setContenidofoto(resultado);
-        setNombrefoto(foto-1);
+        setNombrefoto(foto);
 //        setNombrefoto(resultnegocios.data[0].idnegocio);
       }
       else {
@@ -295,7 +295,7 @@ const CatNegocios = () => {
         setLat(resultnegocio[0].latitud);
       }
       recuperadatosnegocio(resultnegocio[0]);
-      let resultado = await getJpgFile({file: "./galerias/app_images/negocios/" + resultnegocio[0].idnegocio + "/" + "foto-1.jpg"});
+      let resultado = await getJpgFile({file: "./galerias/app_images/negocios/" + resultnegocio[0].idnegocio + "/" + resultnegocio[0].idnegocio + ".jpg"});
       resultado = await resultado.text();
 
       if (resultado.length !== 0) {
@@ -311,7 +311,7 @@ const CatNegocios = () => {
   }
 
 async function recuperaImgagenNegocio(value){
- let resultado = await getJpgFile({file: "./galerias/app_images/negocios/" + arraynegocios[value].idnegocio + "/" + "foto-1.jpg"});
+ let resultado = await getJpgFile({file: "./galerias/app_images/negocios/" + arraynegocios[value].idnegocio + "/" + arraynegocios[value].idnegocio + ".jpg"});
  resultado = await resultado.text();
   if (resultado.length !== 0) {
     setContenidofoto(resultado);

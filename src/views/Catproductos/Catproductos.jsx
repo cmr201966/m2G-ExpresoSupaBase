@@ -24,7 +24,6 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { isValid, buscarEnArreglo, buscarEnArregloString, apiBaseDatos, getJpgFileSB } from "../../Utiles/Utiles";
 import { useNotification } from "../../context/NotificationProvider";
-
 import "./styles.css";
 
 const CatProductos = () => {
@@ -52,6 +51,7 @@ const CatProductos = () => {
   const [lngt, setLngt] = useState(0);
   const [foto] = useState();
   const [usuario, setUsuario] = useState("");
+  const [usuariot, setUsuariot] = useState("");
   const [nombrefoto, setNombrefoto] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [nombrecorto, setNombrecorto] = useState("");
@@ -73,9 +73,7 @@ const CatProductos = () => {
   const [lat, setLat] = useState(20.0217583);
   const [ocupado, setOcupado] = useState(true);
   const [isBase64ToBlob, setIsBase64ToBlob]=useState(true);
-
   //Estados para recuperar los datos del producto
-
   const [nombrecortot, setNombrecortot] = useState("");
   const [descripciont, setDescripciont] = useState("");
   const [preciot, setPreciot] = useState("");
@@ -95,7 +93,6 @@ const CatProductos = () => {
     for (let prop in parsedParams) {
       sessionStorage.setItem(prop, parsedParams[prop])
     }
-
     if ((sessionStorage.getItem("login")===1 || sessionStorage.getItem("login")==='1') && (isValid(sessionStorage.getItem("user"))===false)){
         navigate(`/login?login=1&regreso=${sessionStorage.getItem("regreso")}`);
         return
@@ -107,10 +104,7 @@ const CatProductos = () => {
       return
     }
     let ttarraytnegocios;
-
     let resulttnegocios = await apiBaseDatos("getcategoriasnegociosapp");
-    console.log(resulttnegocios);
-
     if (resulttnegocios.length===0) {
       setArraytnegocios(arraynonegocios);
       ttarraytnegocios = arraynonegocios;
@@ -123,15 +117,12 @@ const CatProductos = () => {
     posicion = posicion === -1 ? 0 : posicion;
     setTnegocio(posicion);
     let resultusuarios = await apiBaseDatos("getUsuarios");
-    if (resultusuarios.length===0) setArrayUsuarios(arrayNoUsuarios)
+    if (isValid(resultusuarios)===false) setArrayUsuarios(arrayNoUsuarios)
     else {
       setUsuario(buscarEnArregloString(resultusuarios, resultusuarios[0].iduser, "iduser"));
       setArrayUsuarios(resultusuarios);
     }
-    console.log("333333333333333")
     let resultproductos = await apiBaseDatos("getproductoscategoria", sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), ttarraytnegocios[posicion].categorianegocio, producto);
-    console.log(resultproductos);
-
     if (resultproductos.length===0) {
       setArrayproductos(arraynoproductos);
       recuperardatosproducto(arraynoproductos, 0);
@@ -147,7 +138,7 @@ const CatProductos = () => {
       setIsBase64ToBlob(true);
       let resultado = await getJpgFileSB("./galerias/app_images/productos/" + resultproductos[0].idproducto + "/" + resultproductos[0].idproducto + ".jpg", 
                                          "productos/" + resultproductos[0].idproducto + "/" + resultproductos[0].idproducto + ".jpg");
-      if (resultado!==undefined || resultado!==null``) {
+      if (resultado!==undefined || resultado!==null) {
         setIsBase64ToBlob(true);
         setContenidofoto(resultado);
         setNombrefoto(resultproductos[0].idproducto);
@@ -157,19 +148,17 @@ const CatProductos = () => {
         setMessage('Error al recuperar la imagen del usuario');
         setOpen(true);
       }
-    }
+    }    
     setInicia(false);
     setShow(false);
   } 
-
 
   const handleProducto = async (_, value) => {
     setProducto(value);
     recuperardatosproducto(arrayproductos, value.value);
     setIsBase64ToBlob(true);
-    let resultado = await getJpgFileSB("./galerias/app_images/productos" + "/" + arrayproductos[value?.value].idproducto + arrayproductos[value?.value].idproducto + ".jpg", 
-                                       "productos" + "/" + arrayproductos[value?.value].idproducto + arrayproductos[value?.value].idproducto + ".jpg");
-    console.log(resultado);
+    let resultado = await getJpgFileSB("./galerias/app_images/productos" + "/" + arrayproductos[value?.value].idproducto + "/" + arrayproductos[value?.value].idproducto + ".jpg", 
+                                       "productos/" + arrayproductos[value?.value].idproducto + "/" + arrayproductos[value?.value].idproducto + ".jpg");
     if (resultado.length !== 0) {
       setContenidofoto(resultado);
       setNombrefoto(arrayproductos[value?.value].idproducto);
@@ -189,12 +178,14 @@ const CatProductos = () => {
       setArrayproductos(resultproductos);
       setNombrefoto(resultproductos[0].idproducto);
       recuperardatosproducto(resultproductos, 0);
-      let resultado = await getJpgFileSB("./galerias/app_images/productos" + "/" + resultproductos[0].idproducto + "/foto-1.jpg", 
-                                         "productos" + "/" + resultproductos[0].idproducto + "/foto-1.jpg");
-      if (resultado.length !== 0) {
+      let resultado = await getJpgFileSB("./galerias/app_images/productos" + "/" + resultproductos[0].idproducto + "/" + resultproductos[0].idproducto + ".jpg", 
+                                         "productos/" + resultproductos[0].idproducto + "/" + resultproductos[0].idproducto + ".jpg");
+      if (isValid(resultado)===true) {
+        setIsBase64ToBlob(true);
         setContenidofoto(resultado);
         setNombrefoto(resultproductos[0].idproducto);
       } else {
+        setIsBase64ToBlob(false);
         setNombrefoto("");
       }
     }
@@ -258,6 +249,7 @@ const CatProductos = () => {
         break;
       case "domicilio":
         setDomicilio(e.target.checked);
+        if (e.target.checked===true) setCbgps(true);
         break;
       case "ocupado":
         setOcupado(e.target.checked);
@@ -290,9 +282,8 @@ const CatProductos = () => {
   }, [location]);
 
   function recuperardatosproducto(data, i) {
-    console.log(data);
-    console.log(i);
     let index = buscarEnArreglo(data, data[i].idproducto, "idproducto");
+    setUsuariot(data[i].iduser);
     setProducto({ label: data[i].desc, value: index });
     setNombrecortot(data[i].nick);
     setDescripciont(data[i].desc);
@@ -303,16 +294,16 @@ const CatProductos = () => {
     setColort(data[i].color);
     setDomiciliot(data[i].domicilio === 0 ? false : true);
     setOcupadot(data[i].ocupado === 0 ? false : true);
-    setGpst(data[i].gpsSN === 1 ? true : false);
-    setCbgps(data[i].gpsSN === 1 ? true : false);
+    setGpst(data[i].gpssn === 1 ? true : false);
+    setCbgps(data[i].gpssn === 1 ? true : false);
     setLatt(data[i].latitud === 0 ? null : data[i].latitud);
     setLngt(data[i].longitud === 0 ? null : data[i].longitud);
-    setTcbsCiudad(data[i].sCiudad === 1 ? true : false);
-    setTdistanciaMax(data[i].distanciaMax);
+    setTcbsCiudad(data[i].sciudad === 1 ? true : false);
+    setTdistanciaMax(data[i].distanciamax);
   }
+
   function restaurardatosproductosNew(data, posicion) {
-    console.log(data);
-    console.log(posicion);
+    setUsuario(buscarEnArregloString(arrayUsuarios, data[posicion].iduser, "iduser"));
     setProducto({ label: data[posicion].desc, value: posicion });
     setNombrecorto(data[posicion].nick);
     setDescripcion(data[posicion].desc);
@@ -323,7 +314,7 @@ const CatProductos = () => {
     setColor(data[posicion].color);
     setDomicilio(data[posicion].domicilio === 0 ? false : true);
     setOcupado(data[posicion].ocupado === 0 ? false : true);
-    setCbgps(data[posicion].gpsSN === 1 ? true : false);
+    setCbgps(data[posicion].gpssn === 1 ? true : false);
     setLat(data[posicion].latitud === 0 ? null : data[posicion].latitud);
     setLng(data[posicion].longitud === 0 ? null : data[posicion].longitud);
     setCbsCiudad(data[posicion].sciudad === 1 ? true : false);
@@ -331,6 +322,7 @@ const CatProductos = () => {
   }
 
   function restaurardatosproductos() {
+    setUsuario(buscarEnArregloString(arrayUsuarios, usuariot, "iduser"));
     setNombrecorto(nombrecortot);
     setDescripcion(descripciont);
     setPrecio(preciot);
@@ -339,9 +331,9 @@ const CatProductos = () => {
     setTalla(tallat);
     setColor(colort);
     setDistanciaMax(tdistanciaMax);
-    setOcupado(ocupadot===false?0:1);
-    setDomicilio(domiciliot===false?0:1);
-    setCbsCiudad(tcbsCiudad===false?0:1);
+    setOcupado(ocupadot);
+    setDomicilio(domiciliot);
+    setCbsCiudad(tcbsCiudad);
     setCbgps(gpst);
     setLat(latt);
     setLng(lngt);
@@ -363,14 +355,12 @@ const CatProductos = () => {
 
   async function confirmar() {
     let mproducto = 0;
-    console.log(cbsCiudad === true ? 1 : 0, distanciaMax);
     if (producto === null) mproducto = 0 
     else mproducto = arrayproductos[producto?.value].idproducto;
     let result = await apiBaseDatos("setProducto",
       sessionStorage.getItem("tipouser")==='3'?arrayUsuarios[usuario].iduser:sessionStorage.getItem("user"), mproducto, arraytnegocios[tnegocio].categorianegocio,
       nombrecorto, contenidofoto, descripcion, precio, ocupado === true ? 1 : 0, domicilio === true ? 1 : 0, agregarsn ? true : false, 
       marca, modelo, talla, color, cbgps === true || domicilio === true ? 1 : 0, lat, lng, cbsCiudad === true ? 1 : 0, distanciaMax, isBase64ToBlob);
-      console.log(result?.err);
     if (isValid(result?.err)===true) {
       setMessage("Ocurrio un error mientras se registraba el producto")
       setOpen(true);
@@ -379,7 +369,7 @@ const CatProductos = () => {
     if (agregarsn) {
       arrayproductos.push({
         user: sessionStorage.getItem("user"),
-        idproducto: result.productot,
+        idproducto: mproducto,
         foto: nombrecortofoto,
         nick: nombrecorto,
         desc: descripcion,
@@ -433,7 +423,7 @@ const CatProductos = () => {
   };
 
   async function sino() {
-    await apiBaseDatos("delproducto", arrayproductos[producto?.value].idproducto);
+    await apiBaseDatos("delProducto", arrayproductos[producto?.value].idproducto);
     iniciadatosgenerales();
     setMessage("Se eliminó el producto " + arrayproductos[producto?.value].desc);
     setOpen(true);
@@ -798,9 +788,7 @@ const CatProductos = () => {
                             ) : (
                               ""
                             )}
-
                             <div className="input-area-foto-prod">
-
                             </div>
                             {nombrefoto !== "" && cbvista ? (
                               <div className="img-class">

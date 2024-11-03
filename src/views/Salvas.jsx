@@ -1833,16 +1833,7 @@ init1();
         recuperardatosproducto(resultproductos, 0);
         const [primero] = resultproductos;
         setProducto({ label: primero.desc, value: 0 });
-            //restaurarmenut(tcategorias, 0, resultproductos.data, 0, topciones);
-{/*
-            const resultado = await axios.post(
-          "http://localhost:3001/getjpg-file",
-          {
-            file: "./galerias/app_images/productos" + "/" + resultproductos.data[0].idproducto + "/foto-1.jpg", },
-          {}
-        );
-*/}
-        let resultado = await getJpgFile({ file: "./galerias/app_images/productos" + "/" + resultproductos[0].idproducto + "/foto-1.jpg"});
+        let resultado = await getJpgFile({ file: "./galerias/app_images/productos" + "/" + resultproductos[0].idproducto + "/" + resultproductos[0].idproducto + ".jpg"});
         resultado = await resultado.text();
         
         if (resultado.length !== 0) {
