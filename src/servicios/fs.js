@@ -20,6 +20,7 @@ export async function creafileinfolder(body) {
   }
   
   export async function getFilesInFolder(body) {
+    console.log(body);
     return makeRequest("http://localhost:3001/getFilesInFolder", body);
   }
   

@@ -61,9 +61,7 @@ const CatCategorias = () => {
       return
     }
     let resultcategorias = await apiBaseDatos("getCategoriasNegocios")
-    
-
-    if (resultcategorias.err || resultcategorias.length === 0)
+    if (isValid(resultcategorias)===false || isValid(resultcategorias.length) === false)
     {
       setArrayCategorias(arraynoCategorias);
       setCategoria(arraynoCategorias[0].categorianegocio);
@@ -77,7 +75,6 @@ const CatCategorias = () => {
       setIsBase64ToBlob(true);
       let resultado = await getJpgFileSB("./galerias/app_images/categorias_de_negocios/" + resultcategorias[0].categorianegocio + "/" + resultcategorias[0].categorianegocio + ".jpg", 
                                      "categorias_de_negocios/" + resultcategorias[0].categorianegocio + "/" + resultcategorias[0].categorianegocio + ".jpg", isBase64ToBlob);
-console.log(resultado);
      if (resultado!== undefined && resultado!==null) {
         setIsBase64ToBlob(true);
         setContenidofoto(resultado);
@@ -157,8 +154,7 @@ console.log(resultado);
       limpiardatosCategoria();
       setAgregarsn(true);
       setTimeout(() => {
-        if (document.getElementById("desc")) document.getElementById("desc").focus();
-        
+        if (document.getElementById("desc")) document.getElementById("desc").focus();        
       }, 50);
     }
   
@@ -171,7 +167,7 @@ console.log(resultado);
 
     async function confirmar() {
     let err= await apiBaseDatos("setCategoriasNegocios", arrayCategorias[categoria].categorianegocio, desc, descold, "productos", agregarsn, contenidofoto, isBase64ToBlob );
-    if (err.length!==undefined && err.length!==null){
+    if (isValid(err)===false){
         setMessage("Ocurrido un error al registrar la categoria");
         setOpen(true);
     }
@@ -192,7 +188,6 @@ console.log(resultado);
           setIsBase64ToBlob(true);
           resultado = await getJpgFileSB("./galerias/app_images/categorias_de_negocios/" + arrayCategorias[e.target.value].categorianegocio + "/" + arrayCategorias[e.target.value].categorianegocio + ".jpg", 
                                          "categorias_de_negocios/" + arrayCategorias[e.target.value].categorianegocio + "/" + arrayCategorias[e.target.value].categorianegocio + ".jpg", isBase64ToBlob);
-         console.log(resultado);
          if (resultado!== undefined && resultado!==null) {
             setIsBase64ToBlob(true);
             setContenidofoto(resultado);

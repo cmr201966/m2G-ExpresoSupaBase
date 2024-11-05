@@ -2,7 +2,7 @@ import { Fragment } from "react";
 import { Link } from "react-router-dom";
 import Tippy from "@tippyjs/react";
 import Check from "@mui/icons-material/Check";
-import Close from "@mui/icons-material/Close";
+//import Close from "@mui/icons-material/Close";
 import Modal from "../../components/Modal/Modal";
 
 import { Box, IconButton } from "@mui/material";
@@ -54,7 +54,7 @@ const Navbar = (props) => {
       funcion: poneModal
     },
   ]);
-{/* depende=0->no depende de nada, 1->nivel, 2-> no autentificado*/} 
+{/* depende=0->no depende de nada, 1->nivel, 2-> no autentificado, 3-> superAdmin, 4-> dueño de negocio*/} 
   const [menuSegundo] = useState([
     { label: "Inicio", to: "/", tooltips: "Ir a la página principal", depende: 1, login: 0, tipo: 0 },
     {
@@ -77,20 +77,20 @@ const Navbar = (props) => {
       inserta: "inserta=true&where=false",
       tipo:0
     },
-    { label: "Categorias", to: "/categorias", tooltips: "Productos de una categoria", depende: 0, login: 0, tipo:0 },
+    //{ label: "Categorias", to: "/categorias", tooltips: "Productos de una categoria", depende: 0, login: 0, tipo:0 },
     {
       label: "Vender",
       to: "/catproductos",
-      tooltips: "Vender un producto",
-      depende: 0,
+      tooltips: "Agregar, editar o eliminar productos",
+      depende: 4,
       login: 1,
       tipo:0
     },
     {
       label: "Anuncios",
       to: "/aplicaciones",
-      tooltips: "Anunciar un negocio",
-      depende: 0,
+      tooltips: "Agregar, editar o eliminar un anuncio",
+      depende: 4,
       categoria: "",
       login: 1,
       tipo:0
@@ -143,7 +143,6 @@ const Navbar = (props) => {
         if (ttmunicipios.length!==0){ 
           // setear sessionStorage con gps del municipio con el que se va a trabajar
           setTmunicipios(ttmunicipios)
-          console.log(ttmunicipios);
         }
         else
             setTmunicipios(arraydesconocido);
@@ -205,7 +204,6 @@ const Navbar = (props) => {
          setMunicipio(0);
          break
         case "municipio":
-          console.log(e.target.value);
           setMunicipio(Number(e.target.value));
           break
   
@@ -296,7 +294,8 @@ useEffect(() => {
 
           {inicia === false ? (          
           <div className="menuTercero">
-               <Tippy content={"Agregar, editar y eliminar categorias"}>
+               {Number(sessionStorage.getItem("tipouser"))===3?
+               <Tippy content={"Agregar, editar y eliminar categorias de negocios"}>
                   <IconButton
                      sx={{ padding: 0 }}
                      id="categorias"
@@ -305,8 +304,8 @@ useEffect(() => {
                    >
                      <SettingsIcon />
                    </IconButton>
-               </Tippy>
-{/*
+               </Tippy>:""}
+              {/*
               <Link className="tools-color" to="/whatsapp?login=1&regreso=/whatsapp" >
               <Tippy content={`Ejecutar pedidos del cliente`}>
                 <IconButton
@@ -318,7 +317,7 @@ useEffect(() => {
                 </IconButton>
                 </Tippy>
               </Link>
-*/}
+             */}
              {isValid(sessionStorage.getItem("user"))?
               <Tippy content={`Actualizar datos de ${sessionStorage.getItem("user")}`}>
                  <IconButton
@@ -333,7 +332,7 @@ useEffect(() => {
 
               }
              {Number(sessionStorage.getItem("tipouser"))===3?
-              <Tippy content={"Registrarse un usuario"}>
+              <Tippy content={"Registrarse un usuario nuevo"}>
                  <IconButton
                    sx={{ padding: 0 }}
                    id="user"
@@ -400,7 +399,9 @@ useEffect(() => {
               >
                 {menuSegundo.map((item, i) => (
                 <Fragment key={i}>
-                {((item.depende === 1 && nivel === 0) || (item.depende === 2 && sessionStorage.getItem("user")!== null)) ? (
+                {((item.depende === 1 && nivel === 0) || (item.depende === 2 && sessionStorage.getItem("user")!== null)  || 
+                  (item.depende===4 && (sessionStorage.getItem("tipouser")!=="1" && sessionStorage.getItem("tipouser")!=="2" 
+                  && sessionStorage.getItem("tipouser")!=="3"))) ? (
                       ""
                     ) : (
                         <Tippy content={item.tooltips}>

@@ -45,15 +45,18 @@ const InfoNegocio = () => {
 
   async function init(){
     let result = await getInfoNegocio(parsedParams.idnegocio);
-    //if (isValid(result)===true) 
-      //if (result[0].idnegocio===sessionStorage.getItem("user")) setShowGalerias(true);
-    let resultFiles = await getFilesInFolderSB("./galerias/app_images/usuarios/" + parsedParams.idnegocio, "galerias");
+    let resultFiles = await getFilesInFolderSB("./galerias/app_images/usuarios/" + parsedParams.idnegocio, "usuarios/" + parsedParams.idnegocio, "galerias");
     setArrayFotos(resultFiles);
     let tarray=[];
+
+    for(let i=0; i<resultFiles.length; i+=1)
+      if (resultFiles[i].indexOf(".jpg") === -1) resultFiles.splice(i, 1)
+
     for(let i=0; i<resultFiles.length; i+=1){
-      let resultFotos= await getJpgFileSB("./galerias/app_images/usuarios" + "/" + parsedParams.idnegocio + "/" +  resultFiles[i], "usuarios/" + parsedParams.idnegocio + "/" +  resultFiles[i]);
-      if (result === "") tarray.push(resultFotos);
-      setArrayFotoInfo(tarray);
+        let result= await getJpgFileSB("./galerias/app_images/usuarios/" + parsedParams.idnegocio + "/" +  resultFiles[i], "usuarios/" + parsedParams.idnegocio + "/" +  resultFiles[i]);
+        if (isValid(result.url)===false || result.url === "") tarray.push(result);
+        if (isValid(result.url)===true) tarray.push(result.url);
+        setArrayFotoInfo(tarray);
     }
     if (isValid(result)===true) {
       if (result[0].tipouser===0) setTipoUser("Gratis");
@@ -129,7 +132,7 @@ useEffect(() => {
                  <p className="strong font-size1"> Datos del negocio</p>
                  <div className="parrafo">
                      <p>
-                        Negocio:
+                        Dueño:
                      </p>
                      <p>
                        {negocio}

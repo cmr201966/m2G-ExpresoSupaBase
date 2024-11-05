@@ -53,6 +53,7 @@ const Home = () => {
       let category1=[];
       let users1=[];
       let nombres1=[];
+      console.log(sessionStorage.getItem("sgbd").toLocaleUpperCase());
       let ruta=sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL'?"./galerias/app_images/aplicaciones/":"aplicaciones/"
       resultApp.forEach((item) => {
         imgs1.push(ruta + item.id + "/" + item.id + ".jpg");

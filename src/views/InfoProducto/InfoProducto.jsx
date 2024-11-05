@@ -57,16 +57,20 @@ const InfoProducto = () => {
 //  const [duracion, setDuracion] = useState(0);
 
   async function init() {
-    let resultFiles = await getFilesInFolderSB("./galerias/app_images/productos/" + parsedParams.idproducto, "galerias");
+    let resultFiles = await getFilesInFolderSB("./galerias/app_images/productos/" + parsedParams.idproducto, "productos/" + parsedParams.idproducto, "galerias");
     setArrayFotos(resultFiles);
+    console.log(resultFiles);
     let tarray=[];
+    for(let i=0; i<resultFiles.length; i+=1)
+      if (resultFiles[i].indexOf(".jpg") === -1) resultFiles.splice(i, 1)
+
     for(let i=0; i<resultFiles.length; i+=1){
-      let result= await getJpgFileSB("./galerias/app_images/productos/" + parsedParams.idproducto + "/" +  resultFiles[i], "productos/" + parsedParams.idproducto + "/" +  resultFiles[i]);
-      if (result.url === "") {
-        tarray.push(result);
-      }
-      setArrayFotoInfo(tarray);
+        let result= await getJpgFileSB("./galerias/app_images/productos/" + parsedParams.idproducto + "/" +  resultFiles[i], "productos/" + parsedParams.idproducto + "/" +  resultFiles[i]);
+        if (isValid(result.url)===false || result.url === "") tarray.push(result);
+        if (isValid(result.url)===true) tarray.push(result.url);
+        setArrayFotoInfo(tarray);
     }
+
     let result= await getInfoProducto(parsedParams.idproducto);
     if (isValid(result)=== true) {
       if (result[0].idnegocio===sessionStorage.getItem("user")){
@@ -99,7 +103,7 @@ const InfoProducto = () => {
       });
     });
     setPuntos(paresGps);
-   result = await getJpgFileSB("./galerias/app_images/productos" + "/" + parsedParams.idproducto + "/" + parsedParams.idproducto + ".jpg", "productos" + "/" + parsedParams.idproducto + "/" + parsedParams.idproducto + ".jpg")
+    result = await getJpgFileSB("./galerias/app_images/productos" + "/" + parsedParams.idproducto + "/" + parsedParams.idproducto + ".jpg", "productos" + "/" + parsedParams.idproducto + "/" + parsedParams.idproducto + ".jpg")
     if (isValid(result) === true) {
       setContenidofoto(result);
     }
@@ -289,7 +293,7 @@ if (puntosState===2){
                 <div className="product-info-1">
                   <p className="strong font-size1"> Datos del producto</p>
                   <div className="parrafo">
-                    <p>Negocio:</p>
+                    <p>Dueño:</p>
                     <p>{negocio}</p>
                   </div>
                   <div className="parrafo">

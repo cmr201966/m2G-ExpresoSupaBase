@@ -103,9 +103,7 @@ const Aplicaciones = () => {
             setNombrefoto("");
              setMessage('Error al recuperar la imagen del usuario');
              setOpen(true);
-          }   
-          
-          
+          }                       
         }    
       }
 

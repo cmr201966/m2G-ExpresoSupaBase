@@ -127,12 +127,12 @@ import supabase from "./connection";
 
   function GeneraVistagetCategoriasNew(user, tipouser){
     let condicion="";
-    if (isValid(user)===true && tipouser!=='3') {
-       condicion= "and (tablacatproductos.iduser='" + user + "')"
+    if (isValid(user)===true && (tipouser==='1' || tipouser==='2')) {
+       condicion= "and (tablacatproductos.iduser='" + user + "') and (tablausuarios.activo=true)"
     }
     return 'CREATE OR REPLACE VIEW getcategoriasnew  AS select DISTINCT tablacatproductos.categorianegocio as idcategoria, ' +
            'tablaCategorias."desc" as categoria, link from tablaCategorias, tablacatproductos' +
-           ' where (tablaCategorias.categorianegocio=tablacatproductos.categorianegocio)' + condicion;
+           ' where (tablaCategorias.categorianegocio=tablacatproductos.categorianegocio) and (tablacatproductos.activo=true)' + condicion;
   }
 
   async function getcategoriasnew(){
@@ -143,28 +143,17 @@ import supabase from "./connection";
       return datos
    }
    else{
-     if (isValid(sessionStorage.getItem("user"))===true && isValid(sessionStorage.getItem("tipouser"))===true && sessionStorage.getItem("tipouser")!='3'){
         let sql=GeneraVistagetCategoriasNew(sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"));
         await supabase.rpc('execute_query', { query: sql});
-        const { data, error } = await supabase
+        const { data } = await supabase
         .from('getcategoriasnew')
         .select('*')
         .order('idcategoria', { ascending: true });
-        //.eq('user', sessionStorage.getItem("user"))
          datos=data;
-        }
-     else{
-      let sql=GeneraVistagetCategoriasNew(sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"));
-      await supabase.rpc('execute_query', { query: sql});
-     const { data } = await supabase
-       .from('getcategoriasnew')
-       .select('*')
-       .order('idcategoria', { ascending: true });
-       datos=data;
-     }
      return datos;
     }
   }
+
   async function getCategoriasNegociosSB(){
     let datos;
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
@@ -224,6 +213,7 @@ import supabase from "./connection";
      .select('*')
      .eq('iduser', param1)
      .eq('pw', param2)
+     .eq('activo', true)
      err=error
      result=data
     return (err, result)
@@ -275,6 +265,7 @@ import supabase from "./connection";
       .from('tablausuarios')
       .select('*')
       .eq('iduser', user)
+      .eq('activo', true)
       .order('nombre', { ascending: true })
       result= data;
       return (result)
@@ -385,25 +376,26 @@ import supabase from "./connection";
     if (bucketExists===false){
       await supabase.storage.createBucket(bucket);
     }
-
   }
 
-  async function getFilesInFolderSB(folder, bucket ){
+  async function getFilesInFolderSB(folderMYSQL, folderSUPABASE, bucket ){
     let resultFiles=[];
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
-       resultFiles = await getFilesInFolder({folder});
+       resultFiles = await getFilesInFolder({folderMYSQL});
        resultFiles = await resultFiles.json()
     }
     else{
       const { data } = await supabase
       .storage
       .from(bucket)
-      .list(folder, {
+      .list(folderSUPABASE, {
           limit: 1000,
           offset: 0,  
           sortBy: { column: 'name', order: 'asc' } 
       });
-      resultFiles=data;
+      data.forEach((item) => {
+        resultFiles.push(item.name);
+      });
     }
     return resultFiles;
   }
@@ -531,7 +523,7 @@ import supabase from "./connection";
 
   function GeneraVistaGetProductos(categoria, userAnuncio, buscar){
     let condicion1=categoria==='0' || isValid(categoria)===false || categoria===''?"":" and (tablacatproductos.categorianegocio=" + categoria + ")"
-    let condicion2=isValid(userAnuncio)===false || userAnuncio===''?"":" and (tablacatproductos.iduser='" + userAnuncio + "')";
+    let condicion2=isValid(userAnuncio)===false || userAnuncio===''?"":" and (tablacatproductos.iduser='" + userAnuncio + "') and (tablausuarios,activo=true)";
     let condicion3="";
     if (isValid(buscar)===true && buscar!==''){
        let busquedas=buscar.split(" ");
@@ -548,7 +540,8 @@ import supabase from "./connection";
         " tablausuarios.nombre as negocio, tablausuarios.iduser as idnegocio, ocupado, tipouser, tablausuarios.iduser, tarifa, costoDomicilio, domicilio" +
         " FROM tablacatproductos, tablausuarios, tablacatprovincias,tablacatmunicipios " +
         " WHERE (tablacatproductos.iduser=tablausuarios.iduser) and (tablacatprovincias.provincia=tablausuarios.provincia) and (tablacatmunicipios.provincia=" + 
-        "tablausuarios.provincia) and (tablacatmunicipios.municipio=tablausuarios.municipio)"  + condicion1  + condicion2 + condicion3;
+        "tablausuarios.provincia) and (tablacatmunicipios.municipio=tablausuarios.municipio) and (tablausuarios.activo=true) and (tablausuarios.activo=true)"  + 
+         condicion1  + condicion2 + condicion3;
         return sql;
   }
 
@@ -746,6 +739,7 @@ import supabase from "./connection";
       const { data } = await supabase
       .from('tablausuarios')
       .select('*')
+      .eq('activo', true);
       resultusuarios=data;
     }
     return resultusuarios;
@@ -763,8 +757,7 @@ import supabase from "./connection";
         .from('tablaconfig')
         .delete()
         .gt('provincia', 0)
-        console.log(error)
-        const  {error1} = await supabase
+        await supabase
         .from('tablaconfig')
         .insert({ provincia: provincia, municipio: municipio });
         err=error;

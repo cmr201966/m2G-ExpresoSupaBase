@@ -4,6 +4,7 @@ import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { apiBaseDatos, isValid } from "../../Utiles/Utiles";
+import { useNotification } from "../../context/NotificationProvider";
 import "./styles.css";
 
 
@@ -12,7 +13,7 @@ const Login = () => {
   const navegar = useNavigate();
   const [user, setUser] = useState("");
   const [password, setPassword] = useState("");
-  const [resultado, setResultado] = useState("");
+  const {setOpen, setMessage} = useNotification();
   const parsedParams = {};
   const location = useLocation();
   async function init() {
@@ -43,10 +44,11 @@ const Login = () => {
   async function confirmalogin(e) {
     e.preventDefault();
     let result = await apiBaseDatos("login", user, password);
-    if (result.err)
+      if (isValid(result.error)===true || isValid(result.length)===false || result.length===0)
     {
-      setResultado(result.err);
-    } 
+      setMessage("Usuario o contraseña incorrecto")
+      setOpen(true);
+  } 
     else 
     {
       sessionStorage.setItem("user", result[0].iduser);
@@ -102,10 +104,6 @@ const Login = () => {
                 required
               />
             </div>
-            {
-              resultado !== "" && <label className="err">{resultado}</label>
-            }
-
             <div className="grupo-button-login">
               <button type="button" className="confirmarlogin button-login primary" onClick={confirmalogin}>
                 Confirmar

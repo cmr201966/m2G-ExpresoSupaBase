@@ -407,7 +407,7 @@ function contains(lat, lon, bbox) {
             tpuntos[i].imageClassName = "";
           });
           tpuntos[i].imageClassName = "iconoGrande";
-          setDuracion1(dura.toFixed(2));
+          //setDuracion1(dura.toFixed(2));
           setIndex(i);
           ok=true;
       }

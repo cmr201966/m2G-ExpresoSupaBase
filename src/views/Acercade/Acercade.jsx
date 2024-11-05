@@ -71,13 +71,13 @@ useEffect(() => {
             </Link>
             <h3>Acerca de</h3>
           </div>
-              <p1>m2G-Expreso Versión 1.0</p1>
-              <p1>Desarrollado por m2G-Software.</p1>
-              <p1>Celular: +5352675359 Fijo: +5322657241 </p1>
-              <p1>Email: cmr201966@gmail.com </p1>
-              <p1>WhatsApp: 5352675359 </p1>
-              <p1>Santiago de Cuba.</p1>
-              <p1>Todos los derechos reservados. 2024</p1>
+              <p>m2G-Expreso Versión 1.0</p>
+              <p>Desarrollado por m2G-Software.</p>
+              <p>Celular: +5352675359 Fijo: +5322657241 </p>
+              <p>Email: cmr201966@gmail.com </p>
+              <p>WhatsApp: 5352675359 </p>
+              <p>Santiago de Cuba.</p>
+              <p>Todos los derechos reservados. 2024</p>
         </div>
         {showchat===true?
           <ChatDialogo user={chatuser} nombre={chatnombre} indexChat={indexChat} />
