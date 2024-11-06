@@ -45,7 +45,7 @@ const Registrarse = () => {
   const [arrayprovincias, setArrayprovincias] = useState([]);
   const [arraymunicipios, setArraymunicipios] = useState([]);
   const [tmunicipios, setTmunicipios] = useState([]);
-  const [show1, setShow1] = useState(false);
+  const [show1, setShow1] = useState(true);
   const [cbvista, setCbvista] = useState(false);
   const [resultado, setResultado] = useState("");
   const [resultadopw] = useState("");
@@ -62,6 +62,8 @@ const Registrarse = () => {
 
   async function init() {
     setShow1(true);
+    setInicia(true);
+    setNombrefoto("");
     setResultado(arrayplan[0].tip);
     setModifica(!(parsedParams.inserta==="true"));
     
@@ -97,10 +99,7 @@ const Registrarse = () => {
         ttmunicipios = resultmunicipio.filter((item)=>{if (item.provincia === ttprovincias[sessionStorage.getItem("userprovincia")-1].provincia){return item}});
       }
     }
-    if (ttmunicipios.length!==0)
-    {
-      setTmunicipios(ttmunicipios);
-    }
+    if (ttmunicipios.length!==0) setTmunicipios(ttmunicipios)
     else
     {
       setTmunicipios(arraydesconocido);
@@ -130,13 +129,15 @@ const Registrarse = () => {
         setMessage('Error al recuperar la imagen del usuario');
         setOpen(true);
       }
-}
-else
-{
-   provinciachange(14,6, resultprovincia, resultmunicipio)
-}
-    setInicia(false);
-    setShow1(false);
+   }
+   else
+   {
+     provinciachange(14,6, resultprovincia, resultmunicipio)
+     setLat(ttmunicipios[buscarEnArreglo(ttmunicipios,6,"municipio")].latitud);
+     setLng(ttmunicipios[buscarEnArreglo(ttmunicipios,6,"municipio")].longitud);
+   }
+   setInicia(false);
+   setShow1(false);
   }
      
   useEffect(() => {
@@ -176,6 +177,7 @@ else
     let ttmunicipio=[];
     switch (e.target.id) {
       case "provincia":
+        console.log(e.target.value);
         setProvincia(Number(e.target.value));
         ttmunicipio=arraymunicipios.filter((item)=>{if (item.provincia === Number(e.target.value)){return item}});
         setTmunicipios(ttmunicipio);
@@ -184,11 +186,15 @@ else
           ttmunicipio=arraydesconocido;
         }
        setMunicipio(0);
-       break
+       console.log(ttmunicipio);
+       setLat(ttmunicipio[buscarEnArreglo(ttmunicipio, ttmunicipio[0].municipio,"municipio")].latitud);
+       setLng(ttmunicipio[buscarEnArreglo(ttmunicipio, ttmunicipio[0].municipio,"municipio")].longitud);
+      break
       case "municipio":
         setMunicipio(Number(e.target.value));
-        break
-
+        setLat(tmunicipios[buscarEnArreglo(tmunicipios,e.target.value,"municipio")].latitud);
+        setLng(tmunicipios[buscarEnArreglo(tmunicipios,e.target.value,"municipio")].longitud);
+          break
       case "plan":
           setPlan(e.target.value);
           setResultado(arrayplan[Number(e.target.value)].tip);
@@ -241,8 +247,10 @@ else
       let latT=lat===null || lat===undefined?0:lat;
       let lngT=lat===null || lng===undefined?0:lng;
       let response = await apiBaseDatos("setregistrarse", user, nombre, password, celular, provincia, municipio, contenidofoto, modifica, plan, latT, lngT, isBase64ToBlob)
-
-      if (isValid(response)===true) 
+      let isOk=true;
+      if (isValid(response)===true )
+         if (isValid(response.length)===true) isOk=false;
+      if (isOk===false)
       {
         setMessage("Ocurrio un error mientras se registraba el usuario.");
         setOpen(true);
@@ -264,11 +272,13 @@ else
     reader.onload = (e) => {
       const content = e.target.result;
       setContenidofoto(content);
+      setIsBase64ToBlob(false);
     };
     reader.readAsDataURL(file);
   }
   
   const lngLatSelected = (point, lngLat) => {
+    console.log(lngLat.lat, lngLat.lng );
     setLng(lngLat.lng);
     setLat(lngLat.lat);
   };
@@ -278,10 +288,8 @@ else
     return setLat(value);
   };
 
-
   return (
     <>
-
     <div>
       <Navbar
       />
@@ -297,7 +305,8 @@ else
               </IconButton>
               <h4 className="registrarse-cabeza-1">Atrás</h4>
           </div>
-          {show1 ? <Box sx={{ width: "100%", height: "300px", display: "flex", alignItems: "center", justifyContent: "center" }}><CircularProgress color="checkbox" /></Box> : null}
+          {console.log(inicia)}
+          {inicia===true && show1===true ? <Box sx={{ width: "100%", height: "300px", display: "flex", alignItems: "center", justifyContent: "center" }}><CircularProgress color="checkbox" /></Box> : null}
 
         {inicia===false?
         <>
@@ -408,22 +417,21 @@ else
                       </Tippy>:""
                     }
                
+                        {inicia === false  && user!=="" && password!=="" && celular!==""? 
                          <label className="producto-button primary label-photo">
                           <input
-
                             id="foto"
                             value={foto}
                             onChange={onPhotoChange}
                             type="file"
                             required
                             multiple
-
                           />
                           <Tippy content="Añadir foto">
                             <AddPhotoAlternateIcon />
                           </Tippy>
-                        </label>
-                        {inicia === false  ? (
+                        </label>:""}
+                        {inicia === false  && user!=="" && password!=="" && celular!==""? (
                           <Tippy content="Ubicar el negocio en el mapa">
                             <button
                               type="button"
@@ -436,16 +444,16 @@ else
                         ) : (
                           ""
                         )}
-              {user!=="" && password!=="" && rpassword!=="" && celular!==""?
-              <button type="button" className="producto-button primary " onClick={confirmar}>
-              <Check />
-              </button>:""
-              }
-              <button type="button" className="producto-button primary" onClick={tcancelar}>
-              <Close />
-              </button>
-            </div>                 
-           </div>
+                       {inicia===false && user!=="" && password!=="" && rpassword!=="" && celular!==""?
+                        <button type="button" className="producto-button primary " onClick={confirmar}>
+                          <Check />
+                        </button>:""
+                       }
+                       <button type="button" className="producto-button primary" onClick={tcancelar}>
+                         <Close />
+                      </button>
+                </div>                 
+            </div>
          </div>
         </>:""}
 

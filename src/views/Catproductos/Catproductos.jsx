@@ -282,8 +282,6 @@ const CatProductos = () => {
   }, [location]);
 
   function recuperardatosproducto(data, i) {
-    console.log(data);
-    console.log(i);
     let index = buscarEnArreglo(data, data[i].idproducto, "idproducto");
     setUsuariot(data[i].iduser);
     setProducto({ label: data[i].desc, value: index });
@@ -305,8 +303,6 @@ const CatProductos = () => {
   }
 
   function restaurardatosproductosNew(data, posicion) {
-    console.log(data);
-    console.log(posicion);
     setUsuario(buscarEnArregloString(arrayUsuarios, data[posicion].iduser, "iduser"));
     setProducto({ label: data[posicion].desc, value: posicion });
     setNombrecorto(data[posicion].nick);
@@ -359,16 +355,12 @@ const CatProductos = () => {
 
   async function confirmar() {
     let mproducto = 0;
-    console.log(arrayproductos);
-    console.log(producto);
-    console.log(arrayproductos[producto?.value].idproducto);
     if (producto === null) mproducto = 0 
     else mproducto = arrayproductos[producto?.value].idproducto;
     let result = await apiBaseDatos("setProducto",
       sessionStorage.getItem("tipouser")==='3'?arrayUsuarios[usuario].iduser:sessionStorage.getItem("user"), mproducto, arraytnegocios[tnegocio].categorianegocio,
       nombrecorto, contenidofoto, descripcion, precio, ocupado === true ? 1 : 0, domicilio === true ? 1 : 0, agregarsn ? true : false, 
       marca, modelo, talla, color, cbgps === true || domicilio === true ? 1 : 0, lat, lng, cbsCiudad === true ? 1 : 0, distanciaMax, isBase64ToBlob);
-      console.log(result);
     if (isValid(result?.err)===true) {
       setMessage("Ocurrio un error mientras se registraba el producto")
       setOpen(true);
@@ -784,7 +776,6 @@ const CatProductos = () => {
                                 </div>
                                 <div className="input-area4">
                                   <label className="sciudad">Ciudad:</label>
-                                  {console.log(cbsCiudad)}
                                   <Checkbox
                                     className="combo-gps"
                                     id="cbsCiudad"

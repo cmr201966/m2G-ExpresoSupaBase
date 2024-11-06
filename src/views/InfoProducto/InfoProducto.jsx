@@ -71,7 +71,6 @@ const InfoProducto = () => {
     }
 
     let result= await getInfoProducto(parsedParams.idproducto);
-    console.log(result);
     if (isValid(result)=== true) {
       if (result[0].idnegocio===sessionStorage.getItem("user")){
         setShowGalerias(true)
@@ -386,10 +385,6 @@ if (puntosState===2){
 
         </main>
         <div className="mapa-1">
-          {console.log(inicio===false )}
-          {console.log(gps === 1 )}
-          {console.log(showMap === true )}
-          {console.log(puntos.length!==0 )}
           {inicio===false && gps === 1 && showMap === true && puntos.length!==0 ? (
             <section className="mapa">
               {domicilio===1?

@@ -33,27 +33,27 @@ const mapboxgl = loadable(() => import("mapbox-gl"));
 // import "./style.css";
 
 function MapBox({
+  sx= {
+    width: "100%",
+    height: "100%",
+  },
   coordinates,
   points,
   point,
   flyTo,
   visible,
-  sx,
+//  sx,
   style,
   remoteZoom,
-  tindex,
   lat,
   lng,
   onLoadMap,
   noLocalMarker = true,
   onMapClick,
 }) {
-  console.log(lng, lat);
   const [zoom] = useState(remoteZoom ?? 16);
-  const [longitude, setLongitude] = useState(isValid(lng) && lng!==0?lng: -75.829090519);
   const [latitude, setLatitude] = useState(isValid(lat) && lat!==0?lat: 20.0217583);
-  console.log(longitude);
-  console.log(latitude);
+  const [longitude, setLongitude] = useState(isValid(lng) && lng!==0?lng: -75.829090519);
   const [localMarker, setLocalMarker] = useState(null);
   const flyToPoint = useCallback(
     (longitude, latitude, zoom) => {
@@ -61,6 +61,8 @@ function MapBox({
         center: [longitude, latitude],
         zoom,
       });
+      console.log(latitude, longitude);
+      console.log(noLocalMarker);
       if (!noLocalMarker) setLocalMarker({ lat: latitude, lng: longitude });
     },
     [noLocalMarker]
@@ -203,6 +205,7 @@ function MapBox({
   );
 }
 
+/*
 MapBox.defaultProps = {
   width: "100%",
   height: "100%",
@@ -211,6 +214,7 @@ MapBox.defaultProps = {
     height: "100%",
   },
 };
+*/
 
 MapBox.propTypes = {
   /*  visible: PropTypes.bool.isRequired, */

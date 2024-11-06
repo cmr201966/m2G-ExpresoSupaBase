@@ -100,12 +100,15 @@ import supabase from "./connection";
 
   }
   const uploadBase64Image = async (base64String, bucket, carpeta, isBase64ToBlob) => {
+    console.log(isBase64ToBlob);
     if (isBase64ToBlob===true) return {}
     deleteFileInFolder(bucket, carpeta);
-    const blob = base64ToBlob(base64String, 'image/jpeg', isBase64ToBlob);
+    console.log("paso");
+    const blob = await base64ToBlob(base64String, 'image/jpeg', isBase64ToBlob);
     const { error } = await supabase.storage
       .from(bucket)
       .upload(carpeta, blob);
+      console.log(error);
       return error
   };  
 
@@ -274,6 +277,7 @@ import supabase from "./connection";
   async function setregistrarseSB(user, nombre, password, celular, provincia, municipio, contenidofoto, modifica,plan, lat, lng, isBase64ToBlob){
     let response=[];
     let err;
+    console.log(sessionStorage.getItem("sgbd").toUpperCase());
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
        response = await setregistrarse({user, nombre, password, celular, provincia:provincia,municipio:municipio, contenidofoto,modifica,plan, lat, lng});
        response = await response.json();
@@ -292,8 +296,13 @@ import supabase from "./connection";
           .select('*')
           .order('id', { ascending: false })
           .limit(1);
-          if (error.length===undefined || error.length===null) {
-            err= uploadBase64Image(contenidofoto, 'galerias', "usuarios/" + data[0].iduser + "/" + data[0].iduser + ".jpg", isBase64ToBlob);
+          console.log(isValid(error));
+          if (isValid(error)===false) {
+            console.log("66666666");
+            console.log('galerias', "usuarios/" + data[0].iduser + "/" + data[0].iduser + ".jpg");
+            console.log(contenidofoto);
+            err= await uploadBase64Image(contenidofoto, 'galerias', "usuarios/" + data[0].iduser + "/" + data[0].iduser + ".jpg", isBase64ToBlob);
+            console.log(err);
           }
         }
         return (err);
@@ -304,7 +313,8 @@ import supabase from "./connection";
       .update({ nombre: nombre, pw: password, celular: celular, provincia: provincia, municipio: municipio, tipouser: plan, latitud: lat, longitud: lng })
       .eq('iduser', user)
       err=error;
-      if (error===undefined || error===null){ 
+      if (isValid(error)===false){ 
+        console.log("55555555");
         err= uploadBase64Image(contenidofoto, 'galerias', "usuarios/" + user + "/" + user + ".jpg", isBase64ToBlob);
       }
       return (err);

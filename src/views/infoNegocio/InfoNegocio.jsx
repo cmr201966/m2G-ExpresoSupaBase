@@ -45,7 +45,6 @@ const InfoNegocio = () => {
 
   async function init(){
     let result = await getInfoNegocio(parsedParams.idnegocio);
-    console.log(result);
     let resultFiles = await getFilesInFolderSB("./galerias/app_images/usuarios/" + parsedParams.idnegocio, "usuarios/" + parsedParams.idnegocio, "galerias");
     setArrayFotos(resultFiles);
     let tarray=[];
@@ -179,8 +178,7 @@ useEffect(() => {
                 {/*<ComGalerias rutatmp={"usuarios/" + idnegocio} desctmp={desctmp} perfil={idnegocio} permiso={true} deQuien="del negocio" />*/}
              </section>:""
           }
-          {console.log(gps)}
-          {gps===1 || gps===true?
+          {gps===1?
           <section className="mapa-negocio">
              <Map sx={{ height: "400px", width: "100%" }} onMapClick={lngLatSelected} remoteshowMap={showMap} lat={lat} lng={lng} point={{ lat, lng }} onChange={onChangeMap} remoteZoom={zoom} /> 
           </section>:""
