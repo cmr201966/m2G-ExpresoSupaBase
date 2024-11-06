@@ -16,7 +16,7 @@ import PropTypes from "prop-types";
 // local hooks
 import { useMapBox } from "./map-box-util";
 import "mapbox-gl/dist/mapbox-gl.css";
-
+import { isValid  } from "../../Utiles/Utiles";
 import config from "../../config";
 
 const Route = loadable(() => import("./Route"));
@@ -48,9 +48,12 @@ function MapBox({
   noLocalMarker = true,
   onMapClick,
 }) {
+  console.log(lng, lat);
   const [zoom] = useState(remoteZoom ?? 16);
-  const [longitude, setLongitude] = useState(lng ?? -75.829090519);
-  const [latitude, setLatitude] = useState(lat ?? 20.0217583);
+  const [longitude, setLongitude] = useState(isValid(lng) && lng!==0?lng: -75.829090519);
+  const [latitude, setLatitude] = useState(isValid(lat) && lat!==0?lat: 20.0217583);
+  console.log(longitude);
+  console.log(latitude);
   const [localMarker, setLocalMarker] = useState(null);
   const flyToPoint = useCallback(
     (longitude, latitude, zoom) => {

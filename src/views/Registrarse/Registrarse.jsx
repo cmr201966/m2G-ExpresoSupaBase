@@ -20,7 +20,7 @@ import Hero from "../../layouts/Hero/Hero";
 import { useEffect, useState } from "react";
 import IconButton from "@mui/material/IconButton"
 import ArrowBack from "@mui/icons-material/ArrowBack";
-import { isValid, apiBaseDatos, getJpgFileSB } from "../../Utiles/Utiles";
+import { isValid, apiBaseDatos, getJpgFileSB, buscarEnArreglo } from "../../Utiles/Utiles";
 import "./styles.css";
 
 const Registrarse = () => {
@@ -106,7 +106,6 @@ const Registrarse = () => {
       setTmunicipios(arraydesconocido);
       ttmunicipios=arraydesconocido;
     }
-
     setMunicipio(ttmunicipios[0].municipio);
     if (isValid(sessionStorage.getItem("user")) === true && (parsedParams.where!=='true'))
     {
@@ -118,8 +117,8 @@ const Registrarse = () => {
       setCelular(result[0].celular);
       setProvincia(result[0].provincia);
       setMunicipio(result[0].municipio);
-      setLat(result[0].latitud);
-      setLng(result[0].longitud);
+      setLat(isValid(result[0].latitud)===true && result[0].latitud!==0?result[0].latitud:ttmunicipios[buscarEnArreglo(ttmunicipios,result[0].municipio,"municipio")].latitud);
+      setLng(isValid(result[0].longitud)===true && result[0].longitud!==0?result[0].longitud:ttmunicipios[buscarEnArreglo(ttmunicipios,result[0].municipio,"municipio")].longitud);
       setIsBase64ToBlob(true);
       let resultado = await getJpgFileSB("./galerias/app_images/usuarios/" + result[0].iduser + "/" + result[0].iduser + ".jpg", "usuarios/" + result[0].iduser + "/" + result[0].iduser + ".jpg");
       if (resultado!== undefined && resultado!==null) {

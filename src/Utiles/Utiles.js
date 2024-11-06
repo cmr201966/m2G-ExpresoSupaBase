@@ -694,7 +694,7 @@ import supabase from "./connection";
 
   async function setProductoSB(user, producto, categoria, nick, contenidofoto, desc, precio, ocupado, domicilio, agregar, marca, modelo, talla, color, gps, latitud, longitud, sciudad, distanciamax, isBase64ToBlob){
     let err="";
-    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL') await setproducto({ user, categoria, nick, desc, precio, domicilio, marca, modelo, talla, color, gps, latitud,longitud, ocupado,  sciudad, distanciamax, agregar, contenidofoto})
+    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL') await setproducto({ user,producto, categoria, nick, desc, precio, domicilio, marca, modelo, talla, color, gps, latitud,longitud, ocupado,  sciudad, distanciamax, agregar, contenidofoto})
     else{
       if (agregar===true){
         const { error } = await supabase

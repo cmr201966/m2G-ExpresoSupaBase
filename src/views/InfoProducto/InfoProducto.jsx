@@ -59,7 +59,6 @@ const InfoProducto = () => {
   async function init() {
     let resultFiles = await getFilesInFolderSB("./galerias/app_images/productos/" + parsedParams.idproducto, "productos/" + parsedParams.idproducto, "galerias");
     setArrayFotos(resultFiles);
-    console.log(resultFiles);
     let tarray=[];
     for(let i=0; i<resultFiles.length; i+=1)
       if (resultFiles[i].indexOf(".jpg") === -1) resultFiles.splice(i, 1)
@@ -72,6 +71,7 @@ const InfoProducto = () => {
     }
 
     let result= await getInfoProducto(parsedParams.idproducto);
+    console.log(result);
     if (isValid(result)=== true) {
       if (result[0].idnegocio===sessionStorage.getItem("user")){
         setShowGalerias(true)
@@ -93,6 +93,7 @@ const InfoProducto = () => {
       setDomicilio(result[0].domicilio);
     }
     result= await getParesGpsProducto(parsedParams.categoria,  parsedParams.idproducto);
+    console.log(result);
     let paresGps = [];
     result.forEach((item) => {
       paresGps.push({
@@ -385,6 +386,10 @@ if (puntosState===2){
 
         </main>
         <div className="mapa-1">
+          {console.log(inicio===false )}
+          {console.log(gps === 1 )}
+          {console.log(showMap === true )}
+          {console.log(puntos.length!==0 )}
           {inicio===false && gps === 1 && showMap === true && puntos.length!==0 ? (
             <section className="mapa">
               {domicilio===1?
