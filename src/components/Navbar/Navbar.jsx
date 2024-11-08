@@ -126,7 +126,6 @@ const Navbar = (props) => {
       setMunicipio(6);
       ttmunicipios = resultmunicipio.filter((item)=>{if (item.provincia === 14){return item}});
       if (ttmunicipios.length!==0){ 
-          // setear sessionStorage con gps del municipio con el que se va a trabajar
           setTmunicipios(ttmunicipios)
       }
       else
@@ -141,7 +140,6 @@ const Navbar = (props) => {
         sessionStorage.setItem("ubicacion-municipio", resultconfig[0].municipio);
         ttmunicipios = resultmunicipio.filter((item)=>{if (item.provincia === resultconfig[0].provincia){return item}});
         if (ttmunicipios.length!==0){ 
-          // setear sessionStorage con gps del municipio con el que se va a trabajar
           setTmunicipios(ttmunicipios)
         }
         else
@@ -187,7 +185,6 @@ const Navbar = (props) => {
       if(sessionStorage.getItem("ubicacion-provincia")!==null){
       setShow1(false)
       }
-      //document.getElementById("password").focus();
     }
   
     async function handleselect(e) {

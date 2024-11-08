@@ -61,8 +61,6 @@ function MapBox({
         center: [longitude, latitude],
         zoom,
       });
-      console.log(latitude, longitude);
-      console.log(noLocalMarker);
       if (!noLocalMarker) setLocalMarker({ lat: latitude, lng: longitude });
     },
     [noLocalMarker]

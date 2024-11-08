@@ -53,7 +53,6 @@ const Home = () => {
       let category1=[];
       let users1=[];
       let nombres1=[];
-      console.log(sessionStorage.getItem("sgbd").toLocaleUpperCase());
       let ruta=sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL'?"./galerias/app_images/aplicaciones/":"aplicaciones/"
       resultApp.forEach((item) => {
         imgs1.push(ruta + item.id + "/" + item.id + ".jpg");
@@ -69,6 +68,7 @@ const Home = () => {
       let longitug=isValid(result)===true?result.length:0;
       let arrayContenidoFoto=[];
       let resultado;
+      console.log(sessionStorage.getItem("sgbd").toLocaleUpperCase());
       for(let i=0;i<longitug; i+=1){
         if (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL'){
            resultado = await getJpgFile({ file: "./galerias/app_images/categorias_de_negocios/" + result[i].idcategoria + "/" + result[i].idcategoria + ".jpg"});

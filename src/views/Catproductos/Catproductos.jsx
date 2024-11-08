@@ -90,9 +90,8 @@ const CatProductos = () => {
 
   async function init() {    
     setShow(true);
-    for (let prop in parsedParams) {
-      sessionStorage.setItem(prop, parsedParams[prop])
-    }
+    tcancelar();
+    for (let prop in parsedParams) sessionStorage.setItem(prop, parsedParams[prop]);
     if ((sessionStorage.getItem("login")===1 || sessionStorage.getItem("login")==='1') && (isValid(sessionStorage.getItem("user"))===false)){
         navigate(`/login?login=1&regreso=${sessionStorage.getItem("regreso")}`);
         return
@@ -119,7 +118,7 @@ const CatProductos = () => {
     let resultusuarios = await apiBaseDatos("getUsuarios");
     if (isValid(resultusuarios)===false) setArrayUsuarios(arrayNoUsuarios)
     else {
-      setUsuario(buscarEnArregloString(resultusuarios, resultusuarios[0].iduser, "iduser"));
+      setUsuario(0);
       setArrayUsuarios(resultusuarios);
     }
     let resultproductos = await apiBaseDatos("getproductoscategoria", sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), ttarraytnegocios[posicion].categorianegocio, producto);
@@ -132,8 +131,9 @@ const CatProductos = () => {
       setProducto({ label: resultproductos[0].desc, value: 0 });
 
       if (isValid(resultproductos[0].idproducto)===true) {
-        restaurardatosproductosNew(resultproductos, posicionProducto);
-        setEditarsn(true);
+        recuperardatosproducto(resultproductos, 0);
+        restaurardatosproductosNew(resultproductos, posicionProducto, resultusuarios);
+        //setEditarsn(true);
       }
       setIsBase64ToBlob(true);
       let resultado = await getJpgFileSB("./galerias/app_images/productos/" + resultproductos[0].idproducto + "/" + resultproductos[0].idproducto + ".jpg", 
@@ -302,7 +302,7 @@ const CatProductos = () => {
     setTdistanciaMax(data[i].distanciamax);
   }
 
-  function restaurardatosproductosNew(data, posicion) {
+  function restaurardatosproductosNew(data, posicion, arrayUsuarios) {
     setUsuario(buscarEnArregloString(arrayUsuarios, data[posicion].iduser, "iduser"));
     setProducto({ label: data[posicion].desc, value: posicion });
     setNombrecorto(data[posicion].nick);
@@ -436,7 +436,6 @@ const CatProductos = () => {
     setAgregarsn(false);
     setEditarsn(false);
     setEliminarsn(false);
-    setDescripcion("");
     setShowGalerias(false);
     setShowMap(false);
   }
@@ -966,11 +965,10 @@ const CatProductos = () => {
                     )}
                   </div>
                 </div>
-
                 {inicia === false && showGalerias === true && showMap === false ? (
                     <ComGalerias
                       deQuien={arrayproductos[producto.value].desc}
-                      rutatmp={
+                      ruta={
                         "productos/" + arrayproductos[producto.value].idproducto
                       }
                       perfil={arrayproductos[producto.value].idproducto}

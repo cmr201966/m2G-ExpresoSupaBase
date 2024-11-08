@@ -4,10 +4,11 @@ import IconButton from "@mui/material/IconButton"
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
-
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Map from "../../components/Map/MapBox";
 import { useLocation } from "react-router-dom";
+import Tippy from "@tippyjs/react";
 import { isValid, getFilesInFolderSB, getJpgFileSB, getInfoNegocio } from "../../Utiles/Utiles";
 import "./styles.css";
 
@@ -32,6 +33,7 @@ const InfoNegocio = () => {
   const [gps, setGps]=useState(true);
   const [arrayFotos, setArrayFotos] = useState([]);
   const [arrayFotoInfo, setArrayFotoInfo] = useState([]); 
+  const url = `https://wa.me/${52675359}?text=`
 
   const onChangeMap = (which, value) => {
     if (which === "lng") return setLng(value);
@@ -146,14 +148,12 @@ useEffect(() => {
                        {tipoUser}
                      </p>
                  </div>
+                 { sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL'?
                  <div className="parrafo">
-                     <p>
-                       Celular:
-                     </p>
-                     <p>
-                       {celular}
-                     </p>
-                 </div>
+                     <p>Celular:</p>
+                     <p>{celular}</p>
+                 </div>:""}
+
                  <div className="parrafo">
                      <p>
                         Provincia:
@@ -170,6 +170,10 @@ useEffect(() => {
                         {municipio}
                      </p>
                   </div>
+                  <Tippy content={`Ordenar via WhatsApp`}>
+                   <a href={url} target="_blank" rel="noopener noreferrer"><WhatsAppIcon /></a>
+              </Tippy>
+
               </div>
 
           </section>

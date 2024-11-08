@@ -2,6 +2,7 @@ import { useLocation } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import Hero from "../../layouts/Hero/Hero";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import Checkbox from "@mui/material/Checkbox";
 import IconButton from "@mui/material/IconButton";
@@ -41,12 +42,12 @@ const Productos = () => {
   const [items, setItems] = useState([]);
   const [puntosState, setPuntosState] = useState(0);
   const [carrera, setCarrera] = useState(0);
-  //const [duracion, setDuracion] = useState(0);
-  //const [duracion1, setDuracion1] = useState(0);
+  const [duracion, setDuracion] = useState(0);
+  const [duracion1, setDuracion1] = useState(0);
   const [verOtraVez] = useState(true);
   const [viewCarrito, setViewCarrito] = useState(false);
   const [toFly] = useState(null);
-
+  const url = `https://wa.me/${52675359}?text=`
   let users =
     sessionStorage.getItem("user") === null
       ? ""
@@ -76,10 +77,10 @@ const Productos = () => {
     setNombre(isValid(parsedParams.nombre)=== true ? decodeURIComponent(parsedParams.nombre) : nombre);
     sessionStorage.setItem("nivel", parsedParams.nivel);
 
-    if (isValid(parsedParams.categoria) === true && parsedParams.categoria !== 0) sessionStorage.setItem("categoria", parsedParams.categoria)
+    if (isValid(parsedParams.categoria) === true && parsedParams.categoria !== 0) sessionStorage.setItem("categoria", decodeURIComponent(parsedParams.categoria))
     else sessionStorage.setItem("categoria", null);
 
-    if (isValid(parsedParams.user) === true  && parsedParams.user !== "") sessionStorage.setItem("user", parsedParams.user);
+    if (isValid(parsedParams.user) === true  && parsedParams.user !== "") sessionStorage.setItem("user", decodeURIComponent(parsedParams.user));
     else sessionStorage.setItem("user", null);
 
     if (isValid(parsedParams.userAnuncio) === true && parsedParams.userAnuncio !== "") sessionStorage.setItem("userAnuncio", parsedParams.userAnuncio);
@@ -221,14 +222,14 @@ function contains(lat, lon, bbox) {
         lng: item.longitud,
         image: libre,
         info: item.celular,
-        distanciaMax: item.distanciaMax,
-        sCiudad: item.sCiudad,
+        distanciamax: item.distanciamax,
+        sciudad: item.sciudad,
         imageClassName: "",
       });
       itemst.push({
         idproducto: item.idproducto,
         tarifa: item.tarifa,
-        costoDomicilio: item.costoDomicilio,
+        costodomicilio: item.costodomicilio,
         domicilio: item.domicilio,
       });
       setPuntos(paresgps);
@@ -287,7 +288,7 @@ function contains(lat, lon, bbox) {
           tipouser: item.tipouser,
           ocupado: item.ocupado,
           tarifa: item.tarifa,
-          costoDomicilio: item.costoDomicilio,
+          costodomicilio: item.costodomicilio,
           domicilio: item.domicilio,
         };
         if (result1[0].idnaturaleza === 62) {
@@ -318,14 +319,14 @@ function contains(lat, lon, bbox) {
         lng: item.longitud,
         image: libre,
         info: item.celular,
-        distanciaMax: item.distanciaMax,
-        sCiudad: item.sCiudad,
+        distanciamax: item.distanciamax,
+        sciudad: item.sciudad,
         imageClassName: "",
       });
       itemst.push({
         idproducto: item.idproducto,
         tarifa: item.tarifa,
-        costoDomicilio: item.costoDomicilio,
+        costodomicilio: item.costodomicilio,
       });
       setPuntos(paresgps);
       setItems(itemst);
@@ -343,14 +344,16 @@ function contains(lat, lon, bbox) {
       let latDestino=tindex<3?0:puntos[tindex-1].lat;
       let lngOrigen=tindex<3?0:puntos[tindex-2].lng;
       let lngDestino=tindex<3?0:puntos[tindex-1].lng;
-      await apiBaseDatos("setmovimientosNew", 1, idproductot, latOrigen, latDestino, lngOrigen, lngDestino, carrera * items[index].tarifa + items[index].costoDomicilio, carrera, users)
+      await apiBaseDatos("setmovimientosNew", 1, idproductot, latOrigen, latDestino, lngOrigen, lngDestino, carrera * items[index].tarifa + items[index].costodomicilio, carrera, users)
       await apiBaseDatos("updateOcupado", idproductot, 1)
       init1();
     }
-
     setPuntosState(0);
     setShowMap(!showMap);
   }
+
+  function whatsapp(){
+ }
 
   async function otroPunto() {
     let tpuntos = [...puntos];
@@ -391,8 +394,8 @@ function contains(lat, lon, bbox) {
         esta = distancia.toFixed(2);
         dura = duracion;
       }
-      if ((Number(esta) < Number(menor)) && ((tpuntos[i].distanciaMax===0) || (tpuntos[i].distanciaMax>=esta))) {
-          menor = esta;
+      if ((Number(esta) < Number(menor)) && ((tpuntos[i].distanciamax===0) || (tpuntos[i].distanciamax>=esta))) {
+        menor = esta;
           setIdroductot(items[i].idproducto);
           let resultProduct = await apiBaseDatos("getProductoNew", items[i].idproducto);
           if (resultProduct.length !== 0) {
@@ -402,12 +405,12 @@ function contains(lat, lon, bbox) {
              setCelular(resultProduct[0].celular);
           }
           setTarifa(items[i].tarifa);
-          setCostoDomicilio(items[i].costoDomicilio);
+          setCostoDomicilio(items[i].costodomicilio);
           tpuntos.forEach((item, i) => {
             tpuntos[i].imageClassName = "";
           });
           tpuntos[i].imageClassName = "iconoGrande";
-          //setDuracion1(dura.toFixed(2));
+          setDuracion1(dura.toFixed(2));
           setIndex(i);
           ok=true;
       }
@@ -462,9 +465,8 @@ function contains(lat, lon, bbox) {
             <ArrowBack className="flecha"/>
             </IconButton>
             <h4 className="h3-1-catproductos-cabeza">Atrás</h4>
-
-            <h4 className="h3-cabeza-productos-1">
-            </h4>{(puntosState === 2 && viewCarrito && showMap===true) || (showMap === false && puntos.length !== 0 && viewCarrito)? (
+            {(((puntosState === 2 && viewCarrito && showMap===true) || (showMap === false && puntos.length !== 0 && viewCarrito))
+               && (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL' || (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='SUPABASE' && showMap===false)))?
                 <Tippy content={`Ordenar un producto`}>
                 <button
                   type="button"
@@ -474,9 +476,21 @@ function contains(lat, lon, bbox) {
             <ShoppingCartOutlinedIcon />
                 </button>
               </Tippy>
-            ) : (
-              ""
-            )}
+            :""}
+            {((puntosState === 2 && viewCarrito && showMap===true) || (showMap === false && puntos.length !== 0 
+               && viewCarrito)) && sessionStorage.getItem("sgbd").toLocaleUpperCase()==='SUPABASE' && showMap===true? 
+                <Tippy content={`Ordenar via WhatsApp`}>
+                   <a href={url} target="_blank" rel="noopener noreferrer"><WhatsAppIcon /></a>
+              </Tippy>
+            :""}
+{/*                <button
+                  type="button"
+                  className="car negocio-button primary"
+                  onClick={whatsapp}
+                >
+                  <WhatsAppIcon />                  
+                </button>
+*/}
             {showMap !== true && mascerca > 0 ? (
               <div className="verOtraVez">
                 <label className="label-datos-productos input-productos-12">
@@ -523,7 +537,7 @@ function contains(lat, lon, bbox) {
           )}
           {inicia===false?
           <div className="productos-nombre">
-              <p >{nombre} - ({cantidadproductos})</p>
+              <p >({cantidadproductos}) - {nombre}</p>
           </div>:""
           }
           {inicia === false && showMap !== true ? (

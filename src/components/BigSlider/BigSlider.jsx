@@ -77,8 +77,9 @@ const BigSlider = (props) => {
           transform: `translateX(${currentIndex * -1 * 100}vw)`, })}`}
       >
         {imgs?.map((item, i) => (
-         <Link  key={i} to={`/productos?userAnuncio=${users[i]}&categoria=${categorias[i]}&user=${sessionStorage.getItem("user")}&nombre=${nombres[i]}`}>
-            <div key={i} className="big-slider-item">
+         <Link  key={i} to={`/productos?categoria=${categorias[i]}&user=${sessionStorage.getItem("user")}&nombre=${nombres[i]}`}>
+{/*/Link>         <Link  key={i} to={`/productos?userAnuncio=${users[i]}&categoria=${categorias[i]}&user=${sessionStorage.getItem("user")}&nombre=${nombres[i]}`}>*/}
+         <div key={i} className="big-slider-item">
             <img className="img-slider"
               src={imagenes[i]}
               alt="Foto"
@@ -87,8 +88,9 @@ const BigSlider = (props) => {
         </Link>
         ))}
         {imgs?.length && 
-         <Link  key={0} to={`/productos?userAnuncio=${users[0]}&categoria=${categorias[0]}&user=${sessionStorage.getItem("user")}&nombre=${nombres[0]}`}>
-            <div className="big-slider-item">
+         <Link  key={0} to={`/productos?categoria=${categorias[0]}&user=${sessionStorage.getItem("user")}&nombre=${nombres[0]}`}>
+{/*         <Link  key={0} to={`/productos?userAnuncio=${users[0]}&categoria=${categorias[0]}&user=${sessionStorage.getItem("user")}&nombre=${nombres[0]}`}>*/}
+         <div className="big-slider-item">
                <img className="img-slider"
                src={imagenes[0]}
                alt="Foto"

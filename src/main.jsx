@@ -26,8 +26,8 @@ import CatCategorias from "./views/CatCategorias/CatCategorias.jsx";
 
 import "tippy.js/dist/tippy.css";
 import "./index.css";
-//sessionStorage.setItem("sgbd","SUPABASE");
-sessionStorage.setItem("sgbd","MYSQL");
+sessionStorage.setItem("sgbd","SUPABASE");
+//sessionStorage.setItem("sgbd","MYSQL");
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Suspense>

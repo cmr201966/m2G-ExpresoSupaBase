@@ -5,6 +5,7 @@ import IconButton from "@mui/material/IconButton";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
 
@@ -54,10 +55,12 @@ const InfoProducto = () => {
   const [usert, setUsert] = useState("");
   const [arrayFotos, setArrayFotos] = useState([]);
   const [arrayFotoInfo, setArrayFotoInfo] = useState([]);
+  const url = `https://wa.me/${52675359}?text=`
 //  const [duracion, setDuracion] = useState(0);
 
   async function init() {
-    let resultFiles = await getFilesInFolderSB("./galerias/app_images/productos/" + parsedParams.idproducto, "productos/" + parsedParams.idproducto, "galerias");
+    let resultFiles = await getFilesInFolderSB("./galerias/app_images/productos/" + parsedParams.idproducto, 
+                                               "productos/" + parsedParams.idproducto, "galerias");
     setArrayFotos(resultFiles);
     let tarray=[];
     for(let i=0; i<resultFiles.length; i+=1)
@@ -88,11 +91,10 @@ const InfoProducto = () => {
       setCelular(result[0].celular);
       setGps(result[0].gpssn);
       setTarifa(result[0].tarifa);
-      setCostoDomicilio(result[0].costoDomicilio);
+      setCostoDomicilio(result[0].costodomicilio);
       setDomicilio(result[0].domicilio);
     }
     result= await getParesGpsProducto(parsedParams.categoria,  parsedParams.idproducto);
-    console.log(result);
     let paresGps = [];
     result.forEach((item) => {
       paresGps.push({
@@ -335,7 +337,7 @@ if (puntosState===2){
                     ""
                   )}
 
-                  {celular !== "undefined" ? (
+                  {celular !== "undefined" && sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL'? (
                     <div className="parrafo">
                       <p>Celular:</p>
                       <p>{celular}</p>
@@ -343,7 +345,8 @@ if (puntosState===2){
                   ) : (
                     ""
                   )}
-                 {(distancia !== 0) && (showMap===true && puntosState===2 && domicilio===1) || (domicilio===1 && ocupado===0)? (
+                 {(((distancia !== 0) && (showMap===true && puntosState===2 && domicilio===1)) || (domicilio===1 && ocupado===0)) 
+                     && (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL')? (
                   <>
                   <Tippy content="Ordenar este producto">
                     <IconButton
@@ -356,12 +359,23 @@ if (puntosState===2){
                     </IconButton>                    
                   </Tippy>
                   </>
+                  ) : (
+                  ""
+                )}
+
+                {(((distancia !== 0) && (showMap===true && puntosState===2 && domicilio===1)) || (domicilio===1 && ocupado===0)) 
+                     && (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='SUPABASE')? (
+                  <>
+                  <Tippy content="Ordenar via WhatsApp">
+                    <a href={url} target="_blank" rel="noopener noreferrer"><WhatsAppIcon /></a>
+                  </Tippy>
+                  </>
                 ) : (
                   ""
-          )}
-                   </div>
-              </section>
-             </>
+               )}
+             </div>
+           </section>
+         </>
             
           ) : 
           (

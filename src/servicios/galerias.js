@@ -1,5 +1,4 @@
 import config from "../config";
-
 export async function makeRequest(url, body, method = "POST") {
   return await fetch(url, {
     method,

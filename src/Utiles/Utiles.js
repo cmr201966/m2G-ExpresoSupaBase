@@ -16,8 +16,60 @@ import { getcategoriasnegociosapp } from "../servicios/negocios";
 import { getproductoscategoria,  setproducto,  delproducto,} from "../servicios/productos";
 import { getusuarios } from "../servicios/registrarse";
 import { setconfig, getconfig  } from "../servicios/config";
+import { creafileinfolder, delfileinfolder } from "../servicios/fs";
+import { getgalerias } from "../servicios/galerias";
 import supabase from "./connection";
-  
+
+  async function creaFileInFolder(folderMYSQL, folderSUPABASE, file, contenidofoto){
+    let err="";
+    if (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL'){ 
+      console.log(folderMYSQL + "/" + file);
+      err =await creafileinfolder({ ruta: folderMYSQL, file, contenidofoto  })
+    }
+      else{
+        console.log(folderSUPABASE + "/" + file);
+        err=await uploadBase64Image(contenidofoto, 'galerias', folderSUPABASE + "/" + file, false)
+    }
+    return err;
+  }
+
+  async function deleteFileInFolder(folderMYSQL, folderSUPABASE, file){
+    let err="";
+    if (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL'){ 
+      await delfileinfolder({ ruta: folderMYSQL, file  });
+    }
+      else{
+        console.log(folderSUPABASE + "/" +  file);
+        await supabase.storage
+        .from("galerias")
+        .remove([folderSUPABASE + "/" +  file]);
+    }
+    return err;
+  }
+
+  async function getGalerias(folder){
+    let galeriasfolders=[];
+    if (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL'){
+      galeriasfolders = await getgalerias({ruta: folder});
+      galeriasfolders = await galeriasfolders.json();
+    }
+    else{
+      const { data } = await supabase
+      .storage
+      .from("galerias")
+      .list(folder, {
+          limit: 1000,
+          offset: 0,  
+          sortBy: { column: 'name', order: 'asc' } 
+      });
+      console.log(data);
+      data.forEach((item) => {
+        galeriasfolders.push(item.name);
+      });
+  }
+  return galeriasfolders;
+}
+
   function borraSessionStorage(items){
     items.forEach(item => {
       sessionStorage.removeItem(item);     
@@ -93,22 +145,15 @@ import supabase from "./connection";
     return new Blob(byteArrays, { type: contentType });
   };
 
-  async function deleteFileInFolder(bucket, carpeta){
-     await supabase.storage
+  const uploadBase64Image = async (base64String, bucket, carpeta, isBase64ToBlob) => {
+    if (isBase64ToBlob===true) return {}
+    await supabase.storage
     .from(bucket)
     .remove([carpeta]);
-
-  }
-  const uploadBase64Image = async (base64String, bucket, carpeta, isBase64ToBlob) => {
-    console.log(isBase64ToBlob);
-    if (isBase64ToBlob===true) return {}
-    deleteFileInFolder(bucket, carpeta);
-    console.log("paso");
-    const blob = await base64ToBlob(base64String, 'image/jpeg', isBase64ToBlob);
+    const blob = base64ToBlob(base64String, 'image/jpeg', isBase64ToBlob);
     const { error } = await supabase.storage
       .from(bucket)
       .upload(carpeta, blob);
-      console.log(error);
       return error
   };  
 
@@ -277,7 +322,6 @@ import supabase from "./connection";
   async function setregistrarseSB(user, nombre, password, celular, provincia, municipio, contenidofoto, modifica,plan, lat, lng, isBase64ToBlob){
     let response=[];
     let err;
-    console.log(sessionStorage.getItem("sgbd").toUpperCase());
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
        response = await setregistrarse({user, nombre, password, celular, provincia:provincia,municipio:municipio, contenidofoto,modifica,plan, lat, lng});
        response = await response.json();
@@ -296,13 +340,8 @@ import supabase from "./connection";
           .select('*')
           .order('id', { ascending: false })
           .limit(1);
-          console.log(isValid(error));
           if (isValid(error)===false) {
-            console.log("66666666");
-            console.log('galerias', "usuarios/" + data[0].iduser + "/" + data[0].iduser + ".jpg");
-            console.log(contenidofoto);
             err= await uploadBase64Image(contenidofoto, 'galerias', "usuarios/" + data[0].iduser + "/" + data[0].iduser + ".jpg", isBase64ToBlob);
-            console.log(err);
           }
         }
         return (err);
@@ -314,7 +353,6 @@ import supabase from "./connection";
       .eq('iduser', user)
       err=error;
       if (isValid(error)===false){ 
-        console.log("55555555");
         err= uploadBase64Image(contenidofoto, 'galerias', "usuarios/" + user + "/" + user + ".jpg", isBase64ToBlob);
       }
       return (err);
@@ -515,6 +553,24 @@ import supabase from "./connection";
     }
   }
 
+  function getParesGpsCategoria(categoria, user, userAnuncio) {
+    let condicion1="";
+    let condicion2="";
+    let condicion3="";
+    if (isValid(user)===true){
+       condicion1= " and (tablacatproductos.iduser='" + user + "')";
+    }
+    if (isValid(userAnuncio)===true){
+      condicion2= " and (tablacatproductos.iduser='" + userAnuncio + "')";
+   }
+   if (isValid(categoria)===true){
+       condicion3= " and (tablacatproductos.categorianegocio=" + categoria + ")"      
+    }
+    return 'CREATE OR REPLACE VIEW getparesgpscategoria AS SELECT celular, tablacatproductos.latitud, tablacatproductos.longitud, ocupado, idproducto, tablacatproductos."desc" as nombre,' + 
+           ' tarifa, costodomicilio, domicilio, distanciamax, sciudad FROM Tablacatproductos, tablausuarios WHERE (ocupado=0) and (tablacatproductos.iduser=tablausuarios.iduser) and ' + 
+           ' (tablacatproductos.activo=true) and (tablausuarios.activo=true)' + condicion1 + condicion2 + condicion3
+  }
+
   async function getparesgpscategoriaSB(categoria, user, anuncio){
     let resultgps=[];
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
@@ -522,11 +578,13 @@ import supabase from "./connection";
       resultgps = await resultgps.json();
         }
     else{
+      let sql=getParesGpsCategoria(categoria, user, anuncio);
       await supabase
+      .rpc('execute_query', { query: sql});
+      const {data} = await supabase
       .from('getparesgpscategoria')
       .select('*')
-      .eq('categorianegocio', categoria)
-      .eq('iduser', user);
+      resultgps=data;
     }
   return resultgps;
   }
@@ -633,7 +691,7 @@ import supabase from "./connection";
   async function delProductoSB(producto){
     let err="";
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL') {
-      const {error} = await delProducto({producto });
+      const error = await delproducto({producto });
       err=error;
     }else{
       const { error } = await supabase.from('tablacatproductos').delete().eq('idproducto', producto)
@@ -694,12 +752,6 @@ import supabase from "./connection";
       resultproductos=data;
     }
     return resultproductos;
-  }
-
-  async function delProducto(producto){
-    if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL') await delproducto({ producto: producto })
-      else
-    await supabase.from('tablacatproductos').delete().eq('idproducto', producto)      
   }
 
   async function setProductoSB(user, producto, categoria, nick, contenidofoto, desc, precio, ocupado, domicilio, agregar, marca, modelo, talla, color, gps, latitud, longitud, sciudad, distanciamax, isBase64ToBlob){
@@ -848,4 +900,4 @@ import supabase from "./connection";
 
   export {isValid, buscarEnArreglo, buscarEnArregloString, obtenerImagen, uploadBase64Image, apiBaseDatos, buscaFoto, creaBucket}
   export { getFilesInFolderSB, getJpgFileSB, getInfoProducto, getParesGpsProducto, setMovimientosNewSB, getInfoNegocio, getcategoriasnegociosappSB}
-  export {delProducto, borraSessionStorage}
+  export {borraSessionStorage, getGalerias, creaFileInFolder, deleteFileInFolder}
