@@ -548,14 +548,16 @@ import supabase from "./connection";
   }
 
   async function updateOcupadoSB(idproducto, ocupado){
+    console.log(idproducto, ocupado);
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
       await updateOcupado({idproducto, ocupado})
     }
     else{
+      console.log("aqui")
       await supabase
-      .from('tablaCatProductos')
+      .from('tablacatproductos')
       .update({ ocupado: ocupado})
-      .eq('iduproducto', idproducto);
+      .eq('idproducto', idproducto);
     }
   }
 
