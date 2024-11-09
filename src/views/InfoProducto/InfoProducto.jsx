@@ -67,7 +67,7 @@ const InfoProducto = () => {
       if (resultFiles[i].indexOf(".jpg") === -1) resultFiles.splice(i, 1)
 
     for(let i=0; i<resultFiles.length; i+=1){
-        let result= await getJpgFileSB("./galerias/app_images/productos/" + parsedParams.idproducto + "/" +  resultFiles[i], "productos/" + parsedParams.idproducto + "/" +  resultFiles[i]);
+        let result= await getJpgFileSB(resultFiles[i], "./galerias/app_images/productos/" + parsedParams.idproducto, "productos/" + parsedParams.idproducto);
         if (isValid(result.url)===false || result.url === "") tarray.push(result);
         if (isValid(result.url)===true) tarray.push(result.url);
         setArrayFotoInfo(tarray);
@@ -105,7 +105,7 @@ const InfoProducto = () => {
       });
     });
     setPuntos(paresGps);
-    result = await getJpgFileSB("./galerias/app_images/productos" + "/" + parsedParams.idproducto + "/" + parsedParams.idproducto + ".jpg", "productos" + "/" + parsedParams.idproducto + "/" + parsedParams.idproducto + ".jpg")
+    result = await getJpgFileSB(parsedParams.idproducto + ".jpg", "./galerias/app_images/productos/" + parsedParams.idproducto, "productos/" + parsedParams.idproducto);
     if (isValid(result) === true) {
       setContenidofoto(result);
     }

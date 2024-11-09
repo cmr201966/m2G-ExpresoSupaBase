@@ -282,8 +282,9 @@ function contains(lat, lon, bbox) {
           idnegocio: item.idnegocio,
           xxxNegocio: item.negocio,
           Producto: item.descripcion,
-          photo: "./galerias/app_images/productos/" + item.idproducto + "/" + item.idproducto + ".jpg",
-          photoSB: "productos/" + item.idproducto + "/"+ item.idproducto + ".jpg",
+          photo: item.idproducto + ".jpg",
+          folderMYSQL: "./galerias/app_images/productos/" + item.idproducto,
+          folderSUPABASE: "productos/" + item.idproducto,
           user: item.iduser,
           tipouser: item.tipouser,
           ocupado: item.ocupado,
@@ -304,7 +305,7 @@ function contains(lat, lon, bbox) {
     // Obtener el contenido de la foto de perfil
     contenidofoto.splice(0, contenidofoto.length);
     for (let i = 0; i < newResult.length; i += 1) {
-      let resultado= await getJpgFileSB(newResult[i].photo, newResult[i].photoSB);
+      let resultado= await getJpgFileSB(newResult[i].photo, newResult[i].folderMYSQL, newResult[i].folderSUPABASE);
       if (resultado!==undefined && resultado!==null) {
         contenidofoto.push(resultado);
       }

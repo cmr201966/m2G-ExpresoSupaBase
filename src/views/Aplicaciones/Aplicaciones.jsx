@@ -92,8 +92,7 @@ const Aplicaciones = () => {
         if (result.length>0){
            setCategoria(buscarEnArreglo(resultcategorias, result[buscarEnArreglo(result, result[0].id, "id")].idcategoria, "categorianegocio"));
            setIsBase64ToBlob(true);
-           let resultado = await getJpgFileSB("./galerias/app_images/aplicaciones/" +  result[0].id + "/" + result[0].id + ".jpg", 
-                                          "aplicaciones/" +  result[0].id + "/" + result[0].id + ".jpg");
+           let resultado = await getJpgFileSB(result[0].id + ".jpg", "./galerias/app_images/aplicaciones/" + result[0].id, "aplicaciones/" + result[0].id);
           if (isValid(resultado)=== true) {
              setIsBase64ToBlob(true);
              setContenidofoto(resultado);
@@ -215,8 +214,8 @@ const Aplicaciones = () => {
 
 
 
-      resultado = await getJpgFileSB("./galerias/app_images/aplicaciones/" + arrayAplicaciones[e.target.value].id + "/" + arrayAplicaciones[e.target.value].id + ".jpg", 
-                                    "aplicaciones/" + arrayAplicaciones[e.target.value].id + "/" + arrayAplicaciones[e.target.value].id + "jpg");
+      resultado = await getJpgFileSB(arrayAplicaciones[e.target.value].id + ".jpg", "./galerias/app_images/aplicaciones/" + arrayAplicaciones[e.target.value].id, 
+                                     "aplicaciones/" + arrayAplicaciones[e.target.value].id);
       if (isValid(resultado)=== true) {
         setIsBase64ToBlob(true);
         setContenidofoto(resultado);

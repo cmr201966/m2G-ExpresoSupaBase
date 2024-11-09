@@ -3,12 +3,13 @@ import { useCallback, useEffect, useState } from "react";
 import { css } from "@emotion/css";
 import "./styles.css";
 import { Link } from "react-router-dom";
-import {  getJpgFileSB } from "../../Utiles/Utiles";
+import {  getJpgFileSB, isValid } from "../../Utiles/Utiles";
 import { useNotification } from "../../context/NotificationProvider";
 
 
 const BigSlider = (props) => {
-  const { imgs = [] } = props;
+  const { imgsFileName = [] } = props;
+  const { imgsFolder = [] } = props;
   const { categorias = [] } = props;
   const { users = [] } = props;
   const { nombres = [] } = props;
@@ -18,10 +19,10 @@ const BigSlider = (props) => {
   const [imagenes] = useState([]);
   const {setOpen, setMessage} = useNotification();
   const toLeft = useCallback(() => {
-    if (currentIndex < imgs.length) {
+    if (currentIndex < imgsFileName.length) {
       setCurrentIndex(currentIndex + 1);
     }
-  }, [currentIndex, imgs.length]);
+  }, [currentIndex, imgsFileName.length]);
 
   const toRight = useCallback(
     () => (currentIndex > 0 ? setCurrentIndex(currentIndex - 1) : null),
@@ -30,9 +31,9 @@ const BigSlider = (props) => {
 
   async function init() {
     setInicia(true);
-    for (let i=0; i<imgs.length; i += 1)  {
-      let resultado = await getJpgFileSB(imgs[i], imgs[i]);
-     if (resultado!== undefined && resultado!==null) {
+    for (let i=0; i<imgsFileName.length; i += 1)  {
+      let resultado = await getJpgFileSB(imgsFileName[i], imgsFolder[i], imgsFolder[i]);
+     if (isValid(resultado)=== true) {
         imagenes.push(resultado)
      } else {
        setMessage('Error al recuperar la imagen del anuncio');
@@ -47,7 +48,7 @@ const BigSlider = (props) => {
    }, []);
    
   useEffect(() => {
-    if (currentIndex === imgs.length) {
+    if (currentIndex === imgsFileName.length) {
       setTimeout(() => {
         setTransition(false);
         setCurrentIndex(0);
@@ -56,7 +57,7 @@ const BigSlider = (props) => {
         }, 100);
       }, 700);
     }
-  }, [currentIndex, imgs.length]);
+  }, [currentIndex, imgsFileName.length]);
 
   useEffect(() => {
     setTimeout(() => {
@@ -76,9 +77,8 @@ const BigSlider = (props) => {
         className={`big-slider-content ${transition ? "transition" : ""} ${css({
           transform: `translateX(${currentIndex * -1 * 100}vw)`, })}`}
       >
-        {imgs?.map((item, i) => (
+        {imgsFileName?.map((item, i) => (
          <Link  key={i} to={`/productos?categoria=${categorias[i]}&user=${sessionStorage.getItem("user")}&nombre=${nombres[i]}`}>
-{/*/Link>         <Link  key={i} to={`/productos?userAnuncio=${users[i]}&categoria=${categorias[i]}&user=${sessionStorage.getItem("user")}&nombre=${nombres[i]}`}>*/}
          <div key={i} className="big-slider-item">
             <img className="img-slider"
               src={imagenes[i]}
@@ -87,9 +87,8 @@ const BigSlider = (props) => {
             </div>
         </Link>
         ))}
-        {imgs?.length && 
+        {imgsFileName?.length && 
          <Link  key={0} to={`/productos?categoria=${categorias[0]}&user=${sessionStorage.getItem("user")}&nombre=${nombres[0]}`}>
-{/*         <Link  key={0} to={`/productos?userAnuncio=${users[0]}&categoria=${categorias[0]}&user=${sessionStorage.getItem("user")}&nombre=${nombres[0]}`}>*/}
          <div className="big-slider-item">
                <img className="img-slider"
                src={imagenes[0]}

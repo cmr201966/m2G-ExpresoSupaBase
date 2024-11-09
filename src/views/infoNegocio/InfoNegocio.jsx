@@ -55,7 +55,7 @@ const InfoNegocio = () => {
       if (resultFiles[i].indexOf(".jpg") === -1) resultFiles.splice(i, 1)
 
     for(let i=0; i<resultFiles.length; i+=1){
-        let result= await getJpgFileSB("./galerias/app_images/usuarios/" + parsedParams.idnegocio + "/" +  resultFiles[i], "usuarios/" + parsedParams.idnegocio + "/" +  resultFiles[i]);
+        let result= await getJpgFileSB(resultFiles[i], "./galerias/app_images/usuarios/" + parsedParams.idnegocio, "usuarios/" + parsedParams.idnegocio);
         if (isValid(result.url)===false || result.url === "") tarray.push(result);
         if (isValid(result.url)===true) tarray.push(result.url);
         setArrayFotoInfo(tarray);
@@ -74,7 +74,7 @@ const InfoNegocio = () => {
       setLng(result[0].longitud);
       setGps(result[0].gpssn);
     }
-   result = await getJpgFileSB("./galerias/app_images/usuarios" + "/" + parsedParams.idnegocio + "/" + parsedParams.idnegocio + ".jpg", "usuarios" + "/" + parsedParams.idnegocio + "/" + parsedParams.idnegocio + ".jpg")
+   result = await getJpgFileSB(parsedParams.idnegocio + ".jpg", "./galerias/app_images/usuarios/" + parsedParams.idnegocio, "usuarios/" + parsedParams.idnegocio);
    if (isValid(result) === true) {
       setContenidofoto(result);
    }

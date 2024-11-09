@@ -23,11 +23,9 @@ import supabase from "./connection";
   async function creaFileInFolder(folderMYSQL, folderSUPABASE, file, contenidofoto){
     let err="";
     if (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL'){ 
-      console.log(folderMYSQL + "/" + file);
       err =await creafileinfolder({ ruta: folderMYSQL, file, contenidofoto  })
     }
       else{
-        console.log(folderSUPABASE + "/" + file);
         err=await uploadBase64Image(contenidofoto, 'galerias', folderSUPABASE + "/" + file, false)
     }
     return err;
@@ -39,7 +37,6 @@ import supabase from "./connection";
       await delfileinfolder({ ruta: folderMYSQL, file  });
     }
       else{
-        console.log(folderSUPABASE + "/" +  file);
         await supabase.storage
         .from("galerias")
         .remove([folderSUPABASE + "/" +  file]);
@@ -62,7 +59,6 @@ import supabase from "./connection";
           offset: 0,  
           sortBy: { column: 'name', order: 'asc' } 
       });
-      console.log(data);
       data.forEach((item) => {
         galeriasfolders.push(item.name);
       });
@@ -101,12 +97,22 @@ import supabase from "./connection";
     return index;
   }
 
-  const obtenerImagen = async (bucket, carpeta) => {
-    const { data } = await supabase
+  const checkFileExists = async (bucketName, directory, fileName) => { 
+    const { data } = await supabase 
+      .storage 
+      .from(bucketName) 
+      .list(directory);
+    const fileExists = data.some(file => file.name === fileName); 
+    return fileExists;
+   };
+
+  const obtenerImagen = async (bucketName, directory, fileName) => {
+    let url="";
+    if (await checkFileExists(bucketName, directory, fileName)===false) return
+    const { data, error } = await supabase
       .storage
-      .from(bucket)
-      .download(carpeta);
-      let url;
+      .from(bucketName)
+      .download(directory + "/" + fileName);
       if (isValid(data)===true){
          url = URL.createObjectURL(data);
          return url;
@@ -448,14 +454,14 @@ import supabase from "./connection";
     return resultFiles;
   }
 
-  async function getJpgFileSB(fileMysql, fileSupabase){
+  async function getJpgFileSB(fileName, directoryMYSQL, directorySUPABASE){
     let result=[]
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
-       result = await getJpgFile({file: fileMysql});
+       result = await getJpgFile({file: directoryMYSQL + "/" + fileName});
        result = await result.text();
     }
     else{
-      result = await obtenerImagen('galerias', fileSupabase);
+      result = await obtenerImagen('galerias', directorySUPABASE, fileName);
     }
     return result;
   }

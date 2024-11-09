@@ -22,72 +22,84 @@ const ComGalerias = (props) => {
     handleShowGaleries,
     botonCerrar,
     deQuien,
+    cambiaNombreFoto,
   } = props;
   const location = useLocation();
   const parsedParams = {};
-  const [arrayalbum] = useState([]);
   const [arrayfotos, setArrayfotos] = useState([]);
   const [inicia, setInicia] = useState(true);
   const [contenidofoto, setContenidofoto] = useState([]);
-  const [contenidoalbum, setContenidoalbum] = useState([]);
-  const [album_add] = useState(false);
   const [file_Name, setFile_Name] = useState(0);
+  const [fotoPerfil, setFotoPerfil] = useState(false);
   const [contenidophoto, setContenidophoto] = useState();
-  const [selectalbum, setSelectalbum] = useState(0);
   const [selectfoto, setSelectfoto] = useState(0);
   const [foto] = useState();
-  let talbum = "";
-  let [carpeta] = useState("");
-  let [vacia] = useState(false);
   const tipouser = Number(sessionStorage.getItem("tipouser"));
   const [showimg, setShowimg] = useState(false);
   const [isBase64ToBlob, setIsBase64ToBlob]=useState(true);
 
   async function init() {
-    console.log(ruta);
-    if (ruta === "/") {
-      return;
-    }
+    if (ruta === "/") return;
     sessionStorage.setItem("nivel", parsedParams.nivel);
     init1(ruta);
   }
 
   async function init1(ruta) {
-    console.log(ruta);
     let galeriasfolders = await getGalerias(ruta);
-    console.log(galeriasfolders);
     let tarrayfotos = [];
     for (const item of galeriasfolders) {
       if (item.toLowerCase().indexOf(".jpg") >= 0) {
         tarrayfotos.push(item);
       }
     }
-
-    carpeta = ruta === "" ? "" : ruta + "/";
+    let carpetaMYSQL = ruta === "" ? "" : "/" + ruta;
+    let carpetaSUPABASE = ruta === "" ? "" : ruta;
     contenidofoto.splice(0, contenidofoto.length);
     let tarray = [];
+    setIsBase64ToBlob(false);
     for (const item of tarrayfotos) {
-      let resultado = await getJpgFileSB("./galerias/app_images/" + carpeta + item, carpeta + item  );
+      let resultado = await getJpgFileSB(item, "./galerias/app_images" + carpetaMYSQL, carpetaSUPABASE );
       if (isValid(resultado)=== true && isValid(resultado.length) === true){ 
         tarray.push(resultado)
         setIsBase64ToBlob(true);
         }
     }
     setArrayfotos(tarrayfotos);
-    setFile_Name(tarrayfotos.length);
+    let {indexPhoto, fp}=await lastIndex(tarrayfotos);
+    if (fp===false){ 
+      cambiaNombreFoto("")
+    }
+    else cambiaNombreFoto(perfil + ".jpg");
+    setFile_Name(indexPhoto + 1);
     setContenidofoto(tarray);
     setInicia(false);
   }
 
+  function lastIndex(array){
+    let endArray=[];
+    let tfotoPerfil=false;
+    array.forEach((item) => {
+      if (item===perfil + ".jpg"){ 
+        tfotoPerfil=true;
+      }
+       const index = item.split("-");
+       if (index[1]!==undefined){
+        const valor=index[1].split(".")
+        endArray.push(Number(valor[0]));
+       }
+    });
+    endArray.sort((a, b) => a - b);
+    setFotoPerfil(tfotoPerfil);
+    return {indexPhoto: endArray.length!==0?endArray[endArray.length-1]:0, fp: tfotoPerfil};
+  }
+
   async function del_file_in_folder(folderSQL, folderSUPABASE, file) {
-    console.log(folderSQL,",", folderSUPABASE,",", file)
     await deleteFileInFolder( folderSQL, folderSUPABASE, file );
   }
 
   async function crea_file_in_folder(folderSQL, folderSUPABASE, file, contenidofoto) {
-    console.log(folderSQL, ",", folderSUPABASE,",", file);
     await creaFileInFolder( folderSQL, folderSUPABASE, file, contenidofoto )
-    console.log("7777777");
+    init1(ruta);
   }
 
   async function onPhotoChange(e) {
@@ -97,13 +109,11 @@ const ComGalerias = (props) => {
     reader.onload = (e) => {
       setIsBase64ToBlob(false);
       setContenidophoto(e.target.result);
-      console.log("6666666");
     };
     reader.readAsDataURL(file);
   }
 
   function selectFoto(i) {
-    console.log(i);
     setSelectfoto(i);
     setShowimg(true);
     sessionStorage.setItem("hd_i", i);
@@ -113,8 +123,8 @@ const ComGalerias = (props) => {
     setShowimg(false);
   }
 
-  function borrarFoto(i) {
-      del_file_in_folder("./galerias/app_images/" + ruta, ruta, arrayfotos[i]);
+  async function borrarFoto(i) {
+      await del_file_in_folder("./galerias/app_images/" + ruta, ruta, arrayfotos[i]);
       init1(ruta); 
   }
 
@@ -132,36 +142,10 @@ const ComGalerias = (props) => {
 
   useEffect(() => {
     if (inicia === false && contenidophoto.length !== 0) {
-      let nombre_file = "foto-" + file_Name + ".jpg";
-      crea_file_in_folder("./galerias/app_images/" + ruta, ruta, nombre_file, contenidophoto);
-      console.log("88888888");
-      carpeta = "";
-      vacia = contenidofoto.length === 0;
-      contenidofoto.push(contenidophoto);
-      let tarray = contenidoalbum;
-      setContenidoalbum(tarray);
-      talbum = arrayalbum[selectalbum];
-      if (vacia) {
-        console.log("Vacia..");
-        tarray.push(contenidophoto);
-        arrayalbum.splice(0, arrayalbum.length);
-        console.log(ruta);
-        init1(ruta);
-      } else {
-        console.log("No vacia");
-        let truta=isValid(carpeta) && carpeta!==""?ruta + "/" + carpeta: ruta;
-        console.log(truta);
-        init1(truta);
-      }
-  
+      let nombre_file = fotoPerfil===false?perfil + ".jpg":"foto-" + file_Name + ".jpg";
+      crea_file_in_folder("./galerias/app_images/" + ruta, ruta, nombre_file, contenidophoto);  
     }
   }, [contenidophoto]);
-
-  useEffect(() => {
-    if (document.getElementById("nombre_album") !== null) {
-      document.getElementById("nombre_album").focus();
-    }
-  }, [album_add]);
 
   useEffect(() => {
     init();

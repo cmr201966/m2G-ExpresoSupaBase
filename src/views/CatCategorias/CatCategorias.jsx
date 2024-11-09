@@ -73,8 +73,8 @@ const CatCategorias = () => {
       setCategoria(buscaCategoria(resultcategorias, resultcategorias[0].categorianegocio));
 
       setIsBase64ToBlob(true);
-      let resultado = await getJpgFileSB("./galerias/app_images/categorias_de_negocios/" + resultcategorias[0].categorianegocio + "/" + resultcategorias[0].categorianegocio + ".jpg", 
-                                     "categorias_de_negocios/" + resultcategorias[0].categorianegocio + "/" + resultcategorias[0].categorianegocio + ".jpg", isBase64ToBlob);
+      let resultado = await getJpgFileSB(resultcategorias[0].categorianegocio + ".jpg", "./galerias/app_images/categorias_de_negocios/" + resultcategorias[0].categorianegocio, 
+                                     "categorias_de_negocios/" + resultcategorias[0].categorianegocio, isBase64ToBlob);
      if (resultado!== undefined && resultado!==null) {
         setIsBase64ToBlob(true);
         setContenidofoto(resultado);
@@ -186,8 +186,8 @@ const CatCategorias = () => {
           guardaDatosCategoria(arrayCategorias, e.target.value)
           setCbvista(false);
           setIsBase64ToBlob(true);
-          resultado = await getJpgFileSB("./galerias/app_images/categorias_de_negocios/" + arrayCategorias[e.target.value].categorianegocio + "/" + arrayCategorias[e.target.value].categorianegocio + ".jpg", 
-                                         "categorias_de_negocios/" + arrayCategorias[e.target.value].categorianegocio + "/" + arrayCategorias[e.target.value].categorianegocio + ".jpg", isBase64ToBlob);
+          resultado = await getJpgFileSB(arrayCategorias[e.target.value].categorianegocio + ".jpg", "./galerias/app_images/categorias_de_negocios/" + arrayCategorias[e.target.value].categorianegocio,
+                                         "categorias_de_negocios/" + arrayCategorias[e.target.value].categorianegocio, isBase64ToBlob);
          if (resultado!== undefined && resultado!==null) {
             setIsBase64ToBlob(true);
             setContenidofoto(resultado);

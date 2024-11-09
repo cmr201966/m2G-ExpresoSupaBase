@@ -136,9 +136,8 @@ const CatProductos = () => {
         //setEditarsn(true);
       }
       setIsBase64ToBlob(true);
-      let resultado = await getJpgFileSB("./galerias/app_images/productos/" + resultproductos[0].idproducto + "/" + resultproductos[0].idproducto + ".jpg", 
-                                         "productos/" + resultproductos[0].idproducto + "/" + resultproductos[0].idproducto + ".jpg");
-      if (resultado!==undefined || resultado!==null) {
+      let resultado = await getJpgFileSB(resultproductos[0].idproducto + ".jpg", "./galerias/app_images/productos/" + resultproductos[0].idproducto, "productos/" + resultproductos[0].idproducto);
+      if (isValid(resultado)===true && resultado!=="" && isValid(resultado.length)===true) {
         setIsBase64ToBlob(true);
         setContenidofoto(resultado);
         setNombrefoto(resultproductos[0].idproducto);
@@ -157,8 +156,8 @@ const CatProductos = () => {
     setProducto(value);
     recuperardatosproducto(arrayproductos, value.value);
     setIsBase64ToBlob(true);
-    let resultado = await getJpgFileSB("./galerias/app_images/productos" + "/" + arrayproductos[value?.value].idproducto + "/" + arrayproductos[value?.value].idproducto + ".jpg", 
-                                       "productos/" + arrayproductos[value?.value].idproducto + "/" + arrayproductos[value?.value].idproducto + ".jpg");
+    let resultado = await getJpgFileSB( arrayproductos[value?.value].idproducto + ".jpg", "./galerias/app_images/productos/" + arrayproductos[value?.value].idproducto, 
+                                        "productos/" + arrayproductos[value?.value].idproducto);
     if (resultado.length !== 0) {
       setContenidofoto(resultado);
       setNombrefoto(arrayproductos[value?.value].idproducto);
@@ -178,8 +177,8 @@ const CatProductos = () => {
       setArrayproductos(resultproductos);
       setNombrefoto(resultproductos[0].idproducto);
       recuperardatosproducto(resultproductos, 0);
-      let resultado = await getJpgFileSB("./galerias/app_images/productos" + "/" + resultproductos[0].idproducto + "/" + resultproductos[0].idproducto + ".jpg", 
-                                         "productos/" + resultproductos[0].idproducto + "/" + resultproductos[0].idproducto + ".jpg");
+      let resultado = await getJpgFileSB(resultproductos[0].idproducto + ".jpg", "./galerias/app_images/productos/" + resultproductos[0].idproducto, 
+                                         "productos/" + resultproductos[0].idproducto);
       if (isValid(resultado)===true) {
         setIsBase64ToBlob(true);
         setContenidofoto(resultado);
@@ -397,6 +396,7 @@ const CatProductos = () => {
     setMessage("El producto '" + descripcion + "' se registró correctamente.")
     setOpen(true);
     setShowMap(false);
+    setShowGalerias(false);
     setAgregarsn(false);
     setEditarsn(false);
     init
@@ -442,6 +442,10 @@ const CatProductos = () => {
 
   const onModalClose1 = () => {
     setShow1(false);
+  };
+
+  const cambiaNombreFoto = (valor) => { 
+    setNombrefoto(valor);
   };
 
   useEffect(() => {
@@ -622,8 +626,6 @@ const CatProductos = () => {
                           </select>
                         </div>:""
                         }
-
-
                             <div className="input-area1-producto">
                               <label className="label-datos-catproducto">
                                 *Nombre:
@@ -974,6 +976,7 @@ const CatProductos = () => {
                       perfil={arrayproductos[producto.value].idproducto}
                       permiso={true}
                       botonCerrar={false}
+                      cambiaNombreFoto={cambiaNombreFoto}
                     />
                   ) : (
                     ""

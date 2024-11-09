@@ -13,8 +13,7 @@ import CardMultipleSlider from "../../components/CardMultipleSlider/CardMultiple
 import { useNavigate } from "react-router-dom";
 import Hero from "../../layouts/Hero/Hero";
 import { useEffect, useMemo, useState } from "react";
-import { getJpgFile  } from "../../servicios/imagenes";
-import { isValid, obtenerImagen, apiBaseDatos, creaBucket, borraSessionStorage } from "../../Utiles/Utiles";
+import { isValid, obtenerImagen, apiBaseDatos, creaBucket, borraSessionStorage, getJpgFileSB } from "../../Utiles/Utiles";
 import { useNotification } from "../../context/NotificationProvider";
 
 import "./styles.css";
@@ -30,7 +29,8 @@ const Home = () => {
   const [desctmp, setDesctmp] = useState("");
   const [rutatmp, setRutatmp] = useState("");
   const [show, setShow] = useState(false);
-  const [imgs, setImgs] = useState([]);
+  const [imgsFileName, setImgsFileName] = useState([]);
+  const [imgsFolder, setImgsFolder] = useState([]);
   const [categorys, setCategorys] = useState([]);
   const [users, setUsers] = useState([]);
   const [nombres, setNombres] = useState([]);
@@ -49,42 +49,38 @@ const Home = () => {
     ) {
       setNivel(0);
       let resultApp = await apiBaseDatos("anuncios");
-      let imgs1=[];
+      let imgsFileName1=[];
+      let imgsFolder1=[];
       let category1=[];
       let users1=[];
       let nombres1=[];
-      let ruta=sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL'?"./galerias/app_images/aplicaciones/":"aplicaciones/"
+      let ruta=sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL'?"./galerias/app_images/aplicaciones":"aplicaciones"
       resultApp.forEach((item) => {
-        imgs1.push(ruta + item.id + "/" + item.id + ".jpg");
+        imgsFileName1.push(item.id + ".jpg");
+        imgsFolder1.push(ruta + "/" + item.id);
         category1.push(item.idcategoria);
         users1.push(item.iduser)
         nombres1.push(item.desc)
       });
-      setImgs(imgs1);
+      setImgsFileName(imgsFileName1);
+      setImgsFolder(imgsFolder1);
       setCategorys(category1);
       setUsers(users1);
       setNombres(nombres1);
       let result = await apiBaseDatos("getcategoriasnew")
       let longitug=isValid(result)===true?result.length:0;
       let arrayContenidoFoto=[];
-      let resultado;
+      let resultado=[];
       console.log(sessionStorage.getItem("sgbd").toLocaleUpperCase());
       for(let i=0;i<longitug; i+=1){
-        if (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL'){
-           resultado = await getJpgFile({ file: "./galerias/app_images/categorias_de_negocios/" + result[i].idcategoria + "/" + result[i].idcategoria + ".jpg"});
-           resultado = await resultado.text();
-           arrayContenidoFoto.push(resultado);
-          }
-        else{ 
-          const resultado = await obtenerImagen('galerias', "categorias_de_negocios/" + result[i].idcategoria + "/" + result[i].idcategoria + ".jpg" )
-          if (isValid(resultado)===true){ 
-            arrayContenidoFoto.push(resultado);  
-          }
-          else{
-            setMessage('Error al recuperar la imagen de la categoria de negocio');
+          resultado = await getJpgFileSB(result[i].idcategoria + ".jpg", "./galerias/app_images/categorias_de_negocios/" + result[i].idcategoria, 
+                                         "categorias_de_negocios/" + result[i].idcategoria);
+          if (isValid(resultado)===true && resultado!=="" && isValid(resultado.length)===true) 
+             arrayContenidoFoto.push(resultado)
+           else {
+            setMessage('Error al recuperar la imagen del usuario');
             setOpen(true);
-          }
-        }   
+          }    
       }
       if (longitug!==0){
       result.forEach((item, i) => {
@@ -96,8 +92,8 @@ const Home = () => {
           tooltip: item.desc,
         });
       });
-      setResult(newResult);
-    }
+         setResult(newResult);
+      }
     } 
 
     sessionStorage.getItem("user") === null
@@ -188,7 +184,7 @@ const Home = () => {
           ) : null}
           {inicia === false ? (
             <>
-              <BigSlider imgs={imgs} categorias={categorys} users={users} nombres={nombres}/>
+              <BigSlider imgsFolder={imgsFolder} imgsFileName={imgsFileName} categorias={categorys} users={users} nombres={nombres}/>
               <div className="main-grid negative-margin">
                 <div className="grid-letf"></div>
                 <div className="gradient-background"></div>
