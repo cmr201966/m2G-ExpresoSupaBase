@@ -175,6 +175,7 @@ import supabase from "./connection";
      .from('tablaAnuncios')
      .select('*')
      .order('desc', { ascending: true })
+     .eq('activo', true)
      return data;  
    }
   }
@@ -381,6 +382,7 @@ import supabase from "./connection";
       const { data } = await supabase
       .from('tablaAnuncios')
       .select('*')
+      .eq('activo, true')
       result=data;
     }
     return result;
@@ -397,7 +399,7 @@ import supabase from "./connection";
       if (agregarsn===true){
         const { error } = await supabase
         .from('tablaAnuncios')
-        .insert({ idapp: nick, iduser: user, desc, categoria, tooltip })
+        .insert({ idapp: nick, iduser: user, desc, categoria, tooltip, activo: false })
         if (isValid(error)===false) 
            err=error
         else{

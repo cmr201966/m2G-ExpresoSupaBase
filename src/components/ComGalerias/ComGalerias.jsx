@@ -36,7 +36,6 @@ const ComGalerias = (props) => {
   const [foto] = useState();
   const tipouser = Number(sessionStorage.getItem("tipouser"));
   const [showimg, setShowimg] = useState(false);
-  const [isBase64ToBlob, setIsBase64ToBlob]=useState(true);
 
   async function init() {
     if (ruta === "/") return;
@@ -56,12 +55,10 @@ const ComGalerias = (props) => {
     let carpetaSUPABASE = ruta === "" ? "" : ruta;
     contenidofoto.splice(0, contenidofoto.length);
     let tarray = [];
-    setIsBase64ToBlob(false);
     for (const item of tarrayfotos) {
       let resultado = await getJpgFileSB(item, "./galerias/app_images" + carpetaMYSQL, carpetaSUPABASE );
       if (isValid(resultado)=== true && isValid(resultado.length) === true){ 
         tarray.push(resultado)
-        setIsBase64ToBlob(true);
         }
     }
     setArrayfotos(tarrayfotos);
@@ -107,7 +104,6 @@ const ComGalerias = (props) => {
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (e) => {
-      setIsBase64ToBlob(false);
       setContenidophoto(e.target.result);
     };
     reader.readAsDataURL(file);

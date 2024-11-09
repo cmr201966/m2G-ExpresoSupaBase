@@ -177,7 +177,6 @@ const Registrarse = () => {
     let ttmunicipio=[];
     switch (e.target.id) {
       case "provincia":
-        console.log(e.target.value);
         setProvincia(Number(e.target.value));
         ttmunicipio=arraymunicipios.filter((item)=>{if (item.provincia === Number(e.target.value)){return item}});
         setTmunicipios(ttmunicipio);
@@ -186,7 +185,6 @@ const Registrarse = () => {
           ttmunicipio=arraydesconocido;
         }
        setMunicipio(0);
-       console.log(ttmunicipio);
        setLat(ttmunicipio[buscarEnArreglo(ttmunicipio, ttmunicipio[0].municipio,"municipio")].latitud);
        setLng(ttmunicipio[buscarEnArreglo(ttmunicipio, ttmunicipio[0].municipio,"municipio")].longitud);
       break
@@ -278,7 +276,6 @@ const Registrarse = () => {
   }
   
   const lngLatSelected = (point, lngLat) => {
-    console.log(lngLat.lat, lngLat.lng );
     setLng(lngLat.lng);
     setLat(lngLat.lat);
   };
@@ -305,7 +302,6 @@ const Registrarse = () => {
               </IconButton>
               <h4 className="registrarse-cabeza-1">Atrás</h4>
           </div>
-          {console.log(inicia)}
           {inicia===true && show1===true ? <Box sx={{ width: "100%", height: "300px", display: "flex", alignItems: "center", justifyContent: "center" }}><CircularProgress color="checkbox" /></Box> : null}
 
         {inicia===false?
