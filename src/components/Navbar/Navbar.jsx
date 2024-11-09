@@ -54,7 +54,7 @@ const Navbar = (props) => {
   ]);
 {/* depende=0->no depende de nada, 1->nivel, 2-> no autentificado, 3-> superAdmin, 4-> dueño de negocio*/} 
   const [menuSegundo] = useState([
-    { label: "Inicio", to: "/", tooltips: "Ir a la página principal", depende: 1, login: 0, tipo: 0 },
+    { label: "Inicio", to: "/", tooltips: "Ir a la página principal", depende: 1, login: 0, inserta: "", tipo: 0 },
     {
       label:
         isValid(sessionStorage.getItem("user"))===false? "Inicio sesión": "Cerrar sesión",
@@ -63,6 +63,7 @@ const Navbar = (props) => {
       isValid(sessionStorage.getItem("user"))===false? "Abrir sesión": "Cerrar la sesión de " + sessionStorage.getItem("usernombre"), 
         depende:0, 
         login: 0, 
+        inserta: "",
         tipo:0
     },
 
@@ -81,6 +82,7 @@ const Navbar = (props) => {
       tooltips: "Agregar, editar o eliminar productos",
       depende: 4,
       login: 1,
+      inserta: "",
       tipo:0
     },
     {
@@ -90,12 +92,13 @@ const Navbar = (props) => {
       depende: 4,
       categoria: "",
       login: 1,
+      inserta: "",
       tipo:0
     },
   ]);
 
   const [menuTercero] = useState([
-    { label: "Acerca de", to: "/acercade", tooltips: "Acerca de Destodo", login: 0, tipo:0 },
+    { label: "Acerca de", to: "/acercade", tooltips: "Acerca de Destodo", login: 0, inserta: "", tipo:0 },
   ]);
 
   async function init() {
@@ -402,7 +405,7 @@ useEffect(() => {
                           <Link
                             className="menu-nav"
                             key={item.label}
-                            to={item.anuncio===undefined?`${item.to}?categoria=0&login=${item.login}&regreso=${item.to}&${item.inserta}`:`${item.to}?anuncio=${item.anuncio}&${item.inserta}
+                            to={isValid(item.anuncio)===false?`${item.to}?categoria=0&login=${item.login}&regreso=${item.to}&${item.inserta}`:`${item.to}?anuncio=${item.anuncio}&${item.inserta}
                             &categoria=0&login=${item.login}&regreso=${item.to}`}>
                             {item.label}
                           </Link>
