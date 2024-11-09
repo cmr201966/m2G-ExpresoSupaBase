@@ -233,7 +233,7 @@ import supabase from "./connection";
       .insert({ desc: desc, link: link })
       if (error.length===undefined || error.length===null){
          const { data } = await supabase
-               .from('tablaCategorias')
+               .from('tablacategorias')
                .select('*')
                .order('id', { ascending: false })
                .limit(1);
@@ -243,7 +243,7 @@ import supabase from "./connection";
     }
     else{
       const  {error} = await supabase
-      .from('tablaCategorias')
+      .from('tablacategorias')
       .update({ desc: desc, link: link })
       .eq('categorianegocio', categorianegocio)
       if (error.length===undefined)
@@ -548,12 +548,10 @@ import supabase from "./connection";
   }
 
   async function updateOcupadoSB(idproducto, ocupado){
-    console.log(idproducto, ocupado);
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
       await updateOcupado({idproducto, ocupado})
     }
     else{
-      console.log("aqui")
       await supabase
       .from('tablacatproductos')
       .update({ ocupado: ocupado})

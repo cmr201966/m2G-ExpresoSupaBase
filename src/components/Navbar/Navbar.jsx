@@ -2,7 +2,6 @@ import { Fragment } from "react";
 import { Link } from "react-router-dom";
 import Tippy from "@tippyjs/react";
 import Check from "@mui/icons-material/Check";
-//import Close from "@mui/icons-material/Close";
 import Modal from "../../components/Modal/Modal";
 
 import { Box, IconButton } from "@mui/material";
@@ -12,7 +11,6 @@ import SearchIcon from "@mui/icons-material/Search";
 import SettingsIcon from '@mui/icons-material/Settings';
 import PersonIcon from '@mui/icons-material/Person';
 import PlaceOutlinedIcon from '@mui/icons-material/PlaceOutlined';
-//import ManageAccountsIcon from '@mui/icons-material/ManageAccounts';
 import PersonAddAlt1Icon from '@mui/icons-material/PersonAddAlt1';
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -77,7 +75,6 @@ const Navbar = (props) => {
       inserta: "inserta=true&where=false",
       tipo:0
     },
-    //{ label: "Categorias", to: "/categorias", tooltips: "Productos de una categoria", depende: 0, login: 0, tipo:0 },
     {
       label: "Vender",
       to: "/catproductos",
@@ -396,7 +393,7 @@ useEffect(() => {
               >
                 {menuSegundo.map((item, i) => (
                 <Fragment key={i}>
-                {((item.depende === 1 && nivel === 0) || (item.depende === 2 && sessionStorage.getItem("user")!== null)  || 
+                {((item.depende === 1 && nivel === 0) || (item.depende === 2 && isValid(sessionStorage.getItem("user"))=== true)  || 
                   (item.depende===4 && (sessionStorage.getItem("tipouser")!=="1" && sessionStorage.getItem("tipouser")!=="2" 
                   && sessionStorage.getItem("tipouser")!=="3"))) ? (
                       ""
