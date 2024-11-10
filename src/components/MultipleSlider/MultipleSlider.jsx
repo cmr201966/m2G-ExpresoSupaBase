@@ -21,7 +21,7 @@ const BigSlider = (props) => {
 
   return (
     <div className={`multiple-slider`}>
-      {imgs.length>3?
+      {imgs.length>=3?
         <button onClick={() => toRight()} className="multiple-slider-nav left">
           {"<"}
         </button>:""
@@ -37,7 +37,7 @@ const BigSlider = (props) => {
           </div>
         ))}
       </div>
-      {imgs.length>3?
+      {imgs.length>=3?
         <button onClick={() => toLeft()} className="multiple-slider-nav right">
           {">"}
         </button>:""

@@ -247,8 +247,10 @@ import supabase from "./connection";
       .from('tablacategorias')
       .update({ desc: desc, link: link })
       .eq('categorianegocio', categorianegocio)
-      if (error.length===undefined)
+      if (isValid(error)===false){
          err=uploadBase64Image(contenidofoto, 'galerias', "categorias_de_negocios/" + categorianegocio + "/" + categorianegocio + ".jpg", isBase64ToBlob)
+      }
+      else err=error;
     }
     return err;
   }
@@ -399,14 +401,15 @@ import supabase from "./connection";
       if (agregarsn===true){
         const { error } = await supabase
         .from('tablaanuncios')
-        .insert({ idapp: nick, iduser: user, desc, categoria, tooltip, activo: false })
-        if (isValid(error)===false) 
+        .insert({ idapp: nick, iduser: user, desc, idcategoria: categoria, tooltip, activo: false })
+        if (isValid(error)===true) 
            err=error
         else{
           const { data, error } = await supabase
           .from('tablaanuncios')
           .select('*')
           .order('id', { ascending: false })
+          //.eq('activo', true)
           .limit(1);
           if (isValid(error)===false){
              await uploadBase64Image(contenidofoto, 'galerias', "aplicaciones/" + data[0].id + "/" + data[0].id + ".jpg", isBase64ToBlob)
@@ -417,9 +420,11 @@ import supabase from "./connection";
       else{
         const { error } = await supabase
         .from('tablaanuncios')
-        .update({ idapp: nick, iduser: user, desc: desc, categoria, tooltip })
+        .update({ idapp: nick, iduser: user, desc: desc, idcategoria: categoria, tooltip })
         .eq('id', id)
-        if (isValid(error)===false) uploadBase64Image(contenidofoto, 'galerias', "aplicaciones/" + id + "/" + id + ".jpg")
+        if (isValid(error)===false){ 
+          uploadBase64Image(contenidofoto, 'galerias', "aplicaciones/" + id + "/" + id + ".jpg")
+        }
         err=error;       
       }
     }
@@ -475,7 +480,7 @@ import supabase from "./connection";
        result = await result.json();
     }
     else{
-      const { data } = await supabase
+      const { data, error } = await supabase
       .from('getinfoproducto')
       .select('*')
       .eq('idproducto', producto)
@@ -499,9 +504,6 @@ import supabase from "./connection";
    }
    return result;
   }
-
-
-
   async function getParesGpsProducto(categoria, producto){
     let result=[];
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
@@ -597,7 +599,7 @@ import supabase from "./connection";
   return resultgps;
   }
 
-  function GeneraVistaGetProductos(categoria, userAnuncio, buscar){
+  async function GeneraVistaGetProductos(categoria, userAnuncio, buscar){
     let condicion1=categoria==='0' || isValid(categoria)===false || categoria===''?"":" and (tablacatproductos.categorianegocio=" + categoria + ")"
     let condicion2=isValid(userAnuncio)===false || userAnuncio===''?"":" and (tablacatproductos.iduser='" + userAnuncio + "') and (tablausuarios,activo=true)";
     let condicion3="";
@@ -616,7 +618,7 @@ import supabase from "./connection";
         " tablausuarios.nombre as negocio, tablausuarios.iduser as idnegocio, ocupado, tipouser, tablausuarios.iduser, tarifa, costoDomicilio, domicilio" +
         " FROM tablacatproductos, tablausuarios, tablacatprovincias,tablacatmunicipios " +
         " WHERE (tablacatproductos.iduser=tablausuarios.iduser) and (tablacatprovincias.provincia=tablausuarios.provincia) and (tablacatmunicipios.provincia=" + 
-        "tablausuarios.provincia) and (tablacatmunicipios.municipio=tablausuarios.municipio) and (tablausuarios.activo=true) and (tablausuarios.activo=true)"  + 
+        "tablausuarios.provincia) and (tablacatmunicipios.municipio=tablausuarios.municipio) and (tablausuarios.activo=true) and (tablacatproductos.activo=true)"  + 
          condicion1  + condicion2 + condicion3;
         return sql;
   }
@@ -629,7 +631,7 @@ import supabase from "./connection";
           }
     else{
       // Generar VISTA con API en SUPABASE
-      let sql=GeneraVistaGetProductos(categoria, userAnuncio, buscar);
+      let sql= await GeneraVistaGetProductos(categoria, userAnuncio, buscar);
       await supabase
       .rpc('execute_query', { query: sql});
       // Ejecutar VISTA

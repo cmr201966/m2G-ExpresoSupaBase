@@ -72,8 +72,9 @@ const InfoProducto = () => {
         if (isValid(result.url)===true) tarray.push(result.url);
         setArrayFotoInfo(tarray);
     }
-
+    console.log(parsedParams.idproducto);
     let result= await getInfoProducto(parsedParams.idproducto);
+    console.log(result);
     if (isValid(result)=== true) {
       if (result[0].idnegocio===sessionStorage.getItem("user")){
         setShowGalerias(true)

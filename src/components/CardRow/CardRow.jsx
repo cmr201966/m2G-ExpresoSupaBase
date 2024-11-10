@@ -11,7 +11,6 @@ import "./styles.css";
 const CardRow = (props) => {
   const { tipouser, user, mapLoading, noproducto, i, item, selectcard, contenidofoto, verproducto, vernegocio, paresGps, onMapClick } = props
   const [ocupado, setOcupado]=useState(item.ocupado);
-
   async function powerSettings(){
     if (user!=="" && isValid(user)===true){
         setOcupado(ocupado===0?1:0);

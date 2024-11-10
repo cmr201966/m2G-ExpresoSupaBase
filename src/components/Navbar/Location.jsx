@@ -92,6 +92,7 @@ function Location() {
               ))}
             </select>
           </div>
+          
           <div className="form-col alter">
             <Typography>Municipio:</Typography>
             <select
