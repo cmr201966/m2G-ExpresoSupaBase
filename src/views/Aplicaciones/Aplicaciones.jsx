@@ -69,7 +69,8 @@ const Aplicaciones = () => {
     return
   }
       let result = await apiBaseDatos("getAplicaciones")
-      if (result.length === 0) 
+      console.log(result);
+      if ((isValid(result) === true && result.err) || isValid(result)===false) 
       {
          setArrayAplicaciones(arraynoaplicaciones);
          setAplicacion(buscarEnArreglo(arraynoaplicaciones, arraynoaplicaciones[0].id, "id"));
@@ -186,10 +187,10 @@ const Aplicaciones = () => {
     }
      
     async function confirmar() {
-      let result= await apiBaseDatos("setAplicaciones", arrayAplicaciones[aplicacion].id, sessionStorage.getItem("user"), nick, desc,
-       ttip, arrayCategorias[categoria].categorianegocio, agregarsn, contenidofoto, isBase64ToBlob);
- 
-    if (isValid(result.err)===true){
+    let result= await apiBaseDatos("setAplicaciones", arrayAplicaciones[aplicacion].id, sessionStorage.getItem("user"), nick, desc,
+                                    ttip, arrayCategorias[categoria].categorianegocio, agregarsn, contenidofoto, isBase64ToBlob);
+    console.log(result);
+    if (isValid(result)===true){
         setMessage("Ocurrio un error al registrar el anuncio")
         setOpen(true);
       }

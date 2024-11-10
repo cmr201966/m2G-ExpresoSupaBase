@@ -172,7 +172,7 @@ import supabase from "./connection";
    }
    else{
     const { data } = await supabase
-     .from('tablaAnuncios')
+     .from('tablaanuncios')
      .select('*')
      .order('desc', { ascending: true })
      .eq('activo', true)
@@ -380,9 +380,9 @@ import supabase from "./connection";
     }
     else{
       const { data } = await supabase
-      .from('tablaAnuncios')
+      .from('tablaanuncios')
       .select('*')
-      .eq('activo, true')
+      .eq('activo', true)
       result=data;
     }
     return result;
@@ -398,13 +398,13 @@ import supabase from "./connection";
     else{
       if (agregarsn===true){
         const { error } = await supabase
-        .from('tablaAnuncios')
+        .from('tablaanuncios')
         .insert({ idapp: nick, iduser: user, desc, categoria, tooltip, activo: false })
         if (isValid(error)===false) 
            err=error
         else{
           const { data, error } = await supabase
-          .from('tablaAnuncios')
+          .from('tablaanuncios')
           .select('*')
           .order('id', { ascending: false })
           .limit(1);
@@ -416,7 +416,7 @@ import supabase from "./connection";
       }
       else{
         const { error } = await supabase
-        .from('tablaAnuncios')
+        .from('tablaanuncios')
         .update({ idapp: nick, iduser: user, desc: desc, categoria, tooltip })
         .eq('id', id)
         if (isValid(error)===false) uploadBase64Image(contenidofoto, 'galerias', "aplicaciones/" + id + "/" + id + ".jpg")
@@ -690,7 +690,7 @@ import supabase from "./connection";
       const {error} = await delAnuncio({id});
       err=error;
     }else{
-      const { error } = await supabase.from('tablaAnuncios').delete().eq('id', id)
+      const { error } = await supabase.from('tablaanuncios').delete().eq('id', id)
       err=error;
     }
     return err;
