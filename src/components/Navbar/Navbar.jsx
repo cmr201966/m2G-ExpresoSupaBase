@@ -26,6 +26,7 @@ import config from "../../config";
 // styles
 import "./styles.css";
 import Location from "./Location";
+import SearchWrapper from "./SearchWrapper";
 
 const Navbar = (props) => {
   const { nivel } = props;
@@ -36,7 +37,6 @@ const Navbar = (props) => {
   const [showMenu, setShowMenu] = useState(false);
 
   const [inicia, setInicia] = useState(true);
-  const [buscar, setBuscar] = useState("");
 
   const [menuPrimero] = useState([]);
   {
@@ -125,25 +125,6 @@ const Navbar = (props) => {
     setShowMenu(!showMenu);
   }
 
-  function handleInput(e) {
-    switch (e.target.id) {
-      case "buscar":
-        setBuscar(e.target.value);
-        break;
-      default:
-        break;
-    }
-  }
-
-  function buscaProductos(e) {
-    e.preventDefault();
-    navigate(
-      `/productos?buscar=${buscar}&user=${sessionStorage.getItem(
-        "user"
-      )}&nombre=Filtro: '${buscar}'`
-    );
-  }
-
   useEffect(() => {
     init();
   }, [location]);
@@ -151,8 +132,8 @@ const Navbar = (props) => {
   return (
     <>
       <div className="navbar-row">
-        <div className="logo">
-          <Link className="link-logo" to="/acercade">
+        <div className="navbar-main">
+          <Link className="link-logo" to="/">
             <img
               className="logo-img-one"
               src={
@@ -164,26 +145,7 @@ const Navbar = (props) => {
             El Expreso
           </Link>
 
-          <div className="input-lupa">
-            <form onSubmit={buscaProductos}>
-              <input
-                className="buscar-input"
-                id="buscar"
-                placeholder="Buscar productos, marcas y más..."
-                value={buscar}
-                onChange={handleInput}
-                type="text"
-              />
-              <IconButton
-                className="lupa"
-                id="lupa"
-                color="primary"
-                type="submit"
-              >
-                <Search />
-              </IconButton>
-            </form>
-          </div>
+          <SearchWrapper />
 
           {inicia === false ? (
             <div className="menuTercero">
@@ -234,7 +196,14 @@ const Navbar = (props) => {
               ) : (
                 ""
               )}
-
+              <IconButton
+                className="responsive-lupa"
+                id="lupa"
+                color="inherit"
+                type="submit"
+              >
+                <Search />
+              </IconButton>
               <IconButton
                 sx={{ padding: 0 }}
                 id="toggle-b"
