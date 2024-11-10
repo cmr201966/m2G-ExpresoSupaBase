@@ -21,9 +21,11 @@ const BigSlider = (props) => {
 
   return (
     <div className={`multiple-slider`}>
+      {imgs.length>3?
         <button onClick={() => toRight()} className="multiple-slider-nav left">
           {"<"}
-        </button>
+        </button>:""
+      }
       <div
         className={`multiple-slider-content ${transition ? "transition" : ""} ${css({
           transform: `translateX(${currentIndex * -1 * 230}px)`,
@@ -35,9 +37,11 @@ const BigSlider = (props) => {
           </div>
         ))}
       </div>
+      {imgs.length>3?
         <button onClick={() => toLeft()} className="multiple-slider-nav right">
           {">"}
-        </button>
+        </button>:""
+      }
     </div>
   );
 };
