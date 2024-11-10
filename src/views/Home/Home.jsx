@@ -39,7 +39,7 @@ const Home = () => {
   async function init() {
     setInicia(true);
     setShow(true);
-    if (sessionStorage.getItem("sgbd").toLocaleUpperCase()!=="SUPABASE") creaBucket('galerias');
+    if (sessionStorage.getItem("sgbd").toLocaleUpperCase()==="SUPABASE") creaBucket('galerias');
     borraSessionStorage(["categoria", "ubicacion-provincia", "ubicacion-municipio"]);
     const newResult = [];
     if (

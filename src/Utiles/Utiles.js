@@ -389,6 +389,7 @@ import supabase from "./connection";
   }
 
   async function setAplicacionesSB(id, user, nick, desc, tooltip, categoria, agregarsn, contenidofoto, isBase64ToBlob){
+    console.log(id, user, nick, desc, tooltip, categoria, agregarsn, isBase64ToBlob);
     let err="";
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
       let result = await setAplicaciones({id, iduser: user, nick, desc, tooltip, categoria, agregarsn, contenidofoto});
@@ -396,18 +397,24 @@ import supabase from "./connection";
       err=result.error;
     }
     else{
+      console.log(agregarsn);
       if (agregarsn===true){
-        const { error } = await supabase
+        const { data, error } = await supabase
         .from('tablaanuncios')
-        .insert({ idapp: nick, iduser: user, desc, categoria, tooltip, activo: false })
-        if (isValid(error)===false) 
+        .insert({ idapp: nick, iduser: user, desc, idcategoria: categoria, tooltip, activo: false })
+        console.log(data);
+        console.log(error)
+        if (isValid(error)===true) 
            err=error
         else{
           const { data, error } = await supabase
           .from('tablaanuncios')
           .select('*')
           .order('id', { ascending: false })
+          //.eq('activo', true)
           .limit(1);
+          console.log(data);
+          console.log(error);
           if (isValid(error)===false){
              await uploadBase64Image(contenidofoto, 'galerias', "aplicaciones/" + data[0].id + "/" + data[0].id + ".jpg", isBase64ToBlob)
              err=error;
@@ -417,9 +424,13 @@ import supabase from "./connection";
       else{
         const { error } = await supabase
         .from('tablaanuncios')
-        .update({ idapp: nick, iduser: user, desc: desc, categoria, tooltip })
+        .update({ idapp: nick, iduser: user, desc: desc, idcategoria: categoria, tooltip })
         .eq('id', id)
-        if (isValid(error)===false) uploadBase64Image(contenidofoto, 'galerias', "aplicaciones/" + id + "/" + id + ".jpg")
+        console.log(error);
+        if (isValid(error)===false){ 
+          console.log("Aqui...")
+          uploadBase64Image(contenidofoto, 'galerias', "aplicaciones/" + id + "/" + id + ".jpg")
+        }
         err=error;       
       }
     }
@@ -427,6 +438,7 @@ import supabase from "./connection";
   }
 
   async function creaBucket(bucket){
+    console.log(bucket);
     const { data } = await supabase.storage.listBuckets(); 
     const bucketExists = data.some(bucket => bucket.name === bucket);
     if (bucketExists===false){
@@ -499,9 +511,6 @@ import supabase from "./connection";
    }
    return result;
   }
-
-
-
   async function getParesGpsProducto(categoria, producto){
     let result=[];
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
