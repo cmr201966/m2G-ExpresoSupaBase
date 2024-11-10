@@ -215,6 +215,7 @@
   border-radius: 15px;
   border: 1px solid aliceblue;
   width: 250px;
+  background-color: aliceblue;
 }
 
 button {
