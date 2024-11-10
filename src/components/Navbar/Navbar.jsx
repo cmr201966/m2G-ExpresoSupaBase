@@ -4,13 +4,11 @@ import Tippy from "@tippyjs/react";
 
 // components
 import NavigationDrawer from "./Drawer";
-import Modal from "../../components/Modal/Modal";
 
 // @mui/material
 import { Box, IconButton } from "@mui/material";
 // @mui/icons
 import {
-  Check,
   Menu,
   Search,
   Settings,
@@ -20,11 +18,7 @@ import {
 } from "@mui/icons-material";
 
 // utils
-import {
-  isValid,
-  apiBaseDatos,
-  borraSessionStorage,
-} from "../../Utiles/Utiles";
+import { isValid, borraSessionStorage } from "../../Utiles/Utiles";
 
 // config
 import config from "../../config";
@@ -40,16 +34,6 @@ const Navbar = (props) => {
   const urlMYSQL = config.urlmysql;
   const urlSUPABASE = config.urlsupabase;
   const [showMenu, setShowMenu] = useState(false);
-
-  const [show1, setShow1] = useState(false);
-  const [arrayprovincias, setArrayprovincias] = useState([]);
-  const [arraymunicipios, setArraymunicipios] = useState([]);
-  const [provincia, setProvincia] = useState(0);
-  const [municipio, setMunicipio] = useState(0);
-  const [tmunicipios, setTmunicipios] = useState([]);
-  const arraydesconocido = [
-    { provincia: 99, municipio: 99, desc: "Desconocido" },
-  ];
 
   const [inicia, setInicia] = useState(true);
   const [buscar, setBuscar] = useState("");
@@ -130,66 +114,7 @@ const Navbar = (props) => {
 
   async function init() {
     borraSessionStorage(["categoria", "login", "idproducto"]);
-    let resultprovincia;
-    let resultmunicipio;
-    let ttmunicipios = [];
-    resultprovincia = await apiBaseDatos("provincias");
-    if (isValid(resultprovincia) === false)
-      setArrayprovincias(arraydesconocido);
-    else {
-      setArrayprovincias(resultprovincia);
-      resultmunicipio = await apiBaseDatos("municipios");
-      if (isValid(resultmunicipio) === false) {
-        setArraymunicipios(arraydesconocido);
-        setTmunicipios(arraydesconocido);
-        ttmunicipios = arraydesconocido;
-      } else if (resultmunicipio.length !== 0)
-        setArraymunicipios(resultmunicipio);
-    }
-    let resultconfig = await apiBaseDatos("getConfig");
-    if (
-      resultconfig.length === undefined ||
-      resultconfig.length === null ||
-      resultconfig.length === 0
-    ) {
-      setProvincia(14);
-      setMunicipio(6);
-      ttmunicipios = resultmunicipio.filter((item) => {
-        if (item.provincia === 14) {
-          return item;
-        }
-      });
-      if (ttmunicipios.length !== 0) {
-        setTmunicipios(ttmunicipios);
-      } else setTmunicipios(arraydesconocido);
-      setShow1(true);
-    } else {
-      if (resultconfig[0].provincia != 0) {
-        setProvincia(resultconfig[0].provincia);
-        setMunicipio(resultconfig[0].municipio);
-        sessionStorage.setItem(
-          "ubicacion-provincia",
-          resultconfig[0].provincia
-        );
-        sessionStorage.setItem(
-          "ubicacion-municipio",
-          resultconfig[0].municipio
-        );
-        ttmunicipios = resultmunicipio.filter((item) => {
-          if (item.provincia === resultconfig[0].provincia) {
-            return item;
-          }
-        });
-        if (ttmunicipios.length !== 0) {
-          setTmunicipios(ttmunicipios);
-        } else setTmunicipios(arraydesconocido);
-      }
-    }
     setInicia(false);
-  }
-
-  function poneModal() {
-    setShow1(!show1);
   }
 
   function updateUserInfo(e) {
@@ -217,46 +142,6 @@ const Navbar = (props) => {
         "user"
       )}&nombre=Filtro: '${buscar}'`
     );
-  }
-
-  function categorias() {
-    navigate("/catcategorias?login=1&regreso=/catcategorias");
-  }
-
-  const onModalClose = () => {
-    if (sessionStorage.getItem("ubicacion-provincia") !== null) {
-      setShow1(false);
-    }
-  };
-
-  async function handleselect(e) {
-    let ttmunicipio = [];
-    switch (e.target.id) {
-      case "provincia":
-        setProvincia(Number(e.target.value));
-        ttmunicipio = arraymunicipios.filter((item) => {
-          if (item.provincia === Number(e.target.value)) {
-            return item;
-          }
-        });
-        if (ttmunicipio.length === 0) {
-          setTmunicipios(arraydesconocido);
-        } else setTmunicipios(ttmunicipio);
-        setMunicipio(0);
-        break;
-      case "municipio":
-        setMunicipio(Number(e.target.value));
-        break;
-    }
-  }
-
-  async function confirmar() {
-    await apiBaseDatos("setConfig", provincia, municipio);
-    setShow1(false);
-  }
-
-  function registrarseWhere() {
-    navigate("/registrarse?inserta=true&where=true");
   }
 
   useEffect(() => {

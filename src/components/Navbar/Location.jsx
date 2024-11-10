@@ -42,6 +42,18 @@ function Location() {
 
     const remoteMunicipals = await apiBaseDatos("municipios");
     setMunicipals(remoteMunicipals);
+
+    const config = await apiBaseDatos("getConfig");
+
+    if (!config?.length) {
+      setProvince(14);
+      setMunicipal(6);
+    } else {
+      setProvince(config[0].provincia);
+      setMunicipal(config[0].municipio);
+      sessionStorage.setItem("ubicacion-provincia", config[0].provincia);
+      sessionStorage.setItem("ubicacion-municipio", config[0].municipio);
+    }
   };
 
   useEffect(() => {
