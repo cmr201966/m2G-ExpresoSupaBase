@@ -31,6 +31,7 @@ import config from "../../config";
 
 // styles
 import "./styles.css";
+import Location from "./Location";
 
 const Navbar = (props) => {
   const { nivel } = props;
@@ -53,17 +54,7 @@ const Navbar = (props) => {
   const [inicia, setInicia] = useState(true);
   const [buscar, setBuscar] = useState("");
 
-  const [menuPrimero] = useState([
-    {
-      label: "Ubicación",
-      to: "/ubicacion",
-      tooltips: "Donde recibira su producto ó servicio",
-      img: 1,
-      anuncio: null,
-      tipo: 1,
-      funcion: poneModal,
-    },
-  ]);
+  const [menuPrimero] = useState([]);
   {
     /* depende=0->no depende de nada, 1->nivel, 2-> no autentificado, 3-> superAdmin, 4-> dueño de negocio*/
   }
@@ -274,73 +265,17 @@ const Navbar = (props) => {
 
   return (
     <>
-      <Modal
-        visible={show1}
-        onClose={onModalClose}
-        className="cmodal-home"
-        classContainer="modal-catprod"
-      >
-        <div className="main-modal">
-          <p className="strong font-size1">Ubicación</p>
-          <div className="modal-provincia">
-            <label>Provincia:</label>
-            <select
-              className="select-home-prov-munic"
-              id="provincia"
-              onChange={handleselect}
-              value={provincia}
-            >
-              {arrayprovincias.map((item, i) => {
-                return (
-                  <option key={i} value={item.provincia}>
-                    {item.desc}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
-          <div className="modal-municipio">
-            <label>Municipio:</label>
-            <select
-              className="select-home-prov-munic"
-              id="municipio"
-              onChange={handleselect}
-              value={municipio}
-            >
-              {tmunicipios.map((item, i) => {
-                return (
-                  <option key={i} value={item.municipio}>
-                    {item.desc}
-                  </option>
-                );
-              })}
-            </select>
-          </div>
-          <div className="grupo-button-modal-home">
-            <button
-              type="button"
-              className="producto-button primary "
-              onClick={confirmar}
-            >
-              <Check />
-            </button>
-          </div>
-        </div>
-      </Modal>
-
       <div className="navbar-row">
         <div className="logo">
           <Link className="link-logo" to="/acercade">
-            <Tippy content="Acerca de M2G-Expreso">
-              <img
-                className="logo-img-one"
-                src={
-                  sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL"
-                    ? urlMYSQL
-                    : urlSUPABASE
-                }
-              />
-            </Tippy>
+            <img
+              className="logo-img-one"
+              src={
+                sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL"
+                  ? urlMYSQL
+                  : urlSUPABASE
+              }
+            />
             El Expreso
           </Link>
 
@@ -438,6 +373,7 @@ const Navbar = (props) => {
                 sx={{ display: { xs: "none", md: "flex" } }}
                 className="links"
               >
+                <Location />
                 {menuPrimero.map((item, i) => (
                   <Fragment key={i}>
                     <Tippy content={item.tooltips}>
@@ -492,20 +428,18 @@ const Navbar = (props) => {
                       sessionStorage.getItem("tipouser") !== "3") ? (
                       ""
                     ) : (
-                      <Tippy content={item.tooltips}>
-                        <Link
-                          className="menu-nav"
-                          key={item.label}
-                          to={
-                            isValid(item.anuncio) === false
-                              ? `${item.to}?categoria=0&login=${item.login}&regreso=${item.to}&${item.inserta}`
-                              : `${item.to}?anuncio=${item.anuncio}&${item.inserta}
+                      <Link
+                        className="menu-nav"
+                        key={item.label}
+                        to={
+                          isValid(item.anuncio) === false
+                            ? `${item.to}?categoria=0&login=${item.login}&regreso=${item.to}&${item.inserta}`
+                            : `${item.to}?anuncio=${item.anuncio}&${item.inserta}
                             &categoria=0&login=${item.login}&regreso=${item.to}`
-                          }
-                        >
-                          {item.label}
-                        </Link>
-                      </Tippy>
+                        }
+                      >
+                        {item.label}
+                      </Link>
                     )}
                   </Fragment>
                 ))}
@@ -517,11 +451,9 @@ const Navbar = (props) => {
           <Box sx={{ display: { xs: "none", md: "flex" } }} className="links">
             {menuTercero.map((item, i) => (
               <Fragment key={i}>
-                <Tippy content={item.tooltips}>
-                  <Link className="menu-nav" key={item.label} to={item.to}>
-                    {item.label}
-                  </Link>
-                </Tippy>
+                <Link className="menu-nav" key={item.label} to={item.to}>
+                  {item.label}
+                </Link>
               </Fragment>
             ))}
           </Box>
