@@ -4,8 +4,8 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { FilterProvider } from "./context/FilterProvider";
 import { ThemeProvider } from "@mui/material";
 import dark from "./assets/theme/tema";
-import { NotificationProvider } from './context/NotificationProvider';
-import  Notification  from './components/Notification/Notification';
+import { NotificationProvider } from "./context/NotificationProvider";
+import Notification from "./components/Notification/Notification";
 
 import Login from "./views/Login/Login";
 import Productos from "./views/Productos/Productos";
@@ -26,34 +26,37 @@ import CatCategorias from "./views/CatCategorias/CatCategorias.jsx";
 
 import "tippy.js/dist/tippy.css";
 import "./index.css";
-sessionStorage.setItem("sgbd","SUPABASE");
+sessionStorage.setItem("sgbd", "SUPABASE");
 //sessionStorage.setItem("sgbd","MYSQL");
+
+// font
+import "@fontsource/poppins";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <Suspense>
     <FilterProvider>
       <ThemeProvider theme={dark}>
         <NotificationProvider>
-          <Notification/>
+          <Notification />
           <BrowserRouter>
-           <Routes>
-            <Route exact path="/" element={<Home />} />
-            <Route exact path="/login" element={<Login />} />
-            <Route exact path="/productos" element={<Productos />} />
-            <Route exact path="/negocios" element={<Negocios />} />
-            <Route exact path="/catproductos" element={<Catproductos />} />
-            <Route exact path="/registrarse" element={<Registrarse />} />
-            <Route exact path="/acercade" element={<Acercade />} />
-            <Route exact path="/cerrarsesion" element={<CerrarSesion />} />
-            <Route exact path="/galerias" element={<Galerias />} />
-            <Route exact path="/infoproducto" element={<InfoProducto />} />
-            <Route exact path="/infonegocio" element={<InfoNegocio />} />
-            <Route exact path="/aplicaciones" element={<Aplicaciones />} />
-            <Route exact path="/whatsapp" element={<Whatsapp />} />
-            <Route exact path="/ubicacion" element={<Ubicacion />} />
-            <Route exact path="/categorias" element={<Categorias />} />
-            <Route exact path="/catcategorias" element={<CatCategorias />} />
-           </Routes>
+            <Routes>
+              <Route exact path="/" element={<Home />} />
+              <Route exact path="/login" element={<Login />} />
+              <Route exact path="/productos" element={<Productos />} />
+              <Route exact path="/negocios" element={<Negocios />} />
+              <Route exact path="/catproductos" element={<Catproductos />} />
+              <Route exact path="/registrarse" element={<Registrarse />} />
+              <Route exact path="/acercade" element={<Acercade />} />
+              <Route exact path="/cerrarsesion" element={<CerrarSesion />} />
+              <Route exact path="/galerias" element={<Galerias />} />
+              <Route exact path="/infoproducto" element={<InfoProducto />} />
+              <Route exact path="/infonegocio" element={<InfoNegocio />} />
+              <Route exact path="/aplicaciones" element={<Aplicaciones />} />
+              <Route exact path="/whatsapp" element={<Whatsapp />} />
+              <Route exact path="/ubicacion" element={<Ubicacion />} />
+              <Route exact path="/categorias" element={<Categorias />} />
+              <Route exact path="/catcategorias" element={<CatCategorias />} />
+            </Routes>
           </BrowserRouter>
         </NotificationProvider>
       </ThemeProvider>
