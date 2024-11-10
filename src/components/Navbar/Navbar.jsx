@@ -191,14 +191,15 @@ const Navbar = (props) => {
                 <Tippy
                   content={"Agregar, editar y eliminar categorias de negocios"}
                 >
-                  <IconButton
-                    sx={{ padding: 0 }}
-                    id="categorias"
-                    color="inherit"
-                    onClick={categorias}
-                  >
-                    <Settings />
-                  </IconButton>
+                  <Link to="/catcategorias?login=1&regreso=/catcategorias">
+                    <IconButton
+                      sx={{ padding: 0 }}
+                      id="categorias"
+                      color="inherit"
+                    >
+                      <Settings />
+                    </IconButton>
+                  </Link>
                 </Tippy>
               ) : (
                 ""
@@ -224,14 +225,11 @@ const Navbar = (props) => {
               )}
               {Number(sessionStorage.getItem("tipouser")) === 3 ? (
                 <Tippy content={"Registrarse un usuario nuevo"}>
-                  <IconButton
-                    sx={{ padding: 0 }}
-                    id="user"
-                    color="inherit"
-                    onClick={registrarseWhere}
-                  >
-                    <PersonAddAlt1 />
-                  </IconButton>
+                  <Link to="/registrarse?inserta=true&where=true">
+                    <IconButton sx={{ padding: 0 }} id="user" color="inherit">
+                      <PersonAddAlt1 />
+                    </IconButton>
+                  </Link>
                 </Tippy>
               ) : (
                 ""
