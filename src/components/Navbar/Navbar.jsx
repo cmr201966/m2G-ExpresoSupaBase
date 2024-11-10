@@ -401,7 +401,6 @@ useEffect(() => {
                   && sessionStorage.getItem("tipouser")!=="3"))) ? (
                       ""
                     ) : (
-                        <Tippy content={item.tooltips}>
                           <Link
                             className="menu-nav"
                             key={item.label}
@@ -409,7 +408,6 @@ useEffect(() => {
                             &categoria=0&login=${item.login}&regreso=${item.to}`}>
                             {item.label}
                           </Link>
-                       </Tippy>
                     )
                     }
                   </Fragment>
@@ -422,11 +420,9 @@ useEffect(() => {
           <Box sx={{ display: { xs: "none", md: "flex" } }} className="links">
             {menuTercero.map((item, i) => (
               <Fragment key={i}>
-                <Tippy content={item.tooltips}>
                   <Link className="menu-nav" key={item.label} to={item.to}>
                     {item.label}
                   </Link>
-                </Tippy>
               </Fragment>
             ))}
           </Box>
