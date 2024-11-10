@@ -244,7 +244,7 @@ const Registrarse = () => {
       }
       let latT=lat===null || lat===undefined?0:lat;
       let lngT=lat===null || lng===undefined?0:lng;
-      let response = await apiBaseDatos("setregistrarse", user, nombre, password, celular, provincia, municipio, contenidofoto, modifica, plan, latT, lngT, isBase64ToBlob)
+      let response = await apiBaseDatos("setregistrarse", user.toLowerCase(), nombre, password, celular, provincia, municipio, contenidofoto, modifica, plan, latT, lngT, isBase64ToBlob)
       let isOk=true;
       if (isValid(response)===true )
          if (isValid(response.length)===true) isOk=false;

@@ -60,7 +60,6 @@ const BigSlider = (props) => {
   }, [currentIndex, imgsFileName.length]);
 
   useEffect(() => {
-    console.log(currentIndex);
     setTimeout(() => {
       toLeft();
     }, 3000)

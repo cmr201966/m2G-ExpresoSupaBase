@@ -247,8 +247,10 @@ import supabase from "./connection";
       .from('tablacategorias')
       .update({ desc: desc, link: link })
       .eq('categorianegocio', categorianegocio)
-      if (error.length===undefined)
+      if (isValid(error)===false){
          err=uploadBase64Image(contenidofoto, 'galerias', "categorias_de_negocios/" + categorianegocio + "/" + categorianegocio + ".jpg", isBase64ToBlob)
+      }
+      else err=error;
     }
     return err;
   }
@@ -389,7 +391,6 @@ import supabase from "./connection";
   }
 
   async function setAplicacionesSB(id, user, nick, desc, tooltip, categoria, agregarsn, contenidofoto, isBase64ToBlob){
-    console.log(id, user, nick, desc, tooltip, categoria, agregarsn, isBase64ToBlob);
     let err="";
     if (sessionStorage.getItem("sgbd").toUpperCase()==='MYSQL'){
       let result = await setAplicaciones({id, iduser: user, nick, desc, tooltip, categoria, agregarsn, contenidofoto});
@@ -397,13 +398,10 @@ import supabase from "./connection";
       err=result.error;
     }
     else{
-      console.log(agregarsn);
       if (agregarsn===true){
-        const { data, error } = await supabase
+        const { error } = await supabase
         .from('tablaanuncios')
         .insert({ idapp: nick, iduser: user, desc, idcategoria: categoria, tooltip, activo: false })
-        console.log(data);
-        console.log(error)
         if (isValid(error)===true) 
            err=error
         else{
@@ -413,8 +411,6 @@ import supabase from "./connection";
           .order('id', { ascending: false })
           //.eq('activo', true)
           .limit(1);
-          console.log(data);
-          console.log(error);
           if (isValid(error)===false){
              await uploadBase64Image(contenidofoto, 'galerias', "aplicaciones/" + data[0].id + "/" + data[0].id + ".jpg", isBase64ToBlob)
              err=error;
@@ -426,9 +422,7 @@ import supabase from "./connection";
         .from('tablaanuncios')
         .update({ idapp: nick, iduser: user, desc: desc, idcategoria: categoria, tooltip })
         .eq('id', id)
-        console.log(error);
         if (isValid(error)===false){ 
-          console.log("Aqui...")
           uploadBase64Image(contenidofoto, 'galerias', "aplicaciones/" + id + "/" + id + ".jpg")
         }
         err=error;       
@@ -438,7 +432,6 @@ import supabase from "./connection";
   }
 
   async function creaBucket(bucket){
-    console.log(bucket);
     const { data } = await supabase.storage.listBuckets(); 
     const bucketExists = data.some(bucket => bucket.name === bucket);
     if (bucketExists===false){
@@ -487,7 +480,7 @@ import supabase from "./connection";
        result = await result.json();
     }
     else{
-      const { data } = await supabase
+      const { data, error } = await supabase
       .from('getinfoproducto')
       .select('*')
       .eq('idproducto', producto)
@@ -606,7 +599,7 @@ import supabase from "./connection";
   return resultgps;
   }
 
-  function GeneraVistaGetProductos(categoria, userAnuncio, buscar){
+  async function GeneraVistaGetProductos(categoria, userAnuncio, buscar){
     let condicion1=categoria==='0' || isValid(categoria)===false || categoria===''?"":" and (tablacatproductos.categorianegocio=" + categoria + ")"
     let condicion2=isValid(userAnuncio)===false || userAnuncio===''?"":" and (tablacatproductos.iduser='" + userAnuncio + "') and (tablausuarios,activo=true)";
     let condicion3="";
@@ -625,7 +618,7 @@ import supabase from "./connection";
         " tablausuarios.nombre as negocio, tablausuarios.iduser as idnegocio, ocupado, tipouser, tablausuarios.iduser, tarifa, costoDomicilio, domicilio" +
         " FROM tablacatproductos, tablausuarios, tablacatprovincias,tablacatmunicipios " +
         " WHERE (tablacatproductos.iduser=tablausuarios.iduser) and (tablacatprovincias.provincia=tablausuarios.provincia) and (tablacatmunicipios.provincia=" + 
-        "tablausuarios.provincia) and (tablacatmunicipios.municipio=tablausuarios.municipio) and (tablausuarios.activo=true) and (tablausuarios.activo=true)"  + 
+        "tablausuarios.provincia) and (tablacatmunicipios.municipio=tablausuarios.municipio) and (tablausuarios.activo=true) and (tablacatproductos.activo=true)"  + 
          condicion1  + condicion2 + condicion3;
         return sql;
   }
@@ -638,7 +631,7 @@ import supabase from "./connection";
           }
     else{
       // Generar VISTA con API en SUPABASE
-      let sql=GeneraVistaGetProductos(categoria, userAnuncio, buscar);
+      let sql= await GeneraVistaGetProductos(categoria, userAnuncio, buscar);
       await supabase
       .rpc('execute_query', { query: sql});
       // Ejecutar VISTA
