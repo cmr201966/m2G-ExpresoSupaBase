@@ -5,12 +5,14 @@
   align-items: center;
   background-color: rgb(2, 114, 226);
 }
+
 .logo-img {
   object-fit: cover;
   width: 100%;
   height: 100%;
   border-radius: 100px;
 }
+
 .logo-img-one {
   object-fit: cover;
   width: 50px;
@@ -18,24 +20,28 @@
   border-radius: 100px;
   padding: 5px;
 }
+
 .logo {
-  display:flex;
+  display: flex;
   align-items: center;
   justify-content: space-between;
   color: aliceblue;
   width: 70%;
   gap: 35px;
 }
+
 .links {
   display: flex;
   justify-content: left;
   align-items: center;
 }
+
 .links a {
   color: aliceblue;
   padding: 4px;
   margin: 4px;
 }
+
 .filter {
   color: aliceblue;
   padding: 5px;
@@ -43,6 +49,7 @@
   border-radius: 1rem;
   min-width: 0;
 }
+
 .hamburguesa {
   color: aliceblue;
   padding: 5px;
@@ -50,6 +57,7 @@
   border-radius: 1rem;
   min-width: 0;
 }
+
 .galerias {
   color: aliceblue;
   padding: 5px;
@@ -57,9 +65,11 @@
   border-radius: 1rem;
   min-width: 0;
 }
+
 .label-pop-up {
   color: aliceblue;
 }
+
 .button-no-login-1 {
   display: flex;
   flex-direction: column;
@@ -77,57 +87,136 @@
 .justify-content-end {
   justify-content: end;
 }
-.menu-nav{
+
+.menu-nav {
   font-size: 16px;
   text-decoration: none;
 }
-.buscar-input{
+
+.buscar-input {
   height: 25px;
   width: 600px;
   padding-left: 8px;
 }
-.link-logo{
+
+.link-logo {
   display: flex;
   align-items: center;
   color: white;
   text-decoration: none;
-  gap:10px;
+  gap: 10px;
 }
-.input-lupa{
+
+.input-lupa {
   position: relative;
 }
-.lupa{
+
+.lupa {
   position: absolute !important;
-  top:50%;
+  top: 50%;
   transform: translateY(-50%);
   right: 2px;
 }
-.agrupa-menu{
+
+.agrupa-menu {
   width: 70%;
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: space-between;
 }
-.menuTercero{
+
+.menuTercero {
   display: flex;
   flex-direction: row;
   align-items: center;
   width: 180px;
   justify-content: end;
-  gap:10px;
+  gap: 10px;
 }
-.place{
+
+.place {
   display: flex;
   align-items: center;
   gap: 2px;
   text-decoration: none;
-  
 }
-.tools-color{
-  color:white
+
+.tools-color {
+  color: white;
 }
-.ubicacion{
-   font-size: 16px;
-   color:aliceblue;
+
+.ubicacion {
+  font-size: 16px;
+  color: aliceblue;
+}
+
+.form-col {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.alter p {
+  color: #1b1b1b !important;
+}
+
+.dialog {
+  padding: 16px 24px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+}
+
+.dialog-close {
+  position: absolute;
+  right: 8px;
+  top: 8px;
+  color: gray;
+  border-radius: 100%;
+  background: none;
+  border: none;
+  width: 40px;
+  height: 40px;
+  display: grid;
+  place-items: center center;
+}
+
+.dialog-close:hover {
+  background-color: rgba(216, 216, 216, 0.445);
+}
+
+.dialog-button-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+}
+
+.dialog-submit {
+  color: aliceblue;
+  background-color: dodgerblue;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 100px;
+  padding: 4px 16px;
+  gap: 8px;
+}
+
+.dialog-submit:hover {
+  background-color: rgb(5, 130, 255);
+}
+
+.form-col select {
+  border: none;
+  padding: 7px 15px;
+  border-radius: 15px;
+  border: 1px solid aliceblue;
+  width: 250px;
+}
+
+button {
+  transition: background-color 300ms ease-in-out;
 }
