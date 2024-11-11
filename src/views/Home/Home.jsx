@@ -91,15 +91,10 @@ const Home = () => {
       setUsers(users1);
       setNombres(nombres1);
       let result = await apiBaseDatos("getcategoriasnew");
-      console.log(result);
       let longitug = isValid(result) === true ? result.length : 0;
       let arrayContenidoFoto = [];
       let resultado = [];
       for (let i = 0; i < longitug; i += 1) {
-        console.log(result[i].idcategoria + ".jpg",
-          "./galerias/app_images/categorias_de_negocios/" +
-            result[i].idcategoria,
-          "categorias_de_negocios/" + result[i].idcategoria);
         resultado = await getJpgFileSB(
           result[i].idcategoria + ".jpg",
           "./galerias/app_images/categorias_de_negocios/" +

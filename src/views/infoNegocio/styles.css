@@ -12,17 +12,14 @@
   justify-content: space-between;
 }
 
-.img-class-info-producto img {
-  /* Para hacer la imagen circular */
-  /*border-radius: 50%; */
-}
-
 .negocio-info {
   width: 100%;
   color: white;
   gap: 10px;
   display: flex;
-  flex-direction: column;}
+  flex-direction: column;
+  align-items: flex-start;
+}
 
 .parrafo {
   display: flex;

@@ -121,17 +121,30 @@ const checkFileExists = async (bucketName, directory, fileName) => {
   const fileExists = data.some((file) => file.name === fileName);
   return fileExists;
 };
+
+
 const obtenerImagen = async (bucketName, directory, fileName) => {
-  console.log(directory + "/" + fileName);
-  const { data, error } = supabase.storage
+  let url="";
+  //if (await checkFileExists(bucketName, directory, fileName)===false) return
+  const { data , error} = await supabase
+    .storage
     .from(bucketName)
-//    .download(directory + "/" + fileName)
+    .download(directory + "/" + fileName);
+    if (isValid(data)===true){
+       url = URL.createObjectURL(data);
+       return url;
+    }
+    else
+       return  url;
+};
+/*
+const obtenerImagen = async (bucketName, directory, fileName) => {
+  const { data } = supabase.storage
+    .from(bucketName)
     .getPublicUrl(directory + "/" + fileName);
-    console.log(data);
-    console.log(error);
   return data.publicUrl;
 };
-
+*/
 const cleanBase64String = (base64String) => {
   const index = base64String.indexOf(",");
   return index !== -1 ? base64String.substring(index + 1) : base64String;
