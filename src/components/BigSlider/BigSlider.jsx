@@ -1,23 +1,32 @@
-// styles
 import { useCallback, useEffect, useState } from "react";
-import { css } from "@emotion/css";
-import "./styles.css";
 import { Link } from "react-router-dom";
-import {  getJpgFileSB, isValid } from "../../Utiles/Utiles";
+
+// styles
+import "./styles.css";
+
+// @emotion
+import { css } from "@emotion/css";
+
+// utils
+import { getJpgFileSB, isValid } from "../../Utiles/Utiles";
+
+// context
 import { useNotification } from "../../context/NotificationProvider";
 
-
 const BigSlider = (props) => {
-  const { imgsFileName = [] } = props;
-  const { imgsFolder = [] } = props;
-  const { categorias = [] } = props;
-  const { users = [] } = props;
-  const { nombres = [] } = props;
+  const {
+    imgsFileName = [],
+    imgsFolder = [],
+    categorias = [],
+    users = [],
+    nombres = [],
+  } = props;
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [transition, setTransition] = useState(true);
   const [inicia, setInicia] = useState(true);
   const [imagenes] = useState([]);
-  const {setOpen, setMessage} = useNotification();
+  const { setOpen, setMessage } = useNotification();
   const toLeft = useCallback(() => {
     if (currentIndex < imgsFileName.length) {
       setCurrentIndex(currentIndex + 1);
@@ -31,22 +40,26 @@ const BigSlider = (props) => {
 
   async function init() {
     setInicia(true);
-    for (let i=0; i<imgsFileName.length; i += 1)  {
-      let resultado = await getJpgFileSB(imgsFileName[i], imgsFolder[i], imgsFolder[i]);
-     if (isValid(resultado)=== true) {
-        imagenes.push(resultado)
-     } else {
-       setMessage('Error al recuperar la imagen del anuncio');
-       setOpen(true);
-     }   
+    for (let i = 0; i < imgsFileName.length; i += 1) {
+      let resultado = await getJpgFileSB(
+        imgsFileName[i],
+        imgsFolder[i],
+        imgsFolder[i]
+      );
+      if (isValid(resultado) === true) {
+        imagenes.push(resultado);
+      } else {
+        setMessage("Error al recuperar la imagen del anuncio");
+        setOpen(true);
+      }
     }
     setInicia(false);
   }
-  
+
   useEffect(() => {
     init();
-   }, []);
-   
+  }, []);
+
   useEffect(() => {
     if (currentIndex === imgsFileName.length) {
       setTimeout(() => {
@@ -62,8 +75,7 @@ const BigSlider = (props) => {
   useEffect(() => {
     setTimeout(() => {
       toLeft();
-    }, 3000)
-
+    }, 3000);
   }, [currentIndex, toLeft]);
 
   return (
@@ -73,33 +85,42 @@ const BigSlider = (props) => {
           L
         </button>
      */}
-      {inicia===false?
-      <div
-        className={`big-slider-content ${transition ? "transition" : ""} ${css({
-          transform: `translateX(${currentIndex * -1 * 100}vw)`, })}`}
-      >
-        {imgsFileName?.map((item, i) => (
-         <Link  key={i} to={`/productos?categoria=${categorias[i]}&user=${sessionStorage.getItem("user")}&nombre=${nombres[i]}`}>
-         <div key={i} className="big-slider-item">
-            <img className="img-slider"
-              src={imagenes[i]}
-              alt="Foto"
-            />
-            </div>
-        </Link>
-        ))}
-        {imgsFileName?.length && 
-         <Link  key={0} to={`/productos?categoria=${categorias[0]}&user=${sessionStorage.getItem("user")}&nombre=${nombres[0]}`}>
-         <div className="big-slider-item">
-               <img className="img-slider"
-               src={imagenes[0]}
-               alt="Foto"
-             />
-         </div>
-         </Link>
-         }
-      </div>:""
-      }
+      {inicia === false ? (
+        <div
+          className={`big-slider-content ${
+            transition ? "transition" : ""
+          } ${css({
+            transform: `translateX(${currentIndex * -1 * 100}vw)`,
+          })}`}
+        >
+          {imgsFileName?.map((item, i) => (
+            <Link
+              key={i}
+              to={`/productos?categoria=${
+                categorias[i]
+              }&user=${sessionStorage.getItem("user")}&nombre=${nombres[i]}`}
+            >
+              <div key={i} className="big-slider-item">
+                <img className="img-slider" src={imagenes[i]} alt="Foto" />
+              </div>
+            </Link>
+          ))}
+          {imgsFileName?.length && (
+            <Link
+              key={0}
+              to={`/productos?categoria=${
+                categorias[0]
+              }&user=${sessionStorage.getItem("user")}&nombre=${nombres[0]}`}
+            >
+              <div className="big-slider-item">
+                <img className="img-slider" src={imagenes[0]} alt="Foto" />
+              </div>
+            </Link>
+          )}
+        </div>
+      ) : (
+        ""
+      )}
 
       {/*
         <button onClick={() => toLeft()} className="big-slider-nav right">

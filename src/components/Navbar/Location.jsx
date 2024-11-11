@@ -1,18 +1,24 @@
+/* eslint-disable react/prop-types */
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Tippy from "@tippyjs/react";
 
 // @mui/material
-import { Dialog, DialogTitle, IconButton, Typography } from "@mui/material";
+import {
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  Typography,
+} from "@mui/material";
 // @mui/icons
-import { Check, Close, PlaceOutlined } from "@mui/icons-material";
+import { Check, Close } from "@mui/icons-material";
 
 // services
 import { apiBaseDatos } from "../../Utiles/Utiles";
 
-function Location() {
-  const [showDialog, setShowDialog] = useState(false);
+function Location(props) {
+  const { open, onModalClose } = props;
 
-  const onModalClose = useCallback(() => setShowDialog(false), [setShowDialog]);
+  const [cantClose, setCantClose] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [province, setProvince] = useState();
   const [provinces, setProvinces] = useState([]);
@@ -29,7 +35,9 @@ function Location() {
   }, [municipals, province]);
 
   const confirmar = useCallback(async () => {
+    setLoading(true);
     await apiBaseDatos("setConfig", province, municipal);
+    setLoading(false);
     onModalClose();
   }, [municipal, onModalClose, province]);
 
@@ -44,16 +52,19 @@ function Location() {
     setMunicipals(remoteMunicipals);
 
     const config = await apiBaseDatos("getConfig");
-
+    console.log(config);
     if (!config?.length) {
+      setCantClose(true);
       setProvince(14);
       setMunicipal(6);
     } else {
+      setCantClose(false);
       setProvince(config[0].provincia);
       setMunicipal(config[0].municipio);
       sessionStorage.setItem("ubicacion-provincia", config[0].provincia);
       sessionStorage.setItem("ubicacion-municipio", config[0].municipio);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -61,19 +72,9 @@ function Location() {
   }, []);
 
   return (
-    <>
-      <Tippy content={"Donde recibirá su producto ó servicio"}>
-        <IconButton
-          sx={{ padding: 0 }}
-          color="inherit"
-          onClick={() => setShowDialog(true)}
-        >
-          <PlaceOutlined sx={{ color: "aliceblue", fontSize: "28px" }} />
-          <span className="ubicacion">Ubicación</span>
-        </IconButton>
-      </Tippy>
-      <Dialog open={showDialog} onClose={onModalClose}>
-        <DialogTitle>Ubicación</DialogTitle>
+    <Dialog open={open} onClose={onModalClose}>
+      <DialogTitle>Ubicación</DialogTitle>
+      {!cantClose && (
         <button
           aria-label="close"
           onClick={onModalClose}
@@ -81,41 +82,37 @@ function Location() {
         >
           <Close />
         </button>
-        <div className="dialog">
-          <div className="form-col alter">
-            <Typography variant="body1">Provincia:</Typography>
-            <select id="provincia" onChange={onProvinceSelect} value={province}>
-              {provinces.map((item, i) => (
-                <option key={i} value={item.provincia}>
-                  {item.desc}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <div className="form-col alter">
-            <Typography>Municipio:</Typography>
-            <select
-              id="municipio"
-              onChange={onMunicipalSelect}
-              value={municipal}
-            >
-              {provinceMunicipals?.map((item, i) => (
-                <option key={i} value={item.municipio}>
-                  {item.desc}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="dialog-button-row">
-            <button type="button" className="dialog-submit" onClick={confirmar}>
-              <Check />
-              Aplicar
-            </button>
-          </div>
+      )}
+      <div className="dialog">
+        <div className="form-col alter">
+          <Typography variant="body1">Provincia:</Typography>
+          <select id="provincia" onChange={onProvinceSelect} value={province}>
+            {provinces.map((item, i) => (
+              <option key={i} value={item.provincia}>
+                {item.desc}
+              </option>
+            ))}
+          </select>
         </div>
-      </Dialog>
-    </>
+
+        <div className="form-col alter">
+          <Typography>Municipio:</Typography>
+          <select id="municipio" onChange={onMunicipalSelect} value={municipal}>
+            {provinceMunicipals?.map((item, i) => (
+              <option key={i} value={item.municipio}>
+                {item.desc}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="dialog-button-row">
+          <button type="button" className="dialog-submit" onClick={confirmar}>
+            {loading ? <CircularProgress color="inherit" size={16} /> : <Check />}
+            Aplicar
+          </button>
+        </div>
+      </div>
+    </Dialog>
   );
 }
 

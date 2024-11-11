@@ -1,9 +1,12 @@
-import { Fragment, useState, useEffect } from "react";
+/* eslint-disable react/prop-types */
+import { Fragment, useState, useEffect, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Tippy from "@tippyjs/react";
 
 // components
 import NavigationDrawer from "./Drawer";
+import Location from "./Location";
+import SearchWrapper from "./SearchWrapper";
 
 // @mui/material
 import { Box, IconButton } from "@mui/material";
@@ -20,13 +23,14 @@ import {
 // utils
 import { isValid, borraSessionStorage } from "../../Utiles/Utiles";
 
+// services
+import { apiBaseDatos } from "../../Utiles/Utiles";
+
 // config
 import config from "../../config";
 
 // styles
 import "./styles.css";
-import Location from "./Location";
-import SearchWrapper from "./SearchWrapper";
 
 const Navbar = (props) => {
   const { nivel } = props;
@@ -112,17 +116,27 @@ const Navbar = (props) => {
     },
   ]);
 
-  async function init() {
-    borraSessionStorage(["categoria", "login", "idproducto"]);
-    setInicia(false);
-  }
-
   function updateUserInfo(e) {
     e.preventDefault();
     navigate(`/registrarse?inserta=false&where=false`);
   }
+
   function toggleMenu() {
     setShowMenu(!showMenu);
+  }
+
+  const [showDialog, setShowDialog] = useState(false);
+
+  const onModalClose = useCallback(() => setShowDialog(false), [setShowDialog]);
+
+  async function init() {
+    borraSessionStorage(["categoria", "login", "idproducto"]);
+
+    const config = await apiBaseDatos("getConfig");
+
+    if (!config?.length) setShowDialog(true);
+
+    setInicia(false);
   }
 
   useEffect(() => {
@@ -196,14 +210,16 @@ const Navbar = (props) => {
               ) : (
                 ""
               )}
-              <IconButton
-                className="responsive-lupa"
-                id="lupa"
-                color="inherit"
-                type="submit"
-              >
-                <Search />
-              </IconButton>
+              <Link to="/productos">
+                <IconButton
+                  className="responsive-lupa"
+                  id="lupa"
+                  color="inherit"
+                  type="submit"
+                >
+                  <Search />
+                </IconButton>
+              </Link>
               <IconButton
                 sx={{ padding: 0 }}
                 id="toggle-b"
@@ -225,7 +241,19 @@ const Navbar = (props) => {
                 sx={{ display: { xs: "none", md: "flex" } }}
                 className="links"
               >
-                <Location />
+                <Tippy content={"Donde recibirá su producto ó servicio"}>
+                  <IconButton
+                    sx={{ padding: 0 }}
+                    color="inherit"
+                    onClick={() => setShowDialog(true)}
+                  >
+                    <PlaceOutlined
+                      sx={{ color: "aliceblue", fontSize: "28px" }}
+                    />
+                    <span className="ubicacion">Ubicación</span>
+                  </IconButton>
+                </Tippy>
+                <Location open={showDialog} onModalClose={onModalClose} />
                 {menuPrimero.map((item, i) => (
                   <Fragment key={i}>
                     <Tippy content={item.tooltips}>
@@ -315,6 +343,7 @@ const Navbar = (props) => {
         nivel={nivel}
         open={showMenu}
         onClose={() => setShowMenu(false)}
+        openLocation={() => setShowDialog(true)}
       />
     </>
   );
