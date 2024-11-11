@@ -49,6 +49,7 @@ const Home = () => {
     ) {
       setNivel(0);
       let resultApp = await apiBaseDatos("anuncios");
+      console.log(resultApp);
       let imgsFileName1=[];
       let imgsFolder1=[];
       let category1=[];

@@ -94,16 +94,16 @@ const Aplicaciones = () => {
            setCategoria(buscarEnArreglo(resultcategorias, result[buscarEnArreglo(result, result[0].id, "id")].idcategoria, "categorianegocio"));
            setIsBase64ToBlob(true);
            let resultado = await getJpgFileSB(result[0].id + ".jpg", "./galerias/app_images/aplicaciones/" + result[0].id, "aplicaciones/" + result[0].id);
-          if (isValid(resultado)=== true) {
-             setIsBase64ToBlob(true);
-             setContenidofoto(resultado);
-             setNombrefoto(result[0].id);
-          } else {
-            setIsBase64ToBlob(false);
-            setNombrefoto("");
-             setMessage('Error al recuperar la imagen del usuario');
-             setOpen(true);
-          }                       
+           if (isValid(resultado)=== true) {
+              setIsBase64ToBlob(true);
+              setContenidofoto(resultado);
+              setNombrefoto(result[0].id);
+           } else {
+             setIsBase64ToBlob(false);
+             setNombrefoto("");
+              setMessage('Error al recuperar la imagen del usuario');
+              setOpen(true);
+           }                       
         }    
       }
 
@@ -189,7 +189,6 @@ const Aplicaciones = () => {
     async function confirmar() {
     let result= await apiBaseDatos("setAplicaciones", arrayAplicaciones[aplicacion].id, sessionStorage.getItem("user"), nick, desc,
                                     ttip, arrayCategorias[categoria].categorianegocio, agregarsn, contenidofoto, isBase64ToBlob);
-    console.log(result);
     if (isValid(result)===true){
         setMessage("Ocurrio un error al registrar el anuncio")
         setOpen(true);

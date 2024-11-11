@@ -1,5 +1,4 @@
 
-
 // components
 import Navbar from "../../components/Navbar/Navbar"
 import Tippy from "@tippyjs/react";
@@ -16,7 +15,9 @@ import ChatDialogo from "../../components/ChatDialogo/ChatDialogo";
 import IconButton from "@mui/material/IconButton";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom"
-import { getJpgFile } from "../../servicios/imagenes";
+import { isValid, getJpgFileSB  } from "../../Utiles/Utiles";
+import { useNotification } from "../../context/NotificationProvider";
+import config from "../../config";
 
 
 const Acercade = () => {
@@ -25,22 +26,21 @@ const Acercade = () => {
   const [chatuser, setChatuser] = useState("root");
   const [chatnombre, setChatnombre] = useState("Destodo");
   const [indexChat, setIndexChat] = useState(0);
+  const {setOpen, setMessage} = useNotification();
+  const urlMYSQL = config.urlmysql;
+  const urlSUPABASE = config.urlsupabase;
   const parsedParams = {}
   const navigate = useNavigate();
 
-  async function contenidofile(file) 
-  {
-
-    let result = await getJpgFile({file: file});
-    result = await result.text();
-
-    if (result.length !== 0 && result.error === undefined) {
-       setContenidofoto(result);
-    }
-  }
-function init()
+async function init()
 {
-  contenidofile("./galerias/app_images/destodo/logo.jpg");
+  let resultado = await getJpgFileSB("logo.jpg", "./galerias/app_images/destodo/", "destodo/");
+  if (isValid(resultado)=== true) {
+     setContenidofoto(resultado);
+  } else {
+     setMessage('Error al recuperar la imagen del usuario');
+     setOpen(true);
+  }                       
 }
 
 useEffect(() => {
@@ -66,7 +66,7 @@ useEffect(() => {
           <div className="logo-acerca">
             <Link to="/">
                <Tippy content="Inicio" >
-                  <img className="logo-acerca-img" src={contenidofoto} />
+                  <img className="logo-acerca-img" src={sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL"? urlMYSQL: urlSUPABASE} />
                </Tippy>
             </Link>
             <h3>Acerca de</h3>
