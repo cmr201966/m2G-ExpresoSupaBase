@@ -302,7 +302,7 @@ if (puntosState===2){
                     <p>{producto}</p>
                   </div>
 
-                  {precio !== 0 ? (
+                  {isValid(precio)===true && precio !== 0 ? (
                     <div className="parrafo">
                       <p>Precio:</p>
                       <p>{precio}</p>
@@ -310,7 +310,7 @@ if (puntosState===2){
                   ) : (
                     ""
                   )}
-                  {marca !== "undefined" ? (
+                  {isValid(marca)=== true && marca!=="" ? (
                     <div className="parrafo">
                       <p>Marca:</p>
                       <p>{marca}</p>
@@ -319,7 +319,7 @@ if (puntosState===2){
                     ""
                   )}
 
-                 {color !== "undefined" && color !== undefined && color !== "null" && color !== null && color !== "" ? (
+                 {isValid(color) === true && color !== "" ? (
                     <div className="parrafo">
                       <p>Color:</p>
                       <p>{color}</p>
@@ -327,7 +327,7 @@ if (puntosState===2){
                   ) : (
                     ""
                   )}
-                 {chapa !== "undefined" && chapa !== undefined && chapa !== "null" && chapa !== null && chapa !== "" ? (
+                 {isValid(chapa)=== true && chapa !== "" ? (
                     <div className="parrafo">
                       <p>Chapa:</p>
                       <p>{chapa}</p>
@@ -336,7 +336,7 @@ if (puntosState===2){
                     ""
                   )}
 
-                  {celular !== "undefined" && sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL'? (
+                  {isValid(celular)=== true && sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL'? (
                     <div className="parrafo">
                       <p>Celular:</p>
                       <p>{celular}</p>
@@ -362,7 +362,7 @@ if (puntosState===2){
                   ""
                 )}
 
-                  <Tippy content="Ordenar via WhatsApp">
+                  <Tippy content="Contactar via WhatsApp">
                     <a href={url} className="whatsapp" target="_blank" rel="noopener noreferrer"><WhatsAppIcon /></a>
                   </Tippy>
              </div>

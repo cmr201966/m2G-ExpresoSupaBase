@@ -170,7 +170,7 @@ useEffect(() => {
                         {municipio}
                      </p>
                   </div>
-                  <Tippy content={`Ordenar via WhatsApp`}>
+                  <Tippy content={`Contactar via WhatsApp`}>
                    <a href={url} className="whatsapp" target="_blank" rel="noopener noreferrer"><WhatsAppIcon /></a>
               </Tippy>
 

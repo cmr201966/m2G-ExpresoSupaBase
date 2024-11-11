@@ -1,7 +1,7 @@
 import Checkbox from "@mui/material/Checkbox";
 import CollectionsIcon from "@mui/icons-material/Collections";
 import { Box, CircularProgress } from "@mui/material";
-import MapIcon from "@mui/icons-material/Map";
+import {PlaceOutlined} from "@mui/icons-material";
 import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Map from "../../components/Map/MapBox";
 import Tippy from "@tippyjs/react";
@@ -917,7 +917,7 @@ const CatProductos = () => {
                               className="negocio-button primary"
                               onClick={() => setShowMap(!showMap)}
                             >
-                              <MapIcon />
+                              <PlaceOutlined />
                             </button>
                           </Tippy>
                         ) : (
