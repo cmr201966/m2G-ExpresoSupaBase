@@ -1,18 +1,16 @@
+/* eslint-disable react/prop-types */
 import { useCallback, useEffect, useMemo, useState } from "react";
-import Tippy from "@tippyjs/react";
 
 // @mui/material
-import { Dialog, DialogTitle, IconButton, Typography } from "@mui/material";
+import { Dialog, DialogTitle, Typography } from "@mui/material";
 // @mui/icons
-import { Check, Close, PlaceOutlined } from "@mui/icons-material";
+import { Check, Close } from "@mui/icons-material";
 
 // services
 import { apiBaseDatos } from "../../Utiles/Utiles";
 
-function Location() {
-  const [showDialog, setShowDialog] = useState(false);
-
-  const onModalClose = useCallback(() => setShowDialog(false), [setShowDialog]);
+function Location(props) {
+  const { open, onModalClose } = props;
 
   const [province, setProvince] = useState();
   const [provinces, setProvinces] = useState([]);
@@ -61,61 +59,45 @@ function Location() {
   }, []);
 
   return (
-    <>
-      <Tippy content={"Donde recibirá su producto ó servicio"}>
-        <IconButton
-          sx={{ padding: 0 }}
-          color="inherit"
-          onClick={() => setShowDialog(true)}
-        >
-          <PlaceOutlined sx={{ color: "aliceblue", fontSize: "28px" }} />
-          <span className="ubicacion">Ubicación</span>
-        </IconButton>
-      </Tippy>
-      <Dialog open={showDialog} onClose={onModalClose}>
-        <DialogTitle>Ubicación</DialogTitle>
-        <button
-          aria-label="close"
-          onClick={onModalClose}
-          className="dialog-close"
-        >
-          <Close />
-        </button>
-        <div className="dialog">
-          <div className="form-col alter">
-            <Typography variant="body1">Provincia:</Typography>
-            <select id="provincia" onChange={onProvinceSelect} value={province}>
-              {provinces.map((item, i) => (
-                <option key={i} value={item.provincia}>
-                  {item.desc}
-                </option>
-              ))}
-            </select>
-          </div>
-          
-          <div className="form-col alter">
-            <Typography>Municipio:</Typography>
-            <select
-              id="municipio"
-              onChange={onMunicipalSelect}
-              value={municipal}
-            >
-              {provinceMunicipals?.map((item, i) => (
-                <option key={i} value={item.municipio}>
-                  {item.desc}
-                </option>
-              ))}
-            </select>
-          </div>
-          <div className="dialog-button-row">
-            <button type="button" className="dialog-submit" onClick={confirmar}>
-              <Check />
-              Aplicar
-            </button>
-          </div>
+    <Dialog open={open} onClose={onModalClose}>
+      <DialogTitle>Ubicación</DialogTitle>
+      <button
+        aria-label="close"
+        onClick={onModalClose}
+        className="dialog-close"
+      >
+        <Close />
+      </button>
+      <div className="dialog">
+        <div className="form-col alter">
+          <Typography variant="body1">Provincia:</Typography>
+          <select id="provincia" onChange={onProvinceSelect} value={province}>
+            {provinces.map((item, i) => (
+              <option key={i} value={item.provincia}>
+                {item.desc}
+              </option>
+            ))}
+          </select>
         </div>
-      </Dialog>
-    </>
+
+        <div className="form-col alter">
+          <Typography>Municipio:</Typography>
+          <select id="municipio" onChange={onMunicipalSelect} value={municipal}>
+            {provinceMunicipals?.map((item, i) => (
+              <option key={i} value={item.municipio}>
+                {item.desc}
+              </option>
+            ))}
+          </select>
+        </div>
+        <div className="dialog-button-row">
+          <button type="button" className="dialog-submit" onClick={confirmar}>
+            <Check />
+            Aplicar
+          </button>
+        </div>
+      </div>
+    </Dialog>
   );
 }
 

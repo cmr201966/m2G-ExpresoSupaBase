@@ -1,9 +1,12 @@
-import { Fragment, useState, useEffect } from "react";
+/* eslint-disable react/prop-types */
+import { Fragment, useState, useEffect, useCallback } from "react";
 import { Link, useNavigate, useLocation } from "react-router-dom";
 import Tippy from "@tippyjs/react";
 
 // components
 import NavigationDrawer from "./Drawer";
+import Location from "./Location";
+import SearchWrapper from "./SearchWrapper";
 
 // @mui/material
 import { Box, IconButton } from "@mui/material";
@@ -25,8 +28,6 @@ import config from "../../config";
 
 // styles
 import "./styles.css";
-import Location from "./Location";
-import SearchWrapper from "./SearchWrapper";
 
 const Navbar = (props) => {
   const { nivel } = props;
@@ -129,6 +130,10 @@ const Navbar = (props) => {
     init();
   }, [location]);
 
+  const [showDialog, setShowDialog] = useState(false);
+
+  const onModalClose = useCallback(() => setShowDialog(false), [setShowDialog]);
+
   return (
     <>
       <div className="navbar-row">
@@ -225,7 +230,19 @@ const Navbar = (props) => {
                 sx={{ display: { xs: "none", md: "flex" } }}
                 className="links"
               >
-                <Location />
+                <Tippy content={"Donde recibirá su producto ó servicio"}>
+                  <IconButton
+                    sx={{ padding: 0 }}
+                    color="inherit"
+                    onClick={() => setShowDialog(true)}
+                  >
+                    <PlaceOutlined
+                      sx={{ color: "aliceblue", fontSize: "28px" }}
+                    />
+                    <span className="ubicacion">Ubicación</span>
+                  </IconButton>
+                </Tippy>
+                <Location open={showDialog} onModalClose={onModalClose} />
                 {menuPrimero.map((item, i) => (
                   <Fragment key={i}>
                     <Tippy content={item.tooltips}>
@@ -315,6 +332,7 @@ const Navbar = (props) => {
         nivel={nivel}
         open={showMenu}
         onClose={() => setShowMenu(false)}
+        openLocation={() => setShowDialog(true)}
       />
     </>
   );
