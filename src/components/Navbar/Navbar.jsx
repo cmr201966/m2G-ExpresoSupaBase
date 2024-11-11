@@ -23,6 +23,9 @@ import {
 // utils
 import { isValid, borraSessionStorage } from "../../Utiles/Utiles";
 
+// services
+import { apiBaseDatos } from "../../Utiles/Utiles";
+
 // config
 import config from "../../config";
 
@@ -113,26 +116,32 @@ const Navbar = (props) => {
     },
   ]);
 
-  async function init() {
-    borraSessionStorage(["categoria", "login", "idproducto"]);
-    setInicia(false);
-  }
-
   function updateUserInfo(e) {
     e.preventDefault();
     navigate(`/registrarse?inserta=false&where=false`);
   }
+
   function toggleMenu() {
     setShowMenu(!showMenu);
+  }
+
+  const [showDialog, setShowDialog] = useState(false);
+
+  const onModalClose = useCallback(() => setShowDialog(false), [setShowDialog]);
+
+  async function init() {
+    borraSessionStorage(["categoria", "login", "idproducto"]);
+
+    const config = await apiBaseDatos("getConfig");
+
+    if (!config?.length) setShowDialog(true);
+
+    setInicia(false);
   }
 
   useEffect(() => {
     init();
   }, [location]);
-
-  const [showDialog, setShowDialog] = useState(false);
-
-  const onModalClose = useCallback(() => setShowDialog(false), [setShowDialog]);
 
   return (
     <>

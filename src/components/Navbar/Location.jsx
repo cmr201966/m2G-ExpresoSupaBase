@@ -2,7 +2,12 @@
 import { useCallback, useEffect, useMemo, useState } from "react";
 
 // @mui/material
-import { Dialog, DialogTitle, Typography } from "@mui/material";
+import {
+  CircularProgress,
+  Dialog,
+  DialogTitle,
+  Typography,
+} from "@mui/material";
 // @mui/icons
 import { Check, Close } from "@mui/icons-material";
 
@@ -11,6 +16,9 @@ import { apiBaseDatos } from "../../Utiles/Utiles";
 
 function Location(props) {
   const { open, onModalClose } = props;
+
+  const [cantClose, setCantClose] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [province, setProvince] = useState();
   const [provinces, setProvinces] = useState([]);
@@ -27,7 +35,9 @@ function Location(props) {
   }, [municipals, province]);
 
   const confirmar = useCallback(async () => {
+    setLoading(true);
     await apiBaseDatos("setConfig", province, municipal);
+    setLoading(false);
     onModalClose();
   }, [municipal, onModalClose, province]);
 
@@ -42,16 +52,19 @@ function Location(props) {
     setMunicipals(remoteMunicipals);
 
     const config = await apiBaseDatos("getConfig");
-
+    console.log(config);
     if (!config?.length) {
+      setCantClose(true);
       setProvince(14);
       setMunicipal(6);
     } else {
+      setCantClose(false);
       setProvince(config[0].provincia);
       setMunicipal(config[0].municipio);
       sessionStorage.setItem("ubicacion-provincia", config[0].provincia);
       sessionStorage.setItem("ubicacion-municipio", config[0].municipio);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -61,13 +74,15 @@ function Location(props) {
   return (
     <Dialog open={open} onClose={onModalClose}>
       <DialogTitle>Ubicación</DialogTitle>
-      <button
-        aria-label="close"
-        onClick={onModalClose}
-        className="dialog-close"
-      >
-        <Close />
-      </button>
+      {!cantClose && (
+        <button
+          aria-label="close"
+          onClick={onModalClose}
+          className="dialog-close"
+        >
+          <Close />
+        </button>
+      )}
       <div className="dialog">
         <div className="form-col alter">
           <Typography variant="body1">Provincia:</Typography>
@@ -92,7 +107,7 @@ function Location(props) {
         </div>
         <div className="dialog-button-row">
           <button type="button" className="dialog-submit" onClick={confirmar}>
-            <Check />
+            {loading ? <CircularProgress color="inherit" size={16} /> : <Check />}
             Aplicar
           </button>
         </div>
