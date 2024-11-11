@@ -33,7 +33,7 @@ const InfoNegocio = () => {
   const [gps, setGps]=useState(true);
   const [arrayFotos, setArrayFotos] = useState([]);
   const [arrayFotoInfo, setArrayFotoInfo] = useState([]); 
-  const url = `https://wa.me/${52675359}?text=`
+  const url = `https://wa.me/${celular}?text=`
 
   const onChangeMap = (which, value) => {
     if (which === "lng") return setLng(value);
@@ -171,7 +171,7 @@ useEffect(() => {
                      </p>
                   </div>
                   <Tippy content={`Ordenar via WhatsApp`}>
-                   <a href={url} target="_blank" rel="noopener noreferrer"><WhatsAppIcon /></a>
+                   <a href={url} className="whatsapp" target="_blank" rel="noopener noreferrer"><WhatsAppIcon /></a>
               </Tippy>
 
               </div>

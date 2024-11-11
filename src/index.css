@@ -310,3 +310,15 @@ h6 {
   display: flex;
   align-items: center;
 }
+
+.whatsapp{
+  background:rgb(27 225 44);
+  border-radius: 5px;
+  border: none;
+  color:aliceblue;
+  width: 35px;
+  justify-content: center;
+  align-items: center;
+  display: flex;
+  height: 35px;
+  }

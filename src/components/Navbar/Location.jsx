@@ -52,7 +52,6 @@ function Location(props) {
     setMunicipals(remoteMunicipals);
 
     const config = await apiBaseDatos("getConfig");
-    console.log(config);
     if (!config?.length) {
       setCantClose(true);
       setProvince(14);

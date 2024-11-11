@@ -33,26 +33,26 @@
 }
 .input-area-registrarse-plan label {
     color: aliceblue;
-    margin-right: 75px;
+    margin-right:69px;
   }
   .input-area-registrarse-plan{
     margin-top: 10px;
   }
 .input-area-registrarse-provincia label {
     color: aliceblue;
-    margin-right: 47px;
+    margin-right: 43px;
   }
 .input-area-registrarse-municipio label {
     color: aliceblue;
-    margin-right: 43px;
+    margin-right: 39px;
   }
 .input-area-registrarse input {
     background: none;
     border: none;
-    padding: 7px 15px;
+    padding: 3px 10px;
     border-radius: 15px;
     border: 1px solid aliceblue;
-    width: 178px;
+    width: 180px;
     background-color: white;
   }
   .input-area-registrarse {
@@ -146,25 +146,25 @@
     padding-left: 40px; }
 
  .select-registrarse-plan{
-    width: 210px;
+    width: 203px;
     border: none;
-    padding: 7px 15px;
+    padding: 3px 10px;
     border-radius: 15px;
     border: 1px solid aliceblue;
    
 }
  .select-registrarse-prov{
-    width: 100%;
+    width: 203px;
     border: none;
-    padding: 7px 15px;
+    padding: 3px 10px;
     border-radius: 15px;
     border: 1px solid aliceblue;
     margin-bottom: 5px;
 }
 .select-registrarse-munic{
-    width: 100%;
+    width: 203px;
     border: none;
-    padding: 7px 15px;
+    padding: 3px 10px;
     border-radius: 15px;
     border: 1px solid aliceblue;
     margin-bottom: 5px;
@@ -192,22 +192,22 @@
     margin-right: 2px;
 }
 .usuario{
-    margin-right: 48px;
+    margin-right: 43px;
 }
 .email{
     margin-right: 68px;
 }
 .celular{
-    margin-right: 56px;
+    margin-right: 47px;
 }
 .pw{
-    margin-right: 34px;
+    margin-right: 26px;
 }
 .rpw{
-    margin-right: 27px;
+    margin-right: 20px;
 }
 .nombre{
-    margin-right: 56px;
+    margin-right: 53px;
 }
 .ci{
     margin-right: 85px;

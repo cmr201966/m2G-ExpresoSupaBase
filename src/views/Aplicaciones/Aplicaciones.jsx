@@ -69,7 +69,6 @@ const Aplicaciones = () => {
     return
   }
       let result = await apiBaseDatos("getAplicaciones")
-      console.log(result);
       if ((isValid(result) === true && result.err) || isValid(result)===false) 
       {
          setArrayAplicaciones(arraynoaplicaciones);

@@ -231,6 +231,10 @@ button {
   transition: background-color 300ms ease-in-out;
 }
 
+button-color{
+  color:aliceblue !important;
+}
+
 @media screen and (max-width: 1100px) {
   .agrupa-menu,
   .navbar-main {

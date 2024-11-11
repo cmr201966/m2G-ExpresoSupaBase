@@ -121,11 +121,14 @@ const checkFileExists = async (bucketName, directory, fileName) => {
   const fileExists = data.some((file) => file.name === fileName);
   return fileExists;
 };
-
 const obtenerImagen = async (bucketName, directory, fileName) => {
-  const { data } = supabase.storage
+  console.log(directory + "/" + fileName);
+  const { data, error } = supabase.storage
     .from(bucketName)
+//    .download(directory + "/" + fileName)
     .getPublicUrl(directory + "/" + fileName);
+    console.log(data);
+    console.log(error);
   return data.publicUrl;
 };
 
@@ -181,7 +184,7 @@ async function anuncios() {
     const { data } = await supabase
       .from("tablaanuncios")
       .select("*")
-      .order("desc", { ascending: true })
+      .order("orden", { ascending: true })
       .eq("activo", true);
     return data;
   }
@@ -197,7 +200,7 @@ function GeneraVistagetCategoriasNew(user, tipouser) {
   }
   return (
     "CREATE OR REPLACE VIEW getcategoriasnew  AS select DISTINCT tablacatproductos.categorianegocio as idcategoria, " +
-    'tablaCategorias."desc" as categoria, link from tablaCategorias, tablacatproductos' +
+    'tablaCategorias."desc" as categoria, link, destodo from tablaCategorias, tablacatproductos' +
     " where (tablaCategorias.categorianegocio=tablacatproductos.categorianegocio) and (tablacatproductos.activo=true)" +
     condicion
   );
@@ -221,7 +224,7 @@ async function getcategoriasnew() {
     const { data } = await supabase
       .from("getcategoriasnew")
       .select("*")
-      .order("idcategoria", { ascending: true });
+      .order("destodo", { ascending: true });
     datos = data;
     return datos;
   }
@@ -275,8 +278,9 @@ async function CategoriasInsertUpdate(
       .from("tablacategorias")
       .update({ desc: desc, link: link })
       .eq("categorianegocio", categorianegocio);
+      err = error;
     if (isValid(error) === false) {
-      err = uploadBase64Image(
+      err = await uploadBase64Image(
         contenidofoto,
         "galerias",
         "categorias_de_negocios/" +
@@ -286,7 +290,8 @@ async function CategoriasInsertUpdate(
           ".jpg",
         isBase64ToBlob
       );
-    } else err = error;
+      err=error;
+    } 
   }
   return err;
 }

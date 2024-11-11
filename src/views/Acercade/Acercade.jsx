@@ -27,8 +27,8 @@ const Acercade = () => {
   const [chatnombre, setChatnombre] = useState("Destodo");
   const [indexChat, setIndexChat] = useState(0);
   const {setOpen, setMessage} = useNotification();
-  const urlMYSQL = config.urlmysql;
-  const urlSUPABASE = config.urlsupabase;
+  //const urlMYSQL = config.urlmysql;
+  //const urlSUPABASE = config.urlsupabase;
   const parsedParams = {}
   const navigate = useNavigate();
 
@@ -66,7 +66,8 @@ useEffect(() => {
           <div className="logo-acerca">
             <Link to="/">
                <Tippy content="Inicio" >
-                  <img className="logo-acerca-img" src={sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL"? urlMYSQL: urlSUPABASE} />
+{/*                  <img className="logo-acerca-img" src={sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL"? urlMYSQL: urlSUPABASE} />*/}
+                  <img className="logo-acerca-img" src={contenidofoto} />
                </Tippy>
             </Link>
             <h3>Acerca de</h3>

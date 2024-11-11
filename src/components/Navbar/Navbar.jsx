@@ -21,23 +21,27 @@ import {
 } from "@mui/icons-material";
 
 // utils
-import { isValid, borraSessionStorage } from "../../Utiles/Utiles";
+import { isValid, borraSessionStorage, getJpgFileSB } from "../../Utiles/Utiles";
 
 // services
 import { apiBaseDatos } from "../../Utiles/Utiles";
 
 // config
-import config from "../../config";
+//import config from "../../config";
+
+import { useNotification } from "../../context/NotificationProvider";
 
 // styles
 import "./styles.css";
 
 const Navbar = (props) => {
+  const [contenidofoto, setContenidofoto] = useState();
   const { nivel } = props;
   const navigate = useNavigate();
   const location = useLocation();
-  const urlMYSQL = config.urlmysql;
-  const urlSUPABASE = config.urlsupabase;
+  const {setOpen, setMessage} = useNotification();
+  //const urlMYSQL = config.urlmysql;
+  //const urlSUPABASE = config.urlsupabase;
   const [showMenu, setShowMenu] = useState(false);
 
   const [inicia, setInicia] = useState(true);
@@ -136,6 +140,15 @@ const Navbar = (props) => {
 
     if (!config?.length) setShowDialog(true);
 
+    let resultado = await getJpgFileSB("logo.jpg", "./galerias/app_images/destodo", "destodo");
+    if (isValid(resultado)=== true) {
+      setContenidofoto(resultado);
+   } else {
+      setMessage('Error al recuperar la imagen del usuario');
+      setOpen(true);
+   }                       
+ 
+
     setInicia(false);
   }
 
@@ -150,11 +163,7 @@ const Navbar = (props) => {
           <Link className="link-logo" to="/">
             <img
               className="logo-img-one"
-              src={
-                sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL"
-                  ? urlMYSQL
-                  : urlSUPABASE
-              }
+              src={contenidofoto}
             />
             El Expreso
           </Link>
@@ -168,10 +177,9 @@ const Navbar = (props) => {
                   content={"Agregar, editar y eliminar categorias de negocios"}
                 >
                   <Link to="/catcategorias?login=1&regreso=/catcategorias">
-                    <IconButton
-                      sx={{ padding: 0 }}
+                    <IconButton 
+                      sx={{ padding: 0, color:"aliceblue" }}
                       id="categorias"
-                      color="inherit"
                     >
                       <Settings />
                     </IconButton>
@@ -187,10 +195,9 @@ const Navbar = (props) => {
                     "user"
                   )}`}
                 >
-                  <IconButton
-                    sx={{ padding: 0 }}
+                  <IconButton 
+                    sx={{ padding: 0, color: "aliceblue" }}
                     id="user"
-                    color="inherit"
                     onClick={updateUserInfo}
                   >
                     <Person id="user" />
@@ -202,7 +209,7 @@ const Navbar = (props) => {
               {Number(sessionStorage.getItem("tipouser")) === 3 ? (
                 <Tippy content={"Registrarse un usuario nuevo"}>
                   <Link to="/registrarse?inserta=true&where=true">
-                    <IconButton sx={{ padding: 0 }} id="user" color="inherit">
+                    <IconButton sx={{ padding: 0, color: "aliceblue" }} id="user">
                       <PersonAddAlt1 />
                     </IconButton>
                   </Link>

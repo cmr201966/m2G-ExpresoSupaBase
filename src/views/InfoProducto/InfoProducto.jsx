@@ -55,7 +55,7 @@ const InfoProducto = () => {
   const [usert, setUsert] = useState("");
   const [arrayFotos, setArrayFotos] = useState([]);
   const [arrayFotoInfo, setArrayFotoInfo] = useState([]);
-  const url = `https://wa.me/${52675359}?text=`
+  const url = `https://wa.me/${celular}?text=`
 //  const [duracion, setDuracion] = useState(0);
 
   async function init() {
@@ -72,9 +72,7 @@ const InfoProducto = () => {
         if (isValid(result.url)===true) tarray.push(result.url);
         setArrayFotoInfo(tarray);
     }
-    console.log(parsedParams.idproducto);
     let result= await getInfoProducto(parsedParams.idproducto);
-    console.log(result);
     if (isValid(result)=== true) {
       if (result[0].idnegocio===sessionStorage.getItem("user")){
         setShowGalerias(true)
@@ -364,16 +362,9 @@ if (puntosState===2){
                   ""
                 )}
 
-                {(((distancia !== 0) && (showMap===true && puntosState===2 && domicilio===1)) || (domicilio===1 && ocupado===0)) 
-                     && (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='SUPABASE')? (
-                  <>
                   <Tippy content="Ordenar via WhatsApp">
-                    <a href={url} target="_blank" rel="noopener noreferrer"><WhatsAppIcon /></a>
+                    <a href={url} className="whatsapp" target="_blank" rel="noopener noreferrer"><WhatsAppIcon /></a>
                   </Tippy>
-                  </>
-                ) : (
-                  ""
-               )}
              </div>
            </section>
          </>

@@ -167,7 +167,7 @@ const CatCategorias = () => {
 
     async function confirmar() {
     let err= await apiBaseDatos("setCategoriasNegocios", arrayCategorias[categoria].categorianegocio, desc, descold, "productos", agregarsn, contenidofoto, isBase64ToBlob );
-    if (isValid(err)===false){
+    if (isValid(err)===true){
         setMessage("Ocurrido un error al registrar la categoria");
         setOpen(true);
     }
