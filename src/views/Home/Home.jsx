@@ -1,26 +1,43 @@
 {
   /*QRCode value="TRANSFERMOVIL_ETECSA, TRANSFERENCIA,9224069991525391,56174215" />*/
 }
+import { useEffect, useMemo, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
+// @mui/material
+import { IconButton, Box, CircularProgress } from "@mui/material";
+// @mui/icons
+import { ArrowBack } from "@mui/icons-material";
+
+// components
 import Navbar from "../../components/Navbar/Navbar";
-import { useLocation } from "react-router-dom";
-import IconButton from "@mui/material/IconButton";
-import ArrowBack from "@mui/icons-material/ArrowBack";
-import { Box, CircularProgress } from "@mui/material";
 //import QRCode from "react-qr-code";
 import BigSlider from "../../components/BigSlider/BigSlider";
 import MultipleSlider from "../../components/MultipleSlider/MultipleSlider";
 import CardMultipleSlider from "../../components/CardMultipleSlider/CardMultipleSlider";
-import { useNavigate } from "react-router-dom";
+
+// layouts
 import Hero from "../../layouts/Hero/Hero";
-import { useEffect, useMemo, useState } from "react";
-import { isValid, obtenerImagen, apiBaseDatos, creaBucket, borraSessionStorage, getJpgFileSB } from "../../Utiles/Utiles";
+
+// utils
+import {
+  isValid,
+  obtenerImagen,
+  apiBaseDatos,
+  creaBucket,
+  borraSessionStorage,
+  getJpgFileSB,
+} from "../../Utiles/Utiles";
+
+// contexts
 import { useNotification } from "../../context/NotificationProvider";
 
+// styles
 import "./styles.css";
 
 const Home = () => {
   const navigate = useNavigate();
-  const {setOpen, setMessage} = useNotification();
+  const { setOpen, setMessage } = useNotification();
   const location = useLocation();
   const parsedParams = {};
   const [result, setResult] = useState([]);
@@ -35,12 +52,16 @@ const Home = () => {
   const [users, setUsers] = useState([]);
   const [nombres, setNombres] = useState([]);
 
-
   async function init() {
     setInicia(true);
     setShow(true);
-    if (sessionStorage.getItem("sgbd").toLocaleUpperCase()==="SUPABASE") creaBucket('galerias');
-    borraSessionStorage(["categoria", "ubicacion-provincia", "ubicacion-municipio"]);
+    if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "SUPABASE")
+      creaBucket("galerias");
+    borraSessionStorage([
+      "categoria",
+      "ubicacion-provincia",
+      "ubicacion-municipio",
+    ]);
     const newResult = [];
     if (
       parsedParams.nivel === undefined ||
@@ -49,52 +70,63 @@ const Home = () => {
     ) {
       setNivel(0);
       let resultApp = await apiBaseDatos("anuncios");
-      let imgsFileName1=[];
-      let imgsFolder1=[];
-      let category1=[];
-      let users1=[];
-      let nombres1=[];
-      let ruta=sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL'?"./galerias/app_images/aplicaciones":"aplicaciones"
+      let imgsFileName1 = [];
+      let imgsFolder1 = [];
+      let category1 = [];
+      let users1 = [];
+      let nombres1 = [];
+      let ruta =
+        sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL"
+          ? "./galerias/app_images/aplicaciones"
+          : "aplicaciones";
       resultApp.forEach((item) => {
         imgsFileName1.push(item.id + ".jpg");
         imgsFolder1.push(ruta + "/" + item.id);
         category1.push(item.idcategoria);
-        users1.push(item.iduser)
-        nombres1.push(item.desc)
+        users1.push(item.iduser);
+        nombres1.push(item.desc);
       });
       setImgsFileName(imgsFileName1);
       setImgsFolder(imgsFolder1);
       setCategorys(category1);
       setUsers(users1);
       setNombres(nombres1);
-      let result = await apiBaseDatos("getcategoriasnew")
-      let longitug=isValid(result)===true?result.length:0;
-      let arrayContenidoFoto=[];
-      let resultado=[];
+      let result = await apiBaseDatos("getcategoriasnew");
+      let longitug = isValid(result) === true ? result.length : 0;
+      let arrayContenidoFoto = [];
+      let resultado = [];
       console.log(sessionStorage.getItem("sgbd").toLocaleUpperCase());
-      for(let i=0;i<longitug; i+=1){
-          resultado = await getJpgFileSB(result[i].idcategoria + ".jpg", "./galerias/app_images/categorias_de_negocios/" + result[i].idcategoria, 
-                                         "categorias_de_negocios/" + result[i].idcategoria);
-          if (isValid(resultado)===true && resultado!=="" && isValid(resultado.length)===true) 
-             arrayContenidoFoto.push(resultado)
-           else {
-            setMessage('Error al recuperar la imagen del usuario');
-            setOpen(true);
-          }    
+      for (let i = 0; i < longitug; i += 1) {
+        resultado = await getJpgFileSB(
+          result[i].idcategoria + ".jpg",
+          "./galerias/app_images/categorias_de_negocios/" +
+            result[i].idcategoria,
+          "categorias_de_negocios/" + result[i].idcategoria
+        );
+        if (
+          isValid(resultado) === true &&
+          resultado !== "" &&
+          isValid(resultado.length) === true
+        )
+          arrayContenidoFoto.push(resultado);
+        else {
+          setMessage("Error al recuperar la imagen del usuario");
+          setOpen(true);
+        }
       }
-      if (longitug!==0){
-      result.forEach((item, i) => {
-        newResult.push({
-          categoria: item.idcategoria,
-          name: item.categoria,
-          link: item.link,
-          photo: arrayContenidoFoto[i],
-          tooltip: item.desc,
+      if (longitug !== 0) {
+        result.forEach((item, i) => {
+          newResult.push({
+            categoria: item.idcategoria,
+            name: item.categoria,
+            link: item.link,
+            photo: arrayContenidoFoto[i],
+            tooltip: item.desc,
+          });
         });
-      });
-         setResult(newResult);
+        setResult(newResult);
       }
-    } 
+    }
 
     sessionStorage.getItem("user") === null
       ? setRutatmp("usuarios/invitado")
@@ -104,7 +136,7 @@ const Home = () => {
       : setDesctmp(`${sessionStorage.getItem("usernombre")}`);
     setInicia(false);
     setShow(false);
-  } 
+  }
 
   const arrayOfCards = useMemo(() => {
     const resultOfCards = [];
@@ -126,7 +158,6 @@ const Home = () => {
     return resultOfCards;
   }, [result]);
 
-    
   useEffect(() => {
     const localParams = location.search.substring(1).split("&");
     localParams.forEach((item) => {
@@ -140,68 +171,68 @@ const Home = () => {
   }, []);
 
   return (
-    <>
-
-      <div>
-        <Navbar nivel={0} />
-        <Hero>
-          <div className="cabeza">
-            {nivel === 0 ? (
-              ""
-            ) : (
-              <>
-                <IconButton
-                  color="primary"
-                  onClick={() => {
-                    navigate(
-                      `/?naturaleza=${sessionStorage.getItem(
-                        "naturaleza"
-                      )}&owner=${sessionStorage.getItem(
-                        "idowner"
-                      )}&nivel=${sessionStorage.getItem("nivel")}`
-                    );
-                  }}
-                >
-                  <ArrowBack className="flecha"/>
-                </IconButton>
-                <h3 className="acercade-title">Atrás</h3>
-              </>
-            )}
-          </div>
-
-          {show ? (
-            <Box
-              sx={{
-                width: "100%",
-                height: "300px",
-                display: "flex",
-                alignItems: "center",
-                justifyContent: "center",
-              }}
-            >
-              <CircularProgress color="checkbox" />
-            </Box>
-          ) : null}
-          {inicia === false ? (
-            <>
-              <BigSlider imgsFolder={imgsFolder} imgsFileName={imgsFileName} categorias={categorys} users={users} nombres={nombres}/>
-              <div className="main-grid negative-margin">
-                <div className="grid-letf"></div>
-                <div className="gradient-background"></div>
-                <MultipleSlider imgs={arrayOfCards} />
-                <div className="grid-rigth"></div>
-              </div>
-            </>
-          ) : (
+    <div>
+      <Navbar nivel={0} />
+      <Hero>
+        <div className="cabeza">
+          {nivel === 0 ? (
             ""
+          ) : (
+            <>
+              <IconButton
+                color="primary"
+                onClick={() => {
+                  navigate(
+                    `/?naturaleza=${sessionStorage.getItem(
+                      "naturaleza"
+                    )}&owner=${sessionStorage.getItem(
+                      "idowner"
+                    )}&nivel=${sessionStorage.getItem("nivel")}`
+                  );
+                }}
+              >
+                <ArrowBack className="flecha" />
+              </IconButton>
+              <h3 className="acercade-title">Atrás</h3>
+            </>
           )}
-        </Hero>
-      </div>
-    </>
+        </div>
+
+        {show ? (
+          <Box
+            sx={{
+              width: "100%",
+              height: "300px",
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+            }}
+          >
+            <CircularProgress color="checkbox" />
+          </Box>
+        ) : null}
+        {inicia === false ? (
+          <>
+            <BigSlider
+              imgsFolder={imgsFolder}
+              imgsFileName={imgsFileName}
+              categorias={categorys}
+              users={users}
+              nombres={nombres}
+            />
+            <div className="main-grid negative-margin">
+              <div className="grid-letf"></div>
+              <div className="gradient-background"></div>
+              <MultipleSlider imgs={arrayOfCards} />
+              <div className="grid-rigth"></div>
+            </div>
+          </>
+        ) : (
+          ""
+        )}
+      </Hero>
+    </div>
   );
 };
 
-
 export default Home;
-
-
