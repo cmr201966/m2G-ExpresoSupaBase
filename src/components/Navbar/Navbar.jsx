@@ -210,14 +210,16 @@ const Navbar = (props) => {
               ) : (
                 ""
               )}
-              <IconButton
-                className="responsive-lupa"
-                id="lupa"
-                color="inherit"
-                type="submit"
-              >
-                <Search />
-              </IconButton>
+              <Link to="/productos">
+                <IconButton
+                  className="responsive-lupa"
+                  id="lupa"
+                  color="inherit"
+                  type="submit"
+                >
+                  <Search />
+                </IconButton>
+              </Link>
               <IconButton
                 sx={{ padding: 0 }}
                 id="toggle-b"
