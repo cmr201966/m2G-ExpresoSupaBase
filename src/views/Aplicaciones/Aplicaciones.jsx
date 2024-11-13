@@ -8,8 +8,6 @@ import Add from "@mui/icons-material/Add";
 import Delete from "@mui/icons-material/Delete";
 import Close from "@mui/icons-material/Close";
 import Edit from "@mui/icons-material/Edit";
-import IconButton from "@mui/material/IconButton";
-import ArrowBack from "@mui/icons-material/ArrowBack";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useNavigate } from "react-router-dom";
@@ -18,6 +16,7 @@ import { useLocation } from "react-router-dom";
 import { useNotification } from "../../context/NotificationProvider";
 import { isValid, apiBaseDatos, buscarEnArreglo, getJpgFileSB  } from "../../Utiles/Utiles";
 import { Box, CircularProgress } from "@mui/material";
+import Encabezado from "../../components/Encabezado/Encabezado";
 
 const Aplicaciones = () => {
 // Create a single supabase client for interacting with your database
@@ -317,35 +316,19 @@ const Aplicaciones = () => {
           ) : ""}
 
         {inicia===false?
-        <div className="div-papa">
-        <div className="cabeza">
-            <IconButton color="primary" onClick={() => {
-              navigate(`/?nivel=${0}`);
-            }}>
-            <ArrowBack className="flecha" />
-            </IconButton>
-            <p className="atras">Atrás</p>
-        </div>
-
+        <div className="div-papa-aplicaciones">
+          <Encabezado/>
         <div className="aplicaciones">
           <p className="strong"> Publicar anuncio</p>
           <div className="container-aplicaciones">
             <div className="app-grip">
-                <div className="app-flex app-flex-gap">
-                     <label>Anuncio:</label>
-                     {inicia===false && (agregarsn || editarsn)?
-                      <>
-                     <label>Descripcion:</label>
-                     <label>Tooltip:</label>
-                     <label className="app-label-naturaleza">Categoria: </label>
-                     </>:""
-                     }
-                 </div>
                  <div className="app-flex">
-                    {agregarsn===true?
+                 <label>Anuncio:</label>
+                 {agregarsn===true?
                       <input className="app-input-area"
                                id="nick"
                                value={nick}
+                               placeholder="Nombre corto"
                                onChange={handleInput}
                                type="text"
                                required
@@ -362,22 +345,17 @@ const Aplicaciones = () => {
 
                       {inicia===false && (agregarsn || editarsn)?
                          <>
-                         <input className="app-input-area"
+                     <label>Descripcion</label>
+                     <input className="app-input-area"
                                 id="desc"
                                 value={desc}
+                                placeholder="Descripción"
                                 onChange={handleInput}
                                 type="text"
                                 required
                          />
-
-                         <input className="app-input-area"
-                              id="ttip"
-                              value={ttip}
-                              onChange={handleInput}
-                              type="text"
-                              required
-                         />
-                         <div className="input-area1-producto">
+                     <label>Categoria </label>
+                     <div className="">
                            <select className="app-select-naturaleza" id="categoria" onChange={handleInput} value={categoria}>
                                {arrayCategorias.map((item, i) => {
                                    return <option key={i} value={i} >{item.desc}</option>

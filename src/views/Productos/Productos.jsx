@@ -3,9 +3,7 @@ import Navbar from "../../components/Navbar/Navbar";
 import Hero from "../../layouts/Hero/Hero";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import ArrowBack from "@mui/icons-material/ArrowBack";
 import Checkbox from "@mui/material/Checkbox";
-import IconButton from "@mui/material/IconButton";
 import { Box, CircularProgress } from "@mui/material";
 import Tippy from "@tippyjs/react";
 import { useNavigate } from "react-router-dom";
@@ -17,6 +15,7 @@ import marker from "../../assets/images/custom_marker.png";
 import { isValid, getJpgFileSB, apiBaseDatos } from "../../Utiles/Utiles";
 import { useEffect, useState } from "react";
 import CardRow from "../../components/CardRow/CardRow";
+import Encabezado from "../../components/Encabezado/Encabezado";
 import config from "../../config";
 import "./styles.css";
 
@@ -261,7 +260,9 @@ function contains(lat, lon, bbox) {
   async function init1() {
     setShow1(true);
     setInicia(true);
-    let result1 = await apiBaseDatos("getProductos", sessionStorage.getItem("categoria"), sessionStorage.getItem("userAnuncio"), sessionStorage.getItem("buscar"));
+    let result1 = await apiBaseDatos("getProductos", sessionStorage.getItem("categoria"), 
+                                     sessionStorage.getItem("userAnuncio"), 
+                                     sessionStorage.getItem("buscar"));
     const newResult = [];
     if (isValid(result1.error)) {
       newResult.push({
@@ -281,7 +282,7 @@ function contains(lat, lon, bbox) {
           idproducto: item.idproducto,
           idnegocio: item.idnegocio,
           xxxNegocio: item.negocio,
-          Producto: item.descripcion,
+          Producto: item.producto,
           photo: item.idproducto + ".jpg",
           folderMYSQL: "./galerias/app_images/productos/" + item.idproducto,
           folderSUPABASE: "productos/" + item.idproducto,
@@ -453,45 +454,35 @@ function contains(lat, lon, bbox) {
         />
         <Hero>
 
-        <div className="div-papa">
+        <div className="div-Papa-Productos">
           <div className={"productos-cabeza"}>
-            <IconButton
-              color="primary"
-              onClick={() => {
-                navigate(
-                  `/?nivel=${nivel}`
-                );
-              }}
-            >
-            <ArrowBack className="flecha"/>
-            </IconButton>
-            <h4 className="h3-1-catproductos-cabeza">Atrás</h4>
+          <Encabezado/>
+          {inicia===false?
+          <div className="productos-nombre">
+              <p >({cantidadproductos}) - {nombre}</p>
+          </div>:""
+          }
+          {/*
             {(((puntosState === 2 && viewCarrito && showMap===true) || (showMap === false && puntos.length !== 0 && viewCarrito))
                && (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL' || (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='SUPABASE' && showMap===false)))?
                 <Tippy content={`Ordenar un producto`}>
                 <button
-                  type="button"
-                  className="car negocio-button primary"
-                  onClick={shooping}
+                   type="button"
+                   className="car negocio-button primary"
+                   onClick={shooping}
                 >
-            <ShoppingCartOutlinedIcon />
+                   <ShoppingCartOutlinedIcon />
                 </button>
               </Tippy>
             :""}
+*/}
             {((puntosState === 2 && viewCarrito && showMap===true) || (showMap === false && puntos.length !== 0 
                && viewCarrito)) && sessionStorage.getItem("sgbd").toLocaleUpperCase()==='SUPABASE' && showMap===true? 
                 <Tippy content={`Ordenar via WhatsApp`}>
                    <a href={url} target="_blank" rel="noopener noreferrer"><WhatsAppIcon /></a>
               </Tippy>
             :""}
-{/*                <button
-                  type="button"
-                  className="car negocio-button primary"
-                  onClick={whatsapp}
-                >
-                  <WhatsAppIcon />                  
-                </button>
-*/}
+
             {showMap !== true && mascerca > 0 ? (
               <div className="verOtraVez">
                 <label className="label-datos-productos input-productos-12">
@@ -510,6 +501,7 @@ function contains(lat, lon, bbox) {
             )}
 
           </div>
+          
           {show1 ? (
             <Box
               sx={{
@@ -523,6 +515,7 @@ function contains(lat, lon, bbox) {
               <CircularProgress color="checkbox" />
             </Box>
           ) : null}
+
           {(showMap === true && mascerca > 0 && mascerca != 999999) || (verOtraVez === true && mascerca > 0 && mascerca != 999999) ? (
             <>
               <div className="result">
@@ -536,11 +529,7 @@ function contains(lat, lon, bbox) {
           ) : (
             ""
           )}
-          {inicia===false?
-          <div className="productos-nombre">
-              <p >({cantidadproductos}) - {nombre}</p>
-          </div>:""
-          }
+
           {inicia === false && showMap !== true ? (
             <div className="product-flex">
               {result.map((item, i) => (

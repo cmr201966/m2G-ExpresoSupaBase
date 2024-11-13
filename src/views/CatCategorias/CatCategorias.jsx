@@ -7,8 +7,6 @@ import Add from "@mui/icons-material/Add";
 import Delete from "@mui/icons-material/Delete";
 import Close from "@mui/icons-material/Close";
 import Edit from "@mui/icons-material/Edit";
-import IconButton from "@mui/material/IconButton";
-import ArrowBack from "@mui/icons-material/ArrowBack";
 import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useNavigate } from "react-router-dom";
@@ -17,6 +15,7 @@ import Modal from "../../components/Modal/Modal";
 import { useLocation } from "react-router-dom";
 import { isValid, apiBaseDatos, getJpgFileSB } from "../../Utiles/Utiles";
 import { Box, CircularProgress } from "@mui/material";
+import Encabezado from "../../components/Encabezado/Encabezado";
 import "./styles.css";
 
 const CatCategorias = () => {
@@ -25,7 +24,11 @@ const CatCategorias = () => {
   const parsedParams = {}
   const {setOpen, setMessage} = useNotification();
   const [show, setShow] = useState(false);
+  const [nick, setNick] = useState("");
+  const [accion, setAccion] = useState("");
   const [desc, setDesc] = useState("");
+  const [nickt, setNickt] = useState("");
+  const [acciont, setAcciont] = useState("");
   const [desct, setDesct] = useState("");
   const [descold, setDescold] = useState("");
   const [inicia, setInicia] = useState(true);
@@ -91,9 +94,11 @@ const CatCategorias = () => {
     setInicia(false);
   } 
 
-  function guardaDatosCategoria(data, i)
-  {setDesct(data[i].desc)}
-
+  function guardaDatosCategoria(data, i){
+    setNickt(data[i].nick)
+    setAcciont(data[i].accion)
+    setDesct(data[i].desc)
+  }
 
   useEffect(() => {
     const localParams = location.search.substring(1).split("&");
@@ -117,6 +122,8 @@ const CatCategorias = () => {
   {
     setDesc(desct);
     setDescold(desct);
+    setNick(nickt);
+    setAccion(acciont);
     
   }
     
@@ -126,6 +133,8 @@ const CatCategorias = () => {
     setAgregarsn(false);
     setEditarsn(false);
     setDesc("");
+    setNick("");
+    setAccion("");
   }
 
     function limpiardatosCategoria() {
@@ -144,14 +153,14 @@ const CatCategorias = () => {
       recuperarDatosCategoria();
       setEditarsn(true);
       setTimeout(() => {
-        if (document.getElementById("desc")) document.getElementById("desc").focus();
-        
+        if (document.getElementById("nick")) document.getElementById("nick").focus();
       }, 50);
     }
   
     function agregar() 
     {
       limpiardatosCategoria();
+      setNombrefoto("");
       setAgregarsn(true);
       setTimeout(() => {
         if (document.getElementById("desc")) document.getElementById("desc").focus();        
@@ -166,7 +175,7 @@ const CatCategorias = () => {
     }
 
     async function confirmar() {
-    let err= await apiBaseDatos("setCategoriasNegocios", arrayCategorias[categoria].categorianegocio, desc, descold, "productos", agregarsn, contenidofoto, isBase64ToBlob );
+    let err= await apiBaseDatos("setCategoriasNegocios", arrayCategorias[categoria].categorianegocio, desc, descold, "productos", nick, accion,  agregarsn, contenidofoto, isBase64ToBlob );
     if (isValid(err)===true){
         setMessage("Ocurrido un error al registrar la categoria");
         setOpen(true);
@@ -199,7 +208,13 @@ const CatCategorias = () => {
             setOpen(true);
          }  
           break;
-       case "desc":
+       case "nick":
+          setNick(e.target.value);
+          break;
+       case "accion":
+          setAccion(e.target.value);
+          break;
+         case "desc":
             setDesc(e.target.value);
             break;
        case "vista":
@@ -286,37 +301,44 @@ const CatCategorias = () => {
           ) : ""}
         {inicia===false?
         <div className="div-papa-categorias">
-        <div className="cabeza">
-            <IconButton color="primary" onClick={() => {
-              navigate(`/?nivel=${0}`);
-            }}>
-            <ArrowBack className="flecha-categoria" />
-            </IconButton>
-            <h4 className="h3-1-cabeza-negocios">Atrás</h4>
-        </div>
-
+           <Encabezado/>
         <div className="categorias">
-          <p className="strong"> Categorias de Negocios</p>
+          <p className="strong margen-catnegocio"> Categorias de Negocios</p>
           <div className="container-categorias">
             <div className="grip-categorias">
-                <div className="flex-categorias flex-gap-categorias">
-                     <label>Categoria:</label>
-                 </div>
                  <div className="flex-categorias">
                       {agregarsn===true || editarsn===true?
-                      <input className="input-area-categorias"
+                      <>
+                      <div className="grupo-nick-accion">
+                         <input className="input-area-categorias"
+                               id="nick"
+                               placeholder="Nombre corto"
+                               value={nick}
+                               onChange={handleInput}
+                               type="text"
+                               required/>
+                         <input className="input-area-categorias"
+                               id="accion"
+                               placeholder="Acción"
+                               value={accion}
+                               onChange={handleInput}
+                               type="text"
+                               required/>
+                      </div>         
+                      <input className="input-area-categorias-desc"
                                id="desc"
+                               placeholder="Descripción"
                                value={desc}
                                onChange={handleInput}
                                type="text"
-                               required
-                       />:""}
-                       
+                               required/>
+                       </>                               
+                       :""}
                     {(agregarsn===false && editarsn===false)?
                       <div className="">
                         <select className="select-categorias" disabled={editarsn===true?true:false} id="categorianegocio" onChange={handleInput} value={categoria}>
                           {arrayCategorias.map((item, i) => {
-                            return <option key={i} value={i} >{item.desc}</option>
+                            return <option key={i} value={i} >{item.nick}</option>
                           })}
                         </select>
                       </div>:""}
@@ -334,7 +356,7 @@ const CatCategorias = () => {
               )}
 
              <div className="grupo-button-categorias">
-                   {(agregarsn === true || editarsn === true) && nombrefoto !== "" && desc!==""? (
+                   {(agregarsn === true || editarsn === true) && nick!=="" && accion!=="" && nombrefoto !== "" && desc!==""? (
                       <Tippy content="Vista previa">
                         <button
                           type="button"

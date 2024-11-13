@@ -1,5 +1,4 @@
 .card-row {
-  gap: 10px;
   display: flex;
   background-color: rgb(2, 114, 226);
   border-radius: 15px;
@@ -31,18 +30,18 @@
 }
 
 .card-image {
-  height: 150px;
+  /*height: 150px;*/
   position: relative;
 }
 
 .card-image img {
-  padding-top: 25px;
-  width: 75%;
-  height: 75%;
+  padding-top: 15px;
+  width: 50%;
+  height: 70%;
   cursor: pointer;
   object-fit: cover;
   border-radius: 15px 15px 0px 0px;
-  padding-left: 28px;}
+  padding-left: 15px;}
 
 .card-row .button-container {
   display: flex;
@@ -82,7 +81,7 @@
 
 .card-texts {
   flex: 1;
-  gap: 10px;
+  /*gap: 10px;*/
   display: flex;
   flex-direction: column;
   justify-content: center;

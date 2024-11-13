@@ -1,13 +1,13 @@
 .main-info-producto {
   display: flex;
   flex-direction: column;
-  padding: 20px;
-  gap: 20px;  
 }
 
 .perfil-info-producto-1 {
   display: flex;
-  gap:30px;
+  justify-content: center;
+  background: rgb(20, 96, 172);
+  gap:8px;
 }
 
 .img-class-info-producto{
@@ -16,17 +16,17 @@
   position: relative;
 }
 .img-class-info-producto img {
-  /* Para hacer la imagen circular */
-  /*border-radius: 50%; */
   border-radius: 15px;
 }
 .product-info-1 {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
-  gap: 7px;
   color: white;
-  margin-top: 30px;
+  margin-top: 15px;
+  margin-bottom: 15px;
+  width: 100%;
+  padding-left: 28px;
 }
 .mapa-producto{
   position: relative;
@@ -41,11 +41,10 @@
 p {
   margin: 1px;
 }
-
 .img-info-producto
 {
-  height: 394px;
-  width: 520px;
+  height: 285px;
+  width: 285px;
   object-fit: cover;
   margin-top: 10px; 
 }
@@ -93,28 +92,58 @@ p {
   flex-direction: column;
   }
   .img-info-producto-lateral{
-    height: 120px;
-    width: 120px;
+    height: 60px;
+    width: 60px;
     object-fit: cover;
     border-radius: 15px;
     border: 1px solid aliceblue;
     margin-top: 13px;
-    margin-left: 25px
+    margin-left: 10px;
   }
-  .div-papa-1{
+  .div-papa-infoProducto{
     display: flex;
     flex-direction: column;
+    background: rgb(20, 96, 172);
     margin: 0 auto;
-    width: 70%;
+    /*width: 100%;*/
+    width: 375px;
   }
+
   .mapa-1{
     width: 100%;
+    background: rgb(20, 96, 172);
   }
   .font-size1{
-    font-size: 20px;
+    font-size: 18px;
     text-decoration: none;
   }
   .car-info{
     margin-left: 50px;
     margin-top: 100px ;
+  }
+  .agrupa-info{
+    display: flex;
+    justify-content: center;
+    background: rgb(20, 96, 172);
+  }
+  .mapa-9{
+    display: flex;
+    justify-content: center;
+    margin-bottom: 5px;
+  }
+  .ws{
+    display: flex;
+    width: 100%;
+    justify-content: space-between;
+    align-items: center;
+  }
+  .wapp{
+    margin-right: 5px;
+  }
+  .Info-Productos{
+    background-color: rgb(22, 104, 187);  
+  }
+  .encabezado-Info-Producto{
+    color:aliceblue;
+    margin-left: 29px;
   }

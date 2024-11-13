@@ -12,6 +12,7 @@ import Close from "@mui/icons-material/Close";
 import { Button } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { getGalerias, isValid, getJpgFileSB, creaFileInFolder, deleteFileInFolder } from "../../Utiles/Utiles";
+import AddAPhotoOutlinedIcon from '@mui/icons-material/AddAPhotoOutlined';
 
 const ComGalerias = (props) => {
   const {
@@ -195,7 +196,7 @@ const ComGalerias = (props) => {
               ""
             )}
 
-            <label className="titulo-album">Fotos {deQuien}</label>
+            <label className="titulo-album">{deQuien}</label>
             <div className="galeria-fotos-view">
               {tipouser !== 0 && permiso === true ? (
                 <div className="image-galeria-add-foto">
@@ -207,7 +208,7 @@ const ComGalerias = (props) => {
                       type="file"
                       required
                     />
-                    <Add className="addcss" />
+                    <AddAPhotoOutlinedIcon className="addcss" />
                   </label>
                 </div>
               ) : (

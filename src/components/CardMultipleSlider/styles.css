@@ -1,9 +1,9 @@
 .card-slider{
     display: flex;
     flex-direction: column;
-    min-width: 200px;
-    width: 200px;
-    height: 250px;
+    min-width: 100px;
+    width: 100px;
+    height: 140px;
     background-color: white;
     border-radius: 15px;
     align-items: center;
@@ -16,7 +16,7 @@
     color: black;
 }
 .card-slider-descripcion{
-    font-size: 14px;
+    font-size: 12px;
     color:black;
 }
 .card-slider-img{

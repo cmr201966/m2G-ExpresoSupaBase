@@ -213,7 +213,7 @@ function GeneraVistagetCategoriasNew(user, tipouser) {
   }
   return (
     "CREATE OR REPLACE VIEW getcategoriasnew  AS select DISTINCT tablacatproductos.categorianegocio as idcategoria, " +
-    'tablaCategorias."desc" as categoria, link, destodo from tablaCategorias, tablacatproductos' +
+    'tablaCategorias."desc" as categoria, link, destodo, tablacategorias.nick(nick) from tablacategorias, tablacatproductos' +
     " where (tablaCategorias.categorianegocio=tablacatproductos.categorianegocio) and (tablacatproductos.activo=true)" +
     condicion
   );
@@ -234,7 +234,7 @@ async function getcategoriasnew() {
       sessionStorage.getItem("tipouser")
     );
     await supabase.rpc("execute_query", { query: sql });
-    const { data } = await supabase
+    const { data, error } = await supabase
       .from("getcategoriasnew")
       .select("*")
       .order("destodo", { ascending: true });
@@ -263,6 +263,8 @@ async function CategoriasInsertUpdate(
   desc,
   descold,
   link,
+  nick,
+  accion,
   insertar,
   contenidofoto,
   isBase64ToBlob
@@ -270,18 +272,18 @@ async function CategoriasInsertUpdate(
   let err;
   if (insertar === true) {
     const { error } = await supabase
-      .from("tablaCategorias")
-      .insert({ desc: desc, link: link });
-    if (error.length === undefined || error.length === null) {
-      const { data } = await supabase
+      .from("tablacategorias")
+      .insert({ desc: desc, link: link, accion: accion, nick: nick });
+    if (isValid(error) === false) {
+      const { data, error } = await supabase
         .from("tablacategorias")
         .select("*")
-        .order("id", { ascending: false })
+        .order("categorianegocio", { ascending: false })
         .limit(1);
       err = uploadBase64Image(
         contenidofoto,
         "galerias",
-        "categorias_de_negocios/" + data[0].id + "/" + data[0].id + ".jpg",
+        "categorias_de_negocios/" + data[0].categorianegocio + "/" + data[0].categorianegocio + ".jpg",
         isBase64ToBlob
       );
     }
@@ -289,7 +291,7 @@ async function CategoriasInsertUpdate(
   } else {
     const { error } = await supabase
       .from("tablacategorias")
-      .update({ desc: desc, link: link })
+      .update({ desc: desc, link: link, accion: accion, nick: nick })
       .eq("categorianegocio", categorianegocio);
       err = error;
     if (isValid(error) === false) {
@@ -845,6 +847,8 @@ async function setCategoriasNegociosSB(
   desc,
   descold,
   link,
+  nick,
+  accion,
   inserta,
   contenidofoto,
   isBase64ToBlob
@@ -857,6 +861,8 @@ async function setCategoriasNegociosSB(
       desc,
       descold,
       link,
+      nick,
+      accion,
       inserta,
       contenidofoto,
     });
@@ -868,6 +874,8 @@ async function setCategoriasNegociosSB(
       desc,
       descold,
       "productos",
+      nick,
+      accion,
       inserta,
       contenidofoto,
       isBase64ToBlob
@@ -1197,7 +1205,9 @@ const apiBaseDatos = async (
         param4,
         param5,
         param6,
-        param7
+        param7,
+        param8,
+        param9
       );
     case "login":
       return await loginSB(param1, param2);

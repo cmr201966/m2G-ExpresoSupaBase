@@ -43,11 +43,11 @@ const CardRow = (props) => {
         <div className="card-texts">
           {item.xxxNegocio !== "" && item.xxxNegocio !== undefined ?
             <div>
-              <label className="parrafo_label"><strong>Negocio:</strong></label>
+              {/*<label className="parrafo_label"><strong>Negocio:</strong></label>*/}
               <label className="parrafo_texto1">{item.xxxNegocio}</label>
             </div> : ""}
           <div>
-            <label className="parrafo_label"><strong>Producto:</strong></label>
+            {/*<label className="parrafo_label"><strong>Producto:</strong></label>*/}
             <label className="parrafo_texto3">{item.Producto}</label>
           </div>
         </div>

@@ -116,10 +116,10 @@ const Home = () => {
         result.forEach((item, i) => {
           newResult.push({
             categoria: item.idcategoria,
-            name: item.categoria,
+            name: item.nick.nick,
             link: item.link,
             photo: arrayContenidoFoto[i],
-            tooltip: item.desc,
+            tooltip: item.categoria,
           });
         });
         setResult(newResult);
@@ -146,7 +146,7 @@ const Home = () => {
           titulo={prop.name}
           categoria={prop.categoria}
           imagen={prop.photo}
-          descripcion={name}
+          descripcion={prop.tooltip}
           rutatmp={rutatmp}
           desctmp={desctmp}
           nivel={nivel}
@@ -172,7 +172,9 @@ const Home = () => {
     <div>
       <Navbar nivel={0} />
       <Hero>
-        <div className="cabeza">
+      <div className="grip-flecha">
+        <div></div>
+        <div className="encabezado">
           {nivel === 0 ? (
             ""
           ) : (
@@ -189,12 +191,15 @@ const Home = () => {
                   );
                 }}
               >
-                <ArrowBack className="flecha" />
+                <ArrowBack className="color-flecha" />
               </IconButton>
-              <h3 className="acercade-title">Atrás</h3>
+              <h3 className="color-encabezado">Atrás</h3>
             </>
           )}
         </div>
+        <div></div>
+      </div>        
+
 
         {show ? (
           <Box

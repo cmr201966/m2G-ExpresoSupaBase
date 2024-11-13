@@ -5,6 +5,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { apiBaseDatos, isValid } from "../../Utiles/Utiles";
 import { useNotification } from "../../context/NotificationProvider";
+import Check from "@mui/icons-material/Check";
 import "./styles.css";
 
 
@@ -73,8 +74,11 @@ const Login = () => {
       parsedParams[paramName] = paramValue;
     });
   }, [location]);
+
   useEffect(() => {
     init();
+    const inputElement = document.getElementById('user');
+    if (inputElement) { inputElement.focus(); }    
   }, []);
 
   return (
@@ -85,9 +89,10 @@ const Login = () => {
           <div className="container-login">
             <h4 className="title-1">Iniciar sesión</h4>
             <div className="input-area-login">
-              <label>Usuario:</label>
+            {/*<p>Usuario</p>*/}
               <input
                 id="user"
+                placeholder="Usuario"
                 value={user}
                 onChange={handleInput}
                 type="text"
@@ -95,9 +100,10 @@ const Login = () => {
               />
             </div>
             <div className="input-area-login">
-              <label>Contraseña:</label>
+              {/*<p>Contraseña</p>*/}
               <input
                 id="password"
+                placeholder="Contraseña"
                 value={password}
                 onChange={handleInput}
                 type="password"
@@ -105,8 +111,8 @@ const Login = () => {
               />
             </div>
             <div className="grupo-button-login">
-              <button type="button" className="confirmarlogin button-login primary" onClick={confirmalogin}>
-                Confirmar
+              <button type="button" className="button-login primary" onClick={confirmalogin}>
+              <Check/>
               </button>
             </div>
 

@@ -18,9 +18,8 @@ import { useNotification } from "../../context/NotificationProvider";
 
 import Hero from "../../layouts/Hero/Hero";
 import { useEffect, useState } from "react";
-import IconButton from "@mui/material/IconButton"
-import ArrowBack from "@mui/icons-material/ArrowBack";
 import { isValid, apiBaseDatos, getJpgFileSB, buscarEnArreglo } from "../../Utiles/Utiles";
+import Encabezado from "../../components/Encabezado/Encabezado";
 import "./styles.css";
 
 const Registrarse = () => {
@@ -149,6 +148,10 @@ const Registrarse = () => {
     init();
   }, [location]);
   
+  useEffect(() => {
+    const inputElement = document.getElementById('user');
+    if (inputElement) { inputElement.focus(); }    
+  }, []);
 
   function provinciachange(cambia, municipio, provinciadata, municipiodata)
   {
@@ -233,7 +236,6 @@ const Registrarse = () => {
     if (password !== rpassword ) {
       setMessage("Contraseña incorrecta");
       setOpen(true);
-  
       document.getElementById("password").focus();
     }
     else
@@ -244,7 +246,9 @@ const Registrarse = () => {
       }
       let latT=lat===null || lat===undefined?0:lat;
       let lngT=lat===null || lng===undefined?0:lng;
-      let response = await apiBaseDatos("setregistrarse", user.toLowerCase(), nombre, password, celular, provincia, municipio, contenidofoto, modifica, plan, latT, lngT, isBase64ToBlob)
+      let response = await apiBaseDatos("setregistrarse", user.toLowerCase(), nombre, password, celular, 
+                                                          provincia, municipio, contenidofoto, modifica, 
+                                                          plan, latT, lngT, isBase64ToBlob);
       let isOk=true;
       if (isValid(response)===true )
          if (isValid(response.length)===true) isOk=false;
@@ -292,24 +296,20 @@ const Registrarse = () => {
       />
       <Hero>
       <div className="div-papa">
-          <div className="cabeza">
-               <IconButton color="primary" onClick={() => 
-               {
-                  navigate("/?nivel=0");
-               }}>
-                <ArrowBack className="flecha" />
-                
-              </IconButton>
-              <h4 className="registrarse-cabeza-1">Atrás</h4>
-          </div>
-          {inicia===true && show1===true ? <Box sx={{ width: "100%", height: "300px", display: "flex", alignItems: "center", justifyContent: "center" }}><CircularProgress color="checkbox" /></Box> : null}
+        <Encabezado/>
+
+        {inicia===true && show1===true ? 
+          <Box sx={{ width: "100%", height: "300px", display: "flex", 
+                     alignItems: "center", justifyContent: "center" }}><CircularProgress color="checkbox" />
+          </Box> : null
+        }
 
         {inicia===false?
         <>
         <div className="registrarse">
           <div className="container-registrarse">
-          <label className="label-grupo label-registrase-size strong">Registrarse</label>
-          <label className="label-grupo label-datos-size strong">Datos Generales</label>
+            <label className="label-grupo label-registrase-size strong">Registrarse</label>
+            <label className="label-grupo label-datos-size strong">Datos Generales</label>
             <div className="input-area-registrarse">
               <label className="usuario" >* Usuario:</label>
               <input
@@ -411,9 +411,8 @@ const Registrarse = () => {
                           <VisibilityIcon />
                         </button>
                       </Tippy>:""
-                    }
-               
-                        {inicia === false  && user!=="" && password!=="" && celular!==""? 
+                      }
+                      {inicia === false  && user!=="" && password!=="" && celular!==""? 
                          <label className="producto-button primary label-photo">
                           <input
                             id="foto"
@@ -427,7 +426,7 @@ const Registrarse = () => {
                             <AddPhotoAlternateIcon />
                           </Tippy>
                         </label>:""}
-                        {inicia === false  && user!=="" && password!=="" && celular!==""? (
+                      {inicia === false  && user!=="" && password!=="" && celular!==""? (
                           <Tippy content="Ubicar el negocio en el mapa">
                             <button
                               type="button"
@@ -448,16 +447,11 @@ const Registrarse = () => {
                        <button type="button" className="producto-button primary" onClick={tcancelar}>
                          <Close />
                       </button>
-                </div>                 
-            </div>
-         </div>
-        </>:""}
-
-        <div className="mapa-1">
-           {showMap === true ? (
-                    <div className="mapa-catalogo">
+              </div>
+              {showMap === true ? (
+                    <div className="mapa-registrarse">
                       <Map
-                        sx={{ height: "100%", width: "100%" }}
+                        sx={{ height: "340px", width: "345px" }}
                         onMapClick={lngLatSelected}
                         remoteshowMap={showMap}
                         lat={lat}
@@ -471,7 +465,8 @@ const Registrarse = () => {
                     ""
                   )}
           </div>
-
+        </div>
+        </>:""}
         </div>
       </Hero>
     </div>

@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import "./styles.css";
 
 const CardMultipleSlider = (props) => {
-  const { categoria, link, titulo, imagen, rutatmp, desctmp,  nivel } = props
+  const { categoria, link, titulo, imagen, rutatmp, desctmp,  nivel, descripcion } = props
   return (
          <Link 
             className="card-slider"
@@ -13,7 +13,7 @@ const CardMultipleSlider = (props) => {
          >
              <p className="card-slider-titulo"><b>{titulo}</b></p>
              <img className="card-slider-img" src={imagen} alt={`Foto de ${titulo}`}  />
-             <p className="card-slider-descripcion">{titulo}</p>
+             <p className="card-slider-descripcion">{descripcion}</p>
          </Link>
   );
 };

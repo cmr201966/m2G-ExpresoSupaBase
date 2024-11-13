@@ -2,12 +2,11 @@ import Tippy from "@tippyjs/react";
 import Navbar from "../../components/Navbar/Navbar";
 import Hero from "../../layouts/Hero/Hero";
 import IconButton from "@mui/material/IconButton";
-import ArrowBack from "@mui/icons-material/ArrowBack";
 import PowerSettingsNewIcon from "@mui/icons-material/PowerSettingsNew";
 import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import { useNavigate } from "react-router-dom";
 import { useEffect, useState } from "react";
+import { Box, CircularProgress } from "@mui/material";
 
 import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Map from "../../components/Map/MapBox";
@@ -18,15 +17,16 @@ import libre from "../../assets/images/libre.png";
 import off from "../../assets/images/ocupado.png";
 import { isValid, apiBaseDatos, getFilesInFolderSB, getJpgFileSB, getInfoProducto, getParesGpsProducto  } from "../../Utiles/Utiles";
 import config from "../../config";
+import Encabezado from "../../components/Encabezado/Encabezado";
 // styles
 import "./styles.css";
 
 
 const InfoProducto = () => {
-  const navigate = useNavigate();
   const location = useLocation();
   const parsedParams = {};
   const [desctmp] = useState("Galerias");
+  const [showcircularProgress, setshowCircularProgress] = useState(true); 
   const [showMap] = useState(true);
   const [showGalerias, setShowGalerias] = useState(false);
     // Estados para la posición GPS del mapa
@@ -43,6 +43,7 @@ const InfoProducto = () => {
   const [color, setColor] = useState("");
   const [chapa, setChapa] = useState("");
   const [celular, setCelular] = useState("");
+  const [accion, setAccion] = useState("");
   const [inicio, setInicio] = useState(true);
   const [gps, setGps] = useState(true);
   const [puntos, setPuntos] = useState([]);
@@ -63,8 +64,9 @@ const InfoProducto = () => {
                                                "productos/" + parsedParams.idproducto, "galerias");
     setArrayFotos(resultFiles);
     let tarray=[];
-    for(let i=0; i<resultFiles.length; i+=1)
+    for(let i=0; i<resultFiles.length; i+=1){
       if (resultFiles[i].indexOf(".jpg") === -1) resultFiles.splice(i, 1)
+      }
 
     for(let i=0; i<resultFiles.length; i+=1){
         let result= await getJpgFileSB(resultFiles[i], "./galerias/app_images/productos/" + parsedParams.idproducto, "productos/" + parsedParams.idproducto);
@@ -92,6 +94,7 @@ const InfoProducto = () => {
       setTarifa(result[0].tarifa);
       setCostoDomicilio(result[0].costodomicilio);
       setDomicilio(result[0].domicilio);
+      setAccion(result[0].accion)
     }
     result= await getParesGpsProducto(parsedParams.categoria,  parsedParams.idproducto);
     let paresGps = [];
@@ -109,6 +112,7 @@ const InfoProducto = () => {
       setContenidofoto(result);
     }
     setInicio(false);
+    setshowCircularProgress(false);
   }
 
   const onChangeMap = (which, value) => {
@@ -243,36 +247,42 @@ if (puntosState===2){
          nivel={1}
       />
       <Hero>
-        <div className="div-papa-1">
-          <div className="cabeza">
-          <IconButton
-            color="primary"
-            onClick={() => {
-              navigate(-1);
-            }}
-          >
-          
-           <ArrowBack className="flecha" />
-          </IconButton>
-          <h4 className="registrarse-cabeza-1">Atrás</h4>
-         </div>
-        
+      {showcircularProgress ? (
+            <Box
+              sx={{
+                width: "100%",
+                height: "300px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CircularProgress color="checkbox" />
+            </Box>
+          ) : null
+      }
+      {inicio===false?
+        <div className="div-papa-infoProducto">
+          <Encabezado/>
          <main className="main-info-producto">
           {showMap === true ? (
             <>
+              <span className="encabezado-Info-Producto">{producto}</span>
               <section className="perfil-info-producto-1">
-                <div>
-                {arrayFotos.map((item, i) => (
-                  item!=="foto-1.jpg" &&
-                  <div key={i} className="producto-fotos">
-                      <img
-                        className="img-info-producto-lateral"
-                        src={arrayFotoInfo[i]}
-                        alt="Imagen del producto"
-                      />
-                </div>
-                ))}
-                </div>
+                {sessionStorage.getItem("tipouser")==='3'?
+                <div className="sliderVertical">
+                  {console.log(arrayFotos)}
+                   {arrayFotos.map((item, i) => (                     
+                     <div key={i} className="producto-fotos">
+                       <img
+                         className="img-info-producto-lateral"
+                         src={arrayFotoInfo[i]}
+                         alt="Imagen del producto"
+                       />
+                     </div>
+                   ))}
+                </div>:""
+                }
                 <div className="img-class-info-producto">
                   <img
                     className="img-info-producto"
@@ -290,57 +300,42 @@ if (puntosState===2){
                     </button>
                   </Tippy>
                 </div>
-
-                <div className="product-info-1">
-                  <p className="strong font-size1"> Datos del producto</p>
-                  <div className="parrafo">
-                    <p>Dueño:</p>
-                    <p>{negocio}</p>
+              </section>
+              <div className="agrupa-info">
+               <div className="product-info-1">
+                  <div className="ws">
+                     <span className="strong font-size1"> Datos del producto</span>
+                     <Tippy content={`${accion} via WhatsApp`}>
+                        <a href={url} className="whatsapp" target="_blank" rel="noopener noreferrer"><WhatsAppIcon /></a>
+                      </Tippy>
                   </div>
-                  <div className="parrafo">
-                    <p>Producto:</p>
-                    <p>{producto}</p>
-                  </div>
+                    <span>{negocio}</span>
+                    {/*<span>{producto}</span>*/}
 
                   {isValid(precio)===true && precio !== 0 ? (
-                    <div className="parrafo">
-                      <p>Precio:</p>
-                      <p>{precio}</p>
-                    </div>
+                      <span>{precio}</span>
                   ) : (
                     ""
                   )}
                   {isValid(marca)=== true && marca!=="" ? (
-                    <div className="parrafo">
-                      <p>Marca:</p>
-                      <p>{marca}</p>
-                    </div>
+                      <span>{marca}</span>
                   ) : (
                     ""
                   )}
 
                  {isValid(color) === true && color !== "" ? (
-                    <div className="parrafo">
-                      <p>Color:</p>
                       <p>{color}</p>
-                    </div>
                   ) : (
                     ""
                   )}
                  {isValid(chapa)=== true && chapa !== "" ? (
-                    <div className="parrafo">
-                      <p>Chapa:</p>
                       <p>{chapa}</p>
-                    </div>
                   ) : (
                     ""
                   )}
 
-                  {isValid(celular)=== true && sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL'? (
-                    <div className="parrafo">
-                      <p>Celular:</p>
+                  {isValid(celular)=== true && sessionStorage.getItem("sgbd").toLocaleUpperCase()!=='MYSQL'? (
                       <p>{celular}</p>
-                    </div>
                   ) : (
                     ""
                   )}
@@ -361,18 +356,15 @@ if (puntosState===2){
                   ) : (
                   ""
                 )}
+               </div>
+              </div>
 
-                  <Tippy content="Contactar via WhatsApp">
-                    <a href={url} className="whatsapp" target="_blank" rel="noopener noreferrer"><WhatsAppIcon /></a>
-                  </Tippy>
-             </div>
-           </section>
-         </>
+             </>
             
-          ) : 
-          (
-            ""
-          )}      
+             ) : 
+             (
+             ""
+            )}      
 
           {inicio === false && showGalerias === true ? (
             <section className="galeria">
@@ -389,11 +381,11 @@ if (puntosState===2){
             ""
           )}
 
-        </main>
-        <div className="mapa-1">
-          {inicio===false && gps === 1 && showMap === true && puntos.length!==0 ? (
+         </main>
+         <div className="mapa-1">
+          {inicio===false && gps === 1 && showMap === true && puntos.length>0 ? (
             <section className="mapa">
-              {domicilio===1?
+              {domicilio===1  && puntos.length>1?
               <div className="parrafo distancia">
                 <p>{puntos[0].info}</p>
                 <p>{" esta a "}</p>
@@ -405,9 +397,10 @@ if (puntosState===2){
                 </p>
               </div>:""
               }
+              <div className="mapa-9">
               <Map
                 points={puntos}
-                sx={{ height: "400px", width: "100%" }}
+                sx={{ height: "340px", width: "345px" }}
                 onMapClick={lngLatSelected}
                 remoteshowMap={showMap}
                 lat={lat}
@@ -415,6 +408,7 @@ if (puntosState===2){
                 onChange={onChangeMap}
                 remoteZoom={zoom}
               />
+              </div>
               :
             </section>
           ) : (
@@ -422,7 +416,8 @@ if (puntosState===2){
           )
           }
           </div>
-        </div>
+        </div>:""
+        }
       </Hero>
     </div>
   );

@@ -11,8 +11,6 @@ import Hero from "../../layouts/Hero/Hero";
 import { useNavigate } from "react-router-dom";
 import TextField from "@mui/material/TextField";
 import Autocomplete from "@mui/material/Autocomplete";
-import { IconButton } from "@mui/material";
-import ArrowBack from "@mui/icons-material/ArrowBack";
 import Check from "@mui/icons-material/Check";
 import Add from "@mui/icons-material/Add";
 import Delete from "@mui/icons-material/Delete";
@@ -24,6 +22,7 @@ import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import { isValid, buscarEnArreglo, buscarEnArregloString, apiBaseDatos, getJpgFileSB } from "../../Utiles/Utiles";
 import { useNotification } from "../../context/NotificationProvider";
+import Encabezado from "../../components/Encabezado/Encabezado";
 import "./styles.css";
 
 const CatProductos = () => {
@@ -31,6 +30,7 @@ const CatProductos = () => {
   const location = useLocation();
   const parsedParams = {};
   const {setOpen, setMessage} = useNotification();
+  const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
   const [showGalerias, setShowGalerias] = useState(false);
@@ -55,7 +55,7 @@ const CatProductos = () => {
   const [nombrefoto, setNombrefoto] = useState("");
   const [descripcion, setDescripcion] = useState("");
   const [nombrecorto, setNombrecorto] = useState("");
-  const [precio, setPrecio] = useState(0);
+  const [precio, setPrecio] = useState("");
   const [distanciaMax, setDistanciaMax] = useState(0);
   const [cbsCiudad, setCbsCiudad] = useState(0);
   const [producto, setProducto] = useState(null);
@@ -128,7 +128,7 @@ const CatProductos = () => {
     } else {
       const posicionProducto = buscarEnArreglo(resultproductos, resultproductos[0].idproducto, "idproducto");
       setArrayproductos(resultproductos);
-      setProducto({ label: resultproductos[0].desc, value: 0 });
+      setProducto({ label: resultproductos[0].nick, value: 0 });
 
       if (isValid(resultproductos[0].idproducto)===true) {
         recuperardatosproducto(resultproductos, 0);
@@ -268,7 +268,7 @@ const CatProductos = () => {
     setNombrefoto("");
     setNombrecorto("");
     setDescripcion("");
-    setPrecio(0);
+    setPrecio("");
     setCbgps(true);
   }
 
@@ -283,7 +283,7 @@ const CatProductos = () => {
   function recuperardatosproducto(data, i) {
     let index = buscarEnArreglo(data, data[i].idproducto, "idproducto");
     setUsuariot(data[i].iduser);
-    setProducto({ label: data[i].desc, value: index });
+    setProducto({ label: data[i].nick, value: index });
     setNombrecortot(data[i].nick);
     setDescripciont(data[i].desc);
     setPreciot(data[i].precio);
@@ -303,7 +303,7 @@ const CatProductos = () => {
 
   function restaurardatosproductosNew(data, posicion, arrayUsuarios) {
     setUsuario(buscarEnArregloString(arrayUsuarios, data[posicion].iduser, "iduser"));
-    setProducto({ label: data[posicion].desc, value: posicion });
+    setProducto({ label: data[posicion].nick, value: posicion });
     setNombrecorto(data[posicion].nick);
     setDescripcion(data[posicion].desc);
     setPrecio(data[posicion].precio);
@@ -353,6 +353,7 @@ const CatProductos = () => {
   };
 
   async function confirmar() {
+    setLoading(true);
     let mproducto = 0;
     if (producto === null) mproducto = 0 
     else mproducto = arrayproductos[producto?.value].idproducto;
@@ -363,6 +364,7 @@ const CatProductos = () => {
     if (isValid(result?.err)===true) {
       setMessage("Ocurrio un error mientras se registraba el producto")
       setOpen(true);
+      setLoading(false);
       return;
     }
     if (agregarsn) {
@@ -399,6 +401,7 @@ const CatProductos = () => {
     setShowGalerias(false);
     setAgregarsn(false);
     setEditarsn(false);
+    setLoading(false);
     init
   } 
 
@@ -500,28 +503,17 @@ const CatProductos = () => {
           ) : null}
           {inicia === false ? (
             <>
-              <div className="div-papa">
-                <div className="cabeza">
-                  <IconButton
-                    color="primary"
-                    onClick={() => {
-                      navigate(`/?nivel=${0}`);
-                    }}
-                  >
-                    <ArrowBack className="flecha" />
-                  </IconButton>
-                  <h4 className="h3-1-catproductos-cabeza">Atrás</h4>
-                </div>
-
+              <div className="div-papa-catProductos">
+                 <Encabezado/>
                 <div className="catalogo-producto">
-                  <p className="strong">Publicar un Productos</p>
+                  <p className="strong">Publicar un producto</p>
                   {showMap === true || showMap === false ? (
                     <>
                       <div className="container-producto-select">
-                        <div className="input-area1-producto">
-                          <label className="label-datos-catproducto">
-                            Categoria:{" "}
-                          </label>
+                        <div>
+                          <p className="label-datos-catproducto">
+                            Categoria
+                          </p>
                           <select
                             className="selecttn-prod"
                             id="tnegocio"
@@ -532,17 +524,17 @@ const CatProductos = () => {
                             {arraytnegocios.map((item, i) => {
                               return (
                                 <option key={i} value={i}>
-                                  {item.desc}
+                                  {item.nick}
                                 </option>
                               );
                             })}
                           </select>
                         </div>
 
-                        <div className="input-area1-producto">
-                          <label className="label-datos-catproducto">
-                            Producto:
-                          </label>
+                        <div>
+                          <p className="label-datos-catproducto">
+                            Producto
+                          </p>
                           <Autocomplete
                             disablePortal
                             disabled={agregarsn || editarsn}
@@ -557,15 +549,15 @@ const CatProductos = () => {
                             value={producto}
                             onChange={handleProducto}
                             sx={{
-                              paddingleft: "7px",
+                              paddingLeft: "7px",
                               borderRadius: "15px",
-                              marginLeft: "30px",
                               marginTop: "5px",
-                              minWidth: "336px",
+                              width: "100%",
                               height: "30px",
                               background: "aliceblue",
                               ".MuiAutocomplete-input": {
                                 padding: "5px 0 0 5px !important",
+                                fontSize: "14px !important",
                               },
                               ".MuiFilledInput-root": {
                                 padding: 0,
@@ -598,18 +590,14 @@ const CatProductos = () => {
                   ) : (
                     ""
                   )}
-
                       {agregarsn || editarsn ? (
                         <>
                           <div className="container-producto-datos">
-                            <div className="label-datos-catproducto-1 strong">
-                              Datos del nuevo producto{" "}
-                            </div>
-                            {sessionStorage.getItem("tipouser")==='3'?
+                          {sessionStorage.getItem("tipouser")==='3'?
                             <div className="input-area1-producto">
-                            <label className="label-datos-catproducto">
-                                Dueño:
-                           </label>
+                            <p className="label-datos-catproducto">
+                                Dueño
+                           </p>
                            <select
                              className="select-usuario"
                              id="usuario"
@@ -623,29 +611,31 @@ const CatProductos = () => {
                                 </option>
                               );
                             })}
-                          </select>
-                        </div>:""
-                        }
-                            <div className="input-area1-producto">
-                              <label className="label-datos-catproducto">
-                                *Nombre:
-                              </label>
+                            </select>
+                            </div>:""
+                            }
+
+                            <div className="label-datos-catproducto-1 strong">
+                              Datos del nuevo producto{" "}
+                            </div>
+
+
+                            <div className="input-area2">
                               <input
-                                className="input-cataproducto-1"
+                                className="input-cataproducto"
                                 id="nombrecorto"
+                                placeholder="Nombre"
                                 value={nombrecorto}
                                 onChange={handleInput}
                                 type="text"
                                 required
                               />
                             </div>
-                            <div className="input-area2">
-                              <label className="label-datos-catproducto">
-                                *Descripción:
-                              </label>
+                            <div  className="input-area2">
                               <input
-                                className="input-cataproducto-2"
+                                className="input-cataproducto"
                                 id="descripcion"
+                                placeholder="Descripción"
                                 value={descripcion}
                                 onChange={handleInput}
                                 type="text"
@@ -653,12 +643,10 @@ const CatProductos = () => {
                               />
                             </div>
                             <div className="input-area2">
-                              <label className="label-datos-catproducto">
-                                Marca:
-                              </label>
                               <input
-                                className="input-cataproducto-20"
+                                className="input-cataproducto"
                                 id="marca"
+                                placeholder="Más datos (ejemplo: marca, horario)"
                                 value={marca}
                                 onChange={handleInput}
                                 type="text"
@@ -666,12 +654,10 @@ const CatProductos = () => {
                               />
                             </div>
                             <div className="input-area2">
-                              <label className="label-datos-catproducto">
-                                Modelo/Chapa:
-                              </label>
                               <input
-                                className="input-cataproducto-21"
+                                className="input-cataproducto"
                                 id="modelo"
+                                placeholder="Otros datos (ejemplo: modelo, chapa, fechas)"
                                 value={modelo}
                                 onChange={handleInput}
                                 type="text"
@@ -679,39 +665,44 @@ const CatProductos = () => {
                               />
                             </div>
                             <div className="precio-capacidad-color">
-                              <div className="input-area2">
-                                <label className="label-datos-catproducto">
-                                  Precio:
-                                </label>
+                              <div>                                
+                                <p className="label-datos-catproducto">
+                                  Precio
+                                </p>
+                                <Tippy content="Precio">
                                 <input
                                   className="input-cataproducto-4"
                                   id="precio"
+                                  placeholder="Precio"
                                   value={precio}
                                   onChange={handleInput}
                                   type="text"
                                   required
                                 />
+                                </Tippy>
                               </div>
-                              <div className="input-area2">
-                                <label className="label-datos-catproducto plazas">
-                                  Plazas:
-                                </label>
+                              <div>
+                                <p className="label-datos-catproducto plazas">
+                                  Plazas
+                                </p>
                                 <input
                                   className="input-cataproducto-999"
                                   id="talla"
+                                  placeholder="Plazas"
                                   value={talla}
                                   onChange={handleInput}
                                   type="text"
                                   required
                                 />
                               </div>
-                              <div className="input-area2">
-                                <label className="label-datos-catproducto color">
-                                  Color:
-                                </label>
+                              <div>
+                                <p className="label-datos-catproducto color">
+                                  Color
+                                </p>
                                 <input
                                   className="input-cataproducto-998"
                                   id="color"
+                                  placeholder="Color"
                                   value={color}
                                   onChange={handleInput}
                                   type="text"
@@ -721,32 +712,29 @@ const CatProductos = () => {
                             </div>
                             <div className="domicilio-ocupado-gps">
                               <div className="input-area4">
-                                <label className="label-datos-catproducto input-cataproducto-12 domicilio">
-                                  Domicilio:
-                                </label>
-                                <Checkbox
+                              <Checkbox
                                   id="domicilio"
                                   sx={{ color: 'white', '&.Mui-checked': { color: 'white',},}}
                                   checked={domicilio}
                                   onClick={handleInput}
                                 />
+                                <label className="label-datos-catproducto input-cataproducto-12 domicilio">
+                                  Domicilio
+                                </label>
                               </div>
                               <div className="input-area4">
-                                <label className="label-datos-catproducto input-cataproducto-12 ocupado">
-                                  Ocupado:
-                                </label>
-                                <Checkbox
+                              <Checkbox
                                   id="ocupado"
                                   sx={{ color: 'white', '&.Mui-checked': { color: 'white',},}}
                                   checked={ocupado}
                                   onClick={handleInput}
                                 />
+                                <label className="label-datos-catproducto input-cataproducto-12 ocupado">
+                                  Ocupado
+                                </label>
                               </div>
                               {domicilio !== true ? (
                                 <div className="input-area4">
-                                  <label className="label-datos-catproducto gps">
-                                    GPS:
-                                  </label>
                                   <Checkbox
                                     className="combo-gps"
                                     id="cbgps"
@@ -754,6 +742,9 @@ const CatProductos = () => {
                                     checked={cbgps}
                                     onClick={handleInput}
                                   />
+                                  <label className="label-datos-catproducto gps">
+                                    GPS
+                                  </label>
                                 </div>
                               ) : (
                                 ""
@@ -761,11 +752,12 @@ const CatProductos = () => {
                             </div>
 
                             {domicilio === true ? (
-                              <div className="distancia-sciudad">
+                              <>
+                             <p className="lejania">
+                                Lejanía kms:
+                             </p>
+                            <div className="distancia-sciudad">
                                 <div className="input-area4">
-                                  <label className="lejania">
-                                    Lejanía kms:
-                                  </label>
                                   <input
                                     className="input-cataproducto-101"
                                     id="distanciaMax"
@@ -776,16 +768,17 @@ const CatProductos = () => {
                                   />
                                 </div>
                                 <div className="input-area4">
-                                  <label className="sciudad">Ciudad:</label>
-                                  <Checkbox
+                                <Checkbox
                                     className="combo-gps"
                                     id="cbsCiudad"
                                     sx={{ color: 'white', '&.Mui-checked': { color: 'white',},}}
                                     checked={cbsCiudad}
                                     onClick={handleInput}
                                   />
+                                  <label  className="lejania">Ciudad</label>
                                 </div>
                               </div>
+                              </>
                             ) : (
                               ""
                             )}
@@ -808,7 +801,6 @@ const CatProductos = () => {
                       )}
 
                   <div className="producto-grupo-button">
-
                     {(agregarsn === true || editarsn === true) && nombrefoto !== "" && nombrecorto!="" && descripcion!==""? (
                       <Tippy content="Vista previa">
                         <button
@@ -908,9 +900,9 @@ const CatProductos = () => {
                         ) : (
                           ""
                         )}
-                        {cbgps === true &&
-                        inicia === false &&
-                        (agregarsn || editarsn) && ((showGalerias===false && showMap===false) || (showGalerias===false && (showMap===true))) ? (
+                        {cbgps === true && inicia === false && (agregarsn===true || editarsn===true) 
+                         && (showGalerias===false && nombrecorto!=="" && descripcion!==""  
+                         && nombrefoto !== "") ? (
                           <Tippy content="Ubicar el producto en el mapa">
                             <button
                               type="button"
@@ -939,13 +931,8 @@ const CatProductos = () => {
                         <button
                           type="button"
                           className="producto-button primary"
-                          onClick={
-                            nombrecorto.length !== 0 && descripcion.length !== 0
-                              ? confirmar
-                              : ""
-                          }
-                        >
-                          <Check />
+                          onClick={nombrecorto.length !== 0 && descripcion.length !== 0 ? confirmar: ""}>
+                          {loading ? <CircularProgress color="inherit" size={16} /> : <Check />}
                         </button>
                       </Tippy>
                     ) : (
@@ -969,7 +956,7 @@ const CatProductos = () => {
                 </div>
                 {inicia === false && showGalerias === true && showMap === false ? (
                     <ComGalerias
-                      deQuien={arrayproductos[producto.value].desc}
+                      deQuien={arrayproductos[producto.value].nick}
                       ruta={
                         "productos/" + arrayproductos[producto.value].idproducto
                       }
@@ -984,7 +971,7 @@ const CatProductos = () => {
                   {showMap === true && showGalerias === false && cbgps === true ? (
                     <div className="mapa-catalogo">
                       <Map
-                        sx={{ height: "100%", width: "100%" }}
+                        sx={{ height: "340px", width: "100%" }}
                         onMapClick={lngLatSelected}
                         remoteshowMap={showMap}
                         lat={lat}

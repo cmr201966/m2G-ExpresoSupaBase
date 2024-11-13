@@ -121,10 +121,15 @@ code {
   color: aliceblue;
   border-radius: 15px;
 }
-
 .cabeza {
   display: flex;
   align-items: center;
+  
+}
+.encabezado {
+  display: flex;
+  align-items: center;
+  
 }
 
 .h3-1-cabeza {
@@ -186,22 +191,6 @@ input[type="file"] {
   justify-content: center;
   align-items: center;
   gap: 2px;
-}
-
-.card-texts {
-  flex: 1;
-  gap: 5px;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-}
-
-.card-texts h5 {
-  color: rgb(87, 110, 129);
-}
-
-.card-texts p {
-  color: #bdb;
 }
 
 .modal-cardrow {
@@ -312,7 +301,6 @@ h6 {
 }
 
 .whatsapp{
-  /*background:rgb(27 225 44);*/
   background: none;
   border-radius: 5px;
   border: none;
@@ -321,6 +309,21 @@ h6 {
   align-items: center;
   display: flex;
   }
-  .whatsapp svg{
+
+.whatsapp svg{
     font-size: 36px;
+    margin-right: 15px;
   }
+
+.color-flecha{
+    color: aliceblue;
+}
+.grip-flecha{
+  display: grid;
+  justify-content: flex-start;
+  grid-template-columns: 0% 33% 33%;
+}
+.color-encabezado
+{
+  color: aliceblue;
+}

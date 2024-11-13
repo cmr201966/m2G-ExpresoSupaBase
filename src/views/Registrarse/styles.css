@@ -1,7 +1,7 @@
 
 .container-registrarse {
     height: auto;
-    width: 333px;
+    width: 340px;
     display: flex;
     flex-direction: column;
     padding: 10px;
@@ -252,3 +252,15 @@
     align-items: center;
     margin-top: 5px;
 }
+.mapa-registrarse{
+    display: flex;
+    justify-content: center;
+    height: auto;
+    width: 100%;
+    margin: 0 auto;
+    margin-top: 15px;
+ }
+ .mapa-registrarse-1{
+    background: rgb(20, 96, 172);
+  }
+
