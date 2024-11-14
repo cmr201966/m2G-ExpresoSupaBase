@@ -41,6 +41,7 @@
 }
 .input-area-categorias{
     height: 28px;
+    width: 120px;
     border-radius: 15px;
     border: 1px solid aliceblue;
     padding-left: 7px;
@@ -50,7 +51,7 @@
     border-radius: 15px;
     border: 1px solid aliceblue;
     padding-left: 7px;
-    width: 300px;
+    width: 97%;
 }
     
 .grupo-button-categorias

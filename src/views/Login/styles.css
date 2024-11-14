@@ -64,3 +64,8 @@
     width: 220px;
     height: 25px;
 }
+.addcss-login {
+    font-size: 1.2rem !important;
+    /*padding-left: 10px;*/
+  }
+  

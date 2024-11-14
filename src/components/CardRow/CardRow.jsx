@@ -33,7 +33,7 @@ const CardRow = (props) => {
         {noproducto===false?
         <Tippy content={`Libre/Ocupado`}>
            <button className={`${ocupado===0?"card-image-onoff":"card-image-offon"}`}  disabled={tipouser===null ||tipouser===0?true:false} onClick={powerSettings}>
-             <PowerSettingsNewIcon />
+             <PowerSettingsNewIcon className="onOff" />
            </button>
         </Tippy>:""
         }
@@ -44,11 +44,11 @@ const CardRow = (props) => {
           {item.xxxNegocio !== "" && item.xxxNegocio !== undefined ?
             <div>
               {/*<label className="parrafo_label"><strong>Negocio:</strong></label>*/}
-              <label className="parrafo_texto1">{item.xxxNegocio}</label>
+              <label className="texto-1">{item.xxxNegocio}</label>
             </div> : ""}
           <div>
             {/*<label className="parrafo_label"><strong>Producto:</strong></label>*/}
-            <label className="parrafo_texto3">{item.Producto}</label>
+            <label className="texto-1">{item.Producto}</label>
           </div>
         </div>
       </div>
@@ -58,12 +58,12 @@ const CardRow = (props) => {
           <>
             <Tippy content={`${ocupado===0?"Datos del producto y ordenar":"Datos del producto"}`}>
               <button onClick={() => verproducto(i, item)}>
-                <ShoppingCartCheckoutOutlinedIcon /> <span>Producto</span>
+                <ShoppingCartCheckoutOutlinedIcon /> {/*<span>Producto</span>*/}
               </button>
             </Tippy>
             <Tippy content={`Más datos del negocio`}>
               <button onClick={() => vernegocio(i, item)}>
-                <BusinessCenterOutlinedIcon  /><span>Negocio</span>
+                <BusinessCenterOutlinedIcon  />{/*<span>Negocio</span>*/}
               </button>
             </Tippy>
           </>

@@ -8,7 +8,6 @@ import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import { useEffect, useState } from "react";
 import { Box, CircularProgress } from "@mui/material";
 
-import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Map from "../../components/Map/MapBox";
 import { useLocation } from "react-router-dom";
 
@@ -25,10 +24,8 @@ import "./styles.css";
 const InfoProducto = () => {
   const location = useLocation();
   const parsedParams = {};
-  const [desctmp] = useState("Galerias");
   const [showcircularProgress, setshowCircularProgress] = useState(true); 
   const [showMap] = useState(true);
-  const [showGalerias, setShowGalerias] = useState(false);
     // Estados para la posición GPS del mapa
   const [lng, setLng] = useState(-75.829090519);
   const [lat, setLat] = useState(20.0217583);
@@ -60,6 +57,7 @@ const InfoProducto = () => {
 //  const [duracion, setDuracion] = useState(0);
 
   async function init() {
+//    sessionStorage.setItem("categoria",parsedParams.categoria);
     let resultFiles = await getFilesInFolderSB("./galerias/app_images/productos/" + parsedParams.idproducto, 
                                                "productos/" + parsedParams.idproducto, "galerias");
     setArrayFotos(resultFiles);
@@ -74,12 +72,8 @@ const InfoProducto = () => {
         if (isValid(result.url)===true) tarray.push(result.url);
         setArrayFotoInfo(tarray);
     }
-    let result= await getInfoProducto(parsedParams.idproducto);
+    let result = await getInfoProducto(parsedParams.idproducto);
     if (isValid(result)=== true) {
-      if (result[0].idnegocio===sessionStorage.getItem("user")){
-        setShowGalerias(true)
-      }
-      else setShowGalerias(false);
       setIdproducto(parsedParams.idproducto);
       setUsert(result[0].idnegocio)
       setNegocio(result[0].negocio);
@@ -107,10 +101,7 @@ const InfoProducto = () => {
       });
     });
     setPuntos(paresGps);
-    result = await getJpgFileSB(parsedParams.idproducto + ".jpg", "./galerias/app_images/productos/" + parsedParams.idproducto, "productos/" + parsedParams.idproducto);
-    if (isValid(result) === true) {
-      setContenidofoto(result);
-    }
+    setContenidofoto(tarray[0]);
     setInicio(false);
     setshowCircularProgress(false);
   }
@@ -219,13 +210,16 @@ if (puntosState===2){
 
   }
 
+  function viewPhoto(i){
+    setContenidofoto(arrayFotoInfo[i])
+  }
+
   useEffect(() => {
     if (ocupado===1) {
       return;
     }
     if (puntos.length !== 0 && puntosState==1) {
       setDistancia(distanciaEnKilometros(lat, lng, puntos[0].lat, puntos[0].lng).toFixed(2));
-      //setProductot(puntos[0].info);
     }
   }, [lng]);
 
@@ -269,20 +263,18 @@ if (puntosState===2){
             <>
               <span className="encabezado-Info-Producto">{producto}</span>
               <section className="perfil-info-producto-1">
-                {sessionStorage.getItem("tipouser")==='3'?
                 <div className="sliderVertical">
-                  {console.log(arrayFotos)}
                    {arrayFotos.map((item, i) => (                     
                      <div key={i} className="producto-fotos">
                        <img
                          className="img-info-producto-lateral"
                          src={arrayFotoInfo[i]}
                          alt="Imagen del producto"
+                         onClick={()=>viewPhoto(i)}
                        />
                      </div>
                    ))}
-                </div>:""
-                }
+                </div>
                 <div className="img-class-info-producto">
                   <img
                     className="img-info-producto"
@@ -306,11 +298,10 @@ if (puntosState===2){
                   <div className="ws">
                      <span className="strong font-size1"> Datos del producto</span>
                      <Tippy content={`${accion} via WhatsApp`}>
-                        <a href={url} className="whatsapp" target="_blank" rel="noopener noreferrer"><WhatsAppIcon /></a>
+                        <a href={url} target="_blank" rel="noopener noreferrer"><WhatsAppIcon className="ws-1" /></a>
                       </Tippy>
                   </div>
-                    <span>{negocio}</span>
-                    {/*<span>{producto}</span>*/}
+                  <span>{negocio}</span>
 
                   {isValid(precio)===true && precio !== 0 ? (
                       <span>{precio}</span>
@@ -358,28 +349,12 @@ if (puntosState===2){
                 )}
                </div>
               </div>
-
              </>
             
              ) : 
              (
              ""
             )}      
-
-          {inicio === false && showGalerias === true ? (
-            <section className="galeria">
-              {/*
-              <ComGalerias
-                rutatmp={"productos/" + idproducto}
-                desctmp={desctmp}
-                perfil={idproducto}
-                permiso={true}
-                deQuien="del producto"
-              />*/}
-            </section>
-          ) : (
-            ""
-          )}
 
          </main>
          <div className="mapa-1">

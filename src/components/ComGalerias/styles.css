@@ -146,22 +146,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background-color: rgb(2, 114, 226);
-  min-width: 50px;
-/*  width: 150px;
-  height: 154px;*/
   border-radius: 15px;
   object-fit: cover;
-  border: 2px solid black;
-  margin-top: 10px;
-  margin-right: 10px;
-  font-size: 4.5rem;
   color: aliceblue;
 }
 .label-add {
-  height: 100%;
   display: flex;
-  width: 100%;
   align-items: center;
   justify-content: center;
   font-size: 4.5rem;
@@ -176,7 +166,8 @@
   gap:10px;
 }
 .addcss {
-  font-size: 3rem !important;
+  font-size: 2.0rem !important;
+  padding-left: 10px;
 }
 .imagen-borrar{
   position: relative;

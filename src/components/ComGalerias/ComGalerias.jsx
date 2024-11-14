@@ -7,12 +7,15 @@ import Modal from "../../components/Modal/Modal";
 // styles
 import "./styles.css";
 import { useEffect, useState } from "react";
-import Add from "@mui/icons-material/Add";
+// @mui/material
+import {CircularProgress,} from "@mui/material";
+//import Add from "@mui/icons-material/Add";
 import Close from "@mui/icons-material/Close";
 import { Button } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { getGalerias, isValid, getJpgFileSB, creaFileInFolder, deleteFileInFolder } from "../../Utiles/Utiles";
 import AddAPhotoOutlinedIcon from '@mui/icons-material/AddAPhotoOutlined';
+import { useNotification } from "../../context/NotificationProvider";
 
 const ComGalerias = (props) => {
   const {
@@ -25,6 +28,7 @@ const ComGalerias = (props) => {
     deQuien,
     cambiaNombreFoto,
   } = props;
+  const {setOpen, setMessage} = useNotification();
   const location = useLocation();
   const parsedParams = {};
   const [arrayfotos, setArrayfotos] = useState([]);
@@ -34,6 +38,8 @@ const ComGalerias = (props) => {
   const [fotoPerfil, setFotoPerfil] = useState(false);
   const [contenidophoto, setContenidophoto] = useState();
   const [selectfoto, setSelectfoto] = useState(0);
+  const [loading, setLoading] = useState(false);
+  const [cantPhoto, setCantPhoto] = useState(0);
   const [foto] = useState();
   const tipouser = Number(sessionStorage.getItem("tipouser"));
   const [showimg, setShowimg] = useState(false);
@@ -47,11 +53,15 @@ const ComGalerias = (props) => {
   async function init1(ruta) {
     let galeriasfolders = await getGalerias(ruta);
     let tarrayfotos = [];
+    let cantPhotoT=1;
     for (const item of galeriasfolders) {
-      if (item.toLowerCase().indexOf(".jpg") >= 0) {
+      if (item.toLowerCase().indexOf(".jpg") >= 0 && cantPhotoT<=4) {
         tarrayfotos.push(item);
+        cantPhotoT=cantPhotoT+1;
       }
     }
+    setArrayfotos(tarrayfotos);
+    setCantPhoto(tarrayfotos.length);
     let carpetaMYSQL = ruta === "" ? "" : "/" + ruta;
     let carpetaSUPABASE = ruta === "" ? "" : ruta;
     contenidofoto.splice(0, contenidofoto.length);
@@ -62,8 +72,7 @@ const ComGalerias = (props) => {
         tarray.push(resultado)
         }
     }
-    setArrayfotos(tarrayfotos);
-    let {indexPhoto, fp}=await lastIndex(tarrayfotos);
+    let {indexPhoto, fp}=lastIndex(tarrayfotos);
     if (fp===false){ 
       cambiaNombreFoto("")
     }
@@ -92,15 +101,30 @@ const ComGalerias = (props) => {
   }
 
   async function del_file_in_folder(folderSQL, folderSUPABASE, file) {
+    setLoading(true);
     await deleteFileInFolder( folderSQL, folderSUPABASE, file );
+    setCantPhoto(cantPhoto-1);
+    setLoading(false);
   }
 
   async function crea_file_in_folder(folderSQL, folderSUPABASE, file, contenidofoto) {
     await creaFileInFolder( folderSQL, folderSUPABASE, file, contenidofoto )
+    setCantPhoto(cantPhoto+1);
+    setMessage("Se agregó la imagen")
+    setOpen(true);
+    setLoading(false);
     init1(ruta);
   }
 
+  function VerificaCantPhoto(e){
+    if (cantPhoto>=4){
+      setMessage("Alcanzó la cantidad máxima de fotos, elimine una")
+      setOpen(true);
+      e.preventDefault()
+    }
+  }
   async function onPhotoChange(e) {
+    setLoading(true);
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
@@ -122,6 +146,8 @@ const ComGalerias = (props) => {
 
   async function borrarFoto(i) {
       await del_file_in_folder("./galerias/app_images/" + ruta, ruta, arrayfotos[i]);
+      setMessage("Se eliminó la imagen")
+      setOpen(true); 
       init1(ruta); 
   }
 
@@ -204,11 +230,12 @@ const ComGalerias = (props) => {
                     <input
                       id="foto"
                       value={foto}
+                      onClick={VerificaCantPhoto}
                       onChange={onPhotoChange}
                       type="file"
                       required
                     />
-                    <AddAPhotoOutlinedIcon className="addcss" />
+                    {loading ? <CircularProgress color="inherit" size={16} /> : <AddAPhotoOutlinedIcon className="addcss" />}
                   </label>
                 </div>
               ) : (

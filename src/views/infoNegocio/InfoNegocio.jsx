@@ -2,7 +2,6 @@ import Navbar from "../../components/Navbar/Navbar"
 import Hero from "../../layouts/Hero/Hero";
 import { useEffect, useState } from "react";
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
-import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Map from "../../components/Map/MapBox";
 import { useLocation } from "react-router-dom";
 import Tippy from "@tippyjs/react";
@@ -15,9 +14,7 @@ import "./styles.css";
 const InfoNegocio = () => {
   const location = useLocation();
   const parsedParams = {}
-  const [desctmp]=useState("Galerias");
   const [showMap] = useState(false);
-  const [showGalerias, setShowGalerias] = useState(false);
   const [showcircularProgress, setshowCircularProgress] = useState(true); 
   const [lng, setLng] = useState(-75.829090519);
   const [lat, setLat] = useState(20.0217583);
@@ -72,14 +69,14 @@ const InfoNegocio = () => {
       setLng(result[0].longitud);
       setGps(result[0].gpssn);
     }
-   result = await getJpgFileSB(parsedParams.idnegocio + ".jpg", "./galerias/app_images/usuarios/" + parsedParams.idnegocio, "usuarios/" + parsedParams.idnegocio);
-   if (isValid(result) === true) {
-      setContenidofoto(result);
-   }
+   setContenidofoto(tarray[0]);
    setInicio(false);
    setshowCircularProgress(false);
 }
 
+function viewPhoto(i){
+  setContenidofoto(arrayFotoInfo[i])
+}
 useEffect(() => {
   const localParams = location.search.substring(1).split("&");
   localParams.forEach((item) => {
@@ -119,20 +116,18 @@ useEffect(() => {
         <main className="main">
         <span className="encabezado-Info-Producto">{negocio}</span>
           <section className="perfil-info-producto">
-          {sessionStorage.getItem("tipouser")==='3'?
              <div className="imagenes-laterales-del-negocio">
-                {arrayFotos.map((item, i) => (
-                  item!=="foto-1.jpg" &&
+                {arrayFotos.map((item, i) => (                  
                   <div key={i} className="producto-fotos">
                       <img
                         className="img-info-producto-lateral"
                         src={arrayFotoInfo[i]}
-                        alt="Imagen del producto"
-                      />
+                        alt="Imagen del negocio"
+                        onClick={()=>viewPhoto(i)}
+                        />
                 </div>
                 ))}
-            </div>:""
-            }
+            </div>
 
              <div className="img-class-info-producto">
                   <img className="img-info-negocio" src={contenidofoto} alt="Imagen del producto" />
@@ -144,7 +139,7 @@ useEffect(() => {
                  <div className="ws">
                       <p className="strong font-size1"> Datos del negocio</p>
                       <Tippy content={`Contactar via WhatsApp`}>
-                         <a href={url} className="whatsapp" target="_blank" rel="noopener noreferrer"><WhatsAppIcon /></a>
+                         <a href={url} target="_blank" rel="noopener noreferrer"><WhatsAppIcon  className="ws-1" /></a>
                       </Tippy>
                  </div>
                  <div className="parrafo">
@@ -178,13 +173,8 @@ useEffect(() => {
                      </p>
                   </div>
 
-              </div>
+          </div>
 
-          {inicio===false && showGalerias===true?
-             <section className="galeria">
-                {/*<ComGalerias rutatmp={"usuarios/" + idnegocio} desctmp={desctmp} perfil={idnegocio} permiso={true} deQuien="del negocio" />*/}
-             </section>:""
-          }
           {gps===1?
           <section className="mapa-1 mapa-9">
              <Map 

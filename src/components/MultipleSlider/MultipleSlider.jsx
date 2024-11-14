@@ -8,7 +8,7 @@ const BigSlider = (props) => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [transition] = useState(true);
   const [cantidad, setCantidad] = useState(
-    window.innerWidth <= 375 ? imgs.length - 2 : imgs.length - 6
+    window.innerWidth <= 768 ? imgs.length - 2 : imgs.length - 6
   );
 
   const toLeft = useCallback(() => {
@@ -45,12 +45,9 @@ const BigSlider = (props) => {
           </div>
         ))}
       </div>
-      {console.log(cantidad)}
-      {console.log((window.innerWidth <= 375 && imgs.length >= 3) ||
-      (window.innerWidth > 375 && imgs.length > 6) && cantidad>0)}
 
-      {((window.innerWidth <= 375 && imgs.length >= 3) ||
-      (window.innerWidth > 375 && imgs.length > 6)) && cantidad>0? (
+      {((window.innerWidth <= 768 && imgs.length >= 3) ||
+      (window.innerWidth > 768 && imgs.length > 6)) && cantidad>0? (
         <button onClick={() => toLeft()} className="multiple-slider-nav right">
           {">"}
         </button>

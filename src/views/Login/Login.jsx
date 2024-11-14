@@ -6,6 +6,8 @@ import { useLocation } from "react-router-dom";
 import { apiBaseDatos, isValid } from "../../Utiles/Utiles";
 import { useNotification } from "../../context/NotificationProvider";
 import Check from "@mui/icons-material/Check";
+// @mui/material
+import {CircularProgress,} from "@mui/material";
 import "./styles.css";
 
 
@@ -17,6 +19,8 @@ const Login = () => {
   const {setOpen, setMessage} = useNotification();
   const parsedParams = {};
   const location = useLocation();
+  const [loading, setLoading] = useState(false);
+
   async function init() {
     if (isValid(parsedParams.login)=== true){
       sessionStorage.setItem("login", parsedParams.login);
@@ -42,14 +46,16 @@ const Login = () => {
     }
   }
 
-  async function confirmalogin(e) {
+  async function confirma(e) {
+    setLoading(true);
     e.preventDefault();
     let result = await apiBaseDatos("login", user, password);
-      if (isValid(result.error)===true || isValid(result.length)===false || result.length===0)
+    setLoading(false);
+    if (isValid(result.error)===true || isValid(result.length)===false || result.length===0)
     {
       setMessage("Usuario o contraseña incorrecto")
       setOpen(true);
-  } 
+    } 
     else 
     {
       sessionStorage.setItem("user", result[0].iduser);
@@ -62,8 +68,7 @@ const Login = () => {
       if ((sessionStorage.getItem("login")==="1")){
         navegar(ruta)
       } else
-         navegar("/?nivel=0"); 
-      
+         navegar("/?nivel=0");       
     }  
   } 
 
@@ -111,8 +116,8 @@ const Login = () => {
               />
             </div>
             <div className="grupo-button-login">
-              <button type="button" className="button-login primary" onClick={confirmalogin}>
-              <Check/>
+              <button type="button" className="button-login primary" onClick={confirma}>
+              {loading ? <CircularProgress color="inherit" size={10} /> : <Check className="addcss-login" />}
               </button>
             </div>
 

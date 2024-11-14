@@ -88,6 +88,17 @@ const Navbar = (props) => {
       inserta: "inserta=true&where=false",
       tipo: 0,
     },
+/*
+    {
+      label: "Categorias",
+      to: "/categorias",
+      tooltips: "Ir a los productos de una categoria",
+      depende: 0,
+      login: 0,
+      inserta: "",
+      tipo: 0,
+    },
+  */  
     {
       label: "Vender",
       to: "/catproductos",
@@ -134,7 +145,9 @@ const Navbar = (props) => {
   const onModalClose = useCallback(() => setShowDialog(false), [setShowDialog]);
 
   async function init() {
-    borraSessionStorage(["categoria", "login", "idproducto"]);
+    if (sessionStorage.getItem("deDonde")!=="infoProducto" && sessionStorage.getItem("deDonde")!=="infoNegocio") {
+      borraSessionStorage(["categoria", "login", "idproducto"])
+    }
 
     const config = await apiBaseDatos("getConfig");
 

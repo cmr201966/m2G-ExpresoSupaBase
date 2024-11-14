@@ -14,6 +14,9 @@
   z-index: 10;
   right: 0;
 }
+.card-image-onoff svg{
+  font-size: 1.2rem;
+}
 .card-image-offon{
   border-radius: 100%;
   background:white;
@@ -35,13 +38,13 @@
 }
 
 .card-image img {
-  padding-top: 15px;
-  width: 50%;
+  padding-top: 10px;
+  width: 58%;
   height: 70%;
   cursor: pointer;
-  object-fit: cover;
+  object-fit: contain;
   border-radius: 15px 15px 0px 0px;
-  padding-left: 15px;}
+  padding-left: 27px;}
 
 .card-row .button-container {
   display: flex;
@@ -81,7 +84,7 @@
 
 .card-texts {
   flex: 1;
-  /*gap: 10px;*/
+  gap: 5px;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -164,3 +167,9 @@
   gap: 10px;
 }
 
+.texto-1{
+ font-size: 12px;
+ color: rgb(255, 255, 255);
+ width: 100%;
+ display: flex;
+}    

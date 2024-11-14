@@ -27,6 +27,7 @@
   margin-bottom: 15px;
   width: 100%;
   padding-left: 28px;
+  position: relative;
 }
 .mapa-producto{
   position: relative;
@@ -45,7 +46,7 @@ p {
 {
   height: 285px;
   width: 285px;
-  object-fit: cover;
+  object-fit: contain;
   margin-top: 10px; 
 }
 
@@ -62,11 +63,12 @@ p {
 .info-image-onoff{
   border-radius: 100%;
   border: none;
-  color:green;
-  background:white;
+  color:#04ee04;
+  background:transparent;
   position: absolute;
   z-index: 10;
-  right: 3px;
+  right: 6px;
+  top: -59px;
   margin-top: 32px;}
 
   .info-image-offon{
@@ -98,7 +100,6 @@ p {
     border-radius: 15px;
     border: 1px solid aliceblue;
     margin-top: 13px;
-    margin-left: 10px;
   }
   .div-papa-infoProducto{
     display: flex;
@@ -146,4 +147,14 @@ p {
   .encabezado-Info-Producto{
     color:aliceblue;
     margin-left: 29px;
+  }
+  .ws-1{
+    background: none;
+    border-radius: 5px;
+    border: none;
+    color:rgb(27 225 44);
+    position: absolute;
+    right: 21px;
+    top: 5px;
+    font-size: 1.7rem !important;
   }

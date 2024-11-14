@@ -1,7 +1,7 @@
 import { useLocation } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import Hero from "../../layouts/Hero/Hero";
-import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+//import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Checkbox from "@mui/material/Checkbox";
 import { Box, CircularProgress } from "@mui/material";
@@ -70,28 +70,48 @@ const Productos = () => {
   const [lng, setLng] = useState();
   const [lat, setLat] = useState();
 
+  function sessionSet(parsedParams,objeto){
+    objeto.forEach(element => {
+      if (isValid(parsedParams[element]) === true && parsedParams[element] !== "") sessionStorage.setItem(element, decodeURIComponent(parsedParams[element]))
+        else sessionStorage.setItem(element, null);           
+    });
+
+/*
+    if (isValid(parsedParams.categoria) === true && parsedParams.categoria !== "") sessionStorage.setItem("categoria", decodeURIComponent(parsedParams.categoria))
+      else sessionStorage.setItem("categoria", null);
+
+      if (isValid(parsedParams.user) === true  && parsedParams.user !== "") sessionStorage.setItem("user", decodeURIComponent(parsedParams.user));
+      else sessionStorage.setItem("user", null);
+
+      if (isValid(parsedParams.nombre) === true  && parsedParams.nombre !== "") sessionStorage.setItem("nombre", decodeURIComponent(parsedParams.nombre));
+      else sessionStorage.setItem("nombre", null);
+
+      if (isValid(parsedParams.nivel) === true  && parsedParams.nivel !== "") sessionStorage.setItem("nivel", decodeURIComponent(parsedParams.nivel));
+      else sessionStorage.setItem("nivel", null);
+
+      if (isValid(parsedParams.mapa) === true  && parsedParams.mapa !== "") sessionStorage.setItem("mapa", decodeURIComponent(parsedParams.mapa));
+      else sessionStorage.setItem("mapa", null);
+      
+      if (isValid(parsedParams.userAnuncio) === true && parsedParams.userAnuncio !== "") sessionStorage.setItem("userAnuncio", parsedParams.userAnuncio);
+      else sessionStorage.setItem("userAnuncio", null);  
+
+      if (isValid(parsedParams.buscar) === true  && parsedParams.buscar !== "") sessionStorage.setItem("buscar", decodeURIComponent(parsedParams.buscar));
+      else sessionStorage.setItem("buscar", null);
+*/
+  }
   function init() {
-    if (parsedParams.mapa==='true') setShowMap(true);
-    setNivel(isValid(parsedParams.nivel)=== true ? parsedParams.nivel : nivel);
-    setNombre(isValid(parsedParams.nombre)=== true ? decodeURIComponent(parsedParams.nombre) : nombre);
-    sessionStorage.setItem("nivel", parsedParams.nivel);
-
-    if (isValid(parsedParams.categoria) === true && parsedParams.categoria !== 0) sessionStorage.setItem("categoria", decodeURIComponent(parsedParams.categoria))
-    else sessionStorage.setItem("categoria", null);
-
-    if (isValid(parsedParams.user) === true  && parsedParams.user !== "") sessionStorage.setItem("user", decodeURIComponent(parsedParams.user));
-    else sessionStorage.setItem("user", null);
-
-    if (isValid(parsedParams.userAnuncio) === true && parsedParams.userAnuncio !== "") sessionStorage.setItem("userAnuncio", parsedParams.userAnuncio);
-    else sessionStorage.setItem("userAnuncio", null);  
-
-    if (isValid(parsedParams.buscar) === true  && parsedParams.buscar !== "") sessionStorage.setItem("buscar", decodeURIComponent(parsedParams.buscar));
-    else sessionStorage.setItem("buscar", null);
-
-    if (isValid(parsedParams.latitud) === true  && parsedParams.latitud !== '0'){
-      sessionStorage.setItem("latitud", decodeURIComponent(parsedParams.latitud));
-      setLat(Number(parsedParams.latitud));
+    setShowMap(isValid(parsedParams.mapa)===true?parsedParams.mapa:sessionStorage.getItem("mapa"));
+    setNivel(isValid(parsedParams.nivel)=== true ? parsedParams.nivel : sessionStorage.getItem("nivel"));
+    setNombre(isValid(parsedParams.nombre)=== true ? decodeURIComponent(parsedParams.nombre) : sessionStorage.getItem("nombre"));
+    if (sessionStorage.getItem("deDonde")!=="Home") {
+      sessionStorage.setItem("deDonde", "Home");
     }
+    else{
+      sessionSet(parsedParams, ["categoria", "user", "nombre", "nivel", "mapa", "userAnuncio", "buscar"]);
+      if (isValid(parsedParams.latitud) === true  && parsedParams.latitud !== '0'){
+         sessionStorage.setItem("latitud", decodeURIComponent(parsedParams.latitud));
+         setLat(Number(parsedParams.latitud));
+      }
     else sessionStorage.setItem("latitud", null);
 
     if (isValid(parsedParams.longitud) === true  && parsedParams.longitud !== '0'){
@@ -99,8 +119,9 @@ const Productos = () => {
       setLng(Number(parsedParams.longitud));
     }
     else sessionStorage.setItem("longitud", null);
-    init1();
   }
+  init1();
+}
 
   const kmToDegrees = (km) => {
   return km / 111.32; // Aproximación para convertir km a grados
@@ -238,12 +259,12 @@ function contains(lat, lon, bbox) {
   }
 
   function verproducto(i) {
-    navigate(
-      `/infoproducto?idproducto=${result[i].idproducto}&categoria=${sessionStorage.getItem("categoria")}`
-    );
+    sessionStorage.setItem("deDonde", "infoProducto")
+    navigate(`/infoproducto?idproducto=${result[i].idproducto}&categoria=${sessionStorage.getItem("categoria")}`);
   }
 
   function vernegocio(i) {
+    sessionStorage.setItem("deDonde", "infoNegocio")
     navigate(`/infonegocio?idnegocio=${result[i].idnegocio}`);
   }
 
@@ -260,6 +281,7 @@ function contains(lat, lon, bbox) {
   async function init1() {
     setShow1(true);
     setInicia(true);
+    sessionStorage.setItem("categoria", parsedParams.categoria);
     let result1 = await apiBaseDatos("getProductos", sessionStorage.getItem("categoria"), 
                                      sessionStorage.getItem("userAnuncio"), 
                                      sessionStorage.getItem("buscar"));

@@ -27,22 +27,24 @@
   }
   
   .multiple-slider-nav {
+    background-color: transparent;
+    border: none;
     z-index: 50;
     width: 40px;
     height: 40px;
     border-radius: 100%;
     position: absolute;
-    top: 50%;
+    top: 42%;
     transform: translateY(-50%);
   }
   
   .multiple-slider-nav.right {
-    right: -1px;
-    font-size: 20px;
+    right: -16px;
+    font-size: 30px;
   }
   
   .multiple-slider-nav.left {
-    left: -3px;
-    font-size: 20px;
+    left: -14px;
+    font-size: 30px;
   }
   

@@ -54,6 +54,7 @@ const Home = () => {
   async function init() {
     setInicia(true);
     setShow(true);
+    sessionStorage.setItem("deDonde", "Home")
     if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "SUPABASE")
       creaBucket("galerias");
     borraSessionStorage([

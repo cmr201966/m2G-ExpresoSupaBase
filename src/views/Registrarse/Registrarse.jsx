@@ -1,12 +1,12 @@
 import { useNavigate } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 import { Box, CircularProgress } from "@mui/material";
+import CollectionsIcon from "@mui/icons-material/Collections";
 import Tippy from "@tippyjs/react";
 
 // components
 import Map from "../../components/Map/MapBox";
 import Navbar from "../../components/Navbar/Navbar"
-//import Modal from "../../components/Modal/Modal";
 
 // Iconos
 import Check from "@mui/icons-material/Check";
@@ -20,11 +20,13 @@ import Hero from "../../layouts/Hero/Hero";
 import { useEffect, useState } from "react";
 import { isValid, apiBaseDatos, getJpgFileSB, buscarEnArreglo } from "../../Utiles/Utiles";
 import Encabezado from "../../components/Encabezado/Encabezado";
+import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import "./styles.css";
 
 const Registrarse = () => {
   const location = useLocation();
   const parsedParams = {}
+  const [showGalerias, setShowGalerias] = useState(false);
   const {setOpen, setMessage} = useNotification();
   const [user, setUser] = useState("");
   const [password, setPassword] = useState();
@@ -55,6 +57,7 @@ const Registrarse = () => {
   const [lng, setLng] = useState(0);
   const [zoom] = useState(15.5);
   const [isBase64ToBlob, setIsBase64ToBlob]=useState(true);
+
 
   // Otros estados
   const navigate = useNavigate(); 
@@ -278,7 +281,11 @@ const Registrarse = () => {
     };
     reader.readAsDataURL(file);
   }
-  
+
+  const cambiaNombreFoto = (valor) => { 
+    setNombrefoto(valor);
+  };
+ 
   const lngLatSelected = (point, lngLat) => {
     setLng(lngLat.lng);
     setLat(lngLat.lat);
@@ -365,7 +372,7 @@ const Registrarse = () => {
             {
               resultado !== "" && <label className="resultado-registrarse">{resultado}</label>
             }
-            <label className="label-grupo label-datos-size strong">Datos Personales</label>
+            <label className="label-grupo label-datos-size strong">Datos del negocio</label>
             <div className="input-area-registrarse">
               <label className="nombre" >Nombre:</label>
               <input
@@ -426,6 +433,20 @@ const Registrarse = () => {
                             <AddPhotoAlternateIcon />
                           </Tippy>
                         </label>:""}
+                        {inicia === false && showMap !== true ? (
+                          <Tippy content={`Galeria de fotos del producto`}>
+                            <button
+                              type="button"
+                              className="producto-button primary"
+                              onClick={() => setShowGalerias(!showGalerias)}
+                            >
+                              <CollectionsIcon />
+                            </button>
+                          </Tippy>
+                        ) : (
+                          ""
+                        )}
+
                       {inicia === false  && user!=="" && password!=="" && celular!==""? (
                           <Tippy content="Ubicar el negocio en el mapa">
                             <button
@@ -448,6 +469,18 @@ const Registrarse = () => {
                          <Close />
                       </button>
               </div>
+              {inicia === false && showGalerias === true && showMap === false ? (
+                    <ComGalerias
+                      deQuien={user}
+                      ruta={"usuarios/" + user}
+                      perfil={user}
+                      permiso={true}
+                      botonCerrar={false}
+                      cambiaNombreFoto={cambiaNombreFoto}
+                    />
+                  ) : (
+                    ""
+              )}
               {showMap === true ? (
                     <div className="mapa-registrarse">
                       <Map
