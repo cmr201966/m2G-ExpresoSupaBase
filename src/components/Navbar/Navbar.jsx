@@ -24,7 +24,7 @@ import {
 import { isValid, borraSessionStorage, getJpgFileSB } from "../../Utiles/Utiles";
 
 // services
-import { apiBaseDatos } from "../../Utiles/Utiles";
+import { getConfigCM } from "../../Utiles/apiBaseDatos";
 
 // config
 //import config from "../../config";
@@ -40,8 +40,6 @@ const Navbar = (props) => {
   const navigate = useNavigate();
   const location = useLocation();
   const {setOpen, setMessage} = useNotification();
-  //const urlMYSQL = config.urlmysql;
-  //const urlSUPABASE = config.urlsupabase;
   const [showMenu, setShowMenu] = useState(false);
 
   const [inicia, setInicia] = useState(true);
@@ -54,7 +52,7 @@ const Navbar = (props) => {
     {
       label: "Inicio",
       to: "/",
-      tooltips: "Ir a la página principal",
+      tooltips: "",
       depende: 1,
       login: 0,
       inserta: "",
@@ -72,7 +70,7 @@ const Navbar = (props) => {
       tooltips:
         isValid(sessionStorage.getItem("user")) === false
           ? "Abrir sesión"
-          : "Cerrar la sesión de " + sessionStorage.getItem("usernombre"),
+          : "",
       depende: 0,
       login: 0,
       inserta: "",
@@ -82,7 +80,7 @@ const Navbar = (props) => {
     {
       label: "Registrarse",
       to: "/registrarse",
-      tooltips: "Crear una cuenta de usuario",
+      tooltips: "Agregar un negocio",
       depende: 2,
       login: 0,
       inserta: "inserta=true&where=false",
@@ -102,7 +100,7 @@ const Navbar = (props) => {
     {
       label: "Vender",
       to: "/catproductos",
-      tooltips: "Agregar, editar o eliminar productos",
+      tooltips: "Publicar sus productos",
       depende: 4,
       login: 1,
       inserta: "",
@@ -111,7 +109,7 @@ const Navbar = (props) => {
     {
       label: "Anuncios",
       to: "/aplicaciones",
-      tooltips: "Agregar, editar o eliminar un anuncio",
+      tooltips: "Publicar sus anuncios",
       depende: 4,
       categoria: "",
       login: 1,
@@ -149,15 +147,17 @@ const Navbar = (props) => {
       borraSessionStorage(["categoria", "login", "idproducto"])
     }
 
-    const config = await apiBaseDatos("getConfig");
+    const config = await getConfigCM();
+//    const config = await apiBaseDatos("getConfig");
 
     if (!config?.length) setShowDialog(true);
 
+//    let resultado = await getJpgFileCM("logo.jpg", "./galerias/app_images/destodo", "destodo");
     let resultado = await getJpgFileSB("logo.jpg", "./galerias/app_images/destodo", "destodo");
     if (isValid(resultado)=== true) {
       setContenidofoto(resultado);
    } else {
-      setMessage('Error al recuperar la imagen del usuario');
+      setMessage('Error al recuperar la imagen del negocio');
       setOpen(true);
    }                       
  
@@ -178,7 +178,7 @@ const Navbar = (props) => {
               className="logo-img-one"
               src={contenidofoto}
             />
-            El Expreso
+            Expreso
           </Link>
 
           <SearchWrapper />
@@ -187,7 +187,7 @@ const Navbar = (props) => {
             <div className="menuTercero">
               {Number(sessionStorage.getItem("tipouser")) === 3 ? (
                 <Tippy
-                  content={"Agregar, editar y eliminar categorias de negocios"}
+                  content={"Categorias de negocios"}
                 >
                   <Link to="/catcategorias?login=1&regreso=/catcategorias">
                     <IconButton 
@@ -220,7 +220,7 @@ const Navbar = (props) => {
                 ""
               )}
               {Number(sessionStorage.getItem("tipouser")) === 3 ? (
-                <Tippy content={"Registrarse un usuario nuevo"}>
+                <Tippy content={"Agregar un usuario"}>
                   <Link to="/registrarse?inserta=true&where=true">
                     <IconButton sx={{ padding: 0, color: "aliceblue" }} id="user">
                       <PersonAddAlt1 />
@@ -230,16 +230,18 @@ const Navbar = (props) => {
               ) : (
                 ""
               )}
-              <Link to="/productos">
+              {/*<Link to="/productos">*/}
                 <IconButton
                   className="responsive-lupa"
                   id="lupa"
                   color="inherit"
-                  type="submit"
+/*                  onClick={toggleBuscar}
+                  type="submit"*/
                 >
                   <Search />
                 </IconButton>
-              </Link>
+              {/*</Link>*/}
+
               <IconButton
                 sx={{ padding: 0 }}
                 id="toggle-b"
@@ -261,7 +263,7 @@ const Navbar = (props) => {
                 sx={{ display: { xs: "none", md: "flex" } }}
                 className="links"
               >
-                <Tippy content={"Donde recibirá su producto ó servicio"}>
+                <Tippy content={"Su ubicación actual"}>
                   <IconButton
                     sx={{ padding: 0 }}
                     color="inherit"
@@ -319,9 +321,10 @@ const Navbar = (props) => {
               >
                 {menuSegundo.map((item, i) => (
                   <Fragment key={i}>
-                    {(item.depende === 1 && nivel === 0) ||
-                    (item.depende === 2 &&
-                      isValid(sessionStorage.getItem("user")) === true) ||
+                    {item.tooltips!==""?
+                    <Tippy content={item.tooltips}>
+                    {(item.depende === 1 && nivel === 0) || (item.depende === 2 &&
+                    isValid(sessionStorage.getItem("user")) === true) ||
                     (item.depende === 4 &&
                       sessionStorage.getItem("tipouser") !== "1" &&
                       sessionStorage.getItem("tipouser") !== "2" &&
@@ -341,6 +344,32 @@ const Navbar = (props) => {
                         {item.label}
                       </Link>
                     )}
+                    </Tippy>:
+                    <>
+                    {(item.depende === 1 && nivel === 0) || (item.depende === 2 &&
+                    isValid(sessionStorage.getItem("user")) === true) ||
+                    (item.depende === 4 &&
+                      sessionStorage.getItem("tipouser") !== "1" &&
+                      sessionStorage.getItem("tipouser") !== "2" &&
+                      sessionStorage.getItem("tipouser") !== "3") ? (
+                      ""
+                    ) : (
+                      <Link
+                        className="menu-nav"
+                        key={item.label}
+                        to={
+                          isValid(item.anuncio) === false
+                            ? `${item.to}?categoria=0&login=${item.login}&regreso=${item.to}&${item.inserta}`
+                            : `${item.to}?anuncio=${item.anuncio}&${item.inserta}
+                            &categoria=0&login=${item.login}&regreso=${item.to}`
+                        }
+                      >
+                        {item.label}
+                      </Link>
+                    )
+                    }
+                    </>
+                    }
                   </Fragment>
                 ))}
               </Box>

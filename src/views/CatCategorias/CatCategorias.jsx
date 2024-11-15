@@ -13,7 +13,8 @@ import { useNavigate } from "react-router-dom";
 import { useNotification } from "../../context/NotificationProvider";
 import Modal from "../../components/Modal/Modal";
 import { useLocation } from "react-router-dom";
-import { isValid, apiBaseDatos, getJpgFileSB } from "../../Utiles/Utiles";
+import { isValid, getJpgFileSB } from "../../Utiles/Utiles";
+import { getCategoriasNegociosCM, setCategoriasNegociosCM, delCategoriaCM } from "../../Utiles/apiBaseDatos";
 import { Box, CircularProgress } from "@mui/material";
 import Encabezado from "../../components/Encabezado/Encabezado";
 import "./styles.css";
@@ -63,7 +64,8 @@ const CatCategorias = () => {
       navigate(`/`);
       return
     }
-    let resultcategorias = await apiBaseDatos("getCategoriasNegocios")
+    let resultcategorias = await getCategoriasNegociosCM();
+//    let resultcategorias = await apiBaseDatos("getCategoriasNegocios")
     if (isValid(resultcategorias)===false || isValid(resultcategorias.length) === false)
     {
       setArrayCategorias(arraynoCategorias);
@@ -175,7 +177,8 @@ const CatCategorias = () => {
     }
 
     async function confirmar() {
-    let err= await apiBaseDatos("setCategoriasNegocios", arrayCategorias[categoria].categorianegocio, desc, descold, "productos", nick, accion,  agregarsn, contenidofoto, isBase64ToBlob );
+    let err= await setCategoriasNegociosCM(arrayCategorias[categoria].categorianegocio, desc, descold, "productos", nick, accion,  agregarsn, contenidofoto, isBase64ToBlob );
+//    let err= await apiBaseDatos("setCategoriasNegocios", arrayCategorias[categoria].categorianegocio, desc, descold, "productos", nick, accion,  agregarsn, contenidofoto, isBase64ToBlob );
     if (isValid(err)===true){
         setMessage("Ocurrido un error al registrar la categoria");
         setOpen(true);
@@ -240,7 +243,8 @@ const CatCategorias = () => {
   };
 
   async function sino() {
-    await apiBaseDatos("delCategoria", arrayCategorias[categoria].categorianegocio);
+    await delCategoriaCM(arrayCategorias[categoria].categorianegocio);
+//    await apiBaseDatos("delCategoria", arrayCategorias[categoria].categorianegocio);
     setMessage("Se eliminó la categoria " + arrayCategorias[categoria].desc);
     setOpen(true);
     setShow(false);

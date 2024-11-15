@@ -3,7 +3,9 @@ import ShoppingCartCheckoutOutlinedIcon from '@mui/icons-material/ShoppingCartCh
 import BusinessCenterOutlinedIcon from '@mui/icons-material/BusinessCenterOutlined';
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
 import { useState } from "react";
-import { isValid, apiBaseDatos  } from "../../Utiles/Utiles";
+import { isValid } from "../../Utiles/Utiles";
+import { updateOcupadoCM } from "../../Utiles/apiBaseDatos";
+
 
 // styles
 import "./styles.css";
@@ -15,7 +17,8 @@ const CardRow = (props) => {
     if (user!=="" && isValid(user)===true){
         setOcupado(ocupado===0?1:0);
     }
-    apiBaseDatos("updateOcupado", item.idproducto, ocupado===0?1:0)
+    updateOcupadoCM(item.idproducto, ocupado===0?1:0);
+//    apiBaseDatos("updateOcupado", item.idproducto, ocupado===0?1:0)
 
     paresGps();
 

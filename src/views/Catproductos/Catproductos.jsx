@@ -20,7 +20,9 @@ import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { isValid, buscarEnArreglo, buscarEnArregloString, apiBaseDatos, getJpgFileSB } from "../../Utiles/Utiles";
+import { isValid, buscarEnArreglo, buscarEnArregloString, getJpgFileSB } from "../../Utiles/Utiles";
+import { getcategoriasnegociosappCM, getUsuariosCM, getproductoscategoriaCM,
+         delProductoCM} from "../../Utiles/apiBaseDatos";
 import { useNotification } from "../../context/NotificationProvider";
 import Encabezado from "../../components/Encabezado/Encabezado";
 import "./styles.css";
@@ -103,7 +105,8 @@ const CatProductos = () => {
       return
     }
     let ttarraytnegocios;
-    let resulttnegocios = await apiBaseDatos("getcategoriasnegociosapp");
+    let resulttnegocios = await getcategoriasnegociosappCM();
+//    let resulttnegocios = await apiBaseDatos("getcategoriasnegociosapp");
     if (resulttnegocios.length===0) {
       setArraytnegocios(arraynonegocios);
       ttarraytnegocios = arraynonegocios;
@@ -115,13 +118,15 @@ const CatProductos = () => {
     );
     posicion = posicion === -1 ? 0 : posicion;
     setTnegocio(posicion);
-    let resultusuarios = await apiBaseDatos("getUsuarios");
+    let resultusuarios = await getUsuariosCM();
+//    let resultusuarios = await apiBaseDatos("getUsuarios");
     if (isValid(resultusuarios)===false) setArrayUsuarios(arrayNoUsuarios)
     else {
       setUsuario(0);
       setArrayUsuarios(resultusuarios);
     }
-    let resultproductos = await apiBaseDatos("getproductoscategoria", sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), ttarraytnegocios[posicion].categorianegocio, producto);
+    let resultproductos = await getproductoscategoriaCM(sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), ttarraytnegocios[posicion].categorianegocio, producto);
+    //let resultproductos = await apiBaseDatos("getproductoscategoria", sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), ttarraytnegocios[posicion].categorianegocio, producto);
     if (resultproductos.length===0) {
       setArrayproductos(arraynoproductos);
       recuperardatosproducto(arraynoproductos, 0);
@@ -168,7 +173,8 @@ const CatProductos = () => {
   };
 
   async function getProductos(value) {
-    let resultproductos = await apiBaseDatos("getproductoscategoria", sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), arraytnegocios[value].categorianegocio);
+    let resultproductos = await getproductoscategoriaCM(sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), arraytnegocios[value].categorianegocio);
+//    let resultproductos = await apiBaseDatos("getproductoscategoria", sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), arraytnegocios[value].categorianegocio);
     setProducto(null);
     if (isValid(resultproductos)===false || resultproductos.length===0) {
       setArrayproductos(arraynoproductos);
@@ -357,10 +363,12 @@ const CatProductos = () => {
     let mproducto = 0;
     if (producto === null) mproducto = 0 
     else mproducto = arrayproductos[producto?.value].idproducto;
-    let result = await apiBaseDatos("setProducto",
+      // let result = await apiBaseDatos("setProducto",
+      let result = await setProducto(
       sessionStorage.getItem("tipouser")==='3'?arrayUsuarios[usuario].iduser:sessionStorage.getItem("user"), mproducto, arraytnegocios[tnegocio].categorianegocio,
-      nombrecorto, contenidofoto, descripcion, precio, ocupado === true ? 1 : 0, domicilio === true ? 1 : 0, agregarsn ? true : false, 
+      nombrecorto, contenidofoto, descripcion, precio!==""?precio:"0", ocupado === true ? 1 : 0, domicilio === true ? 1 : 0, agregarsn ? true : false, 
       marca, modelo, talla, color, cbgps === true || domicilio === true ? 1 : 0, lat, lng, cbsCiudad === true ? 1 : 0, distanciaMax, isBase64ToBlob);
+
     if (isValid(result?.err)===true) {
       setMessage("Ocurrio un error mientras se registraba el producto")
       setOpen(true);
@@ -426,7 +434,8 @@ const CatProductos = () => {
   };
 
   async function sino() {
-    await apiBaseDatos("delProducto", arrayproductos[producto?.value].idproducto);
+    await delProductoCM(arrayproductos[producto?.value].idproducto);
+//    await apiBaseDatos("delProducto", arrayproductos[producto?.value].idproducto);
     iniciadatosgenerales();
     setMessage("Se eliminó el producto " + arrayproductos[producto?.value].desc);
     setOpen(true);

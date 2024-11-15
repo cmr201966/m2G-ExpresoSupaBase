@@ -3,7 +3,8 @@ import Hero from "../../layouts/Hero/Hero";
 import { useNavigate } from "react-router-dom"
 import { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
-import { apiBaseDatos, isValid } from "../../Utiles/Utiles";
+import { isValid } from "../../Utiles/Utiles";
+import { loginCM } from "../../Utiles/apiBaseDatos";
 import { useNotification } from "../../context/NotificationProvider";
 import Check from "@mui/icons-material/Check";
 // @mui/material
@@ -49,7 +50,8 @@ const Login = () => {
   async function confirma(e) {
     setLoading(true);
     e.preventDefault();
-    let result = await apiBaseDatos("login", user, password);
+    let result = await loginCM(user, password);
+//    let result = await apiBaseDatos("login", user, password);
     setLoading(false);
     if (isValid(result.error)===true || isValid(result.length)===false || result.length===0)
     {

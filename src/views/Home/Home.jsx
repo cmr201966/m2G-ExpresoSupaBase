@@ -22,11 +22,13 @@ import Hero from "../../layouts/Hero/Hero";
 // utils
 import {
   isValid,
-  apiBaseDatos,
   creaBucket,
   borraSessionStorage,
   getJpgFileSB,
 } from "../../Utiles/Utiles";
+import {
+  getanunciosCM, getcategoriasnewCM, 
+} from "../../Utiles/apiBaseDatos";
 
 // contexts
 import { useNotification } from "../../context/NotificationProvider";
@@ -69,7 +71,8 @@ const Home = () => {
       parsedParams.nivel === "0"
     ) {
       setNivel(0);
-      let resultApp = await apiBaseDatos("anuncios");
+      let resultApp = await getanunciosCM();
+//      let resultApp = await apiBaseDatos("anuncios");
       let imgsFileName1 = [];
       let imgsFolder1 = [];
       let category1 = [];
@@ -91,7 +94,8 @@ const Home = () => {
       setCategorys(category1);
       setUsers(users1);
       setNombres(nombres1);
-      let result = await apiBaseDatos("getcategoriasnew");
+      let result = await getcategoriasnewCM();
+//      let result = await apiBaseDatos("getcategoriasnew");
       let longitug = isValid(result) === true ? result.length : 0;
       let arrayContenidoFoto = [];
       let resultado = [];
@@ -114,15 +118,24 @@ const Home = () => {
         }
       }
       if (longitug !== 0) {
-        result.forEach((item, i) => {
-          newResult.push({
-            categoria: item.idcategoria,
-            name: item.nick.nick,
-            link: item.link,
-            photo: arrayContenidoFoto[i],
-            tooltip: item.categoria,
-          });
-        });
+         if (sessionStorage.getItem("sgbd").toLocaleUpperCase() !== "MYSQL")
+            result.forEach((item, i) => {
+              newResult.push({
+                 categoria: item.idcategoria,
+                 name: item.nick.nick,
+                 link: item.link,
+                 photo: arrayContenidoFoto[i],
+                 tooltip: item.categoria,});
+            })
+            else
+            result.forEach((item, i) => {
+              newResult.push({
+                 categoria: item.idcategoria,
+                 name: item.nick,
+                 link: item.link,
+                 photo: arrayContenidoFoto[i],
+                 tooltip: item.categoria,});
+            })
         setResult(newResult);
       }
     }
@@ -200,8 +213,6 @@ const Home = () => {
         </div>
         <div></div>
       </div>        
-
-
         {show ? (
           <Box
             sx={{

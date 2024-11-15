@@ -12,7 +12,7 @@ import {
 import { Check, Close } from "@mui/icons-material";
 
 // services
-import { apiBaseDatos } from "../../Utiles/Utiles";
+import { getProvinciasCM, getMunicipiosCM, getConfigCM, setConfigCM  } from "../../Utiles/apiBaseDatos";
 
 function Location(props) {
   const { open, onModalClose } = props;
@@ -36,22 +36,26 @@ function Location(props) {
 
   const confirmar = useCallback(async () => {
     setLoading(true);
-    await apiBaseDatos("setConfig", province, municipal);
+    await setConfigCM(province, municipal);
+//    await apiBaseDatos("setConfig", province, municipal);
     setLoading(false);
     onModalClose();
   }, [municipal, onModalClose, province]);
 
   const init = async () => {
-    const remoteProvinces = await apiBaseDatos("provincias");
-    setProvinces(remoteProvinces);
+    const remoteProvinces = await getProvinciasCM();
+    //const remoteProvinces = await apiBaseDatos("provincias");
+//    setProvinces(remoteProvinces);
     if (remoteProvinces?.length) {
       setProvince(remoteProvinces[0].provincia);
     }
 
-    const remoteMunicipals = await apiBaseDatos("municipios");
+    const remoteMunicipals = await getMunicipiosCM();
+    //const remoteMunicipals = await apiBaseDatos("municipios");
     setMunicipals(remoteMunicipals);
 
-    const config = await apiBaseDatos("getConfig");
+    const config = await getConfigCM();
+//    const config = await apiBaseDatos("getConfig");
     if (!config?.length) {
       setCantClose(true);
       setProvince(14);

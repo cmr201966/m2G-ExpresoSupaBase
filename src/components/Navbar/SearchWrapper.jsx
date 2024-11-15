@@ -24,9 +24,7 @@ function SearchWrapper() {
   function buscaProductos(e) {
     e.preventDefault();
     navigate(
-      `/productos?buscar=${buscar}&user=${sessionStorage.getItem(
-        "user"
-      )}&nombre=Filtro: '${buscar}'`
+      `/productos?buscar=${buscar}&user=${sessionStorage.getItem("user")}&nombre=Filtro: '${buscar}'`
     );
   }
 
@@ -37,7 +35,7 @@ function SearchWrapper() {
           <input
             className="buscar-input"
             id="buscar"
-            placeholder="Buscar productos, marcas y más..."
+            placeholder="Buscar productos"
             value={buscar}
             onChange={handleInput}
             type="text"

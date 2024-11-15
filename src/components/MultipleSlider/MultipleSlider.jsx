@@ -7,6 +7,7 @@ const BigSlider = (props) => {
   const { imgs = [] } = props;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [transition] = useState(true);
+  const [movil] = useState(window.innerWidth < 768);
   const [cantidad, setCantidad] = useState(
     window.innerWidth <= 768 ? imgs.length - 2 : imgs.length - 6
   );
@@ -25,28 +26,22 @@ const BigSlider = (props) => {
 
   return (
     <div className={`multiple-slider`}>
-      {imgs.length >= 3 ? (
+    {movil===false && imgs.length >= 3 ? (
         <button onClick={() => toRight()} className="multiple-slider-nav left">
           {"<"}
         </button>
       ) : (
         ""
       )}
-      <div
-        className={`multiple-slider-content ${
-          transition ? "transition" : ""
-        } ${css({
-          transform: `translateX(${currentIndex * -1 * 125}px)`,
-        })}`}
-      >
+      <div className={`${movil?"multi-slider-movil":""} multiple-slider-content ${transition ? "transition" : ""} ${css({transform: `translateX(${currentIndex * -1 * 129}px)`,})}`}>
         {imgs?.map((item, i) => (
-          <div key={i} className="multiple-slider-item">
+          <div key={i} className={"multiple-slider-item"}>
             {item}
           </div>
         ))}
       </div>
 
-      {((window.innerWidth <= 768 && imgs.length >= 3) ||
+      {movil===false && ((window.innerWidth <= 768 && imgs.length >= 3) ||
       (window.innerWidth > 768 && imgs.length > 6)) && cantidad>0? (
         <button onClick={() => toLeft()} className="multiple-slider-nav right">
           {">"}

@@ -14,9 +14,13 @@ import { useNavigate } from "react-router-dom";
 import Modal from "../../components/Modal/Modal";
 import { useLocation } from "react-router-dom";
 import { useNotification } from "../../context/NotificationProvider";
-import { isValid, apiBaseDatos, buscarEnArreglo, getJpgFileSB  } from "../../Utiles/Utiles";
+import { isValid, buscarEnArreglo, getJpgFileSB  } from "../../Utiles/Utiles";
 import { Box, CircularProgress } from "@mui/material";
 import Encabezado from "../../components/Encabezado/Encabezado";
+import { getAplicacionesCM, getCategoriasNegociosCM, setAplicacionesCM,
+         delAnuncioCM} 
+       from "../../Utiles/apiBaseDatos";
+
 
 const Aplicaciones = () => {
 // Create a single supabase client for interacting with your database
@@ -67,7 +71,8 @@ const Aplicaciones = () => {
     navigate(`/`);
     return
   }
-      let result = await apiBaseDatos("getAplicaciones")
+      let result = await getAplicacionesCM();
+//      let result = await apiBaseDatos("getAplicaciones");
       if ((isValid(result) === true && result.err) || isValid(result)===false) 
       {
          setArrayAplicaciones(arraynoaplicaciones);
@@ -78,7 +83,8 @@ const Aplicaciones = () => {
         guardaDatosAplicacion(result, 0)
         setAplicacion(buscarEnArreglo(result, result[0].id, "id"));  
       }
-      let resultcategorias= await apiBaseDatos("getCategoriasNegocios");
+      let resultcategorias= await getCategoriasNegociosCM();
+//      let resultcategorias= await apiBaseDatos("getCategoriasNegocios");
 
       if (resultcategorias.length === 0) 
       {
@@ -92,6 +98,7 @@ const Aplicaciones = () => {
            setCategoria(buscarEnArreglo(resultcategorias, result[buscarEnArreglo(result, result[0].id, "id")].idcategoria, "categorianegocio"));
            setIsBase64ToBlob(true);
            let resultado = await getJpgFileSB(result[0].id + ".jpg", "./galerias/app_images/aplicaciones/" + result[0].id, "aplicaciones/" + result[0].id);
+//           let resultado = await getJpgFileSB(result[0].id + ".jpg", "./galerias/app_images/aplicaciones/" + result[0].id, "aplicaciones/" + result[0].id);
            if (isValid(resultado)=== true) {
               setIsBase64ToBlob(true);
               setContenidofoto(resultado);
@@ -185,8 +192,10 @@ const Aplicaciones = () => {
     }
      
     async function confirmar() {
-    let result= await apiBaseDatos("setAplicaciones", arrayAplicaciones[aplicacion].id, sessionStorage.getItem("user"), nick, desc,
+    let result= await setAplicacionesCM(arrayAplicaciones[aplicacion].id, sessionStorage.getItem("user"), nick, desc,
                                     ttip, arrayCategorias[categoria].categorianegocio, agregarsn, contenidofoto, isBase64ToBlob);
+//    let result= await apiBaseDatos("setAplicaciones", arrayAplicaciones[aplicacion].id, sessionStorage.getItem("user"), nick, desc,
+//                                    ttip, arrayCategorias[categoria].categorianegocio, agregarsn, contenidofoto, isBase64ToBlob);
     if (isValid(result)===true){
         setMessage("Ocurrio un error al registrar el anuncio")
         setOpen(true);
@@ -257,7 +266,8 @@ const Aplicaciones = () => {
 
   async function sino() {
 
-    await apiBaseDatos("delAnuncio", arrayAplicaciones[aplicacion].id);
+    await delAnuncioCM(arrayAplicaciones[aplicacion].id);
+//    await apiBaseDatos("delAnuncio", arrayAplicaciones[aplicacion].id);
     setMessage("Se eliminó el anuncio " + arrayAplicaciones[aplicacion].desc);
     setOpen(true);
     setShow(false);
@@ -379,7 +389,7 @@ const Aplicaciones = () => {
                           )}
 
              <div className="grupo-button-app">
-                   {(agregarsn === true || editarsn === true) && nombrefoto !== "" && nick!=="" && desc!=="" && ttip!==""? (
+                   {(agregarsn === true || editarsn === true) && nombrefoto !== "" && nick!=="" && desc!==""? (
                       <Tippy content="Vista previa">
                         <button
                           type="button"
@@ -391,7 +401,7 @@ const Aplicaciones = () => {
                      ) : (
                       ""
                     )}
-                  {(agregarsn === true || editarsn === true) && nick!=="" && desc!=="" && ttip!==""? (
+                  {(agregarsn === true || editarsn === true) && nick!=="" && desc!==""? (
                          <label className="producto-button primary label-photo">
                           <input
                             id="foto"

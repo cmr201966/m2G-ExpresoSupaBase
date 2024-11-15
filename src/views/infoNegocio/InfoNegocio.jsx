@@ -5,7 +5,9 @@ import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Map from "../../components/Map/MapBox";
 import { useLocation } from "react-router-dom";
 import Tippy from "@tippyjs/react";
-import { isValid, getFilesInFolderSB, getJpgFileSB, getInfoNegocio } from "../../Utiles/Utiles";
+import { isValid, getFilesInFolderSB, getJpgFileSB } from "../../Utiles/Utiles";
+import { getInfoNegocioCM } from "../../Utiles/apiBaseDatos";
+
 import Encabezado from "../../components/Encabezado/Encabezado";
 import { Box, CircularProgress } from "@mui/material";
 
@@ -42,7 +44,8 @@ const InfoNegocio = () => {
   };
 
   async function init(){
-    let result = await getInfoNegocio(parsedParams.idnegocio);
+    let result = await getInfoNegocioCM(parsedParams.idnegocio);
+//    let result = await getInfoNegocio(parsedParams.idnegocio);
     let resultFiles = await getFilesInFolderSB("./galerias/app_images/usuarios/" + parsedParams.idnegocio, "usuarios/" + parsedParams.idnegocio, "galerias");
     setArrayFotos(resultFiles);
     let tarray=[];

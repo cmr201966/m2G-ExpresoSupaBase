@@ -12,7 +12,10 @@ import Map from "../../components/Map/MapBox";
 import libre from "../../assets/images/libre.png";
 import ocupado from "../../assets/images/ocupado.png";
 import marker from "../../assets/images/custom_marker.png";
-import { isValid, getJpgFileSB, apiBaseDatos } from "../../Utiles/Utiles";
+import { isValid, getJpgFileSB } from "../../Utiles/Utiles";
+import {getparesgpscategoriaCM, getProductosCM, updateOcupadoCM, setMovimientosNewCM,
+  getProductosNewCM} from "../../Utiles/apiBaseDatos";
+
 import { useEffect, useState } from "react";
 import CardRow from "../../components/CardRow/CardRow";
 import Encabezado from "../../components/Encabezado/Encabezado";
@@ -233,7 +236,8 @@ function contains(lat, lon, bbox) {
   }
 
   async function paresGps() {
-    let resultgps = await apiBaseDatos("getparesgpscategoria", sessionStorage.getItem("categoria"),"");
+    let resultgps = await getparesgpscategoriaCM(sessionStorage.getItem("categoria"),"");
+//    let resultgps = await apiBaseDatos("getparesgpscategoria", sessionStorage.getItem("categoria"),"");
     let paresgps = [];
     let itemst = [];
     resultgps.forEach((item) => {
@@ -282,9 +286,12 @@ function contains(lat, lon, bbox) {
     setShow1(true);
     setInicia(true);
     sessionStorage.setItem("categoria", parsedParams.categoria);
-    let result1 = await apiBaseDatos("getProductos", sessionStorage.getItem("categoria"), 
+    let result1 = await getProductosCM(sessionStorage.getItem("categoria"), 
                                      sessionStorage.getItem("userAnuncio"), 
                                      sessionStorage.getItem("buscar"));
+//    let result1 = await apiBaseDatos("getProductos", sessionStorage.getItem("categoria"), 
+//                                     sessionStorage.getItem("userAnuncio"), 
+//                                     sessionStorage.getItem("buscar"));
     const newResult = [];
     if (isValid(result1.error)) {
       newResult.push({
@@ -334,7 +341,8 @@ function contains(lat, lon, bbox) {
       }
     }
     sessionStorage.setItem("carditem", 0);
-    let resultgps = await apiBaseDatos("getparesgpscategoria", sessionStorage.getItem("categoria"));
+    let resultgps = await getparesgpscategoriaCM(sessionStorage.getItem("categoria"));
+//    let resultgps = await apiBaseDatos("getparesgpscategoria", sessionStorage.getItem("categoria"));
     let paresgps = [];
     let itemst = [];
     resultgps.forEach((item) => {
@@ -368,8 +376,10 @@ function contains(lat, lon, bbox) {
       let latDestino=tindex<3?0:puntos[tindex-1].lat;
       let lngOrigen=tindex<3?0:puntos[tindex-2].lng;
       let lngDestino=tindex<3?0:puntos[tindex-1].lng;
-      await apiBaseDatos("setmovimientosNew", 1, idproductot, latOrigen, latDestino, lngOrigen, lngDestino, carrera * items[index].tarifa + items[index].costodomicilio, carrera, users)
-      await apiBaseDatos("updateOcupado", idproductot, 1)
+      await setMovimientosNewCM(1, idproductot, latOrigen, latDestino, lngOrigen, lngDestino, carrera * items[index].tarifa + items[index].costodomicilio, carrera, users)
+      await updateOcupadoCM(idproductot, 1)
+//      await apiBaseDatos("setmovimientosNew", 1, idproductot, latOrigen, latDestino, lngOrigen, lngDestino, carrera * items[index].tarifa + items[index].costodomicilio, carrera, users)
+//      await apiBaseDatos("updateOcupado", idproductot, 1)
       init1();
     }
     setPuntosState(0);
@@ -421,7 +431,8 @@ function contains(lat, lon, bbox) {
       if ((Number(esta) < Number(menor)) && ((tpuntos[i].distanciamax===0) || (tpuntos[i].distanciamax>=esta))) {
         menor = esta;
           setIdroductot(items[i].idproducto);
-          let resultProduct = await apiBaseDatos("getProductoNew", items[i].idproducto);
+          let resultProduct = await getProductosNewCM(items[i].idproducto);
+//          let resultProduct = await apiBaseDatos("getProductoNew", items[i].idproducto);
           if (resultProduct.length !== 0) {
              setMarca(resultProduct[0].marca);
              setColor(resultProduct[0].color);

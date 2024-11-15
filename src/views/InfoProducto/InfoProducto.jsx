@@ -14,7 +14,9 @@ import { useLocation } from "react-router-dom";
 import marker from "../../assets/images/custom_marker.png";
 import libre from "../../assets/images/libre.png";
 import off from "../../assets/images/ocupado.png";
-import { isValid, apiBaseDatos, getFilesInFolderSB, getJpgFileSB, getInfoProducto, getParesGpsProducto  } from "../../Utiles/Utiles";
+import { isValid, getFilesInFolderSB, getJpgFileSB } from "../../Utiles/Utiles";
+import { getInfoProductoCM, getParesGpsProductoCM, setMovimientosNewCM,
+         updateOcupadoCM} from "../../Utiles/apiBaseDatos";
 import config from "../../config";
 import Encabezado from "../../components/Encabezado/Encabezado";
 // styles
@@ -72,7 +74,8 @@ const InfoProducto = () => {
         if (isValid(result.url)===true) tarray.push(result.url);
         setArrayFotoInfo(tarray);
     }
-    let result = await getInfoProducto(parsedParams.idproducto);
+    let result = await getInfoProductoCM(parsedParams.idproducto);
+//    let result = await getInfoProducto(parsedParams.idproducto);
     if (isValid(result)=== true) {
       setIdproducto(parsedParams.idproducto);
       setUsert(result[0].idnegocio)
@@ -90,7 +93,8 @@ const InfoProducto = () => {
       setDomicilio(result[0].domicilio);
       setAccion(result[0].accion)
     }
-    result= await getParesGpsProducto(parsedParams.categoria,  parsedParams.idproducto);
+    result= await getParesGpsProductoCM(parsedParams.categoria,  parsedParams.idproducto);
+//    result= await getParesGpsProducto(parsedParams.categoria,  parsedParams.idproducto);
     let paresGps = [];
     result.forEach((item) => {
       paresGps.push({
@@ -200,9 +204,9 @@ if (puntosState===2){
       let latDestino=tindex<3?0:puntos[tindex-1].lat;
       let lngOrigen=tindex<3?0:puntos[tindex-2].lng;
       let lngDestino=tindex<3?0:puntos[tindex-1].lng;
-      apiBaseDatos("setmovimientosNew", 1, idproducto, latOrigen, latDestino, lngOrigen, lngDestino, (carrera*tarifa)+costoDomicilio, carrera, usert)
+      setmovimientosNewCM( 1, idproducto, latOrigen, latDestino, lngOrigen, lngDestino, (carrera*tarifa)+costoDomicilio, carrera, usert)
       setOcupado(true);
-      apiBaseDatos("updateOcupado", idproducto, 1)
+      updateOcupadoCM(idproducto, 1)
     } 
 
     setPuntos([]);

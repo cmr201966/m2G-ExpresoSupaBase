@@ -1,4 +1,4 @@
-import {  isValid, uploadBase64Image} from "./Utiles/Utiles";
+import {  isValid, uploadBase64Image} from "./Utiles";
 import { getCategoriasNew } from "../servicios/home";
 import { getCategoriasNegocios } from "../servicios/catalogos";
 import { getAplicaciones, setAplicaciones } from "../servicios/aplicaciones";
@@ -8,13 +8,8 @@ import { getdatosiduser, setregistrarse } from "../servicios/registrarse";
 import { getinfoproducto } from "../servicios/productos";
 import { getParesGpsNaturalezaNew } from "../servicios/naturalezas";
 import { getinfonegocio } from "../servicios/negocios";
-import { getparesgpscategoria } from "../servicios/catalogos";
-import {
-  getproductos,
-  setMovimientosNew,
-  updateOcupado,
-  getProductoNew,
-} from "../servicios/productos";
+import { getparesgpscategoria, delAnuncio } from "../servicios/catalogos";
+import {getproductos, setMovimientosNew, updateOcupado,getProductoNew,} from "../servicios/productos";
 import { setCategoriasNegocios, delCategoria } from "../servicios/catalogos";
 import { getcategoriasnegociosapp } from "../servicios/negocios";
 import {
@@ -25,7 +20,7 @@ import {
 import { getusuarios } from "../servicios/registrarse";
 import { setconfig, getconfig } from "../servicios/config";
 import supabase from "./connection";
-  
+
 async function getanunciosCM() {
   let datos;
   if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
@@ -91,7 +86,7 @@ async function getCategoriasNegociosCM() {
     const { data } = await supabase
       .from("tablacategorias")
       .select("*")
-      .order("desc", { ascending: true });
+      .order("nick", { ascending: true });
     datos = data;
   }
   return datos;
@@ -151,6 +146,7 @@ async function CategoriasInsertUpdate(
 }
 
 async function loginCM(param1, param2) {
+  console.log(param1, param2);
   let result = [];
   let err = undefined;
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
@@ -162,8 +158,8 @@ async function loginCM(param1, param2) {
     const { data, error } = await supabase
       .from("tablausuarios")
       .select("*")
-      .eq("iduser", param1)
-      .eq("pw", param2)
+      .eq("iduser", param1.toLowerCase())
+      .eq("pw", param2.toLowerCase())
       .eq("activo", true);
     err = error;
     result = data;
@@ -171,7 +167,7 @@ async function loginCM(param1, param2) {
   }
 }
 
-async function getprovinciasCM() {
+async function getProvinciasCM() {
   let resultprovincia = [];
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
     resultprovincia = await getprovincias({});
@@ -186,7 +182,7 @@ async function getprovinciasCM() {
   return resultprovincia;
 }
 
-async function getmunicipiosCM() {
+async function getMunicipiosCM() {
   let resultmunicipio = [];
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
     resultmunicipio = await getmunicipios({});
@@ -253,6 +249,7 @@ async function setregistrarseCM(
     return err;
   } else {
     if (modifica === false) {
+      let activo=sessionStorage.getItem("tipouser")==="3"?true:false;
       const { error } = await supabase.from("tablausuarios").insert({
         iduser: user,
         nombre: nombre,
@@ -263,6 +260,7 @@ async function setregistrarseCM(
         tipouser: plan,
         latitud: lat,
         longitud: lng,
+        activo: activo,
       });
       err = error;
       if (isValid(error) === false) {
@@ -335,6 +333,14 @@ async function setAplicacionesCM(
   contenidofoto,
   isBase64ToBlob
 ) {
+  console.log(id,
+    user,
+    nick,
+    desc,
+    tooltip,
+    categoria,
+    agregarsn,
+    );
   let err = "";
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
     let result = await setAplicaciones({
@@ -351,14 +357,16 @@ async function setAplicacionesCM(
     err = result.error;
   } else {
     if (agregarsn === true) {
+      let activo=sessionStorage.getItem("tipouser")==='3'?true:false;
       const { error } = await supabase.from("tablaanuncios").insert({
         idapp: nick,
         iduser: user,
         desc,
         idcategoria: categoria,
         tooltip,
-        activo: false,
+        activo: activo,
       });
+      console.log(error);
       if (isValid(error) === true) err = error;
       else {
         const { data, error } = await supabase
@@ -399,6 +407,14 @@ async function setAplicacionesCM(
     }
   }
   return err;
+}
+
+async function creaBucketCM(bucket) {
+  const { data } = await supabase.storage.listBuckets();
+  const bucketExists = data.some((bucket) => bucket.name === bucket);
+  if (bucketExists === false) {
+    await supabase.storage.createBucket(bucket);
+  }
 }
 
 async function getInfoProductoCM(producto) {
@@ -734,7 +750,7 @@ async function getcategoriasnegociosappCM() {
     const { data } = await supabase
       .from("tablacategorias")
       .select("*")
-      .order("desc", { ascending: true });
+      .order("nick", { ascending: true });
     resulttnegocios = data;
   }
   return resulttnegocios;
@@ -841,6 +857,7 @@ async function setProductoCM(
     });
   else {
     if (agregar === true) {
+      let activo = sessionStorage.getItem("tipouser")==="3"?true:false;
       const { error } = await supabase.from("tablacatproductos").insert({
         iduser: user,
         categorianegocio: categoria,
@@ -858,7 +875,9 @@ async function setProductoCM(
         ocupado,
         distanciamax,
         sciudad,
-      });
+        activo: activo,
+       });
+
       if (isValid(error) === true && error.length === 0) {
         err = error;
       } else {
@@ -965,12 +984,13 @@ async function getConfigCM() {
 }
 
 export {
-  loginCM
+  loginCM,
+  creaBucketCM
 };
 
 export {
-  getprovinciasCM,
-  getmunicipiosCM,
+  getProvinciasCM,
+  getMunicipiosCM,
   getAplicacionesCM,
   getInfoProductoCM,
   getParesGpsProductoCM,
@@ -990,14 +1010,14 @@ export {
 };
 
 export {
-setAplicacionesCM,
-setMovimientosNewCM,
-setProductoCM,
-setConfigCM,
-setregistrarseCM,
+  setAplicacionesCM,
+  setMovimientosNewCM,
+  setProductoCM,
+  setConfigCM,
+  setregistrarseCM,
 };
 export {
-    updateOcupadoCM
+  updateOcupadoCM
 };
   
 export {

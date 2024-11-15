@@ -5,10 +5,13 @@
     overflow: hidden;
     position: relative;
   }
+  .multi-slider-movil {
+    overflow-x: auto;
+  }
   
   .multiple-slider-content {
     display: flex;
-    justify-content: center;
+    /*justify-content: center;*/
     align-items: center;
     gap: 20px;
   }
@@ -39,12 +42,12 @@
   }
   
   .multiple-slider-nav.right {
-    right: -16px;
-    font-size: 30px;
+    right: -13px;
+    font-size: 35px;
   }
   
   .multiple-slider-nav.left {
-    left: -14px;
-    font-size: 30px;
+    left: -13px;
+    font-size: 35px;
   }
   

@@ -18,7 +18,9 @@ import { useNotification } from "../../context/NotificationProvider";
 
 import Hero from "../../layouts/Hero/Hero";
 import { useEffect, useState } from "react";
-import { isValid, apiBaseDatos, getJpgFileSB, buscarEnArreglo } from "../../Utiles/Utiles";
+import { isValid, getJpgFileSB, buscarEnArreglo } from "../../Utiles/Utiles";
+import { getProvinciasCM, getMunicipiosCM, getdatosuserCM, setregistrarseCM } 
+        from "../../Utiles/apiBaseDatos";
 import Encabezado from "../../components/Encabezado/Encabezado";
 import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import "./styles.css";
@@ -70,7 +72,8 @@ const Registrarse = () => {
     setModifica(!(parsedParams.inserta==="true"));
     
     let ttprovincias=[];
-    let resultprovincia = await apiBaseDatos("provincias")
+    let resultprovincia = await getProvinciasCM()
+//    let resultprovincia = await apiBaseDatos("provincias")
 
     if (resultprovincia === undefined)
     {
@@ -84,7 +87,8 @@ const Registrarse = () => {
     }
     setProvincia(ttprovincias[0].provincia);
     let ttmunicipios=[];
-    let resultmunicipio = await apiBaseDatos("municipios");
+    let resultmunicipio = await getMunicipiosCM();
+//    let resultmunicipio = await apiBaseDatos("municipios");
     if (resultmunicipio === true)
     {
        setArraymunicipios(arraydesconocido);
@@ -110,7 +114,8 @@ const Registrarse = () => {
     setMunicipio(ttmunicipios[0].municipio);
     if (isValid(sessionStorage.getItem("user")) === true && (parsedParams.where!=='true'))
     {
-      let result = await apiBaseDatos("getdatosuser", sessionStorage.getItem("user"));
+      let result = await getdatosuserCM(sessionStorage.getItem("user"));
+//      let result = await apiBaseDatos("getdatosuser", sessionStorage.getItem("user"));
       setUser(result[0].iduser);
       setPassword(result[0].pw);
       setNombre(result[0].nombre);
@@ -249,9 +254,12 @@ const Registrarse = () => {
       }
       let latT=lat===null || lat===undefined?0:lat;
       let lngT=lat===null || lng===undefined?0:lng;
-      let response = await apiBaseDatos("setregistrarse", user.toLowerCase(), nombre, password, celular, 
+      let response = await setregistrarseCM(user.toLowerCase(), nombre, password, celular, 
                                                           provincia, municipio, contenidofoto, modifica, 
                                                           plan, latT, lngT, isBase64ToBlob);
+//      let response = await apiBaseDatos("setregistrarse", user.toLowerCase(), nombre, password, celular, 
+//                                                          provincia, municipio, contenidofoto, modifica, 
+//                                                          plan, latT, lngT, isBase64ToBlob);
       let isOk=true;
       if (isValid(response)===true )
          if (isValid(response.length)===true) isOk=false;
