@@ -11,7 +11,7 @@ import "./styles.css";
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom"
 //import Modal from "../../components/Modal/Modal";
-import ChatDialogo from "../../components/ChatDialogo/ChatDialogo";
+//import ChatDialogo from "../../components/ChatDialogo/ChatDialogo";
 import IconButton from "@mui/material/IconButton";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom"
@@ -81,7 +81,7 @@ useEffect(() => {
               <p>Todos los derechos reservados. 2024</p>
         </div>
         {showchat===true?
-          <ChatDialogo user={chatuser} nombre={chatnombre} indexChat={indexChat} />
+          {/*<ChatDialogo user={chatuser} nombre={chatnombre} indexChat={indexChat} />*/}
         :""}
       </Hero>
     </div>

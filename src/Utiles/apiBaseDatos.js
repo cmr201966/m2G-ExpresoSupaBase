@@ -47,7 +47,7 @@ function GeneraVistagetCategoriasNew(user, tipouser) {
   }
   return (
     "CREATE OR REPLACE VIEW getcategoriasnew  AS select DISTINCT tablacatproductos.categorianegocio as idcategoria, " +
-    'tablaCategorias."desc" as categoria, link, destodo, tablacategorias.nick(nick) from tablacategorias, tablacatproductos' +
+    'tablaCategorias."desc" as categoria, link, destodo, tablacategorias.nick(*) from tablacategorias, tablacatproductos' +
     " where (tablaCategorias.categorianegocio=tablacatproductos.categorianegocio) and (tablacatproductos.activo=true)" +
     condicion
   );
@@ -146,7 +146,6 @@ async function CategoriasInsertUpdate(
 }
 
 async function loginCM(param1, param2) {
-  console.log(param1, param2);
   let result = [];
   let err = undefined;
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
@@ -333,14 +332,6 @@ async function setAplicacionesCM(
   contenidofoto,
   isBase64ToBlob
 ) {
-  console.log(id,
-    user,
-    nick,
-    desc,
-    tooltip,
-    categoria,
-    agregarsn,
-    );
   let err = "";
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
     let result = await setAplicaciones({
@@ -366,7 +357,6 @@ async function setAplicacionesCM(
         tooltip,
         activo: activo,
       });
-      console.log(error);
       if (isValid(error) === true) err = error;
       else {
         const { data, error } = await supabase
@@ -418,16 +408,19 @@ async function creaBucketCM(bucket) {
 }
 
 async function getInfoProductoCM(producto) {
+  console.log("InfoProducto 50")
   let result = [];
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
     result = await getinfoproducto({ idproducto: producto });
     result = await result.json();
   } else {
+    console.log("InfoProducto 51")
     const { data, error } = await supabase
       .from("getinfoproducto")
       .select("*")
       .eq("idproducto", producto);
     result = data;
+    console.log("InfoProducto 52")
   }
   return result;
 }
@@ -578,6 +571,7 @@ async function getparesgpscategoriaCM(categoria, user, anuncio) {
     resultgps = await resultgps.json();
   } else {
     let sql = getParesGpsCategoria(categoria, user, anuncio);
+
     await supabase.rpc("execute_query", { query: sql });
     const { data } = await supabase.from("getparesgpscategoria").select("*");
     resultgps = data;
@@ -625,18 +619,23 @@ async function GeneraVistaGetProductos(categoria, userAnuncio, buscar) {
 }
 
 async function getProductosCM(categoria, userAnuncio, buscar) {
+  console.log("Productos 9");
   let result1 = [];
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
     result1 = await getproductos({ categoria, userAnuncio, buscar });
     result1 = await result1.json();
   } else {
     // Generar VISTA con API en SUPABASE
+    console.log("Productos 10");
     let sql = await GeneraVistaGetProductos(categoria, userAnuncio, buscar);
+    console.log("Productos 11");
     await supabase.rpc("execute_query", { query: sql });
     // Ejecutar VISTA
     const { data } = await supabase.from("getproductos").select("*");
     result1 = data;
+    console.log("Productos 12");
   }
+  console.log("Productos 13");
   return result1;
 }
 

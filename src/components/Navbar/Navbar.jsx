@@ -41,6 +41,7 @@ const Navbar = (props) => {
   const location = useLocation();
   const {setOpen, setMessage} = useNotification();
   const [showMenu, setShowMenu] = useState(false);
+  const [whereIs, setWhereIs] = useState("ubica");
 
   const [inicia, setInicia] = useState(true);
 
@@ -138,9 +139,23 @@ const Navbar = (props) => {
     setShowMenu(!showMenu);
   }
 
+  function BuscarMovil(){
+    setWhereIs("movil")
+    setShowDialog(true);
+  }
+
+  function cambiaWhereIs(valor){
+    setWhereIs(valor);
+  }
+
+  function cierraDialogo(){
+    setShowDialog(false)
+    cambiaWhereIs("ubica");
+  }
+
   const [showDialog, setShowDialog] = useState(false);
 
-  const onModalClose = useCallback(() => setShowDialog(false), [setShowDialog]);
+  const onModalClose = useCallback(() => cierraDialogo(), [setShowDialog]);
 
   async function init() {
     if (sessionStorage.getItem("deDonde")!=="infoProducto" && sessionStorage.getItem("deDonde")!=="infoNegocio") {
@@ -235,8 +250,8 @@ const Navbar = (props) => {
                   className="responsive-lupa"
                   id="lupa"
                   color="inherit"
-/*                  onClick={toggleBuscar}
-                  type="submit"*/
+                  onClick={() => BuscarMovil()}
+/*                  type="submit"*/
                 >
                   <Search />
                 </IconButton>
@@ -275,7 +290,7 @@ const Navbar = (props) => {
                     <span className="ubicacion">Ubicación</span>
                   </IconButton>
                 </Tippy>
-                <Location open={showDialog} onModalClose={onModalClose} />
+                <Location open={showDialog} onModalClose={onModalClose} whereIs={whereIs} CambiawhereIs={cambiaWhereIs} />
                 {menuPrimero.map((item, i) => (
                   <Fragment key={i}>
                     <Tippy content={item.tooltips}>

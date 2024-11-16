@@ -2,7 +2,7 @@ import Tippy from "@tippyjs/react";
 import Modal from "../../components/Modal/Modal";
 import Checkbox from '@mui/material/Checkbox';
 // Mis controles
-import ChatDialogo from "../../components/ChatDialogo/ChatDialogo";
+//import ChatDialogo from "../../components/ChatDialogo/ChatDialogo";
 import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Map from "../../components/Map/MapBox";
 
@@ -785,10 +785,12 @@ function handleInput(e) {
 
                     <Map sx={{ height: "800px", width: "100%" }} onMapClick={lngLatSelected} remoteshowMap={showMap} lat={lat} lng={lng} point={{ lat, lng }} onChange={onChangeMap} remoteZoom={zoom} /></> : ""
                   }
+{/*
                   {showchat === true && showGalerias === false && showMap === false ?
                      <ChatDialogo user={chatuser} nombre={chatnombre} indexChat={indexChat} /> : ""
                   }
 
+*/}
                 </div>
               </div>
             </> : ""}

@@ -5,9 +5,12 @@
 
 .perfil-info-producto-1 {
   display: flex;
-  justify-content: center;
+  flex-direction: column;
+  /*justify-content: center;*/
   background: rgb(20, 96, 172);
-  gap:8px;
+  width: 360px;
+  /*height: 340px;
+  gap:5px;*/
 }
 
 .img-class-info-producto{
@@ -44,8 +47,8 @@ p {
 }
 .img-info-producto
 {
-  height: 285px;
-  width: 285px;
+  height: 280px;
+  width: 360px;
   object-fit: contain;
   margin-top: 10px; 
 }
@@ -73,7 +76,7 @@ p {
 
   .info-image-offon{
   border-radius: 100%;
-  background:white;
+  background:transparent;
   border: none;
   color:red;
   position: absolute;
@@ -91,7 +94,7 @@ p {
 }
 .producto-fotos{
   display: flex;
-  flex-direction: column;
+  /*flex-direction: column;*/
   }
   .img-info-producto-lateral{
     height: 60px;
@@ -100,6 +103,7 @@ p {
     border-radius: 15px;
     border: 1px solid aliceblue;
     margin-top: 13px;
+    margin-left: 8px;
   }
   .div-papa-infoProducto{
     display: flex;
@@ -107,11 +111,13 @@ p {
     background: rgb(20, 96, 172);
     margin: 0 auto;
     /*width: 100%;*/
-    width: 375px;
+    width: 368px;
   }
 
   .mapa-1{
-    width: 100%;
+    width: 340px;
+    height: 340px;
+    margin-left: 8px;
     background: rgb(20, 96, 172);
   }
   .font-size1{
@@ -128,9 +134,9 @@ p {
     background: rgb(20, 96, 172);
   }
   .mapa-9{
+    width: 100%;
     display: flex;
     justify-content: center;
-    margin-bottom: 5px;
   }
   .ws{
     display: flex;
@@ -157,4 +163,9 @@ p {
     right: 21px;
     top: 5px;
     font-size: 1.7rem !important;
+  }
+  .sliderVertical{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
   }

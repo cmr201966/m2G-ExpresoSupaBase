@@ -15,7 +15,7 @@ import { Check, Close } from "@mui/icons-material";
 import { getProvinciasCM, getMunicipiosCM, getConfigCM, setConfigCM  } from "../../Utiles/apiBaseDatos";
 
 function Location(props) {
-  const { open, onModalClose } = props;
+  const { open, onModalClose, whereIs, cambiaWhereIs } = props;
 
   const [cantClose, setCantClose] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -38,6 +38,7 @@ function Location(props) {
     setLoading(true);
     await setConfigCM(province, municipal);
 //    await apiBaseDatos("setConfig", province, municipal);
+    cambiaWhereIs("unica")
     setLoading(false);
     onModalClose();
   }, [municipal, onModalClose, province]);
@@ -76,7 +77,7 @@ function Location(props) {
 
   return (
     <Dialog open={open} onClose={onModalClose}>
-      <DialogTitle>Ubicación</DialogTitle>
+      {whereIs!=="movil"?<DialogTitle>Ubicación</DialogTitle>:<DialogTitle>Buscar</DialogTitle>}
       {!cantClose && (
         <button
           aria-label="close"

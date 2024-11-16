@@ -76,7 +76,7 @@ const InfoProducto = () => {
     }
     let result = await getInfoProductoCM(parsedParams.idproducto);
 //    let result = await getInfoProducto(parsedParams.idproducto);
-    if (isValid(result)=== true) {
+if (isValid(result)=== true) {
       setIdproducto(parsedParams.idproducto);
       setUsert(result[0].idnegocio)
       setNegocio(result[0].negocio);
@@ -95,7 +95,7 @@ const InfoProducto = () => {
     }
     result= await getParesGpsProductoCM(parsedParams.categoria,  parsedParams.idproducto);
 //    result= await getParesGpsProducto(parsedParams.categoria,  parsedParams.idproducto);
-    let paresGps = [];
+let paresGps = [];
     result.forEach((item) => {
       paresGps.push({
         lat: item.latitud,
@@ -204,7 +204,7 @@ if (puntosState===2){
       let latDestino=tindex<3?0:puntos[tindex-1].lat;
       let lngOrigen=tindex<3?0:puntos[tindex-2].lng;
       let lngDestino=tindex<3?0:puntos[tindex-1].lng;
-      setmovimientosNewCM( 1, idproducto, latOrigen, latDestino, lngOrigen, lngDestino, (carrera*tarifa)+costoDomicilio, carrera, usert)
+      setMovimientosNewCM( 1, idproducto, latOrigen, latDestino, lngOrigen, lngDestino, (carrera*tarifa)+costoDomicilio, carrera, usert)
       setOcupado(true);
       updateOcupadoCM(idproducto, 1)
     } 
@@ -267,18 +267,6 @@ if (puntosState===2){
             <>
               <span className="encabezado-Info-Producto">{producto}</span>
               <section className="perfil-info-producto-1">
-                <div className="sliderVertical">
-                   {arrayFotos.map((item, i) => (                     
-                     <div key={i} className="producto-fotos">
-                       <img
-                         className="img-info-producto-lateral"
-                         src={arrayFotoInfo[i]}
-                         alt="Imagen del producto"
-                         onClick={()=>viewPhoto(i)}
-                       />
-                     </div>
-                   ))}
-                </div>
                 <div className="img-class-info-producto">
                   <img
                     className="img-info-producto"
@@ -296,7 +284,21 @@ if (puntosState===2){
                     </button>
                   </Tippy>
                 </div>
+
+                <div className="sliderVertical">
+                   {arrayFotos.map((item, i) => (                     
+                     <div key={i} className="producto-fotos">
+                       <img
+                         className="img-info-producto-lateral"
+                         src={arrayFotoInfo[i]}
+                         alt="Imagen del producto"
+                         onClick={()=>viewPhoto(i)}
+                       />
+                     </div>
+                   ))}
+                </div>
               </section>
+
               <div className="agrupa-info">
                <div className="product-info-1">
                   <div className="ws">
@@ -379,7 +381,7 @@ if (puntosState===2){
               <div className="mapa-9">
               <Map
                 points={puntos}
-                sx={{ height: "340px", width: "345px" }}
+                sx={{ height: "340px", width: "340px" }}
                 onMapClick={lngLatSelected}
                 remoteshowMap={showMap}
                 lat={lat}
