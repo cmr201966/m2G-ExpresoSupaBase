@@ -3,13 +3,10 @@ h3 {
 }
 
 .aplicaciones {
-  width: 300px;
+  width: 90%;
+  margin: 0 10px;
   display: flex;
   flex-direction: column;
-  background: rgb(20, 96, 172);
-  padding: 15px;
-  margin: 0 auto;
-  border-radius: 15px;
 }
 
 .container-aplicaciones {
@@ -18,6 +15,9 @@ h3 {
   align-items: start;
   flex-direction: column;
   gap: 15px;
+  background: rgb(20, 96, 172);
+  padding: 15px;
+  border-radius: 15px;
 }
 
 .app-flex {
@@ -25,6 +25,7 @@ h3 {
   flex-direction: column;
   gap: 15px;
   width: 100%;
+  max-width: 350px;
 }
 
 .app-flex-gap {
@@ -38,6 +39,21 @@ h3 {
   border-radius: 100px;
   border: 1px solid aliceblue;
   padding-left: 7px;
+}
+
+.form-main {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+}
+
+@media (max-width: 760px) {
+  .form-main {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    width: 100%;
+  }
 }
 
 .form-control {
@@ -72,6 +88,7 @@ h3 {
   width: 100%;
   object-fit: cover;
   border-radius: 15px;
+  object-position: center;
 }
 
 .atras {
