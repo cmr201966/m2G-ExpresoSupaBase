@@ -124,12 +124,10 @@ code {
 .cabeza {
   display: flex;
   align-items: center;
-  
 }
 .encabezado {
   display: flex;
   align-items: center;
-  
 }
 
 .h3-1-cabeza {
@@ -300,30 +298,31 @@ h6 {
   align-items: center;
 }
 
-.whatsapp{
+.whatsapp {
   background: none;
   border-radius: 5px;
   border: none;
-  color:rgb(27 225 44);
+  color: rgb(27 225 44);
   justify-content: center;
   align-items: center;
   display: flex;
   font-size: 3rem;
 }
 
-.whatsapp svg{
-    font-size: 3rem;
-  }
-
-.color-flecha{
-    color: aliceblue;
+.whatsapp svg {
+  font-size: 3rem;
 }
-.grip-flecha{
+
+.color-flecha {
+  color: aliceblue;
+}
+
+.grip-flecha {
   display: grid;
   justify-content: flex-start;
   grid-template-columns: 0% 33% 33%;
 }
-.color-encabezado
-{
+
+.color-encabezado {
   color: aliceblue;
 }

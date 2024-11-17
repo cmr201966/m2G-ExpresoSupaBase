@@ -1,5 +1,7 @@
 /* eslint-disable react/prop-types */
 import { useState } from "react";
+import { Link } from "react-router-dom";
+import Tippy from "@tippyjs/react";
 
 // @mui/material
 import {
@@ -10,7 +12,10 @@ import {
   ListItem,
   ListItemButton,
   ListItemText,
+  IconButton,
 } from "@mui/material";
+// @mui/icons
+import { Person, Settings, PersonAddAlt1 } from "@mui/icons-material";
 
 // utils
 import { isValid } from "../../Utiles/Utiles";
@@ -76,6 +81,46 @@ export default function NavigationDrawer({
           </ListItem>
         ))}
       </List>
+      <Divider />
+      <div className="row-buttons">
+        {Number(sessionStorage.getItem("tipouser")) === 3 ? (
+          <Tippy content={"Categorias de negocios"}>
+            <Link to="/catcategorias?login=1&regreso=/catcategorias">
+              <IconButton id="categorias">
+                <Settings />
+              </IconButton>
+            </Link>
+          </Tippy>
+        ) : (
+          ""
+        )}
+
+        {isValid(sessionStorage.getItem("user")) ? (
+          <Tippy
+            content={`Actualizar datos de ${sessionStorage.getItem("user")}`}
+          >
+            <Link to="/registrarse?inserta=false&where=false">
+              <IconButton id="user">
+                <Person id="user" />
+              </IconButton>
+            </Link>
+          </Tippy>
+        ) : (
+          ""
+        )}
+
+        {Number(sessionStorage.getItem("tipouser")) === 3 ? (
+          <Tippy content={"Agregar un usuario"}>
+            <Link to="/registrarse?inserta=true&where=true">
+              <IconButton id="user">
+                <PersonAddAlt1 />
+              </IconButton>
+            </Link>
+          </Tippy>
+        ) : (
+          ""
+        )}
+      </div>
     </Box>
   );
 
