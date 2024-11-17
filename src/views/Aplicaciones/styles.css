@@ -1,85 +1,87 @@
-.aplicaciones
-{
-    width: 100%px;
-    display: flex;
-    flex-direction: column;
-    background: rgb(20, 96, 172);
-    padding: 15px;
-    margin: 0 auto;
-    border-radius: 15px;   
-}
-.container-aplicaciones
-{
-    height: auto;
-    width: 100%;
-    display: flex;
-    align-items: start;
-    flex-direction: column;
-    padding: 10px;
-    border-radius: 15px;
-}
-.app-grip{
-    display: grid;
-    grid-template-columns: 100%;
-    width: 100%;
-}
-.app-flex{
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
-    gap:5px;
-
-}
-.app-flex-gap{
-    gap:11px;
-    color:aliceblue;
-    padding: 5px;
-    
-}
-.app-select-naturaleza{
-    width: 290px;
-    height: 32px;
-    border-radius: 15px;
-    border: 1px solid aliceblue;
-    padding-left: 7px;
-}
-.app-input-area{
-    width: 91%;
-    height: 28px;
-    border-radius: 15px;
-    border: 1px solid aliceblue;
-    padding-left: 7px;
-}
-    
-.grupo-button-app
-{
-    display: flex;
-    width: 100%;
-    justify-content: flex-end;
-    gap: 20px;
-    margin-top: 20px;
+h3 {
+  color: aliceblue;
 }
 
-.div-papa-aplicaciones{
-    display: flex;
-    flex-direction: column;
-    margin: 0 auto;
-    /*width: 100%;*/
+.aplicaciones {
+  width: 300px;
+  display: flex;
+  flex-direction: column;
+  background: rgb(20, 96, 172);
+  padding: 15px;
+  margin: 0 auto;
+  border-radius: 15px;
 }
+
+.container-aplicaciones {
+  height: auto;
+  display: flex;
+  align-items: start;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.app-flex {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  width: 100%;
+}
+
+.app-flex-gap {
+  gap: 11px;
+  color: aliceblue;
+  padding: 5px;
+}
+
+.app-select-naturaleza {
+  height: 32px;
+  border-radius: 100px;
+  border: 1px solid aliceblue;
+  padding-left: 7px;
+}
+
+.form-control {
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
+.app-input-area {
+  height: 28px;
+  border-radius: 15px;
+  border: 1px solid aliceblue;
+  padding-left: 7px;
+}
+
+.grupo-button-app {
+  display: flex;
+  width: 100%;
+  justify-content: flex-end;
+  gap: 20px;
+}
+
+.div-papa-aplicaciones {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  /*width: 100%;*/
+}
+
 .img-producto {
-    height: 272px;
-    width: 310px;
-    margin-top: 4px;
-    object-fit: cover;
+  height: 272px;
+  width: 100%;
+  object-fit: cover;
+  border-radius: 15px;
 }
-.atras
-{
+
+.atras {
   color: aliceblue;
   margin-left: 4px;
   margin-top: 3px;
   font-size: 16px;
   font-weight: bold;
 }
-html{
-    background-color: rgb(22, 104, 187);
+
+html {
+  background-color: rgb(22, 104, 187);
 }
