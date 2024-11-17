@@ -1,37 +1,58 @@
-import Checkbox from "@mui/material/Checkbox";
-import CollectionsIcon from "@mui/icons-material/Collections";
-import { Box, CircularProgress } from "@mui/material";
-import {PlaceOutlined} from "@mui/icons-material";
-import ComGalerias from "../../components/ComGalerias/ComGalerias";
-import Map from "../../components/Map/MapBox";
 import Tippy from "@tippyjs/react";
+import { useEffect, useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
+// @mui/icons
+import {
+  PlaceOutlined,
+  Checkbox,
+  Collections,
+  Check,
+  Add,
+  Delete,
+  Close,
+  Edit,
+  AddPhotoAlternate,
+  Visibility,
+} from "@mui/icons-material";
+// @mui/material
+import { TextField, Autocomplete, Box, CircularProgress } from "@mui/material";
+
+// utils
+import {
+  isValid,
+  buscarEnArreglo,
+  buscarEnArregloString,
+  getJpgFileSB,
+} from "../../Utiles/Utiles";
+import {
+  getcategoriasnegociosappCM,
+  getUsuariosCM,
+  getproductoscategoriaCM,
+  delProductoCM,
+} from "../../Utiles/apiBaseDatos";
+
+// contexts
+import { useNotification } from "../../context/NotificationProvider";
+
+// layouts
+import Hero from "../../layouts/Hero/Hero";
+
+// components
+import Map from "../../components/Map/MapBox";
 import Modal from "../../components/Modal/Modal";
 import Navbar from "../../components/Navbar/Navbar";
-import Hero from "../../layouts/Hero/Hero";
-import { useNavigate } from "react-router-dom";
-import TextField from "@mui/material/TextField";
-import Autocomplete from "@mui/material/Autocomplete";
-import Check from "@mui/icons-material/Check";
-import Add from "@mui/icons-material/Add";
-import Delete from "@mui/icons-material/Delete";
-import Close from "@mui/icons-material/Close";
-import Edit from "@mui/icons-material/Edit";
-import AddPhotoAlternateIcon from "@mui/icons-material/AddPhotoAlternate";
-import VisibilityIcon from '@mui/icons-material/Visibility';
-import { useEffect, useState } from "react";
-import { useLocation } from "react-router-dom";
-import { isValid, buscarEnArreglo, buscarEnArregloString, getJpgFileSB } from "../../Utiles/Utiles";
-import { getcategoriasnegociosappCM, getUsuariosCM, getproductoscategoriaCM,
-         delProductoCM} from "../../Utiles/apiBaseDatos";
-import { useNotification } from "../../context/NotificationProvider";
+import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Encabezado from "../../components/Encabezado/Encabezado";
+
+// styles
 import "./styles.css";
 
 const CatProductos = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const parsedParams = {};
-  const {setOpen, setMessage} = useNotification();
+  const { setOpen, setMessage } = useNotification();
   const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
@@ -41,9 +62,16 @@ const CatProductos = () => {
   const [contenido, setContenido] = useState("");
   const [arraytnegocios, setArraytnegocios] = useState([]);
   const [arrayUsuarios, setArrayUsuarios] = useState([]);
-  const arrayNoUsuarios = [{iduser: 99999999, desc: "Desconocido"}];
+  const arrayNoUsuarios = [{ iduser: 99999999, desc: "Desconocido" }];
   const [arrayproductos, setArrayproductos] = useState([]);
-  const arraynoproductos = [{idproducto: 99999999, marca: 999999, desc: "Desconocido", nick: "Desconocido",}];
+  const arraynoproductos = [
+    {
+      idproducto: 99999999,
+      marca: 999999,
+      desc: "Desconocido",
+      nick: "Desconocido",
+    },
+  ];
   const arraynonegocios = [{ categorianegocio: 999999, desc: "Desconocido" }];
   const [marca, setMarca] = useState("");
   const [modelo, setModelo] = useState("");
@@ -74,7 +102,7 @@ const CatProductos = () => {
   const [lng, setLng] = useState(-75.829090519);
   const [lat, setLat] = useState(20.0217583);
   const [ocupado, setOcupado] = useState(true);
-  const [isBase64ToBlob, setIsBase64ToBlob]=useState(true);
+  const [isBase64ToBlob, setIsBase64ToBlob] = useState(true);
   //Estados para recuperar los datos del producto
   const [nombrecortot, setNombrecortot] = useState("");
   const [descripciont, setDescripciont] = useState("");
@@ -89,80 +117,116 @@ const CatProductos = () => {
   const [tallat, setTallat] = useState("");
   const [colort, setColort] = useState("");
 
-
-  async function init() {    
+  async function init() {
     setShow(true);
     tcancelar();
-    for (let prop in parsedParams) sessionStorage.setItem(prop, parsedParams[prop]);
-    if ((sessionStorage.getItem("login")===1 || sessionStorage.getItem("login")==='1') && (isValid(sessionStorage.getItem("user"))===false)){
-        navigate(`/login?login=1&regreso=${sessionStorage.getItem("regreso")}`);
-        return
+    for (let prop in parsedParams)
+      sessionStorage.setItem(prop, parsedParams[prop]);
+    if (
+      (sessionStorage.getItem("login") === 1 ||
+        sessionStorage.getItem("login") === "1") &&
+      isValid(sessionStorage.getItem("user")) === false
+    ) {
+      navigate(`/login?login=1&regreso=${sessionStorage.getItem("regreso")}`);
+      return;
     }
-    if (sessionStorage.getItem("tipouser")!=='1' && sessionStorage.getItem("tipouser")!=='2' && sessionStorage.getItem("tipouser")!=='3'){
-      setMessage("No tiene derechos para crear, editar o eliminar productos")
+    if (
+      sessionStorage.getItem("tipouser") !== "1" &&
+      sessionStorage.getItem("tipouser") !== "2" &&
+      sessionStorage.getItem("tipouser") !== "3"
+    ) {
+      setMessage("No tiene derechos para crear, editar o eliminar productos");
       setOpen(true);
       navigate(`/`);
-      return
+      return;
     }
     let ttarraytnegocios;
     let resulttnegocios = await getcategoriasnegociosappCM();
-//    let resulttnegocios = await apiBaseDatos("getcategoriasnegociosapp");
-    if (resulttnegocios.length===0) {
+    //    let resulttnegocios = await apiBaseDatos("getcategoriasnegociosapp");
+    if (resulttnegocios.length === 0) {
       setArraytnegocios(arraynonegocios);
       ttarraytnegocios = arraynonegocios;
     } else {
       setArraytnegocios(resulttnegocios);
       ttarraytnegocios = resulttnegocios;
     }
-    let posicion = buscarEnArreglo(ttarraytnegocios, parsedParams.categoria, "categorianegocio"
+    let posicion = buscarEnArreglo(
+      ttarraytnegocios,
+      parsedParams.categoria,
+      "categorianegocio"
     );
     posicion = posicion === -1 ? 0 : posicion;
     setTnegocio(posicion);
     let resultusuarios = await getUsuariosCM();
-//    let resultusuarios = await apiBaseDatos("getUsuarios");
-    if (isValid(resultusuarios)===false) setArrayUsuarios(arrayNoUsuarios)
+    //    let resultusuarios = await apiBaseDatos("getUsuarios");
+    if (isValid(resultusuarios) === false) setArrayUsuarios(arrayNoUsuarios);
     else {
       setUsuario(0);
       setArrayUsuarios(resultusuarios);
     }
-    let resultproductos = await getproductoscategoriaCM(sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), ttarraytnegocios[posicion].categorianegocio, producto);
+    let resultproductos = await getproductoscategoriaCM(
+      sessionStorage.getItem("user"),
+      sessionStorage.getItem("tipouser"),
+      ttarraytnegocios[posicion].categorianegocio,
+      producto
+    );
     //let resultproductos = await apiBaseDatos("getproductoscategoria", sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), ttarraytnegocios[posicion].categorianegocio, producto);
-    if (resultproductos.length===0) {
+    if (resultproductos.length === 0) {
       setArrayproductos(arraynoproductos);
       recuperardatosproducto(arraynoproductos, 0);
     } else {
-      const posicionProducto = buscarEnArreglo(resultproductos, resultproductos[0].idproducto, "idproducto");
+      const posicionProducto = buscarEnArreglo(
+        resultproductos,
+        resultproductos[0].idproducto,
+        "idproducto"
+      );
       setArrayproductos(resultproductos);
       setProducto({ label: resultproductos[0].nick, value: 0 });
 
-      if (isValid(resultproductos[0].idproducto)===true) {
+      if (isValid(resultproductos[0].idproducto) === true) {
         recuperardatosproducto(resultproductos, 0);
-        restaurardatosproductosNew(resultproductos, posicionProducto, resultusuarios);
+        restaurardatosproductosNew(
+          resultproductos,
+          posicionProducto,
+          resultusuarios
+        );
         //setEditarsn(true);
       }
       setIsBase64ToBlob(true);
-      let resultado = await getJpgFileSB(resultproductos[0].idproducto + ".jpg", "./galerias/app_images/productos/" + resultproductos[0].idproducto, "productos/" + resultproductos[0].idproducto);
-      if (isValid(resultado)===true && resultado!=="" && isValid(resultado.length)===true) {
+      let resultado = await getJpgFileSB(
+        resultproductos[0].idproducto + ".jpg",
+        "./galerias/app_images/productos/" + resultproductos[0].idproducto,
+        "productos/" + resultproductos[0].idproducto
+      );
+      if (
+        isValid(resultado) === true &&
+        resultado !== "" &&
+        isValid(resultado.length) === true
+      ) {
         setIsBase64ToBlob(true);
         setContenidofoto(resultado);
         setNombrefoto(resultproductos[0].idproducto);
       } else {
         setIsBase64ToBlob(false);
         setNombrefoto("");
-        setMessage('Error al recuperar la imagen del usuario');
+        setMessage("Error al recuperar la imagen del usuario");
         setOpen(true);
       }
-    }    
+    }
     setInicia(false);
     setShow(false);
-  } 
+  }
 
   const handleProducto = async (_, value) => {
     setProducto(value);
     recuperardatosproducto(arrayproductos, value.value);
     setIsBase64ToBlob(true);
-    let resultado = await getJpgFileSB( arrayproductos[value?.value].idproducto + ".jpg", "./galerias/app_images/productos/" + arrayproductos[value?.value].idproducto, 
-                                        "productos/" + arrayproductos[value?.value].idproducto);
+    let resultado = await getJpgFileSB(
+      arrayproductos[value?.value].idproducto + ".jpg",
+      "./galerias/app_images/productos/" +
+        arrayproductos[value?.value].idproducto,
+      "productos/" + arrayproductos[value?.value].idproducto
+    );
     if (resultado.length !== 0) {
       setContenidofoto(resultado);
       setNombrefoto(arrayproductos[value?.value].idproducto);
@@ -173,19 +237,26 @@ const CatProductos = () => {
   };
 
   async function getProductos(value) {
-    let resultproductos = await getproductoscategoriaCM(sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), arraytnegocios[value].categorianegocio);
-//    let resultproductos = await apiBaseDatos("getproductoscategoria", sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), arraytnegocios[value].categorianegocio);
+    let resultproductos = await getproductoscategoriaCM(
+      sessionStorage.getItem("user"),
+      sessionStorage.getItem("tipouser"),
+      arraytnegocios[value].categorianegocio
+    );
+    //    let resultproductos = await apiBaseDatos("getproductoscategoria", sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), arraytnegocios[value].categorianegocio);
     setProducto(null);
-    if (isValid(resultproductos)===false || resultproductos.length===0) {
+    if (isValid(resultproductos) === false || resultproductos.length === 0) {
       setArrayproductos(arraynoproductos);
       recuperardatosproducto(arraynoproductos, 0);
     } else {
       setArrayproductos(resultproductos);
       setNombrefoto(resultproductos[0].idproducto);
       recuperardatosproducto(resultproductos, 0);
-      let resultado = await getJpgFileSB(resultproductos[0].idproducto + ".jpg", "./galerias/app_images/productos/" + resultproductos[0].idproducto, 
-                                         "productos/" + resultproductos[0].idproducto);
-      if (isValid(resultado)===true) {
+      let resultado = await getJpgFileSB(
+        resultproductos[0].idproducto + ".jpg",
+        "./galerias/app_images/productos/" + resultproductos[0].idproducto,
+        "productos/" + resultproductos[0].idproducto
+      );
+      if (isValid(resultado) === true) {
         setIsBase64ToBlob(true);
         setContenidofoto(resultado);
         setNombrefoto(resultproductos[0].idproducto);
@@ -198,12 +269,12 @@ const CatProductos = () => {
   function handleselect(e) {
     switch (e.target.id) {
       case "tnegocio":
-          setTnegocio(e.target.value);
-          getProductos(e.target.value);
-          break;
+        setTnegocio(e.target.value);
+        getProductos(e.target.value);
+        break;
       case "usuario":
-          setUsuario(e.target.value);
-          break;
+        setUsuario(e.target.value);
+        break;
     }
   }
 
@@ -254,7 +325,7 @@ const CatProductos = () => {
         break;
       case "domicilio":
         setDomicilio(e.target.checked);
-        if (e.target.checked===true) setCbgps(true);
+        if (e.target.checked === true) setCbgps(true);
         break;
       case "ocupado":
         setOcupado(e.target.checked);
@@ -308,7 +379,9 @@ const CatProductos = () => {
   }
 
   function restaurardatosproductosNew(data, posicion, arrayUsuarios) {
-    setUsuario(buscarEnArregloString(arrayUsuarios, data[posicion].iduser, "iduser"));
+    setUsuario(
+      buscarEnArregloString(arrayUsuarios, data[posicion].iduser, "iduser")
+    );
     setProducto({ label: data[posicion].nick, value: posicion });
     setNombrecorto(data[posicion].nick);
     setDescripcion(data[posicion].desc);
@@ -361,16 +434,36 @@ const CatProductos = () => {
   async function confirmar() {
     setLoading(true);
     let mproducto = 0;
-    if (producto === null) mproducto = 0 
+    if (producto === null) mproducto = 0;
     else mproducto = arrayproductos[producto?.value].idproducto;
-      // let result = await apiBaseDatos("setProducto",
-      let result = await setProducto(
-      sessionStorage.getItem("tipouser")==='3'?arrayUsuarios[usuario].iduser:sessionStorage.getItem("user"), mproducto, arraytnegocios[tnegocio].categorianegocio,
-      nombrecorto, contenidofoto, descripcion, precio!==""?precio:"0", ocupado === true ? 1 : 0, domicilio === true ? 1 : 0, agregarsn ? true : false, 
-      marca, modelo, talla, color, cbgps === true || domicilio === true ? 1 : 0, lat, lng, cbsCiudad === true ? 1 : 0, distanciaMax, isBase64ToBlob);
+    // let result = await apiBaseDatos("setProducto",
+    let result = await setProducto(
+      sessionStorage.getItem("tipouser") === "3"
+        ? arrayUsuarios[usuario].iduser
+        : sessionStorage.getItem("user"),
+      mproducto,
+      arraytnegocios[tnegocio].categorianegocio,
+      nombrecorto,
+      contenidofoto,
+      descripcion,
+      precio !== "" ? precio : "0",
+      ocupado === true ? 1 : 0,
+      domicilio === true ? 1 : 0,
+      agregarsn ? true : false,
+      marca,
+      modelo,
+      talla,
+      color,
+      cbgps === true || domicilio === true ? 1 : 0,
+      lat,
+      lng,
+      cbsCiudad === true ? 1 : 0,
+      distanciaMax,
+      isBase64ToBlob
+    );
 
-    if (isValid(result?.err)===true) {
-      setMessage("Ocurrio un error mientras se registraba el producto")
+    if (isValid(result?.err) === true) {
+      setMessage("Ocurrio un error mientras se registraba el producto");
       setOpen(true);
       setLoading(false);
       return;
@@ -403,15 +496,15 @@ const CatProductos = () => {
         editar: editarsn ? true : false,
       });
     }
-    setMessage("El producto '" + descripcion + "' se registró correctamente.")
+    setMessage("El producto '" + descripcion + "' se registró correctamente.");
     setOpen(true);
     setShowMap(false);
     setShowGalerias(false);
     setAgregarsn(false);
     setEditarsn(false);
     setLoading(false);
-    init
-  } 
+    init;
+  }
 
   function editar() {
     restaurardatosproductos();
@@ -435,9 +528,11 @@ const CatProductos = () => {
 
   async function sino() {
     await delProductoCM(arrayproductos[producto?.value].idproducto);
-//    await apiBaseDatos("delProducto", arrayproductos[producto?.value].idproducto);
+    //    await apiBaseDatos("delProducto", arrayproductos[producto?.value].idproducto);
     iniciadatosgenerales();
-    setMessage("Se eliminó el producto " + arrayproductos[producto?.value].desc);
+    setMessage(
+      "Se eliminó el producto " + arrayproductos[producto?.value].desc
+    );
     setOpen(true);
     setShow1(false);
     setEliminarsn(false);
@@ -456,7 +551,7 @@ const CatProductos = () => {
     setShow1(false);
   };
 
-  const cambiaNombreFoto = (valor) => { 
+  const cambiaNombreFoto = (valor) => {
     setNombrefoto(valor);
   };
 
@@ -493,7 +588,7 @@ const CatProductos = () => {
           )}
         </div>
       </Modal>
-      
+
       <div>
         <Navbar />
         <Hero>
@@ -513,16 +608,14 @@ const CatProductos = () => {
           {inicia === false ? (
             <>
               <div className="div-papa-catProductos">
-                 <Encabezado/>
+                <Encabezado />
                 <div className="catalogo-producto">
                   <p className="strong">Publicar un producto</p>
                   {showMap === true || showMap === false ? (
                     <>
                       <div className="container-producto-select">
                         <div>
-                          <p className="label-datos-catproducto">
-                            Categoria
-                          </p>
+                          <p className="label-datos-catproducto">Categoria</p>
                           <select
                             className="selecttn-prod"
                             id="tnegocio"
@@ -541,9 +634,7 @@ const CatProductos = () => {
                         </div>
 
                         <div>
-                          <p className="label-datos-catproducto">
-                            Producto
-                          </p>
+                          <p className="label-datos-catproducto">Producto</p>
                           <Autocomplete
                             disablePortal
                             disabled={agregarsn || editarsn}
@@ -590,256 +681,260 @@ const CatProductos = () => {
                                 {option.label}
                               </li>
                             )}
-
                           />
                         </div>
                       </div>
-
                     </>
                   ) : (
                     ""
                   )}
-                      {agregarsn || editarsn ? (
-                        <>
-                          <div className="container-producto-datos">
-                          {sessionStorage.getItem("tipouser")==='3'?
-                            <div className="input-area1-producto">
-                            <p className="label-datos-catproducto">
-                                Dueño
-                           </p>
-                           <select
-                             className="select-usuario"
-                             id="usuario"
-                             onChange={handleselect}
-                             value={usuario}
-                           >
-                            {arrayUsuarios.map((item, i) => {
-                              return (
-                                <option key={i} value={i}>
-                                  {item.nombre}
-                                </option>
-                              );
-                            })}
+                  {agregarsn || editarsn ? (
+                    <>
+                      <div className="container-producto-datos">
+                        {sessionStorage.getItem("tipouser") === "3" ? (
+                          <div className="input-area1-producto">
+                            <p className="label-datos-catproducto">Dueño</p>
+                            <select
+                              className="select-usuario"
+                              id="usuario"
+                              onChange={handleselect}
+                              value={usuario}
+                            >
+                              {arrayUsuarios.map((item, i) => {
+                                return (
+                                  <option key={i} value={i}>
+                                    {item.nombre}
+                                  </option>
+                                );
+                              })}
                             </select>
-                            </div>:""
-                            }
-
-                            <div className="label-datos-catproducto-1 strong">
-                              Datos del nuevo producto{" "}
-                            </div>
-
-
-                            <div className="input-area2">
-                              <input
-                                className="input-cataproducto"
-                                id="nombrecorto"
-                                placeholder="Nombre"
-                                value={nombrecorto}
-                                onChange={handleInput}
-                                type="text"
-                                required
-                              />
-                            </div>
-                            <div  className="input-area2">
-                              <input
-                                className="input-cataproducto"
-                                id="descripcion"
-                                placeholder="Descripción"
-                                value={descripcion}
-                                onChange={handleInput}
-                                type="text"
-                                required
-                              />
-                            </div>
-                            <div className="input-area2">
-                              <input
-                                className="input-cataproducto"
-                                id="marca"
-                                placeholder="Más datos (ejemplo: marca, horario)"
-                                value={marca}
-                                onChange={handleInput}
-                                type="text"
-                                required
-                              />
-                            </div>
-                            <div className="input-area2">
-                              <input
-                                className="input-cataproducto"
-                                id="modelo"
-                                placeholder="Otros datos (ejemplo: modelo, chapa, fechas)"
-                                value={modelo}
-                                onChange={handleInput}
-                                type="text"
-                                required
-                              />
-                            </div>
-                            <div className="precio-capacidad-color">
-                              <div>                                
-                                <p className="label-datos-catproducto">
-                                  Precio
-                                </p>
-                                <Tippy content="Precio">
-                                <input
-                                  className="input-cataproducto-4"
-                                  id="precio"
-                                  placeholder="Precio"
-                                  value={precio}
-                                  onChange={handleInput}
-                                  type="text"
-                                  required
-                                />
-                                </Tippy>
-                              </div>
-                              <div>
-                                <p className="label-datos-catproducto plazas">
-                                  Plazas
-                                </p>
-                                <input
-                                  className="input-cataproducto-999"
-                                  id="talla"
-                                  placeholder="Plazas"
-                                  value={talla}
-                                  onChange={handleInput}
-                                  type="text"
-                                  required
-                                />
-                              </div>
-                              <div>
-                                <p className="label-datos-catproducto color">
-                                  Color
-                                </p>
-                                <input
-                                  className="input-cataproducto-998"
-                                  id="color"
-                                  placeholder="Color"
-                                  value={color}
-                                  onChange={handleInput}
-                                  type="text"
-                                  required
-                                />
-                              </div>
-                            </div>
-                            <div className="domicilio-ocupado-gps">
-                              <div className="input-area4">
-                              <Checkbox
-                                  id="domicilio"
-                                  sx={{ color: 'white', '&.Mui-checked': { color: 'white',},}}
-                                  checked={domicilio}
-                                  onClick={handleInput}
-                                />
-                                <label className="label-datos-catproducto input-cataproducto-12 domicilio">
-                                  Domicilio
-                                </label>
-                              </div>
-                              <div className="input-area4">
-                              <Checkbox
-                                  id="ocupado"
-                                  sx={{ color: 'white', '&.Mui-checked': { color: 'white',},}}
-                                  checked={ocupado}
-                                  onClick={handleInput}
-                                />
-                                <label className="label-datos-catproducto input-cataproducto-12 ocupado">
-                                  Ocupado
-                                </label>
-                              </div>
-                              {domicilio !== true ? (
-                                <div className="input-area4">
-                                  <Checkbox
-                                    className="combo-gps"
-                                    id="cbgps"
-                                    sx={{ color: 'white', '&.Mui-checked': { color: 'white',},}}
-                                    checked={cbgps}
-                                    onClick={handleInput}
-                                  />
-                                  <label className="label-datos-catproducto gps">
-                                    GPS
-                                  </label>
-                                </div>
-                              ) : (
-                                ""
-                              )}
-                            </div>
-
-                            {domicilio === true ? (
-                              <>
-                             <p className="lejania">
-                                Lejanía kms:
-                             </p>
-                            <div className="distancia-sciudad">
-                                <div className="input-area4">
-                                  <input
-                                    className="input-cataproducto-101"
-                                    id="distanciaMax"
-                                    value={distanciaMax}
-                                    onChange={handleInput}
-                                    type="text"
-                                    required
-                                  />
-                                </div>
-                                <div className="input-area4">
-                                <Checkbox
-                                    className="combo-gps"
-                                    id="cbsCiudad"
-                                    sx={{ color: 'white', '&.Mui-checked': { color: 'white',},}}
-                                    checked={cbsCiudad}
-                                    onClick={handleInput}
-                                  />
-                                  <label  className="lejania">Ciudad</label>
-                                </div>
-                              </div>
-                              </>
-                            ) : (
-                              ""
-                            )}
-                            <div className="input-area-foto-prod">
-                            </div>
-                            {nombrefoto !== "" && cbvista ? (
-                              <div className="img-class">
-                                <img
-                                  className="img-producto"
-                                  src={contenidofoto}
-                                />
-                              </div>
-                            ) : (
-                              ""
-                            )}
                           </div>
-                        </>
-                      ) : (
-                        ""
-                      )}
+                        ) : (
+                          ""
+                        )}
+
+                        <div className="label-datos-catproducto-1 strong">
+                          Datos del nuevo producto{" "}
+                        </div>
+
+                        <div className="input-area2">
+                          <input
+                            className="input-cataproducto"
+                            id="nombrecorto"
+                            placeholder="Nombre"
+                            value={nombrecorto}
+                            onChange={handleInput}
+                            type="text"
+                            required
+                          />
+                        </div>
+                        <div className="input-area2">
+                          <input
+                            className="input-cataproducto"
+                            id="descripcion"
+                            placeholder="Descripción"
+                            value={descripcion}
+                            onChange={handleInput}
+                            type="text"
+                            required
+                          />
+                        </div>
+                        <div className="input-area2">
+                          <input
+                            className="input-cataproducto"
+                            id="marca"
+                            placeholder="Más datos (ejemplo: marca, horario)"
+                            value={marca}
+                            onChange={handleInput}
+                            type="text"
+                            required
+                          />
+                        </div>
+                        <div className="input-area2">
+                          <input
+                            className="input-cataproducto"
+                            id="modelo"
+                            placeholder="Otros datos (ejemplo: modelo, chapa, fechas)"
+                            value={modelo}
+                            onChange={handleInput}
+                            type="text"
+                            required
+                          />
+                        </div>
+                        <div className="precio-capacidad-color">
+                          <div>
+                            <p className="label-datos-catproducto">Precio</p>
+                            <Tippy content="Precio">
+                              <input
+                                className="input-cataproducto-4"
+                                id="precio"
+                                placeholder="Precio"
+                                value={precio}
+                                onChange={handleInput}
+                                type="text"
+                                required
+                              />
+                            </Tippy>
+                          </div>
+                          <div>
+                            <p className="label-datos-catproducto plazas">
+                              Plazas
+                            </p>
+                            <input
+                              className="input-cataproducto-999"
+                              id="talla"
+                              placeholder="Plazas"
+                              value={talla}
+                              onChange={handleInput}
+                              type="text"
+                              required
+                            />
+                          </div>
+                          <div>
+                            <p className="label-datos-catproducto color">
+                              Color
+                            </p>
+                            <input
+                              className="input-cataproducto-998"
+                              id="color"
+                              placeholder="Color"
+                              value={color}
+                              onChange={handleInput}
+                              type="text"
+                              required
+                            />
+                          </div>
+                        </div>
+                        <div className="domicilio-ocupado-gps">
+                          <div className="input-area4">
+                            <Checkbox
+                              id="domicilio"
+                              sx={{
+                                color: "white",
+                                "&.Mui-checked": { color: "white" },
+                              }}
+                              checked={domicilio}
+                              onClick={handleInput}
+                            />
+                            <label className="label-datos-catproducto input-cataproducto-12 domicilio">
+                              Domicilio
+                            </label>
+                          </div>
+                          <div className="input-area4">
+                            <Checkbox
+                              id="ocupado"
+                              sx={{
+                                color: "white",
+                                "&.Mui-checked": { color: "white" },
+                              }}
+                              checked={ocupado}
+                              onClick={handleInput}
+                            />
+                            <label className="label-datos-catproducto input-cataproducto-12 ocupado">
+                              Ocupado
+                            </label>
+                          </div>
+                          {domicilio !== true ? (
+                            <div className="input-area4">
+                              <Checkbox
+                                className="combo-gps"
+                                id="cbgps"
+                                sx={{
+                                  color: "white",
+                                  "&.Mui-checked": { color: "white" },
+                                }}
+                                checked={cbgps}
+                                onClick={handleInput}
+                              />
+                              <label className="label-datos-catproducto gps">
+                                GPS
+                              </label>
+                            </div>
+                          ) : (
+                            ""
+                          )}
+                        </div>
+
+                        {domicilio === true ? (
+                          <>
+                            <p className="lejania">Lejanía kms:</p>
+                            <div className="distancia-sciudad">
+                              <div className="input-area4">
+                                <input
+                                  className="input-cataproducto-101"
+                                  id="distanciaMax"
+                                  value={distanciaMax}
+                                  onChange={handleInput}
+                                  type="text"
+                                  required
+                                />
+                              </div>
+                              <div className="input-area4">
+                                <Checkbox
+                                  className="combo-gps"
+                                  id="cbsCiudad"
+                                  sx={{
+                                    color: "white",
+                                    "&.Mui-checked": { color: "white" },
+                                  }}
+                                  checked={cbsCiudad}
+                                  onClick={handleInput}
+                                />
+                                <label className="lejania">Ciudad</label>
+                              </div>
+                            </div>
+                          </>
+                        ) : (
+                          ""
+                        )}
+                        <div className="input-area-foto-prod"></div>
+                        {nombrefoto !== "" && cbvista ? (
+                          <div className="img-class">
+                            <img className="img-producto" src={contenidofoto} />
+                          </div>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+                    </>
+                  ) : (
+                    ""
+                  )}
 
                   <div className="producto-grupo-button">
-                    {(agregarsn === true || editarsn === true) && nombrefoto !== "" && nombrecorto!="" && descripcion!==""? (
+                    {(agregarsn === true || editarsn === true) &&
+                    nombrefoto !== "" &&
+                    nombrecorto != "" &&
+                    descripcion !== "" ? (
                       <Tippy content="Vista previa">
                         <button
                           type="button"
                           className="producto-button primary"
-                          onClick={()=>setCbvista(!cbvista)}
+                          onClick={() => setCbvista(!cbvista)}
                         >
-                          <VisibilityIcon />
+                          <Visibility />
                         </button>
                       </Tippy>
-                     ) : (
+                    ) : (
                       ""
                     )}
 
-                      {(agregarsn === true || editarsn === true) && nombrecorto!="" && descripcion!==""? (
-                         <label className="producto-button primary label-photo">
-                          <input
-
-                            id="foto"
-                            value={foto}
-                            onChange={onPhotoChange}
-                            type="file"
-                            required
-                            multiple
-
-                          />
-                          <Tippy content="Añadir foto">
-                            <AddPhotoAlternateIcon />
-                          </Tippy>
-                        </label>
+                    {(agregarsn === true || editarsn === true) &&
+                    nombrecorto != "" &&
+                    descripcion !== "" ? (
+                      <label className="producto-button primary label-photo">
+                        <input
+                          id="foto"
+                          value={foto}
+                          onChange={onPhotoChange}
+                          type="file"
+                          required
+                          multiple
+                        />
+                        <Tippy content="Añadir foto">
+                          <AddPhotoAlternate />
+                        </Tippy>
+                      </label>
                     ) : (
                       ""
                     )}
@@ -903,15 +998,19 @@ const CatProductos = () => {
                               className="producto-button primary"
                               onClick={() => setShowGalerias(!showGalerias)}
                             >
-                              <CollectionsIcon />
+                              <Collections />
                             </button>
                           </Tippy>
                         ) : (
                           ""
                         )}
-                        {cbgps === true && inicia === false && (agregarsn===true || editarsn===true) 
-                         && (showGalerias===false && nombrecorto!=="" && descripcion!==""  
-                         && nombrefoto !== "") ? (
+                        {cbgps === true &&
+                        inicia === false &&
+                        (agregarsn === true || editarsn === true) &&
+                        showGalerias === false &&
+                        nombrecorto !== "" &&
+                        descripcion !== "" &&
+                        nombrefoto !== "" ? (
                           <Tippy content="Ubicar el producto en el mapa">
                             <button
                               type="button"
@@ -924,12 +1023,14 @@ const CatProductos = () => {
                         ) : (
                           ""
                         )}
-
                       </>
                     ) : (
                       ""
                     )}
-                   {(agregarsn === true || editarsn === true) && nombrecorto!=="" && descripcion!==""  && nombrefoto !== "" ? (
+                    {(agregarsn === true || editarsn === true) &&
+                    nombrecorto !== "" &&
+                    descripcion !== "" &&
+                    nombrefoto !== "" ? (
                       <Tippy
                         content={
                           nombrecorto.length !== 0 && descripcion.length !== 0
@@ -940,8 +1041,17 @@ const CatProductos = () => {
                         <button
                           type="button"
                           className="producto-button primary"
-                          onClick={nombrecorto.length !== 0 && descripcion.length !== 0 ? confirmar: ""}>
-                          {loading ? <CircularProgress color="inherit" size={16} /> : <Check />}
+                          onClick={
+                            nombrecorto.length !== 0 && descripcion.length !== 0
+                              ? confirmar
+                              : ""
+                          }
+                        >
+                          {loading ? (
+                            <CircularProgress color="inherit" size={16} />
+                          ) : (
+                            <Check />
+                          )}
                         </button>
                       </Tippy>
                     ) : (
@@ -963,36 +1073,40 @@ const CatProductos = () => {
                     )}
                   </div>
                 </div>
-                {inicia === false && showGalerias === true && showMap === false ? (
-                    <ComGalerias
-                      deQuien={arrayproductos[producto.value].nick}
-                      ruta={
-                        "productos/" + arrayproductos[producto.value].idproducto
-                      }
-                      perfil={arrayproductos[producto.value].idproducto}
-                      permiso={true}
-                      botonCerrar={false}
-                      cambiaNombreFoto={cambiaNombreFoto}
+                {inicia === false &&
+                showGalerias === true &&
+                showMap === false ? (
+                  <ComGalerias
+                    deQuien={arrayproductos[producto.value].nick}
+                    ruta={
+                      "productos/" + arrayproductos[producto.value].idproducto
+                    }
+                    perfil={arrayproductos[producto.value].idproducto}
+                    permiso={true}
+                    botonCerrar={false}
+                    cambiaNombreFoto={cambiaNombreFoto}
+                  />
+                ) : (
+                  ""
+                )}
+                {showMap === true &&
+                showGalerias === false &&
+                cbgps === true ? (
+                  <div className="mapa-catalogo">
+                    <Map
+                      sx={{ height: "340px", width: "100%" }}
+                      onMapClick={lngLatSelected}
+                      remoteshowMap={showMap}
+                      lat={lat}
+                      lng={lng}
+                      point={{ lat, lng }}
+                      onChange={onChangeMap}
+                      remoteZoom={zoom}
                     />
-                  ) : (
-                    ""
-                  )}
-                  {showMap === true && showGalerias === false && cbgps === true ? (
-                    <div className="mapa-catalogo">
-                      <Map
-                        sx={{ height: "340px", width: "100%" }}
-                        onMapClick={lngLatSelected}
-                        remoteshowMap={showMap}
-                        lat={lat}
-                        lng={lng}
-                        point={{ lat, lng }}
-                        onChange={onChangeMap}
-                        remoteZoom={zoom}
-                      />
-                      </div>
-                  ) : (
-                    ""
-                  )}
+                  </div>
+                ) : (
+                  ""
+                )}
               </div>
             </>
           ) : (
