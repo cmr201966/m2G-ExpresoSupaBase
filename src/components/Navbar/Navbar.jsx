@@ -150,6 +150,7 @@ const Navbar = (props) => {
 
   function cierraDialogo(){
     setShowDialog(false)
+    if (whereIs==="movil") navigate(`/productos?buscar=${buscar}&user=${sessionStorage.getItem("user")}&nombre=Filtro: '${buscar}'`);
     cambiaWhereIs("ubica");
   }
 
@@ -290,7 +291,7 @@ const Navbar = (props) => {
                     <span className="ubicacion">Ubicación</span>
                   </IconButton>
                 </Tippy>
-                <Location open={showDialog} onModalClose={onModalClose} whereIs={whereIs} CambiawhereIs={cambiaWhereIs} />
+                <Location open={showDialog} onModalClose={onModalClose} whereIs={whereIs} />
                 {menuPrimero.map((item, i) => (
                   <Fragment key={i}>
                     <Tippy content={item.tooltips}>

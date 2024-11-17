@@ -23,9 +23,7 @@ function SearchWrapper() {
 
   function buscaProductos(e) {
     e.preventDefault();
-    navigate(
-      `/productos?buscar=${buscar}&user=${sessionStorage.getItem("user")}&nombre=Filtro: '${buscar}'`
-    );
+    navigate(`/productos?buscar=${buscar}&user=${sessionStorage.getItem("user")}&nombre=Filtro: '${buscar}'`);
   }
 
   return (

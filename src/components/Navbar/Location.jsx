@@ -1,5 +1,6 @@
 /* eslint-disable react/prop-types */
 import { useCallback, useEffect, useMemo, useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 // @mui/material
 import {
@@ -15,7 +16,7 @@ import { Check, Close } from "@mui/icons-material";
 import { getProvinciasCM, getMunicipiosCM, getConfigCM, setConfigCM  } from "../../Utiles/apiBaseDatos";
 
 function Location(props) {
-  const { open, onModalClose, whereIs, cambiaWhereIs } = props;
+  const { open, onModalClose, whereIs } = props;
 
   const [cantClose, setCantClose] = useState(false);
   const [loading, setLoading] = useState(true);
@@ -27,24 +28,34 @@ function Location(props) {
 
   const [municipal, setMunicipal] = useState();
   const [municipals, setMunicipals] = useState([]);
+  const [buscar, setBuscar] = useState("");
+  const [donde] = useState(whereIs);
+  
+  const navigate = useNavigate();
 
   const onMunicipalSelect = (e) => setMunicipal(e.target.value);
-
+console.log(whereIs);
   const provinceMunicipals = useMemo(() => {
     return municipals?.filter((item) => item.provincia === Number(province));
   }, [municipals, province]);
 
   const confirmar = useCallback(async () => {
+    console.log(whereIs);
+    if (whereIs!=="movil"){
     setLoading(true);
     await setConfigCM(province, municipal);
 //    await apiBaseDatos("setConfig", province, municipal);
-    cambiaWhereIs("unica")
+    }
+    else{
+      navigate(`/productos?buscar=${buscar}&user=${sessionStorage.getItem("user")}&nombre=Filtro: '${buscar}'`);
+    }
     setLoading(false);
     onModalClose();
   }, [municipal, onModalClose, province]);
 
   const init = async () => {
     const remoteProvinces = await getProvinciasCM();
+    console.log(remoteProvinces);
     //const remoteProvinces = await apiBaseDatos("provincias");
 //    setProvinces(remoteProvinces);
     if (remoteProvinces?.length) {
@@ -52,10 +63,12 @@ function Location(props) {
     }
 
     const remoteMunicipals = await getMunicipiosCM();
+    console.log(remoteMunicipals);
     //const remoteMunicipals = await apiBaseDatos("municipios");
     setMunicipals(remoteMunicipals);
 
     const config = await getConfigCM();
+    console.log(config);
 //    const config = await apiBaseDatos("getConfig");
     if (!config?.length) {
       setCantClose(true);
@@ -71,6 +84,16 @@ function Location(props) {
     setLoading(false);
   };
 
+  async function handleInput(e) {
+    switch (e.target.id) {
+       case "desc":
+          setBuscar(e.target.value);
+          break;
+       default:
+        break;
+    }
+  }
+
   useEffect(() => {
     init();
   }, []);
@@ -78,7 +101,7 @@ function Location(props) {
   return (
     <Dialog open={open} onClose={onModalClose}>
       {whereIs!=="movil"?<DialogTitle>Ubicación</DialogTitle>:<DialogTitle>Buscar</DialogTitle>}
-      {!cantClose && (
+        {!cantClose && (
         <button
           aria-label="close"
           onClick={onModalClose}
@@ -86,35 +109,50 @@ function Location(props) {
         >
           <Close />
         </button>
-      )}
-      <div className="dialog">
-        <div className="form-col alter">
-          <Typography variant="body1">Provincia:</Typography>
-          <select id="provincia" onChange={onProvinceSelect} value={province}>
-            {provinces.map((item, i) => (
-              <option key={i} value={item.provincia}>
-                {item.desc}
-              </option>
-            ))}
-          </select>
-        </div>
+        )}
 
-        <div className="form-col alter">
-          <Typography>Municipio:</Typography>
-          <select id="municipio" onChange={onMunicipalSelect} value={municipal}>
-            {provinceMunicipals?.map((item, i) => (
-              <option key={i} value={item.municipio}>
-                {item.desc}
+        <div className="dialog">
+          {whereIs!=="movil"?
+          <>
+          <div className="form-col alter">
+            <Typography variant="body1">Provincia:</Typography>
+            <select id="provincia" onChange={onProvinceSelect} value={province}>
+              {provinces.map((item, i) => (
+                <option key={i} value={item.provincia}>
+                  {item.desc}
               </option>
-            ))}
-          </select>
-        </div>
-        <div className="dialog-button-row">
-          <button type="button" className="dialog-submit" onClick={confirmar}>
-            {loading ? <CircularProgress color="inherit" size={16} /> : <Check />}
-            Aplicar
-          </button>
-        </div>
+              ))}
+            </select>
+          </div>
+          <div className="form-col alter">
+            <Typography>Municipio:</Typography>
+              <select id="municipio" onChange={onMunicipalSelect} value={municipal}>
+                 {provinceMunicipals?.map((item, i) => (
+                   <option key={i} value={item.municipio}>
+                     {item.desc}
+                   </option>
+                 ))}
+              </select>
+          </div>
+          </>:
+          <div className="form-col alter">
+            <input className="input-buscar-movil"
+                   id="desc"
+                   value={buscar}
+                   placeholder="Buscar productos..."
+                   onChange={handleInput}
+                   type="text"
+                   required
+            />
+          </div>
+          }
+
+          <div className="dialog-button-row">
+             <button type="button" className="dialog-submit" onClick={confirmar}>
+               {loading ? <CircularProgress color="inherit" size={16} /> : <Check />}
+                Aplicar
+             </button>
+          </div>
       </div>
     </Dialog>
   );
