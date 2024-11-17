@@ -33,21 +33,17 @@ function Location(props) {
   const navigate = useNavigate();
 
   const onMunicipalSelect = (e) => setMunicipal(e.target.value);
-  console.log(whereIs);
   const provinceMunicipals = useMemo(() => {
     return municipals?.filter((item) => item.provincia === Number(province));
   }, [municipals, province]);
 
   const confirmar = useCallback(async () => {
-    console.log(whereIs, whereIs!=="movil",":", sessionStorage.getItem("buscar"));
     if (whereIs!=="movil" && whereIs!==""){
-      console.log("Hola...")
     setLoading(true);
     await setConfigCM(province, municipal);
 //    await apiBaseDatos("setConfig", province, municipal);
     }
     else{
-      console.log("Here...", sessionStorage.getItem("buscar"))
       navigate(`/productos?buscar=${sessionStorage.getItem("buscar")}&user=${sessionStorage.getItem("user")}&nombre=Filtro: '${sessionStorage.getItem("buscar")}'`);
     }
     setLoading(false);
@@ -83,7 +79,6 @@ function Location(props) {
   };
 
   async function handleInput(e) {
-    console.log(e.target.value);
     switch (e.target.id) {
        case "buscar":
           setBuscar(e.target.value);

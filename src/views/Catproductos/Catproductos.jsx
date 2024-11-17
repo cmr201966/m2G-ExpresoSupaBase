@@ -178,7 +178,6 @@ const CatProductos = () => {
     );
     //let resultproductos = await apiBaseDatos("getproductoscategoria", sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), ttarraytnegocios[posicion].categorianegocio, producto);
     if (resultproductos.length === 0) {
-      console.log(arraynoproductos[0].desc, 0)
       setProducto({ label: arraynoproductos[0].desc, value: 0 });
       setArrayproductos(arraynoproductos);
       recuperardatosproducto(arraynoproductos, 0);
@@ -188,7 +187,6 @@ const CatProductos = () => {
         resultproductos[0].idproducto,
         "idproducto"
       );
-      console.log("2");
       setArrayproductos(resultproductos);
       setProducto({ label: resultproductos[0].desc, value: 0 });
 
@@ -227,7 +225,6 @@ const CatProductos = () => {
   }
 
   const handleProducto = async (_, value) => {
-    console.log("3");
     setProducto(value);
     recuperardatosproducto(arrayproductos, value.value);
     setIsBase64ToBlob(true);
@@ -253,7 +250,6 @@ const CatProductos = () => {
       arraytnegocios[value].categorianegocio
     );
     //    let resultproductos = await apiBaseDatos("getproductoscategoria", sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), arraytnegocios[value].categorianegocio);
-    console.log("4");
     setProducto(null);
     if (isValid(resultproductos) === false || resultproductos.length === 0) {
       setArrayproductos(arraynoproductos);
@@ -371,7 +367,6 @@ const CatProductos = () => {
   function recuperardatosproducto(data, i) {
     let index = buscarEnArreglo(data, data[i].idproducto, "idproducto");
     setUsuariot(data[i].iduser);
-    console.log(data[i].nick, index)
     setProducto({ label: data[i].nick, value: index });
     setNombrecortot(data[i].nick);
     setDescripciont(data[i].desc);
@@ -394,7 +389,6 @@ const CatProductos = () => {
     setUsuario(
       buscarEnArregloString(arrayUsuarios, data[posicion].iduser, "iduser")
     );
-    console.log(data[posicion], posicion);
     setProducto({ label: data[posicion].nick, value: posicion });
     setNombrecorto(data[posicion].nick);
     setDescripcion(data[posicion].desc);
@@ -976,9 +970,6 @@ const CatProductos = () => {
                     ) : (
                       ""
                     )}
-                    {console.log(inicia)}
-                    {console.log(producto?.value)}
-                    {console.log(arrayproductos)}
                     {producto &&
                     arrayproductos[producto?.value].desc!== "Desconocido" ? (
                       <>
