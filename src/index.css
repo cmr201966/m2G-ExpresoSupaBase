@@ -321,7 +321,6 @@ h6 {
   display: grid;
   justify-content: flex-start;
   grid-template-columns: 0% 33% 33%;
-  width: 90%;
 }
 
 .color-encabezado {
