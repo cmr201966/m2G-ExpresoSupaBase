@@ -5,7 +5,6 @@ import { useLocation, useNavigate } from "react-router-dom";
 // @mui/icons
 import {
   PlaceOutlined,
-  Checkbox,
   Collections,
   Check,
   Add,
@@ -16,7 +15,13 @@ import {
   Visibility,
 } from "@mui/icons-material";
 // @mui/material
-import { TextField, Autocomplete, Box, CircularProgress } from "@mui/material";
+import {
+  TextField,
+  Autocomplete,
+  Box,
+  CircularProgress,
+  Checkbox,
+} from "@mui/material";
 
 // utils
 import {
@@ -609,12 +614,18 @@ const CatProductos = () => {
             <>
               <div className="div-papa-catProductos">
                 <Encabezado />
-                <div className="catalogo-producto">
+                <form
+                  onSubmit={(e) => {
+                    e.preventDefault();
+                    setCbvista(!cbvista);
+                  }}
+                  className="catalogo-producto"
+                >
                   <p className="strong">Publicar un producto</p>
                   {showMap === true || showMap === false ? (
                     <>
                       <div className="container-producto-select">
-                        <div>
+                        <div className="cat-select">
                           <p className="label-datos-catproducto">Categoria</p>
                           <select
                             className="selecttn-prod"
@@ -633,7 +644,7 @@ const CatProductos = () => {
                           </select>
                         </div>
 
-                        <div>
+                        <div className="cat-select">
                           <p className="label-datos-catproducto">Producto</p>
                           <Autocomplete
                             disablePortal
@@ -649,10 +660,8 @@ const CatProductos = () => {
                             value={producto}
                             onChange={handleProducto}
                             sx={{
-                              paddingLeft: "7px",
-                              borderRadius: "15px",
-                              marginTop: "5px",
-                              width: "100%",
+                              paddingLeft: "5px",
+                              borderRadius: "100px",
                               height: "30px",
                               background: "aliceblue",
                               ".MuiAutocomplete-input": {
@@ -661,12 +670,19 @@ const CatProductos = () => {
                               },
                               ".MuiFilledInput-root": {
                                 padding: 0,
+                                background: "none",
+                                ":hover": {
+                                  background: "none",
+                                },
                               },
                               ".MuiFilledInput-root::before": {
                                 display: "none",
                               },
                               ".MuiFilledInput-root::after": {
                                 display: "none",
+                              },
+                              ".MuiAutocomplete-endAdornment": {
+                                marginTop: "2px",
                               },
                             }}
                             renderInput={(params) => (
@@ -908,9 +924,8 @@ const CatProductos = () => {
                     descripcion !== "" ? (
                       <Tippy content="Vista previa">
                         <button
-                          type="button"
+                          type="submit"
                           className="producto-button primary"
-                          onClick={() => setCbvista(!cbvista)}
                         >
                           <Visibility />
                         </button>
@@ -1072,7 +1087,7 @@ const CatProductos = () => {
                       ""
                     )}
                   </div>
-                </div>
+                </form>
                 {inicia === false &&
                 showGalerias === true &&
                 showMap === false ? (
