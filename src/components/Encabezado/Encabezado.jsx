@@ -6,28 +6,30 @@ import { useNavigate } from "react-router-dom";
 import "./styles.css";
 
 const Encabezado = () => {
-let donde=sessionStorage.getItem("deDonde");
-const navigate = useNavigate();
+  let donde = sessionStorage.getItem("deDonde");
+  const navigate = useNavigate();
 
-function regresa(){
-  navigate(donde==="Home"?`/?nivel=${0}`:`/productos?nivel=${0}&categoria=${sessionStorage.getItem("categoria")}`)
-}
+  function regresa() {
+    navigate(
+      donde === "Home"
+        ? `/?nivel=${0}`
+        : `/productos?nivel=${0}&categoria=${sessionStorage.getItem(
+            "categoria"
+          )}`
+    );
+  }
 
-    return (
-      <>
-      <div className="grip-flecha">
-         <div></div>
-         <div className="encabezado">
-                <IconButton
-                  color="primary"
-                  onClick={regresa}>
-                <ArrowBack className="color-flecha" />
-                </IconButton>
-                {/*<h4 className="color-encabezado">Atrás</h4>*/}
-          </div>
-          <div></div>
-      </div>        
-        </>
+  return (
+    <div className="grip-flecha">
+      <div></div>
+      <div className="encabezado">
+        <IconButton color="primary" onClick={regresa}>
+          <ArrowBack className="color-flecha" />
+        </IconButton>
+        {/*<h4 className="color-encabezado">Atrás</h4>*/}
+      </div>
+      <div></div>
+    </div>
   );
 };
 
