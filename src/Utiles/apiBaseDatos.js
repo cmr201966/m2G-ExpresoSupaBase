@@ -408,19 +408,16 @@ async function creaBucketCM(bucket) {
 }
 
 async function getInfoProductoCM(producto) {
-  console.log("InfoProducto 50")
   let result = [];
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
     result = await getinfoproducto({ idproducto: producto });
     result = await result.json();
   } else {
-    console.log("InfoProducto 51")
     const { data, error } = await supabase
       .from("getinfoproducto")
       .select("*")
       .eq("idproducto", producto);
     result = data;
-    console.log("InfoProducto 52")
   }
   return result;
 }
@@ -619,23 +616,18 @@ async function GeneraVistaGetProductos(categoria, userAnuncio, buscar) {
 }
 
 async function getProductosCM(categoria, userAnuncio, buscar) {
-  console.log("Productos 9");
   let result1 = [];
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
     result1 = await getproductos({ categoria, userAnuncio, buscar });
     result1 = await result1.json();
   } else {
     // Generar VISTA con API en SUPABASE
-    console.log("Productos 10");
     let sql = await GeneraVistaGetProductos(categoria, userAnuncio, buscar);
-    console.log("Productos 11");
     await supabase.rpc("execute_query", { query: sql });
     // Ejecutar VISTA
     const { data } = await supabase.from("getproductos").select("*");
     result1 = data;
-    console.log("Productos 12");
   }
-  console.log("Productos 13");
   return result1;
 }
 

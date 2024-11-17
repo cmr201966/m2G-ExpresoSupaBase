@@ -35,6 +35,7 @@ import {
   getUsuariosCM,
   getproductoscategoriaCM,
   delProductoCM,
+  setProductoCM
 } from "../../Utiles/apiBaseDatos";
 
 // contexts
@@ -177,6 +178,8 @@ const CatProductos = () => {
     );
     //let resultproductos = await apiBaseDatos("getproductoscategoria", sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), ttarraytnegocios[posicion].categorianegocio, producto);
     if (resultproductos.length === 0) {
+      console.log(arraynoproductos[0].desc, 0)
+      setProducto({ label: arraynoproductos[0].desc, value: 0 });
       setArrayproductos(arraynoproductos);
       recuperardatosproducto(arraynoproductos, 0);
     } else {
@@ -185,8 +188,9 @@ const CatProductos = () => {
         resultproductos[0].idproducto,
         "idproducto"
       );
+      console.log("2");
       setArrayproductos(resultproductos);
-      setProducto({ label: resultproductos[0].nick, value: 0 });
+      setProducto({ label: resultproductos[0].desc, value: 0 });
 
       if (isValid(resultproductos[0].idproducto) === true) {
         recuperardatosproducto(resultproductos, 0);
@@ -223,6 +227,7 @@ const CatProductos = () => {
   }
 
   const handleProducto = async (_, value) => {
+    console.log("3");
     setProducto(value);
     recuperardatosproducto(arrayproductos, value.value);
     setIsBase64ToBlob(true);
@@ -248,6 +253,7 @@ const CatProductos = () => {
       arraytnegocios[value].categorianegocio
     );
     //    let resultproductos = await apiBaseDatos("getproductoscategoria", sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), arraytnegocios[value].categorianegocio);
+    console.log("4");
     setProducto(null);
     if (isValid(resultproductos) === false || resultproductos.length === 0) {
       setArrayproductos(arraynoproductos);
@@ -365,6 +371,7 @@ const CatProductos = () => {
   function recuperardatosproducto(data, i) {
     let index = buscarEnArreglo(data, data[i].idproducto, "idproducto");
     setUsuariot(data[i].iduser);
+    console.log(data[i].nick, index)
     setProducto({ label: data[i].nick, value: index });
     setNombrecortot(data[i].nick);
     setDescripciont(data[i].desc);
@@ -387,6 +394,7 @@ const CatProductos = () => {
     setUsuario(
       buscarEnArregloString(arrayUsuarios, data[posicion].iduser, "iduser")
     );
+    console.log(data[posicion], posicion);
     setProducto({ label: data[posicion].nick, value: posicion });
     setNombrecorto(data[posicion].nick);
     setDescripcion(data[posicion].desc);
@@ -438,11 +446,12 @@ const CatProductos = () => {
 
   async function confirmar() {
     setLoading(true);
+
     let mproducto = 0;
     if (producto === null) mproducto = 0;
     else mproducto = arrayproductos[producto?.value].idproducto;
     // let result = await apiBaseDatos("setProducto",
-    let result = await setProducto(
+    let result = setProductoCM(
       sessionStorage.getItem("tipouser") === "3"
         ? arrayUsuarios[usuario].iduser
         : sessionStorage.getItem("user"),
@@ -967,8 +976,11 @@ const CatProductos = () => {
                     ) : (
                       ""
                     )}
+                    {console.log(inicia)}
+                    {console.log(producto?.value)}
+                    {console.log(arrayproductos)}
                     {producto &&
-                    arrayproductos[producto?.value].desc !== "Desconocido" ? (
+                    arrayproductos[producto?.value].desc!== "Desconocido" ? (
                       <>
                         {agregarsn === false && editarsn === false ? (
                           <Tippy content="Clic para editar el producto">
@@ -976,7 +988,7 @@ const CatProductos = () => {
                               type="button"
                               className="producto-button primary"
                               disabled={
-                                arrayproductos[0].desc === "Desconocido"
+                                arrayproductos[0].desc=== "Desconocido"
                               }
                               onClick={editar}
                             >
@@ -993,7 +1005,7 @@ const CatProductos = () => {
                               type="button"
                               className="producto-button primary"
                               disabled={
-                                arrayproductos[0].desc === "Desconocido"
+                                arrayproductos[0].desc=== "Desconocido"
                               }
                               onClick={eliminar}
                             >

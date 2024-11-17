@@ -103,7 +103,6 @@ const Productos = () => {
 */
   }
   function init() {
-    console.log("Productos 1");
     setShowMap(isValid(parsedParams.mapa)===true?parsedParams.mapa:sessionStorage.getItem("mapa"));
     setNivel(isValid(parsedParams.nivel)=== true ? parsedParams.nivel : sessionStorage.getItem("nivel"));
     setNombre(isValid(parsedParams.nombre)=== true ? decodeURIComponent(parsedParams.nombre) : sessionStorage.getItem("nombre"));
@@ -124,9 +123,7 @@ const Productos = () => {
     }
     else sessionStorage.setItem("longitud", null);
   }
-  console.log("Productos 2");
   init1();
-  console.log("Productos 3");
 }
 
   const kmToDegrees = (km) => {
@@ -286,7 +283,6 @@ function contains(lat, lon, bbox) {
   }
 
   async function init1() {
-    console.log("Productos 4");
     setShow1(true);
     setInicia(true);
     sessionStorage.setItem("categoria", parsedParams.categoria);
@@ -296,7 +292,6 @@ function contains(lat, lon, bbox) {
 //    let result1 = await apiBaseDatos("getProductos", sessionStorage.getItem("categoria"), 
 //                                     sessionStorage.getItem("userAnuncio"), 
 //                                     sessionStorage.getItem("buscar"));
-console.log("Productos 5");
 const newResult = [];
     if (isValid(result1.error)) {
       newResult.push({
@@ -338,7 +333,6 @@ const newResult = [];
       setResult(newResult);
     }
     // Obtener el contenido de la foto de perfil
-    console.log("Productos 6");
     contenidofoto.splice(0, contenidofoto.length);
     for (let i = 0; i < newResult.length; i += 1) {
       let resultado= await getJpgFileSB(newResult[i].photo, newResult[i].folderMYSQL, newResult[i].folderSUPABASE);
@@ -346,11 +340,9 @@ const newResult = [];
         contenidofoto.push(resultado);
       }
     }
-    console.log("Productos 7");
     sessionStorage.setItem("carditem", 0);
     let resultgps = await getparesgpscategoriaCM(sessionStorage.getItem("categoria"));
 //    let resultgps = await apiBaseDatos("getparesgpscategoria", sessionStorage.getItem("categoria"));
-console.log("Productos 8");
 let paresgps = [];
     let itemst = [];
     resultgps.forEach((item) => {
@@ -374,7 +366,6 @@ let paresgps = [];
     setViewCarrito(paresgps.length > 0);
     setInicia(false);
     setShow1(false);
-    console.log("Productos 9");
   }
 
   async function shooping() {
