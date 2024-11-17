@@ -41,8 +41,6 @@ import {
 } from "../../Utiles/apiBaseDatos";
 
 const Aplicaciones = () => {
-  // Create a single supabase client for interacting with your database
-
   const navigate = useNavigate();
   const location = useLocation();
   const parsedParams = {};
@@ -170,7 +168,7 @@ const Aplicaciones = () => {
       const [paramName, paramValue] = item.split("=");
       parsedParams[paramName] = paramValue;
     });
-  }, [location]);
+  }, [location, parsedParams]);
 
   function recuperardatosproducto(data, i) {
     setNickt(data[i].idapp);
