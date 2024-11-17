@@ -27,7 +27,6 @@
   color: white;
   text-decoration: none;
   gap: 10px;
-  /*width: 138px;*/
 }
 
 .navbar-main {
@@ -36,10 +35,8 @@
   justify-content: space-between;
   color: aliceblue;
   width: 70%;
-/*  gap: 100px;*/
   gap: 10%;
   padding-top: 10px;
-  /*padding-left: 8px;*/
 }
 
 .links {
@@ -109,7 +106,6 @@
   height: 25px;
   flex: 1;
   padding-left: 5px;
-  /*margin-left: 5px;*/
 }
 
 .input-lupa {
@@ -143,7 +139,6 @@
   align-items: center;
   justify-content: end;
   gap: 10px;
-  /*width: 138px;*/
 }
 
 .place {
@@ -205,8 +200,8 @@
 }
 
 .dialog-submit {
-  color: aliceblue;
-  background-color: dodgerblue;
+  color: black;
+  background-color: aliceblue;
   border: none;
   display: flex;
   align-items: center;
@@ -263,7 +258,6 @@ button-color{
 
   .responsive-lupa {
     display: inline-flex !important;
-    /*display: none !important;*/
   }
 
   .navbar-main {
@@ -278,5 +272,10 @@ button-color{
   }
 }
 .input-buscar-movil{
-  background-color: dodgerblue;
+  background-color: aliceblue;
+  color: black;
+  background-color: aliceblue;
+  border: none;
+  border-radius: 100px;
+  padding: 4px 16px;
 }

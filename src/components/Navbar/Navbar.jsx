@@ -41,7 +41,7 @@ const Navbar = (props) => {
   const location = useLocation();
   const {setOpen, setMessage} = useNotification();
   const [showMenu, setShowMenu] = useState(false);
-  const [whereIs, setWhereIs] = useState("ubica");
+  const [whereIs, setWhereIs] = useState("");
 
   const [inicia, setInicia] = useState(true);
 
@@ -144,14 +144,10 @@ const Navbar = (props) => {
     setShowDialog(true);
   }
 
-  function cambiaWhereIs(valor){
-    setWhereIs(valor);
-  }
-
   function cierraDialogo(){
     setShowDialog(false)
-    if (whereIs==="movil") navigate(`/productos?buscar=${buscar}&user=${sessionStorage.getItem("user")}&nombre=Filtro: '${buscar}'`);
-    cambiaWhereIs("ubica");
+    /*if (whereIs==="movil") navigate(`/productos?buscar=${buscar}&user=${sessionStorage.getItem("user")}&nombre=Filtro: '${buscar}'`);*/
+    init;
   }
 
   const [showDialog, setShowDialog] = useState(false);
@@ -177,8 +173,14 @@ const Navbar = (props) => {
       setOpen(true);
    }                       
  
-
+    //cambiaWhereIs("ubica");
     setInicia(false);
+  }
+
+  function goToUbica(){
+    console.log("Aqui...");
+    setWhereIs("Unica");
+    setShowDialog(true);
   }
 
   useEffect(() => {
@@ -283,7 +285,7 @@ const Navbar = (props) => {
                   <IconButton
                     sx={{ padding: 0 }}
                     color="inherit"
-                    onClick={() => setShowDialog(true)}
+                    onClick={() => goToUbica()}
                   >
                     <PlaceOutlined
                       sx={{ color: "aliceblue", fontSize: "28px" }}
@@ -408,7 +410,7 @@ const Navbar = (props) => {
         nivel={nivel}
         open={showMenu}
         onClose={() => setShowMenu(false)}
-        openLocation={() => setShowDialog(true)}
+        openLocation={() => goToUbica()}
       />
     </>
   );

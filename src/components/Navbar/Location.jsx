@@ -29,25 +29,26 @@ function Location(props) {
   const [municipal, setMunicipal] = useState();
   const [municipals, setMunicipals] = useState([]);
   const [buscar, setBuscar] = useState("");
-  const [donde] = useState(whereIs);
   
   const navigate = useNavigate();
 
   const onMunicipalSelect = (e) => setMunicipal(e.target.value);
-console.log(whereIs);
+  console.log(whereIs);
   const provinceMunicipals = useMemo(() => {
     return municipals?.filter((item) => item.provincia === Number(province));
   }, [municipals, province]);
 
   const confirmar = useCallback(async () => {
-    console.log(whereIs);
-    if (whereIs!=="movil"){
+    console.log(whereIs, whereIs!=="movil",":", sessionStorage.getItem("buscar"));
+    if (whereIs!=="movil" && whereIs!==""){
+      console.log("Hola...")
     setLoading(true);
     await setConfigCM(province, municipal);
 //    await apiBaseDatos("setConfig", province, municipal);
     }
     else{
-      navigate(`/productos?buscar=${buscar}&user=${sessionStorage.getItem("user")}&nombre=Filtro: '${buscar}'`);
+      console.log("Here...", sessionStorage.getItem("buscar"))
+      navigate(`/productos?buscar=${sessionStorage.getItem("buscar")}&user=${sessionStorage.getItem("user")}&nombre=Filtro: '${sessionStorage.getItem("buscar")}'`);
     }
     setLoading(false);
     onModalClose();
@@ -55,20 +56,17 @@ console.log(whereIs);
 
   const init = async () => {
     const remoteProvinces = await getProvinciasCM();
-    console.log(remoteProvinces);
     //const remoteProvinces = await apiBaseDatos("provincias");
-//    setProvinces(remoteProvinces);
+    setProvinces(remoteProvinces);
     if (remoteProvinces?.length) {
       setProvince(remoteProvinces[0].provincia);
     }
 
     const remoteMunicipals = await getMunicipiosCM();
-    console.log(remoteMunicipals);
     //const remoteMunicipals = await apiBaseDatos("municipios");
     setMunicipals(remoteMunicipals);
 
     const config = await getConfigCM();
-    console.log(config);
 //    const config = await apiBaseDatos("getConfig");
     if (!config?.length) {
       setCantClose(true);
@@ -85,9 +83,11 @@ console.log(whereIs);
   };
 
   async function handleInput(e) {
+    console.log(e.target.value);
     switch (e.target.id) {
-       case "desc":
+       case "buscar":
           setBuscar(e.target.value);
+          sessionStorage.setItem("buscar", e.target.value);
           break;
        default:
         break;
@@ -137,7 +137,7 @@ console.log(whereIs);
           </>:
           <div className="form-col alter">
             <input className="input-buscar-movil"
-                   id="desc"
+                   id="buscar"
                    value={buscar}
                    placeholder="Buscar productos..."
                    onChange={handleInput}
