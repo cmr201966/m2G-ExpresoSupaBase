@@ -378,85 +378,87 @@ const Aplicaciones = () => {
               <div className="aplicaciones">
                 <h3 className="strong">Publicar anuncio</h3>
                 <div className="container-aplicaciones">
-                  <div className="app-flex">
-                    <div className="form-control">
-                      <label>Anuncio:</label>
-                      {agregarsn === true ? (
-                        <input
-                          className="app-input-area"
-                          id="nick"
-                          value={nick}
-                          placeholder="Nombre corto"
-                          onChange={handleInput}
-                          type="text"
-                          required
-                        />
-                      ) : (
-                        ""
-                      )}
-                      {(agregarsn === false && editarsn === false) ||
-                      editarsn === true ? (
-                        <select
-                          className="app-select-naturaleza"
-                          disabled={editarsn === true ? true : false}
-                          id="idapp"
-                          onChange={handleInput}
-                          value={aplicacion}
-                        >
-                          {arrayAplicaciones.map((item, i) => {
-                            return (
-                              <option key={i} value={i}>
-                                {item.idapp}
-                              </option>
-                            );
-                          })}
-                        </select>
-                      ) : (
-                        ""
-                      )}
-                    </div>
-
-                    {inicia === false && (agregarsn || editarsn) ? (
-                      <>
-                        <div className="form-control">
-                          <label>Descripcion</label>
+                  <div className="form-main">
+                    <div className="app-flex">
+                      <div className="form-control">
+                        <label>Anuncio:</label>
+                        {agregarsn === true ? (
                           <input
                             className="app-input-area"
-                            id="desc"
-                            value={desc}
-                            placeholder="Descripción"
+                            id="nick"
+                            value={nick}
+                            placeholder="Nombre corto"
                             onChange={handleInput}
                             type="text"
                             required
                           />
-                        </div>
-                        <div className="form-control">
-                          <label>Categoria </label>
+                        ) : (
+                          ""
+                        )}
+                        {(agregarsn === false && editarsn === false) ||
+                        editarsn === true ? (
                           <select
                             className="app-select-naturaleza"
-                            id="categoria"
+                            disabled={editarsn === true ? true : false}
+                            id="idapp"
                             onChange={handleInput}
-                            value={categoria}
+                            value={aplicacion}
                           >
-                            {arrayCategorias.map((item, i) => {
+                            {arrayAplicaciones.map((item, i) => {
                               return (
                                 <option key={i} value={i}>
-                                  {item.desc}
+                                  {item.idapp}
                                 </option>
                               );
                             })}
                           </select>
-                        </div>
-                      </>
+                        ) : (
+                          ""
+                        )}
+                      </div>
+
+                      {inicia === false && (agregarsn || editarsn) ? (
+                        <>
+                          <div className="form-control">
+                            <label>Descripcion</label>
+                            <input
+                              className="app-input-area"
+                              id="desc"
+                              value={desc}
+                              placeholder="Descripción"
+                              onChange={handleInput}
+                              type="text"
+                              required
+                            />
+                          </div>
+                          <div className="form-control">
+                            <label>Categoria </label>
+                            <select
+                              className="app-select-naturaleza"
+                              id="categoria"
+                              onChange={handleInput}
+                              value={categoria}
+                            >
+                              {arrayCategorias.map((item, i) => {
+                                return (
+                                  <option key={i} value={i}>
+                                    {item.desc}
+                                  </option>
+                                );
+                              })}
+                            </select>
+                          </div>
+                        </>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                    {nombrefoto !== "" && cbvista ? (
+                      <img className="img-producto" src={contenidofoto} />
                     ) : (
                       ""
                     )}
                   </div>
-                  {nombrefoto !== "" && cbvista ? (
-                    <img className="img-producto" src={contenidofoto} />
-                  ) : (
-                    ""
-                  )}
 
                   <div className="grupo-button-app">
                     {(agregarsn === true || editarsn === true) &&
