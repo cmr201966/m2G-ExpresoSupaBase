@@ -128,7 +128,7 @@ const Login = () => {
             <div className="grupo-button-login">
               <button type="submit" className="button-login primary">
                 {loading ? (
-                  <CircularProgress color="inherit" size={16} />
+                  <CircularProgress color="inherit" size={18} />
                 ) : (
                   <Check className="addcss-login" />
                 )}
