@@ -133,12 +133,23 @@
   width: 70%;
 }
 
+.optional-buttons,
 .menuTercero {
   display: flex;
   flex-direction: row;
   align-items: center;
   justify-content: end;
   gap: 10px;
+}
+
+.optional-buttons {
+  gap: 0px;
+}
+
+@media (max-width: 365px) {
+  .optional-buttons {
+    display: none;
+  }
 }
 
 .place {
@@ -228,8 +239,8 @@ button {
   transition: background-color 300ms ease-in-out;
 }
 
-button-color{
-  color:aliceblue !important;
+button-color {
+  color: aliceblue !important;
 }
 
 @media screen and (max-width: 1100px) {
@@ -271,7 +282,8 @@ button-color{
     height: 32px;
   }
 }
-.input-buscar-movil{
+
+.input-buscar-movil {
   background-color: aliceblue;
   color: black;
   background-color: aliceblue;
