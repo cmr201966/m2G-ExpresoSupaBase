@@ -101,9 +101,9 @@ const Navbar = (props) => {
     },
   */
     {
-      label: "Vender",
+      label: "Publicar",
       to: "/catproductos",
-      tooltips: "Publicar sus productos",
+      tooltips: "Publicar productos",
       depende: 4,
       login: 1,
       inserta: "",
@@ -111,8 +111,8 @@ const Navbar = (props) => {
     },
     {
       label: "Anuncios",
-      to: "/aplicaciones",
-      tooltips: "Publicar sus anuncios",
+      to: "/anuncios",
+      tooltips: "Publicar anuncios",
       depende: 4,
       categoria: "",
       login: 1,
@@ -168,7 +168,7 @@ const Navbar = (props) => {
     let resultado = await getJpgFileSB(
       "logo.jpg",
       "./galerias/app_images/destodo",
-      "destodo"
+      "destodo", false, "", "",""
     );
     if (isValid(resultado) === true) {
       setContenidofoto(resultado);

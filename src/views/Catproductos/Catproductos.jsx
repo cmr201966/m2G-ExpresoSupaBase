@@ -60,6 +60,7 @@ const CatProductos = () => {
   const parsedParams = {};
   const { setOpen, setMessage } = useNotification();
   const [loading, setLoading] = useState(false);
+  const [imagen, setImagen] = useState(false);
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
   const [showGalerias, setShowGalerias] = useState(false);
@@ -187,6 +188,7 @@ const CatProductos = () => {
         resultproductos[0].idproducto,
         "idproducto"
       );
+      console.log(resultproductos);
       setArrayproductos(resultproductos);
       setProducto({ label: resultproductos[0].desc, value: 0 });
 
@@ -203,7 +205,7 @@ const CatProductos = () => {
       let resultado = await getJpgFileSB(
         resultproductos[0].idproducto + ".jpg",
         "./galerias/app_images/productos/" + resultproductos[0].idproducto,
-        "productos/" + resultproductos[0].idproducto
+        "productos/" + resultproductos[0].idproducto, resultproductos[0].imagen, "tablacatproductos", "idproducto", resultproductos[0].idproducto
       );
       if (
         isValid(resultado) === true &&
@@ -225,6 +227,7 @@ const CatProductos = () => {
   }
 
   const handleProducto = async (_, value) => {
+    console.log(arrayproductos);
     setProducto(value);
     recuperardatosproducto(arrayproductos, value.value);
     setIsBase64ToBlob(true);
@@ -232,7 +235,8 @@ const CatProductos = () => {
       arrayproductos[value?.value].idproducto + ".jpg",
       "./galerias/app_images/productos/" +
         arrayproductos[value?.value].idproducto,
-      "productos/" + arrayproductos[value?.value].idproducto
+      "productos/" + arrayproductos[value?.value].idproducto, arrayproductos[value?.value].imagen, "tablacatproductos", "idproducto", 
+      arrayproductos[value?.value].idproducto
     );
     if (resultado.length !== 0) {
       setContenidofoto(resultado);
@@ -261,7 +265,7 @@ const CatProductos = () => {
       let resultado = await getJpgFileSB(
         resultproductos[0].idproducto + ".jpg",
         "./galerias/app_images/productos/" + resultproductos[0].idproducto,
-        "productos/" + resultproductos[0].idproducto
+        "productos/" + resultproductos[0].idproducto, resultproductos[0].imagen, "tablacatproductos", "idproducto", resultproductos[0].idproducto
       );
       if (isValid(resultado) === true) {
         setIsBase64ToBlob(true);
@@ -425,6 +429,7 @@ const CatProductos = () => {
   }
 
   const onPhotoChange = (e) => {
+    setImagen(true);
     const file = e.target.files[0];
     setNombrefoto(e.target.value);
     if (!file) return;
@@ -445,7 +450,7 @@ const CatProductos = () => {
     if (producto === null) mproducto = 0;
     else mproducto = arrayproductos[producto?.value].idproducto;
     // let result = await apiBaseDatos("setProducto",
-    let result = setProductoCM(
+    let result = await setProductoCM(
       sessionStorage.getItem("tipouser") === "3"
         ? arrayUsuarios[usuario].iduser
         : sessionStorage.getItem("user"),
@@ -467,7 +472,8 @@ const CatProductos = () => {
       lng,
       cbsCiudad === true ? 1 : 0,
       distanciaMax,
-      isBase64ToBlob
+      isBase64ToBlob,
+      imagen,
     );
 
     if (isValid(result?.err) === true) {

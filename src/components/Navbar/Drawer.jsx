@@ -34,7 +34,7 @@ export default function NavigationDrawer({
     "/registrarse?inserta=true",
     "/categorias",
     "/catproductos",
-    "/aplicaciones",
+    "/anuncios",
   ]);
   const [hamburguesa1Depende] = useState([0, 0, 1, 0, 0, 0, 0]);
   const [hamburguesa1Nivel] = useState([1, 0, 0, 0, 0, 0, 0]);
@@ -50,7 +50,7 @@ export default function NavigationDrawer({
             : "Cerrar sesion",
           "Registrarse",
           "Categorias",
-          "Vender",
+          "Publicar",
           "Anuncios",
         ].map((text, i) => (
           <ListItem key={i} disablePadding>

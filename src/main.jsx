@@ -18,7 +18,7 @@ import Home from "./views/Home/Home";
 import Galerias from "./views/Galerias/Galerias";
 import InfoProducto from "./views/InfoProducto/InfoProducto";
 import InfoNegocio from "./views/infoNegocio/InfoNegocio";
-import Aplicaciones from "./views/Aplicaciones/Aplicaciones";
+import Anuncios from "./views/Anuncios/Anuncios";
 import Whatsapp from "./views/Whatsapp/Whatsapp";
 import Ubicacion from "./views/Ubicacion/Ubicacion";
 import Categorias from "./views/Categorias/Categorias";
@@ -51,7 +51,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               <Route exact path="/galerias" element={<Galerias />} />
               <Route exact path="/infoproducto" element={<InfoProducto />} />
               <Route exact path="/infonegocio" element={<InfoNegocio />} />
-              <Route exact path="/aplicaciones" element={<Aplicaciones />} />
+              <Route exact path="/anuncios" element={<Anuncios />} />
               <Route exact path="/whatsapp" element={<Whatsapp />} />
               <Route exact path="/ubicacion" element={<Ubicacion />} />
               <Route exact path="/categorias" element={<Categorias />} />

@@ -95,7 +95,6 @@ async function getCategoriasNegociosCM() {
 async function CategoriasInsertUpdate(
   categorianegocio,
   desc,
-  descold,
   link,
   nick,
   accion,
@@ -330,7 +329,8 @@ async function setAplicacionesCM(
   categoria,
   agregarsn,
   contenidofoto,
-  isBase64ToBlob
+  isBase64ToBlob,
+  imagen
 ) {
   let err = "";
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
@@ -343,6 +343,7 @@ async function setAplicacionesCM(
       categoria,
       agregarsn,
       contenidofoto,
+      imagen
     });
     result = await result.json();
     err = result.error;
@@ -352,10 +353,11 @@ async function setAplicacionesCM(
       const { error } = await supabase.from("tablaanuncios").insert({
         idapp: nick,
         iduser: user,
-        desc,
+        desc: desc,
         idcategoria: categoria,
-        tooltip,
+        tooltip: tooltip,
         activo: activo,
+        imagen: true,
       });
       if (isValid(error) === true) err = error;
       else {
@@ -363,7 +365,6 @@ async function setAplicacionesCM(
           .from("tablaanuncios")
           .select("*")
           .order("id", { ascending: false })
-          //.eq('activo', true)
           .limit(1);
         if (isValid(error) === false) {
           await uploadBase64Image(
@@ -376,6 +377,7 @@ async function setAplicacionesCM(
         }
       }
     } else {
+      console.log(categoria)
       const { error } = await supabase
         .from("tablaanuncios")
         .update({
@@ -384,6 +386,7 @@ async function setAplicacionesCM(
           desc: desc,
           idcategoria: categoria,
           tooltip,
+          imagen: imagen
         })
         .eq("id", id);
       if (isValid(error) === false) {
@@ -605,7 +608,7 @@ async function GeneraVistaGetProductos(categoria, userAnuncio, buscar) {
   }
   let sql =
     "CREATE OR REPLACE VIEW getProductos AS SELECT DISTINCT tablacatproductos.idproducto as idproducto,tablacatproductos.nick as producto,tablacatproductos.desc as descripcion," +
-    " tablausuarios.nombre as negocio, tablausuarios.iduser as idnegocio, ocupado, tipouser, tablausuarios.iduser, tarifa, costoDomicilio, domicilio" +
+    " tablausuarios.nombre as negocio, tablausuarios.iduser as idnegocio, ocupado, tipouser, tablausuarios.iduser, tarifa, costoDomicilio, domicilio, tablacatproductos.imagen" +
     " FROM tablacatproductos, tablausuarios, tablacatprovincias,tablacatmunicipios " +
     " WHERE (tablacatproductos.iduser=tablausuarios.iduser) and (tablacatprovincias.provincia=tablausuarios.provincia) and (tablacatmunicipios.provincia=" +
     "tablausuarios.provincia) and (tablacatmunicipios.municipio=tablausuarios.municipio) and (tablausuarios.activo=true) and (tablacatproductos.activo=true)" +
@@ -676,7 +679,6 @@ async function setCategoriasNegociosCM(
     err = await CategoriasInsertUpdate(
       categorianegocio,
       desc,
-      descold,
       "productos",
       nick,
       accion,
@@ -821,7 +823,8 @@ async function setProductoCM(
   longitud,
   sciudad,
   distanciamax,
-  isBase64ToBlob
+  isBase64ToBlob,
+  imagen
 ) {
   let err = "";
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL")
@@ -867,6 +870,7 @@ async function setProductoCM(
         distanciamax,
         sciudad,
         activo: activo,
+        imagen: imagen
        });
 
       if (isValid(error) === true && error.length === 0) {
@@ -893,6 +897,7 @@ async function setProductoCM(
       }
     } else {
       let distanciamaxT = Number(distanciamax);
+      console.log("Imagen:", imagen, producto);
       const { error } = await supabase
         .from("tablacatproductos")
         .update({
@@ -912,6 +917,7 @@ async function setProductoCM(
           ocupado: ocupado,
           distanciamax: distanciamaxT,
           sciudad: sciudad,
+          imagen: imagen
         })
         .eq("idproducto", producto);
       if (isValid(error) === false)

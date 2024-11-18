@@ -67,7 +67,8 @@ const ComGalerias = (props) => {
     contenidofoto.splice(0, contenidofoto.length);
     let tarray = [];
     for (const item of tarrayfotos) {
-      let resultado = await getJpgFileSB(item, "./galerias/app_images" + carpetaMYSQL, carpetaSUPABASE );
+      console.log(item);
+      let resultado = await getJpgFileSB(item, "./galerias/app_images" + carpetaMYSQL, carpetaSUPABASE,   );
       if (isValid(resultado)=== true && isValid(resultado.length) === true){ 
         tarray.push(resultado)
         }

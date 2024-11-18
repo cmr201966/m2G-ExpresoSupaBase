@@ -1,6 +1,5 @@
 import { getJpgFile } from "../servicios/imagenes";
 import { getFilesInFolder } from "../servicios/fs";
-//import { getparesgpscategoria, delAnuncio } from "../servicios/catalogos";
 import { creafileinfolder, delfileinfolder } from "../servicios/fs";
 import { getgalerias } from "../servicios/galerias";
 import supabase from "./connection";
@@ -98,19 +97,61 @@ const checkFileExists = async (bucketName, directory, fileName) => {
   return fileExists;
 };
 
+const getUrlCM = async (bucketName, directory, fileName, imagen, tabla, campo, id) => {
+  const {data} = supabase.storage
+    .from(bucketName)
+    .getPublicUrl(directory + "/" + fileName);
+    let urlWithCacheBuster="";
+    const cacheBuster = new Date().getTime();
+    urlWithCacheBuster = `${data.publicUrl}?cb=${cacheBuster}`;
+    /*
+    if (update!==cacheBuster){
+    const cacheBuster = new Date().getTime();
+    urlWithCacheBuster = `${data.publicUrl}?cb=${cacheBuster}`;
+    await supabase
+      .from(tabla)
+      .update({ update: cacheBuster })
+      .eq(campo, id);    
+    }
+    else{ 
+      urlWithCacheBuster=`${data.publicUrl}?cb=${update}`;
+    }*/
+  return urlWithCacheBuster;
+  /*return data.publicUrl;*/
+};
 
-const obtenerImagen = async (bucketName, directory, fileName) => {
-  let url="";
-  const { data , error} = await supabase
-    .storage
+const TgetUrlCM = async (bucketName, directory, fileName, tabla, campo, id, update) => {
+  const {data} = supabase.storage
+    .from(bucketName)
+    .getPublicUrl(directory + "/" + fileName);
+    let urlWithCacheBuster="";
+    const cacheBuster = new Date().getTime();
+    //urlWithCacheBuster = `${data.publicUrl}?cb=${cacheBuster}`;
+    if (update!==cacheBuster){
+    //const cacheBuster = new Date().getTime();
+    urlWithCacheBuster = `${data.publicUrl}?cb=${cacheBuster}`;
+    await supabase
+      .from(tabla)
+      .update({ update: cacheBuster })
+      .eq(campo, id);    
+    }
+    else{ 
+      urlWithCacheBuster=`${data.publicUrl}?cb=${update}`;
+    }
+  return urlWithCacheBuster;
+  /*return data.publicUrl;*/
+};
+
+
+const getImagenCM = async (bucketName, directory, fileName) => {
+  let url = "";
+  const { data, error } = await supabase.storage
     .from(bucketName)
     .download(directory + "/" + fileName);
-    if (isValid(data)===true){
-       url = URL.createObjectURL(data);
-       return url;
-    }
-    else
-       return url;
+  if (isValid(data) === true) {
+    url = URL.createObjectURL(data);
+    return url;
+  } else return url;
 };
 
 const cleanBase64String = (base64String) => {
@@ -186,38 +227,33 @@ async function getFilesInFolderSB(folderMYSQL, folderSUPABASE, bucket) {
   return resultFiles;
 }
 
-async function getJpgFileSB(fileName, directoryMYSQL, directorySUPABASE) {
+async function getJpgFileSB(fileName, directoryMYSQL, directorySUPABASE, imagen, tabla, campo, id) {
   let result = [];
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
     result = await getJpgFile({ file: directoryMYSQL + "/" + fileName });
     result = await result.text();
   } else {
-    result = await obtenerImagen("galerias", directorySUPABASE, fileName);
+    result = await getUrlCM("galerias", directorySUPABASE, fileName, imagen, tabla, campo, id);
+    //result = await getImagenCM("galerias", directorySUPABASE, fileName);
   }
   return result;
 }
 
-export{
-  checkFileExists
-}
+export { checkFileExists };
 
 export {
   isValid,
   buscarEnArreglo,
   buscarEnArregloString,
-  obtenerImagen,
+  getImagenCM,
   uploadBase64Image,
   buscaFoto,
   creaBucket,
 };
-export {
-  getFilesInFolderSB,
-  getJpgFileSB,
-};
+export { getFilesInFolderSB, getJpgFileSB };
 export {
   borraSessionStorage,
   getGalerias,
   creaFileInFolder,
   deleteFileInFolder,
 };
-

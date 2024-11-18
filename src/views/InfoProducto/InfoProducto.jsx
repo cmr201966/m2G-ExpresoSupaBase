@@ -59,24 +59,10 @@ const InfoProducto = () => {
 //  const [duracion, setDuracion] = useState(0);
 
   async function init() {
-//    sessionStorage.setItem("categoria",parsedParams.categoria);
-    let resultFiles = await getFilesInFolderSB("./galerias/app_images/productos/" + parsedParams.idproducto, 
-                                               "productos/" + parsedParams.idproducto, "galerias");
-    setArrayFotos(resultFiles);
-    let tarray=[];
-    for(let i=0; i<resultFiles.length; i+=1){
-      if (resultFiles[i].indexOf(".jpg") === -1) resultFiles.splice(i, 1)
-      }
-
-    for(let i=0; i<resultFiles.length; i+=1){
-        let result= await getJpgFileSB(resultFiles[i], "./galerias/app_images/productos/" + parsedParams.idproducto, "productos/" + parsedParams.idproducto);
-        if (isValid(result.url)===false || result.url === "") tarray.push(result);
-        if (isValid(result.url)===true) tarray.push(result.url);
-        setArrayFotoInfo(tarray);
-    }
+    let imagen="";
     let result = await getInfoProductoCM(parsedParams.idproducto);
 //    let result = await getInfoProducto(parsedParams.idproducto);
-if (isValid(result)=== true) {
+    if (isValid(result)=== true) {
       setIdproducto(parsedParams.idproducto);
       setUsert(result[0].idnegocio)
       setNegocio(result[0].negocio);
@@ -92,10 +78,11 @@ if (isValid(result)=== true) {
       setCostoDomicilio(result[0].costodomicilio);
       setDomicilio(result[0].domicilio);
       setAccion(result[0].accion)
+      imagen=result[0].imagen
     }
     result= await getParesGpsProductoCM(parsedParams.categoria,  parsedParams.idproducto);
 //    result= await getParesGpsProducto(parsedParams.categoria,  parsedParams.idproducto);
-let paresGps = [];
+    let paresGps = [];
     result.forEach((item) => {
       paresGps.push({
         lat: item.latitud,
@@ -103,8 +90,26 @@ let paresGps = [];
         image: item.ocupado === 0 ? libre : off,
         info: item.nombre,
       });
-    });
+    });    
     setPuntos(paresGps);
+
+//    sessionStorage.setItem("categoria",parsedParams.categoria);
+    let resultFiles = await getFilesInFolderSB("./galerias/app_images/productos/" + parsedParams.idproducto, 
+                                               "productos/" + parsedParams.idproducto, "galerias");
+    setArrayFotos(resultFiles);
+    let tarray=[];
+    for(let i=0; i<resultFiles.length; i+=1){
+      if (resultFiles[i].indexOf(".jpg") === -1) resultFiles.splice(i, 1)
+      }
+
+    for(let i=0; i<resultFiles.length; i+=1){
+        let resultimg= await getJpgFileSB(resultFiles[i], "./galerias/app_images/productos/" + parsedParams.idproducto, 
+                                       "productos/" + parsedParams.idproducto, imagen, 
+                                      "tablacatproductos", "idproducto", result[0].idproducto);
+        if (isValid(resultimg.url)===false || resultimg.url === "") tarray.push(resultimg);
+        if (isValid(resultimg.url)===true) tarray.push(resultimg.url);
+        setArrayFotoInfo(tarray);
+    }
     setContenidofoto(tarray[0]);
     setInicio(false);
     setshowCircularProgress(false);

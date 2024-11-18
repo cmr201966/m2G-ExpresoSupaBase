@@ -24,6 +24,7 @@ const CatCategorias = () => {
   const location = useLocation();
   const parsedParams = {}
   const {setOpen, setMessage} = useNotification();
+  const [loading, setLoading] = useState(false);
   const [show, setShow] = useState(false);
   const [nick, setNick] = useState("");
   const [accion, setAccion] = useState("");
@@ -79,7 +80,7 @@ const CatCategorias = () => {
 
       setIsBase64ToBlob(true);
       let resultado = await getJpgFileSB(resultcategorias[0].categorianegocio + ".jpg", "./galerias/app_images/categorias_de_negocios/" + resultcategorias[0].categorianegocio, 
-                                     "categorias_de_negocios/" + resultcategorias[0].categorianegocio, isBase64ToBlob);
+                                     "categorias_de_negocios/" + resultcategorias[0].categorianegocio, resultcategorias[0].imagen, "tablacategorias", "categorianegocio", resultcategorias[0].categorianegocio);
      if (resultado!== undefined && resultado!==null) {
         setIsBase64ToBlob(true);
         setContenidofoto(resultado);
@@ -177,8 +178,10 @@ const CatCategorias = () => {
     }
 
     async function confirmar() {
+      setLoading(true);
     let err= await setCategoriasNegociosCM(arrayCategorias[categoria].categorianegocio, desc, descold, "productos", nick, accion,  agregarsn, contenidofoto, isBase64ToBlob );
 //    let err= await apiBaseDatos("setCategoriasNegocios", arrayCategorias[categoria].categorianegocio, desc, descold, "productos", nick, accion,  agregarsn, contenidofoto, isBase64ToBlob );
+    setLoading(false);
     if (isValid(err)===true){
         setMessage("Ocurrido un error al registrar la categoria");
         setOpen(true);
@@ -199,7 +202,8 @@ const CatCategorias = () => {
           setCbvista(false);
           setIsBase64ToBlob(true);
           resultado = await getJpgFileSB(arrayCategorias[e.target.value].categorianegocio + ".jpg", "./galerias/app_images/categorias_de_negocios/" + arrayCategorias[e.target.value].categorianegocio,
-                                         "categorias_de_negocios/" + arrayCategorias[e.target.value].categorianegocio, isBase64ToBlob);
+                                         "categorias_de_negocios/" + arrayCategorias[e.target.value].categorianegocio, arrayCategorias[e.target.value].imagen, "tablacategorias", "categorianegocio", 
+                                         arrayCategorias[e.target.value].categorianegocio);
          if (resultado!== undefined && resultado!==null) {
             setIsBase64ToBlob(true);
             setContenidofoto(resultado);
@@ -418,7 +422,11 @@ const CatCategorias = () => {
                   {inicia===false && (agregarsn || editarsn) && desc?.length!==0 ?
                     <Tippy content={desc.length !== 0 ? "Registrar el producto" : "Complete los datos necesarios"}>
                       <button type="button" className="producto-button primary" onClick={desc.length !== 0 ? confirmar : ""}>
-                      <Check />
+                      {loading ? (
+                            <CircularProgress color="inherit" size={16} />
+                          ) : (
+                            <Check />
+                          )}
                       </button>
                     </Tippy> : ""
                   }

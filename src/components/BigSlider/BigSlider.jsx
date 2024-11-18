@@ -17,6 +17,7 @@ const BigSlider = (props) => {
   const {
     imgsFileName = [],
     imgsFolder = [],
+    imgsImagen=[],
     categorias = [],
     users = [],
     nombres = [],
@@ -42,9 +43,13 @@ const BigSlider = (props) => {
     setInicia(true);
     for (let i = 0; i < imgsFileName.length; i += 1) {
       let resultado = await getJpgFileSB(
-        imgsFileName[i],
-        imgsFolder[i],
-        imgsFolder[i]
+      imgsFileName[i],
+      imgsFolder[i],
+      imgsFolder[i],
+      imgsImagen[i],
+      "tablaanuncios",
+      "id",
+      imgsFileName[i].split(".")[0],
       );
       if (isValid(resultado) === true) {
         imagenes.push(resultado);

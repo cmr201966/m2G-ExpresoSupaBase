@@ -45,6 +45,7 @@ const InfoNegocio = () => {
 
   async function init(){
     let result = await getInfoNegocioCM(parsedParams.idnegocio);
+    console.log(result);
 //    let result = await getInfoNegocio(parsedParams.idnegocio);
     let resultFiles = await getFilesInFolderSB("./galerias/app_images/usuarios/" + parsedParams.idnegocio, "usuarios/" + parsedParams.idnegocio, "galerias");
     setArrayFotos(resultFiles);
@@ -52,11 +53,12 @@ const InfoNegocio = () => {
 
     for(let i=0; i<resultFiles.length; i+=1)
       if (resultFiles[i].indexOf(".jpg") === -1) resultFiles.splice(i, 1)
-
     for(let i=0; i<resultFiles.length; i+=1){
-        let result= await getJpgFileSB(resultFiles[i], "./galerias/app_images/usuarios/" + parsedParams.idnegocio, "usuarios/" + parsedParams.idnegocio);
-        if (isValid(result.url)===false || result.url === "") tarray.push(result);
-        if (isValid(result.url)===true) tarray.push(result.url);
+        let resultimg= await getJpgFileSB(resultFiles[i], "./galerias/app_images/usuarios/" + parsedParams.idnegocio, "usuarios/" + parsedParams.idnegocio, 
+                                       result[0].imagen, "tablausuarios", "iduser", result[0].idnegocio);
+        console.log(isValid(resultimg.url)===false || resultimg.url === "", isValid(resultimg.url)===true);
+        if (isValid(resultimg.url)===false || resultimg.url === "") tarray.push(resultimg);
+        if (isValid(resultimg.url)===true) tarray.push(resultimg.url);
         setArrayFotoInfo(tarray);
     }
     if (isValid(result)===true) {

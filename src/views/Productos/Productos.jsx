@@ -292,7 +292,7 @@ function contains(lat, lon, bbox) {
 //    let result1 = await apiBaseDatos("getProductos", sessionStorage.getItem("categoria"), 
 //                                     sessionStorage.getItem("userAnuncio"), 
 //                                     sessionStorage.getItem("buscar"));
-const newResult = [];
+    const newResult = [];
     if (isValid(result1.error)) {
       newResult.push({
         descnaturaleza: "",
@@ -321,6 +321,7 @@ const newResult = [];
           tarifa: item.tarifa,
           costodomicilio: item.costodomicilio,
           domicilio: item.domicilio,
+          imagen: item.imagen
         };
         if (result1[0].idnaturaleza === 62) {
           obj.Habilidades = item.adicional;
@@ -335,7 +336,8 @@ const newResult = [];
     // Obtener el contenido de la foto de perfil
     contenidofoto.splice(0, contenidofoto.length);
     for (let i = 0; i < newResult.length; i += 1) {
-      let resultado= await getJpgFileSB(newResult[i].photo, newResult[i].folderMYSQL, newResult[i].folderSUPABASE);
+      let resultado= await getJpgFileSB(newResult[i].photo, newResult[i].folderMYSQL, newResult[i].folderSUPABASE, newResult[i].imagen,
+                                         "tablacatproductos", "idproducto", newResult[i].idproducto);
       if (resultado!==undefined && resultado!==null) {
         contenidofoto.push(resultado);
       }

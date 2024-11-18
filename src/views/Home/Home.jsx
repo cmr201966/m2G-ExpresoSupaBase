@@ -49,6 +49,7 @@ const Home = () => {
   const [show, setShow] = useState(false);
   const [imgsFileName, setImgsFileName] = useState([]);
   const [imgsFolder, setImgsFolder] = useState([]);
+  const [imgsImagen, setImgsImagen] = useState([]);
   const [categorys, setCategorys] = useState([]);
   const [users, setUsers] = useState([]);
   const [nombres, setNombres] = useState([]);
@@ -75,6 +76,7 @@ const Home = () => {
 //      let resultApp = await apiBaseDatos("anuncios");
       let imgsFileName1 = [];
       let imgsFolder1 = [];
+      let imgsImagen1 = [];
       let category1 = [];
       let users1 = [];
       let nombres1 = [];
@@ -85,12 +87,14 @@ const Home = () => {
       resultApp.forEach((item) => {
         imgsFileName1.push(item.id + ".jpg");
         imgsFolder1.push(ruta + "/" + item.id);
+        imgsImagen1.push(item.imagen);
         category1.push(item.idcategoria);
         users1.push(item.iduser);
         nombres1.push(item.desc);
       });
       setImgsFileName(imgsFileName1);
       setImgsFolder(imgsFolder1);
+      setImgsImagen(imgsImagen1)
       setCategorys(category1);
       setUsers(users1);
       setNombres(nombres1);
@@ -104,7 +108,7 @@ const Home = () => {
           result[i].idcategoria + ".jpg",
           "./galerias/app_images/categorias_de_negocios/" +
             result[i].idcategoria,
-          "categorias_de_negocios/" + result[i].idcategoria
+          "categorias_de_negocios/" + result[i].idcategoria, result[i].nick.imagen, "tablacategorias", "categorianegocio", result[i].idcategoria
         );
         if (
           isValid(resultado) === true &&
@@ -231,6 +235,7 @@ const Home = () => {
             <BigSlider
               imgsFolder={imgsFolder}
               imgsFileName={imgsFileName}
+              imgsImagen={imgsImagen}
               categorias={categorys}
               users={users}
               nombres={nombres}

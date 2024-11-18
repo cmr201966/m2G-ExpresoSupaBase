@@ -132,6 +132,7 @@ const Login = () => {
                 ) : (
                   <Check className="addcss-login" />
                 )}
+                Iniciar
               </button>
             </div>
           </form>

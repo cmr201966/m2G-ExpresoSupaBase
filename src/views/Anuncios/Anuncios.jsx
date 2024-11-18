@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 
 // @mui/material
+
 import { Box, CircularProgress } from "@mui/material";
 
 // @mui/icons
@@ -44,6 +45,8 @@ const Aplicaciones = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const parsedParams = {};
+  const [loading, setLoading] = useState(false);
+  const [imagen, setImagen] = useState(false);
   const [show, setShow] = useState(false);
   const { setOpen, setMessage } = useNotification();
   const [nick, setNick] = useState("");
@@ -94,6 +97,7 @@ const Aplicaciones = () => {
       return;
     }
     let result = await getAplicacionesCM();
+    console.log(result);
     //      let result = await apiBaseDatos("getAplicaciones");
     if ((isValid(result) === true && result.err) || isValid(result) === false) {
       setArrayAplicaciones(arraynoaplicaciones);
@@ -106,7 +110,6 @@ const Aplicaciones = () => {
     }
     let resultcategorias = await getCategoriasNegociosCM();
     //      let resultcategorias= await apiBaseDatos("getCategoriasNegocios");
-
     if (resultcategorias.length === 0) {
       setArrayCategorias(arraynoCategorias);
       setCategoria(
@@ -130,7 +133,7 @@ const Aplicaciones = () => {
         let resultado = await getJpgFileSB(
           result[0].id + ".jpg",
           "./galerias/app_images/aplicaciones/" + result[0].id,
-          "aplicaciones/" + result[0].id
+          "aplicaciones/" + result[0].id, imagen, "tablaanuncios", "id", result[0].id
         );
         //           let resultado = await getJpgFileSB(result[0].id + ".jpg", "./galerias/app_images/aplicaciones/" + result[0].id, "aplicaciones/" + result[0].id);
         if (isValid(resultado) === true) {
@@ -219,6 +222,9 @@ const Aplicaciones = () => {
   };
 
   async function confirmar() {
+    console.log(arrayAplicaciones[aplicacion].id)
+    console.log(arrayCategorias[categoria].categorianegocio);
+    setLoading(true);
     let result = await setAplicacionesCM(
       arrayAplicaciones[aplicacion].id,
       sessionStorage.getItem("user"),
@@ -228,14 +234,17 @@ const Aplicaciones = () => {
       arrayCategorias[categoria].categorianegocio,
       agregarsn,
       contenidofoto,
-      isBase64ToBlob
+      isBase64ToBlob,
+      imagen
     );
     //    let result= await apiBaseDatos("setAplicaciones", arrayAplicaciones[aplicacion].id, sessionStorage.getItem("user"), nick, desc,
     //                                    ttip, arrayCategorias[categoria].categorianegocio, agregarsn, contenidofoto, isBase64ToBlob);
     if (isValid(result) === true) {
+      setLoading(false);
       setMessage("Ocurrio un error al registrar el anuncio");
       setOpen(true);
     } else {
+      setLoading(false);
       setMessage(
         agregarsn === true
           ? "El anuncio se agrego correctamente."
@@ -267,7 +276,7 @@ const Aplicaciones = () => {
           arrayAplicaciones[e.target.value].id + ".jpg",
           "./galerias/app_images/aplicaciones/" +
             arrayAplicaciones[e.target.value].id,
-          "aplicaciones/" + arrayAplicaciones[e.target.value].id
+          "aplicaciones/" + arrayAplicaciones[e.target.value].id, arrayAplicaciones[e.target.value].imagen
         );
         if (isValid(resultado) === true) {
           setIsBase64ToBlob(true);
@@ -297,6 +306,7 @@ const Aplicaciones = () => {
   }
 
   const onPhotoChange = (e) => {
+    setImagen(true);
     const file = e.target.files[0];
     setNombrefoto(e.target.value);
     if (!file) return;
@@ -574,7 +584,11 @@ const Aplicaciones = () => {
                               : ""
                           }
                         >
-                          <Check />
+                          {loading ? (
+                            <CircularProgress color="inherit" size={16} />
+                          ) : (
+                            <Check />
+                          )}
                         </button>
                       </Tippy>
                     ) : (
@@ -582,7 +596,7 @@ const Aplicaciones = () => {
                     )}
 
                     {inicia === false && (agregarsn || editarsn) ? (
-                      <Tippy content="Cancelar, agregar ó editar anuncio">
+                      <Tippy content={`Cancelar ${agregarsn===true?'agregar':'editar'} anuncio`}>
                         <button
                           type="button"
                           className="producto-button primary"

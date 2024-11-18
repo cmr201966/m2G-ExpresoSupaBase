@@ -14,27 +14,31 @@ import { Link } from "react-router-dom"
 //import ChatDialogo from "../../components/ChatDialogo/ChatDialogo";
 import IconButton from "@mui/material/IconButton";
 import ArrowBack from "@mui/icons-material/ArrowBack";
+import WhatsAppIcon from '@mui/icons-material/WhatsApp';
+import AlternateEmailIcon from '@mui/icons-material/AlternateEmail';
+import SettingsCellIcon from '@mui/icons-material/SettingsCell';
+import ContactPhoneIcon from '@mui/icons-material/ContactPhone';
 import { useNavigate } from "react-router-dom"
 import { isValid, getJpgFileSB  } from "../../Utiles/Utiles";
 import { useNotification } from "../../context/NotificationProvider";
-import config from "../../config";
+//import config from "../../config";
 
 
 const Acercade = () => {
   const [contenidofoto, setContenidofoto] = useState();
-  const [showchat, setShowchat] = useState(false);
-  const [chatuser, setChatuser] = useState("root");
-  const [chatnombre, setChatnombre] = useState("Destodo");
-  const [indexChat, setIndexChat] = useState(0);
   const {setOpen, setMessage} = useNotification();
-  //const urlMYSQL = config.urlmysql;
-  //const urlSUPABASE = config.urlsupabase;
   const parsedParams = {}
   const navigate = useNavigate();
+  const url = `https://wa.me/52675359?text=`
+  //const [showchat, setShowchat] = useState(false);
+  //const [chatuser, setChatuser] = useState("root");
+  //const [chatnombre, setChatnombre] = useState("Destodo");
+  //const [indexChat, setIndexChat] = useState(0);
+
 
 async function init()
 {
-  let resultado = await getJpgFileSB("logo.jpg", "./galerias/app_images/destodo/", "destodo/");
+  let resultado = await getJpgFileSB("logo.jpg", "./galerias/app_images/destodo/", "destodo/", false, "", "", "");
   if (isValid(resultado)=== true) {
      setContenidofoto(resultado);
   } else {
@@ -59,8 +63,6 @@ useEffect(() => {
                 <ArrowBack />
               </IconButton>
             }
-
-            <h3 className="acercade-title">Atrás</h3>
         </div>
         <div className="acercade">
           <div className="logo-acerca">
@@ -74,36 +76,44 @@ useEffect(() => {
           </div>
               <p>m2G-Expreso Versión 1.0</p>
               <p>Desarrollado por m2G-Software.</p>
-              <p>Celular: +5352675359 Fijo: +5322657241 </p>
-              <p>Email: cmr201966@gmail.com </p>
-              <p>WhatsApp: 5352675359 </p>
+              <div className="acercade-flex">
+                 <button
+                     type="button"
+                     className="producto-button email-acercade"
+                     disabled
+                  >
+                     <SettingsCellIcon />
+                  </button>
+                 <span> +(53)52675359 </span>
+                 <button
+                     type="button"
+                     disabled
+                     className="producto-button email-acercade"
+                  >
+                     <ContactPhoneIcon />
+                  </button>
+                 <span> +(53)22657241 </span>
+              </div>
+              <div className="acercade-flex">
+                 <button
+                     type="button"
+                     disabled
+                     className="producto-button email-acercade"
+                  >
+                     <AlternateEmailIcon />
+                  </button>
+              <p>cmr201966@gmail.com </p>
+              </div>
+              <div className="ws-acercade">
+                 <a href={url} target="_blank" rel="noopener noreferrer"><WhatsAppIcon className="ws-acercade-1" /></a>
+                 <span>WhatsApp </span>
+              </div>
               <p>Santiago de Cuba.</p>
               <p>Todos los derechos reservados. 2024</p>
         </div>
-        {showchat===true?
-          {/*<ChatDialogo user={chatuser} nombre={chatnombre} indexChat={indexChat} />*/}
-        :""}
       </Hero>
     </div>
   );
 };
 
 export default Acercade;
-
-
-/*
-import React from 'react';
-import ReactBeforeSliderComponent from 'react-before-after-slider-component';
-import 'react-before-after-slider-component/dist/build.css';
-
-const FIRST_IMAGE = {
-  imageUrl: 'https://example.com/.../some-image.jpg'
-};
-const SECOND_IMAGE = {
-  imageUrl: 'https://example.com/.../some-image-2.jpg'
-};
-<ReactBeforeSliderComponent
-    firstImage={FIRST_IMAGE}
-    secondImage={SECOND_IMAGE}
-/>
-*/
