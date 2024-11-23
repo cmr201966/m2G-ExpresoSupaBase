@@ -569,10 +569,9 @@ const Registrarse = () => {
                       Datos Generales
                     </label>
                     {editarUser === true ? (
-                      <div className="input-area-registrarse-usuario">
-                        <label className="select-usuario">* Usuario:</label>
+                      <div className="input-area-registrarse">
+                        <label htmlFor="usuario">* Usuario:</label>
                         <select
-                          className="select-registrarse-plan"
                           id="usuario"
                           onChange={handleselect}
                           value={usuario}
@@ -591,7 +590,7 @@ const Registrarse = () => {
                     )}
                     {editarUser === false ? (
                       <div className="input-area-registrarse">
-                        <label className="usuario">* Usuario:</label>
+                        <label htmlFor="user">* Usuario:</label>
                         <input
                           id="user"
                           value={user}
@@ -607,7 +606,7 @@ const Registrarse = () => {
                       ""
                     )}
                     <div className="input-area-registrarse">
-                      <label className="pw">* Password:</label>
+                      <label htmlFor="password">* Password:</label>
                       <input
                         id="password"
                         value={password}
@@ -618,7 +617,7 @@ const Registrarse = () => {
                       />
                     </div>
                     <div className="input-area-registrarse">
-                      <label className="rpw">* Repetir Pw:</label>
+                      <label htmlFor="rpassword">* Repetir Pw:</label>
                       <input
                         id="rpassword"
                         value={rpassword}
@@ -629,13 +628,13 @@ const Registrarse = () => {
                       />
                     </div>
                     {resultadopw !== "" && (
-                      <label className="resultadopw-registrarse">
+                      <label className="resultado-registrarse">
                         {resultadopw}
                       </label>
                     )}
 
                     <div className="input-area-registrarse">
-                      <label className="celular">* Celular:</label>
+                      <label htmlFor="celular">* Celular:</label>
                       <input
                         id="celular"
                         value={celular}
@@ -644,14 +643,9 @@ const Registrarse = () => {
                         required
                       />
                     </div>
-                    <div className="input-area-registrarse-plan">
-                      <label className="plan">* Plan:</label>
-                      <select
-                        className="select-registrarse-plan"
-                        id="plan"
-                        onChange={handleselect}
-                        value={plan}
-                      >
+                    <div className="input-area-registrarse">
+                      <label htmlFor="plan">* Plan:</label>
+                      <select id="plan" onChange={handleselect} value={plan}>
                         {arrayplan
                           .filter((item, i) => {
                             if (i < 3) {
@@ -676,7 +670,7 @@ const Registrarse = () => {
                       Datos del negocio
                     </label>
                     <div className="input-area-registrarse">
-                      <label className="nombre">Nombre:</label>
+                      <label htmlFor="nombre">Nombre:</label>
                       <input
                         id="nombre"
                         value={nombre}
@@ -688,7 +682,7 @@ const Registrarse = () => {
                     </div>
 
                     <div className="input-area-registrarse">
-                      <label className="datos">Datos:</label>
+                      <label htmlFor="datos">Datos:</label>
                       <input
                         id="datos"
                         value={datos}
@@ -699,7 +693,7 @@ const Registrarse = () => {
                       />
                     </div>
                     <div className="input-area-registrarse">
-                      <label className="otros-datos">Otros datos:</label>
+                      <label htmlFor="otrosdatos">Otros datos:</label>
                       <input
                         id="otrosdatos"
                         value={otrosDatos}
@@ -710,10 +704,9 @@ const Registrarse = () => {
                       />
                     </div>
 
-                    <div className="input-area-registrarse-provincia">
-                      <label>Provincia:</label>
+                    <div className="input-area-registrarse">
+                      <label htmlFor="provincia">Provincia:</label>
                       <select
-                        className="select-registrarse-prov"
                         id="provincia"
                         onChange={handleselect}
                         value={provincia}
@@ -727,10 +720,9 @@ const Registrarse = () => {
                         })}
                       </select>
                     </div>
-                    <div className="input-area-registrarse-municipio">
-                      <label>Municipio:</label>
+                    <div className="input-area-registrarse">
+                      <label htmlFor="municipio">Municipio:</label>
                       <select
-                        className="select-registrarse-munic"
                         id="municipio"
                         onChange={handleselect}
                         value={municipio}
