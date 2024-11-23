@@ -1,9 +1,6 @@
 .main-info-producto {
   display: flex;
   flex-direction: column;
-  background: rgb(20, 96, 172);
-  width: 360px;
-  padding: 10px;
   border-radius: 16px;
   gap: 10px;
 }
@@ -18,13 +15,15 @@
   display: flex;
   flex-direction: column;
   background: rgb(20, 96, 172);
-  width: 360px;
+  max-width: 360px;
+  width: 100%;
 }
 
 .img-class-info-producto {
   display: flex;
   flex-direction: row;
   position: relative;
+  width: 100%;
 }
 
 .img-class-info-producto img {
@@ -36,10 +35,7 @@
   flex-direction: column;
   align-items: flex-start;
   color: white;
-  margin-top: 15px;
-  margin-bottom: 15px;
   width: 100%;
-  padding-left: 28px;
   position: relative;
 }
 
@@ -58,9 +54,9 @@ p {
 }
 .img-info-producto {
   height: 280px;
-  width: 360px;
+  width: 100%;
+  max-width: 360px;
   object-fit: contain;
-  margin-top: 10px;
 }
 
 .offon-info-producto {
@@ -73,27 +69,28 @@ p {
   right: 0;
 }
 
-.info-image-onoff {
+.info-image {
   border-radius: 100%;
   border: none;
-  color: #04ee04;
-  background: transparent;
+  background: aliceblue;
   position: absolute;
   z-index: 10;
   right: 6px;
-  top: -59px;
-  margin-top: 32px;
+  top: 6px;
+  width: 35px;
+  height: 35px;
+  border: 1px solid;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
-.info-image-offon {
-  border-radius: 100%;
-  background: transparent;
-  border: none;
+.info-image-on {
+  color: #018801;
+}
+
+.info-image-off {
   color: red;
-  position: absolute;
-  z-index: 10;
-  right: 3px;
-  margin-top: 3px;
 }
 
 .distancia {
@@ -125,15 +122,16 @@ p {
   flex-direction: column;
   background: rgb(20, 96, 172);
   margin: 0 auto;
-  /*width: 100%;*/
-  width: 368px;
+  width: 70%;
+  padding: 10px;
+  border-radius: 16px;
+  gap: 16px;
 }
 
-.mapa-1 {
-  width: 340px;
-  height: 340px;
-  margin-left: 8px;
-  background: rgb(20, 96, 172);
+@media (max-width: 1100px) {
+  .div-papa-infoProducto {
+    width: 90%;
+  }
 }
 
 .font-size1 {
@@ -149,7 +147,11 @@ p {
 .agrupa-info {
   display: flex;
   justify-content: center;
-  background: rgb(20, 96, 172);
+}
+
+.mapa-1 {
+  width: 100%;
+  height: 340px;
 }
 
 .mapa-9 {
@@ -161,8 +163,9 @@ p {
 .ws {
   display: flex;
   width: 100%;
-  justify-content: space-between;
+  justify-content: flex-start;
   align-items: center;
+  gap: 10px;
 }
 
 .wapp {
@@ -175,17 +178,11 @@ p {
 
 .encabezado-Info-Producto {
   color: aliceblue;
-  margin-left: 29px;
 }
 
 .ws-1 {
-  background: none;
-  border-radius: 5px;
-  border: none;
-  color: rgb(27 225 44);
-  position: absolute;
-  right: 21px;
-  top: 5px;
+  color: aliceblue;
+  display: flex;
   font-size: 1.7rem !important;
 }
 
@@ -193,4 +190,15 @@ p {
   display: flex;
   flex-direction: row;
   justify-content: center;
+}
+
+.info-product-content {
+  display: flex;
+  gap: 15px;
+}
+
+@media (max-width: 715px) {
+  .info-product-content {
+    flex-direction: column;
+  }
 }
