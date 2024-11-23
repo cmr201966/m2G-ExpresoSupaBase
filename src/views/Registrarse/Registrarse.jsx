@@ -191,9 +191,7 @@ const Registrarse = () => {
       if (resultado !== undefined && resultado !== null) {
         setContenidofoto(resultado);
         setNombrefoto(result[0].iduser);
-      } 
-    
-      if (parsedParams.inserta==="true" && parsedParams.where==="true")  {
+      } else{
         setIsBase64ToBlob(false);
         setNombrefoto("");
         setNombre("");
@@ -202,9 +200,9 @@ const Registrarse = () => {
         setMessage("Error al recuperar la imagen del usuario");
         setOpen(true);
       }
+      }
      
-    
-      if (parsedParams.where === "false" && parsedParams.inserta === "true") {
+      if (parsedParams.inserta === "true" && parsedParams.where === "true") {
         provinciachange(14, 6, resultprovincia, resultmunicipio);
         setLat(
           ttmunicipios[buscarEnArreglo(ttmunicipios, 6, "municipio")].latitud
@@ -212,7 +210,8 @@ const Registrarse = () => {
         setLng(
           ttmunicipios[buscarEnArreglo(ttmunicipios, 6, "municipio")].longitud
         );
-      } else {
+      } 
+      if (parsedParams.inserta === "false" && parsedParams.where === "true"){
         /* Traer usuarios y poner select con ellos*/
         /*Poner los datos del primer user y en handleselect poner el que cojan*/
         setEditarUser(true);
@@ -275,7 +274,6 @@ const Registrarse = () => {
           }
         }
         setUsuario(0);
-      }
     }
     setInicia(false);
     setShow1(false);

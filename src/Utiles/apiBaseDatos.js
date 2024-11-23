@@ -84,7 +84,6 @@ async function getcategoriasnewCM() {
 }
 
 async function getCategoriasNegociosCM(activo) {
-  console.log(activo);
   let datos;
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
     datos = await getCategoriasNegocios({});
@@ -117,14 +116,10 @@ async function CategoriasInsertUpdate(
     .from("tablacategorias")
     .select("*")
     .eq("desc", desc)
-    console.log(error)
-    console.log(datos);
     if (isValid(datos)===false || datos.length===0){
-      console.log("4")
       const { error } = await supabase
       .from("tablacategorias")
       .insert({ desc: desc, link: link, accion: accion, nick: nick, activo: true });
-      console.log(error)
       if (isValid(error) === false) {
       const { data } = await supabase
         .from("tablacategorias")
@@ -359,14 +354,6 @@ async function setAplicacionesCM(
   contenidofoto,
   isBase64ToBlob,
 ) {
-  console.log(  id,
-    user,
-    nick,
-    desc,
-    tooltip,
-    categoria,
-    agregarsn,
-  );
   let err = "";
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
     let result = await setAplicaciones({
@@ -392,7 +379,6 @@ async function setAplicacionesCM(
         tooltip: tooltip,
         activo: activo,
       });
-      console.log(error)
       if (isValid(error) === true) err = error;
       else {
         const { data, error } = await supabase
@@ -1032,7 +1018,6 @@ async function setConfigCM(provincia, municipio) {
       .from("tablaconfig")
       .select('*')
 //      .gt("provincia", 0);
-    console.log(data);
     if (isValid(data)!==true)
        await supabase
        .from("tablaconfig")

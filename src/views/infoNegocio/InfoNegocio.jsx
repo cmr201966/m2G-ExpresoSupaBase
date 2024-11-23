@@ -149,7 +149,6 @@ useEffect(() => {
              <div className="sliderVertical">
                 {arrayFotos.map((item, i) => (                  
                   <div key={i} className="producto-fotos">
-                    {console.log(arrayFotoInfo[i])}
                       <img
                         className="img-info-producto-lateral"
                         src={arrayFotoInfo[i]}
