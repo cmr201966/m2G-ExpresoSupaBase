@@ -84,7 +84,7 @@ const Acercade = () => {
             </Link>
             <h3>Acerca de</h3>
           </div>
-          <p>m2G-Expreso Versión 1.0</p>
+          <p>{sessionStorage.getItem("iddapp")} Versión 1.0</p>
           <p>Desarrollado por m2G-Software.</p>
           <div className="acercade-flex">
             <button
