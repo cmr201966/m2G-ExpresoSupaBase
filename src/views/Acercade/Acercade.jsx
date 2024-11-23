@@ -18,6 +18,9 @@ import {
   WhatsApp,
   AlternateEmail,
   SettingsCell,
+  Email,
+  PhoneAndroid,
+  Phone,
 } from "@mui/icons-material";
 // @mui/material
 import { IconButton } from "@mui/material";
@@ -87,41 +90,31 @@ const Acercade = () => {
           <p>m2G-Expreso Versión 1.0</p>
           <p>Desarrollado por m2G-Software.</p>
           <div className="acercade-flex">
-            <button
-              type="button"
-              className="producto-button email-acercade"
-              disabled
-            >
-              <SettingsCell />
-            </button>
-            <span> +(53)52675359 </span>
-            <button
-              type="button"
-              disabled
-              className="producto-button email-acercade"
-            >
-              <ContactPhone />
-            </button>
-            <span> +(53)22657241 </span>
+            <div className="acercade-row">
+              <PhoneAndroid />
+              <span> +(53)52675359 </span>
+            </div>
+            <a href="tel:+5322657241" className="acercade-row">
+              <Phone />
+              <span>+(53)22657241</span>
+            </a>
           </div>
           <div className="acercade-flex">
-            <button
-              type="button"
-              disabled
-              className="producto-button email-acercade"
-            >
-              <AlternateEmail />
-            </button>
-            <p>cmr201966@gmail.com </p>
-          </div>
-          <div className="ws-acercade">
-            <a href={url} target="_blank" rel="noopener noreferrer">
-              <WhatsApp className="ws-acercade-1" />
+            <a href="mailto:cmr201966@gmail.com" className="acercade-row">
+              <Email />
             </a>
-            <span>WhatsApp </span>
+            <a
+              href={url}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="acercade-row"
+            >
+              <WhatsApp />
+            </a>
           </div>
+
           <p>Santiago de Cuba.</p>
-          <p>Todos los derechos reservados. 2024</p>
+          <p className="text-center">Todos los derechos reservados. 2024</p>
         </div>
       </Hero>
     </div>
