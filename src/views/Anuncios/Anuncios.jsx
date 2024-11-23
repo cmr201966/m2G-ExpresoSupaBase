@@ -95,7 +95,6 @@ const Aplicaciones = () => {
       return;
     }
     let result = await getAplicacionesCM();
-    console.log(result);
     //      let result = await apiBaseDatos("getAplicaciones");
     if ((isValid(result) === true && result.err) || isValid(result) === false || result.length===0) {
       setArrayAplicaciones(arraynoaplicaciones);
@@ -106,7 +105,7 @@ const Aplicaciones = () => {
       guardaDatosAplicacion(result, 0);
       setAplicacion(buscarEnArreglo(result, result[0].id, "id"));
     }
-    let resultcategorias = await getCategoriasNegociosCM();
+    let resultcategorias = await getCategoriasNegociosCM(true);
     console.log(resultcategorias);
     //      let resultcategorias= await apiBaseDatos("getCategoriasNegocios");
     if (resultcategorias.length === 0) {

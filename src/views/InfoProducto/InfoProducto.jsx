@@ -61,7 +61,7 @@ const InfoProducto = () => {
   async function init() {
     let idsb="";
     let result = await getInfoProductoCM(parsedParams.idproducto);
-//    let result = await getInfoProducto(parsedParams.idproducto);
+//  let result = await getInfoProducto(parsedParams.idproducto);
     if (isValid(result)=== true) {
       setIdproducto(parsedParams.idproducto);
       setUsert(result[0].idnegocio)
@@ -80,7 +80,7 @@ const InfoProducto = () => {
       setAccion(result[0].accion)
       idsb=result[0].idsb
     }
-    result= await getParesGpsProductoCM(parsedParams.categoria,  parsedParams.idproducto);
+    result=await getParesGpsProductoCM(parsedParams.categoria,  parsedParams.idproducto);
 //    result= await getParesGpsProducto(parsedParams.categoria,  parsedParams.idproducto);
     let paresGps = [];
     result.forEach((item) => {

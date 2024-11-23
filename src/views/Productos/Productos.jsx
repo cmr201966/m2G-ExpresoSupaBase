@@ -272,7 +272,7 @@ function contains(lat, lon, bbox) {
 //                                     sessionStorage.getItem("userAnuncio"), 
 //                                     sessionStorage.getItem("buscar"));
     const newResult = [];
-    if (isValid(result1.error)) {
+    if (isValid(result1)===false || result1.length===0 ) {
       newResult.push({
         descnaturaleza: "",
         idproducto: 0,

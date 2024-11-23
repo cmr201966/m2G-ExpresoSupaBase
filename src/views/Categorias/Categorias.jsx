@@ -30,7 +30,7 @@ const Categorias = () => {
   ];
 
   async function init() {
-    let resultcategorias = await getCategoriasNegociosCM();
+    let resultcategorias = await getCategoriasNegociosCM(true);
     //    let resultcategorias = await apiBaseDatos("getCategoriasNegocios")
     if (
       isValid(resultcategorias) === false ||

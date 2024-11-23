@@ -152,7 +152,7 @@ const Registrarse = () => {
     setEditarUser(false);
     if (
       isValid(sessionStorage.getItem("user")) === true &&
-      parsedParams.where !== "true"
+      parsedParams.where === "false" && parsedParams.inserta==="false"
     ) {
       let result = await getdatosuserCM(sessionStorage.getItem("user"));
       //      let result = await apiBaseDatos("getdatosuser", sessionStorage.getItem("user"));
@@ -191,14 +191,18 @@ const Registrarse = () => {
       if (resultado !== undefined && resultado !== null) {
         setContenidofoto(resultado);
         setNombrefoto(result[0].iduser);
-      } else {
+      } else{
         setIsBase64ToBlob(false);
         setNombrefoto("");
+        setNombre("");
+        setDatos("");
+        setOtrosDatos("");
         setMessage("Error al recuperar la imagen del usuario");
         setOpen(true);
       }
-    } else {
-      if (parsedParams.where === "false" && parsedParams.inserta === "true") {
+      }
+     
+      if (parsedParams.inserta === "true" && parsedParams.where === "true") {
         provinciachange(14, 6, resultprovincia, resultmunicipio);
         setLat(
           ttmunicipios[buscarEnArreglo(ttmunicipios, 6, "municipio")].latitud
@@ -206,13 +210,13 @@ const Registrarse = () => {
         setLng(
           ttmunicipios[buscarEnArreglo(ttmunicipios, 6, "municipio")].longitud
         );
-      } else {
+      } 
+      if (parsedParams.inserta === "false" && parsedParams.where === "true"){
         /* Traer usuarios y poner select con ellos*/
         /*Poner los datos del primer user y en handleselect poner el que cojan*/
         setEditarUser(true);
         let resultusuarios = await getUsuariosCM(true);
         //    let resultusuarios = await apiBaseDatos("getUsuarios");
-        console.log(resultusuarios);
         if (isValid(resultusuarios) === false || resultusuarios.length === 0)
           setArrayUsuarios(arrayNoUsuarios);
         else {
@@ -270,7 +274,6 @@ const Registrarse = () => {
           }
         }
         setUsuario(0);
-      }
     }
     setInicia(false);
     setShow1(false);

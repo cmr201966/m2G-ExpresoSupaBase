@@ -79,6 +79,7 @@ const Acercade = () => {
           )}
         </div>
         <div className="acercade">
+          {console.log(sessionStorage.getItem("idapp"))}
           <div className="logo-acerca">
             <Link to="/">
               <Tippy content="Inicio">
@@ -87,7 +88,7 @@ const Acercade = () => {
             </Link>
             <h3>Acerca de</h3>
           </div>
-          <p>m2G-Expreso Versión 1.0</p>
+          <p>{sessionStorage.getItem("idapp")} Versión 1.0</p>
           <p>Desarrollado por m2G-Software.</p>
           <div className="acercade-flex">
             <div className="acercade-row">

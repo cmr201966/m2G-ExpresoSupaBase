@@ -465,7 +465,7 @@
 .img-producto {
   height: 280px;
   margin-top: 4px;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .modal-catalogo-productos {

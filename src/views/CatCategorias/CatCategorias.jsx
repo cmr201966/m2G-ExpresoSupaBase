@@ -68,6 +68,7 @@ const CatCategorias = () => {
       return
     }
     let resultcategorias = await getCategoriasNegociosCM(true);
+    console.log(resultcategorias)
 //    let resultcategorias = await apiBaseDatos("getCategoriasNegocios")
 if (isValid(resultcategorias)===false || 
     isValid(resultcategorias.length) === false || 
@@ -174,7 +175,6 @@ if (isValid(resultcategorias)===false ||
         if (document.getElementById("desc")) document.getElementById("desc").focus();        
       }, 50);
     }
-  
     const eliminar = () => 
     {
       setEliminarsn(true);
