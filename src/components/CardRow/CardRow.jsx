@@ -13,8 +13,9 @@ import "./styles.css";
 
 const CardRow = (props) => {
   const { tipouser, user, mapLoading, noproducto, i, item, selectcard, contenidofoto, 
-          verproducto, vernegocio, paresGps, onMapClick, pagina, link } = props
+          verproducto, vernegocio, paresGps, onMapClick } = props
   const [ocupado, setOcupado]=useState(item.ocupado);
+  const [inicia, setInicia]=useState(true);
   const linkRef = useRef(null);
   async function powerSettings(){
     if (user!=="" && isValid(user)===true){
@@ -27,9 +28,10 @@ const CardRow = (props) => {
   }
   useEffect(() => {
     // Simula un clic en el <a>
-    if (linkRef.current) {
+    if (linkRef.current && inicia===false) {
       linkRef.current.click();
     }
+    setInicia(false);
   }, []);
 
   return (
@@ -77,11 +79,13 @@ const CardRow = (props) => {
                 <BusinessCenterOutlinedIcon  />
               </button>
             </Tippy>
-            <Tippy content={`Ir a ${pagina}`}>
+            {item.link!==""?
+            <Tippy content={`Ir a ${item.idnegocio}`}>
               <a className="irA" ref={linkRef} href={item.link} target="_blank" rel="noopener noreferrer">
                 <OpenInBrowserIcon />
               </a>  
-            </Tippy>
+            </Tippy>:""
+            }
           </>
         ) : (
           ""

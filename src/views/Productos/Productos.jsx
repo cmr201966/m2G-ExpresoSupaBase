@@ -1,7 +1,7 @@
 import { useLocation } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import Hero from "../../layouts/Hero/Hero";
-//import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
 import {PlaceOutlined,} from "@mui/icons-material";
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Checkbox from "@mui/material/Checkbox";
@@ -300,7 +300,8 @@ function contains(lat, lon, bbox) {
           tarifa: item.tarifa,
           costodomicilio: item.costodomicilio,
           domicilio: item.domicilio,
-          idsb: item.idsb
+          idsb: item.idsb,
+          link: item.link
         };
         if (result1[0].idnaturaleza === 62) {
           obj.Habilidades = item.adicional;
@@ -470,8 +471,6 @@ let paresgps = [];
           {inicia===false?
           <div className="productos-nombre">
               <p className="p-productos-nombre" >({cantidadproductos}) - {nombre}</p>
-              {/*
-              {
               <button
                    type="button"
                    className="placeoutlined"
@@ -479,10 +478,9 @@ let paresgps = [];
                 >
                    <PlaceOutlined />
                 </button>
-              }*/}
           </div>:""
           }
-          {/*}
+{/*
             {(((puntosState === 2 && viewCarrito && showMap===true) || (showMap === false && puntos.length !== 0 && viewCarrito))
                && (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL' || (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='SUPABASE' && showMap===false)))?
                 <Tippy content={`Ordenar un producto`}>
@@ -495,7 +493,7 @@ let paresgps = [];
                 </button>
               </Tippy>
             :""}
-*/}
+*/}         
             {((puntosState === 2 && viewCarrito && showMap===true) || (showMap === false && puntos.length !== 0 
                && viewCarrito)) && sessionStorage.getItem("sgbd").toLocaleUpperCase()==='SUPABASE' && showMap===true? 
                 <Tippy content={`Ordenar via WhatsApp`}>

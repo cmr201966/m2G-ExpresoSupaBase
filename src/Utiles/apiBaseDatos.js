@@ -636,14 +636,12 @@ async function GeneraVistaGetProductos(categoria, userAnuncio, buscar) {
     });
   }
   let sql =
-    "CREATE OR REPLACE VIEW getProductos AS SELECT DISTINCT tablacatproductos.idproducto as idproducto,tablacatproductos.nick as producto,tablacatproductos.desc as descripcion," +
-    " tablausuarios.nombre as negocio, tablausuarios.iduser as idnegocio, ocupado, tipouser, tablausuarios.iduser, tarifa, costoDomicilio, domicilio, tablacatproductos.idsb" +
-    " FROM tablacatproductos, tablausuarios, tablacatprovincias,tablacatmunicipios " +
-    " WHERE (tablacatproductos.iduser=tablausuarios.iduser) and (tablacatprovincias.provincia=tablausuarios.provincia) and (tablacatmunicipios.provincia=" +
-    "tablausuarios.provincia) and (tablacatmunicipios.municipio=tablausuarios.municipio) and (tablausuarios.activo=true) and (tablacatproductos.activo=true)" +
-    condicion1 +
-    condicion2 +
-    condicion3;
+    "CREATE OR REPLACE VIEW getProductos AS SELECT DISTINCT tablacatproductos.idproducto as idproducto,tablacatproductos.nick as producto, " +
+    "tablacatproductos.desc as descripcion, tablausuarios.nombre as negocio, tablausuarios.iduser as idnegocio, ocupado, tipouser, " + 
+    "tablausuarios.iduser, tarifa, costoDomicilio, domicilio, tablacatproductos.idsb, tablacatproductos.link FROM tablacatproductos, tablausuarios, " + 
+    "tablacatprovincias,tablacatmunicipios WHERE (tablacatproductos.iduser=tablausuarios.iduser) and (tablacatprovincias.provincia=tablausuarios.provincia)" +
+    " and (tablacatmunicipios.provincia=tablausuarios.provincia) and (tablacatmunicipios.municipio=tablausuarios.municipio) and (tablausuarios.activo=true)" +
+    " and (tablacatproductos.activo=true)" + condicion1 + condicion2 + condicion3;
   return sql;
 }
 
