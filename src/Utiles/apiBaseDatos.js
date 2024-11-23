@@ -73,9 +73,7 @@ async function getcategoriasnewCM() {
       sessionStorage.getItem("user"),
       sessionStorage.getItem("tipouser")
     );
-    console.log(sql)
     const {error}=await supabase.rpc("exec_sql", { query: sql });
-    console.log(error)
     const { data } = await supabase
       .from("getcategoriasnew")
       .select("*")
