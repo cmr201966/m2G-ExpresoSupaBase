@@ -8,7 +8,11 @@ async function creaFileInFolder(
   folderMYSQL,
   folderSUPABASE,
   file,
-  contenidofoto
+  contenidofoto,
+  file_Name,
+  tabla,
+  campo,
+  valor
 ) {
   let err = "";
   if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
@@ -20,6 +24,11 @@ async function creaFileInFolder(
       folderSUPABASE + "/" + file,
       false
     );
+    await supabase
+    .from(tabla)
+    .update({ nophoto: file_Name })
+    .eq(campo, valor);
+  
   }
   return err;
 }
@@ -36,7 +45,7 @@ async function deleteFileInFolder(folderMYSQL, folderSUPABASE, file) {
   return err;
 }
 
-async function getGalerias(folder) {
+async function getGaleriasSB(folder) {
   let galeriasfolders = [];
   if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
     galeriasfolders = await getgalerias({ ruta: folder });
@@ -97,51 +106,28 @@ const checkFileExists = async (bucketName, directory, fileName) => {
   return fileExists;
 };
 
-const getUrlCM = async (bucketName, directory, fileName, imagen, tabla, campo, id) => {
-  const {data} = supabase.storage
-    .from(bucketName)
-    .getPublicUrl(directory + "/" + fileName);
-    let urlWithCacheBuster="";
-    const cacheBuster = new Date().getTime();
-    urlWithCacheBuster = `${data.publicUrl}?cb=${cacheBuster}`;
-    /*
-    if (update!==cacheBuster){
-    const cacheBuster = new Date().getTime();
-    urlWithCacheBuster = `${data.publicUrl}?cb=${cacheBuster}`;
-    await supabase
-      .from(tabla)
-      .update({ update: cacheBuster })
-      .eq(campo, id);    
-    }
-    else{ 
-      urlWithCacheBuster=`${data.publicUrl}?cb=${update}`;
-    }*/
-  return urlWithCacheBuster;
-  /*return data.publicUrl;*/
-};
 
-const TgetUrlCM = async (bucketName, directory, fileName, tabla, campo, id, update) => {
-  const {data} = supabase.storage
+async function filesList(bucketName, directory){
+  const {data} = await supabase.storage
     .from(bucketName)
-    .getPublicUrl(directory + "/" + fileName);
-    let urlWithCacheBuster="";
-    const cacheBuster = new Date().getTime();
-    //urlWithCacheBuster = `${data.publicUrl}?cb=${cacheBuster}`;
-    if (update!==cacheBuster){
-    //const cacheBuster = new Date().getTime();
-    urlWithCacheBuster = `${data.publicUrl}?cb=${cacheBuster}`;
-    await supabase
-      .from(tabla)
-      .update({ update: cacheBuster })
-      .eq(campo, id);    
-    }
-    else{ 
-      urlWithCacheBuster=`${data.publicUrl}?cb=${update}`;
-    }
-  return urlWithCacheBuster;
-  /*return data.publicUrl;*/
-};
+    .list(directory);
+    return data;
+ 
+}  
 
+async function getUrlPublic(bucketName, directory, fileName){
+  const {data} = supabase.storage
+  .from(bucketName)
+  .getPublicUrl(directory + "/" + fileName);
+  return data;  
+}
+
+const getUrlCM = async (bucketName, directory, fileName, id) => {
+  let urlWithCacheBuster="";
+  let url=await getUrlPublic(bucketName, directory, fileName);
+  urlWithCacheBuster = `${url.publicUrl}?cb=${id}`;
+  return urlWithCacheBuster;
+};
 
 const getImagenCM = async (bucketName, directory, fileName) => {
   let url = "";
@@ -187,12 +173,18 @@ const uploadBase64Image = async (
   base64String,
   bucket,
   carpeta,
-  isBase64ToBlob
+  isBase64ToBlob, tabla, campo, id
 ) => {
   if (isBase64ToBlob === true) return {};
   await supabase.storage.from(bucket).remove([carpeta]);
   const blob = base64ToBlob(base64String, "image/jpeg", isBase64ToBlob);
-  const { error } = await supabase.storage.from(bucket).upload(carpeta, blob);
+  const { data, error } = await supabase.storage.from(bucket).upload(carpeta, blob);
+  // poner el id del fichero en la tabla
+  await supabase
+  .from(tabla)
+  .update({ idsb: data.id })
+  .eq(campo, id);
+
   return error;
 };
 
@@ -227,33 +219,41 @@ async function getFilesInFolderSB(folderMYSQL, folderSUPABASE, bucket) {
   return resultFiles;
 }
 
-async function getJpgFileSB(fileName, directoryMYSQL, directorySUPABASE, imagen, tabla, campo, id) {
+async function getJpgFileSB(fileName, directoryMYSQL, directorySUPABASE, id) {
   let result = [];
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
     result = await getJpgFile({ file: directoryMYSQL + "/" + fileName });
     result = await result.text();
   } else {
-    result = await getUrlCM("galerias", directorySUPABASE, fileName, imagen, tabla, campo, id);
+    result = await getUrlCM("galerias", directorySUPABASE, fileName, id);
     //result = await getImagenCM("galerias", directorySUPABASE, fileName);
   }
   return result;
 }
 
-export { checkFileExists };
+export { 
+  filesList, 
+  checkFileExists 
+};
 
 export {
   isValid,
   buscarEnArreglo,
   buscarEnArregloString,
-  getImagenCM,
   uploadBase64Image,
   buscaFoto,
   creaBucket,
+  creaFileInFolder,
 };
-export { getFilesInFolderSB, getJpgFileSB };
+
+export { 
+  getFilesInFolderSB, 
+  getJpgFileSB, 
+  getImagenCM,
+  getGaleriasSB,
+};
+
 export {
   borraSessionStorage,
-  getGalerias,
-  creaFileInFolder,
   deleteFileInFolder,
 };

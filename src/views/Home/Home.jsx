@@ -1,5 +1,6 @@
 {
-  /*QRCode value="TRANSFERMOVIL_ETECSA, TRANSFERENCIA,9224069991525391,56174215" />*/
+  /*QRCode value="TRANSFERMOVIL_ETECSA, TRANSFERENCIA,9224069991525391,56174215" />
+  <QRCode value="https://expreso-cb7f2.web.app/" />*/
 }
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -49,7 +50,7 @@ const Home = () => {
   const [show, setShow] = useState(false);
   const [imgsFileName, setImgsFileName] = useState([]);
   const [imgsFolder, setImgsFolder] = useState([]);
-  const [imgsImagen, setImgsImagen] = useState([]);
+  const [imgsId, setImgsId] = useState([]);
   const [categorys, setCategorys] = useState([]);
   const [users, setUsers] = useState([]);
   const [nombres, setNombres] = useState([]);
@@ -58,13 +59,8 @@ const Home = () => {
     setInicia(true);
     setShow(true);
     sessionStorage.setItem("deDonde", "Home")
-    if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "SUPABASE")
-      creaBucket("galerias");
-    borraSessionStorage([
-      "categoria",
-      "ubicacion-provincia",
-      "ubicacion-municipio",
-    ]);
+    if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "SUPABASE") creaBucket("galerias");
+    borraSessionStorage(["categoria",]);
     const newResult = [];
     if (
       parsedParams.nivel === undefined ||
@@ -76,7 +72,7 @@ const Home = () => {
 //      let resultApp = await apiBaseDatos("anuncios");
       let imgsFileName1 = [];
       let imgsFolder1 = [];
-      let imgsImagen1 = [];
+      let imgsId1 = [];
       let category1 = [];
       let users1 = [];
       let nombres1 = [];
@@ -87,18 +83,19 @@ const Home = () => {
       resultApp.forEach((item) => {
         imgsFileName1.push(item.id + ".jpg");
         imgsFolder1.push(ruta + "/" + item.id);
-        imgsImagen1.push(item.imagen);
+        imgsId1.push(item.idsb);
         category1.push(item.idcategoria);
         users1.push(item.iduser);
         nombres1.push(item.desc);
       });
       setImgsFileName(imgsFileName1);
       setImgsFolder(imgsFolder1);
-      setImgsImagen(imgsImagen1)
+      setImgsId(imgsId1)
       setCategorys(category1);
       setUsers(users1);
       setNombres(nombres1);
       let result = await getcategoriasnewCM();
+      console.log(result)
 //      let result = await apiBaseDatos("getcategoriasnew");
       let longitug = isValid(result) === true ? result.length : 0;
       let arrayContenidoFoto = [];
@@ -108,7 +105,7 @@ const Home = () => {
           result[i].idcategoria + ".jpg",
           "./galerias/app_images/categorias_de_negocios/" +
             result[i].idcategoria,
-          "categorias_de_negocios/" + result[i].idcategoria, result[i].nick.imagen, "tablacategorias", "categorianegocio", result[i].idcategoria
+          "categorias_de_negocios/" + result[i].idcategoria, result[i].nick.idsb
         );
         if (
           isValid(resultado) === true &&
@@ -126,7 +123,7 @@ const Home = () => {
             result.forEach((item, i) => {
               newResult.push({
                  categoria: item.idcategoria,
-                 name: item.nick.nick,
+                 name: item.nick,
                  link: item.link,
                  photo: arrayContenidoFoto[i],
                  tooltip: item.categoria,});
@@ -155,6 +152,7 @@ const Home = () => {
   }
 
   const arrayOfCards = useMemo(() => {
+    console.log(result)
     const resultOfCards = [];
     result.forEach((prop, i) =>
       resultOfCards.push(
@@ -235,7 +233,7 @@ const Home = () => {
             <BigSlider
               imgsFolder={imgsFolder}
               imgsFileName={imgsFileName}
-              imgsImagen={imgsImagen}
+              imgsId={imgsId}
               categorias={categorys}
               users={users}
               nombres={nombres}

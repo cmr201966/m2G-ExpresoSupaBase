@@ -18,8 +18,12 @@ import { useNotification } from "../../context/NotificationProvider";
 
 import Hero from "../../layouts/Hero/Hero";
 import { useEffect, useState } from "react";
-import { isValid, getJpgFileSB, buscarEnArreglo } from "../../Utiles/Utiles";
-import { getProvinciasCM, getMunicipiosCM, getdatosuserCM, setregistrarseCM } 
+import { isValid, getJpgFileSB, buscarEnArreglo, buscarEnArregloString } from "../../Utiles/Utiles";
+import { getProvinciasCM, 
+         getMunicipiosCM, 
+         getdatosuserCM, 
+         setregistrarseCM,
+         getUsuariosCM } 
         from "../../Utiles/apiBaseDatos";
 import Encabezado from "../../components/Encabezado/Encabezado";
 import ComGalerias from "../../components/ComGalerias/ComGalerias";
@@ -31,6 +35,8 @@ const Registrarse = () => {
   const [showGalerias, setShowGalerias] = useState(false);
   const {setOpen, setMessage} = useNotification();
   const [user, setUser] = useState("");
+  const [idsb, setIdsb] = useState("");
+  const [nophoto, setNophoto] = useState("");
   const [password, setPassword] = useState();
   const [rpassword, setRpassword] = useState();
   const [nombre, setNombre] = useState("");
@@ -50,6 +56,7 @@ const Registrarse = () => {
   const [tmunicipios, setTmunicipios] = useState([]);
   const [show1, setShow1] = useState(true);
   const [cbvista, setCbvista] = useState(false);
+  const [editarUser, setEditarUser] = useState(false);
   const [resultado, setResultado] = useState("");
   const [resultadopw] = useState("");
   const [inicia, setInicia] = useState(true);
@@ -59,6 +66,11 @@ const Registrarse = () => {
   const [lng, setLng] = useState(0);
   const [zoom] = useState(15.5);
   const [isBase64ToBlob, setIsBase64ToBlob]=useState(true);
+  const [arrayUsuarios, setArrayUsuarios] = useState([]);
+  const arrayNoUsuarios = [{ iduser: 99999999, desc: "Desconocido" }];
+  const [usuario, setUsuario] = useState("");
+  const [datos, setDatos] = useState("");
+  const [otrosDatos, setOtrosDatos] = useState("");
 
 
   // Otros estados
@@ -112,23 +124,27 @@ const Registrarse = () => {
       ttmunicipios=arraydesconocido;
     }
     setMunicipio(ttmunicipios[0].municipio);
+    setEditarUser(false);
     if (isValid(sessionStorage.getItem("user")) === true && (parsedParams.where!=='true'))
     {
       let result = await getdatosuserCM(sessionStorage.getItem("user"));
 //      let result = await apiBaseDatos("getdatosuser", sessionStorage.getItem("user"));
-console.log(result);
       setUser(result[0].iduser);
       setPassword(result[0].pw);
       setNombre(result[0].nombre);
       setPlan(result[0].tipouser);
       setCelular(result[0].celular);
+      setNophoto(result[0].nophoto);
+      setDatos(result[0].datos);
+      setOtrosDatos(result[0].otrosdatos);
       setProvincia(result[0].provincia);
       setMunicipio(result[0].municipio);
       setLat(isValid(result[0].latitud)===true && result[0].latitud!==0?result[0].latitud:ttmunicipios[buscarEnArreglo(ttmunicipios,result[0].municipio,"municipio")].latitud);
       setLng(isValid(result[0].longitud)===true && result[0].longitud!==0?result[0].longitud:ttmunicipios[buscarEnArreglo(ttmunicipios,result[0].municipio,"municipio")].longitud);
+      setIdsb(result[0].idsb)
       setIsBase64ToBlob(true);
       let resultado = await getJpgFileSB(result[0].iduser + ".jpg", "./galerias/app_images/usuarios/" + result[0].iduser, 
-                                         "usuarios/" + result[0].iduser, result[0].imagen, "tablausuarios", "iduser", result[0].iduser);
+                                         "usuarios/" + result[0].iduser, result[0].idsb);
       if (resultado!== undefined && resultado!==null) {
         setContenidofoto(resultado);
         setNombrefoto(result[0].iduser);
@@ -141,9 +157,52 @@ console.log(result);
    }
    else
    {
-     provinciachange(14,6, resultprovincia, resultmunicipio)
-     setLat(ttmunicipios[buscarEnArreglo(ttmunicipios,6,"municipio")].latitud);
-     setLng(ttmunicipios[buscarEnArreglo(ttmunicipios,6,"municipio")].longitud);
+    if (parsedParams.where==='false' && parsedParams.inserta==='true'){
+       provinciachange(14,6, resultprovincia, resultmunicipio)
+       setLat(ttmunicipios[buscarEnArreglo(ttmunicipios,6,"municipio")].latitud);
+       setLng(ttmunicipios[buscarEnArreglo(ttmunicipios,6,"municipio")].longitud);
+    }
+    else{
+      /* Traer usuarios y poner select con ellos*/
+      /*Poner los datos del primer user y en handleselect poner el que cojan*/
+      setEditarUser(true);
+      let resultusuarios = await getUsuariosCM(true);
+      //    let resultusuarios = await apiBaseDatos("getUsuarios");
+      console.log(resultusuarios)
+      if (isValid(resultusuarios) === false || resultusuarios.length===0) 
+        setArrayUsuarios(arrayNoUsuarios);
+      else {
+        setArrayUsuarios(resultusuarios);
+        setUser(resultusuarios[0].iduser);
+        setPassword(resultusuarios[0].pw);
+        setNombre(resultusuarios[0].nombre);
+        setPlan(resultusuarios[0].tipouser);
+        setCelular(resultusuarios[0].celular);
+        setNophoto(resultusuarios[0].nophoto);
+        setDatos(resultusuarios[0].datos);
+        setOtrosDatos(resultusuarios[0].otrosdatos);
+        setProvincia(resultusuarios[0].provincia);
+        setMunicipio(resultusuarios[0].municipio);
+        setLat(isValid(resultusuarios[0].latitud)===true && resultusuarios[0].latitud!==0?resultusuarios[0].latitud:ttmunicipios[buscarEnArreglo(ttmunicipios,resultusuarios[0].municipio,"municipio")].latitud);
+        setLng(isValid(resultusuarios[0].longitud)===true && resultusuarios[0].longitud!==0?resultusuarios[0].longitud:ttmunicipios[buscarEnArreglo(ttmunicipios,resultusuarios[0].municipio,"municipio")].longitud);
+        setIdsb(resultusuarios[0].idsb)
+        setIsBase64ToBlob(true);
+        let resultado = await getJpgFileSB(resultusuarios[0].iduser + ".jpg", "./galerias/app_images/usuarios/" + resultusuarios[0].iduser, 
+                                           "usuarios/" + resultusuarios[0].iduser, resultusuarios[0].idsb);
+        if (resultado!== undefined && resultado!==null) {
+          setContenidofoto(resultado);
+          setNombrefoto(resultusuarios[0].iduser);
+        } else {
+          setIsBase64ToBlob(false);
+          setNombrefoto("");
+          setMessage('Error al recuperar la imagen del usuario');
+          setOpen(true);
+        }
+  
+      }
+      setUsuario(0);
+  
+    }
    }
    setInicia(false);
    setShow1(false);
@@ -179,16 +238,53 @@ console.log(result);
        setRpassword("");
        setNombre("");
        setCelular("");
-     
-
-  }
+       setDatos("");
+       setOtrosDatos("");
+       }
   function tcancelar() {
     navigate("/?nivel=0")
   }
 
+async function getImage(index){
+  return await getJpgFileSB(arrayUsuarios[index].iduser + ".jpg", "./galerias/app_images/usuarios/" + arrayUsuarios[index].iduser, 
+    "usuarios/" + arrayUsuarios[index].iduser, arrayUsuarios[index].idsb);  
+}
+
   async function handleselect(e) {
     let ttmunicipio=[];
+    let index=-1;
+    let resultado;
     switch (e.target.id) {
+      case "usuario":
+          setShowGalerias(false);
+          index = buscarEnArregloString(arrayUsuarios, e.target.value, "iduser");
+          setUsuario(e.target.valor);
+          setUser(arrayUsuarios[index].iduser);
+          setPassword(arrayUsuarios[index].pw);
+          setNombre(arrayUsuarios[index].nombre);
+          setPlan(arrayUsuarios[index].tipouser);
+          setCelular(arrayUsuarios[index].celular);
+          setNophoto(arrayUsuarios[index].nophoto);
+          setDatos(arrayUsuarios[index].datos);
+          setOtrosDatos(arrayUsuarios[index].otrosdatos);
+          setProvincia(arrayUsuarios[index].provincia);
+          setMunicipio(arrayUsuarios[index].municipio);
+          setLat(isValid(arrayUsuarios[index].latitud)===true && arrayUsuarios[index].latitud!==0?arrayUsuarios[index].latitud:tmunicipios[buscarEnArreglo(tmunicipios,arrayUsuarios[index].municipio,"municipio")].latitud);
+          setLng(isValid(arrayUsuarios[index].longitud)===true && arrayUsuarios[index].longitud!==0?arrayUsuarios[index].longitud:tmunicipios[buscarEnArreglo(tmunicipios,arrayUsuarios[index].municipio,"municipio")].longitud);
+          setIdsb(arrayUsuarios[index].idsb)
+          setIsBase64ToBlob(true);
+          resultado = await getImage(index);
+          if (resultado!== undefined && resultado!==null) {
+            setContenidofoto(resultado);
+            setNombrefoto(arrayUsuarios[index].iduser);
+          } else {
+            setIsBase64ToBlob(false);
+            setNombrefoto("");
+            setMessage('Error al recuperar la imagen del usuario');
+            setOpen(true);
+          }
+  
+          break; 
       case "provincia":
         setProvincia(Number(e.target.value));
         ttmunicipio=arraymunicipios.filter((item)=>{if (item.provincia === Number(e.target.value)){return item}});
@@ -231,8 +327,11 @@ console.log(result);
       case "celular":
         setCelular(e.target.value);
         break;
-      case "desc":
-        setDesc(e.target.value);
+      case "datos":
+        setDatos(e.target.value);
+        break;
+      case "otrosdatos":
+        setOtrosDatos(e.target.value);
         break;
       case "vista":
         setCbvista(e.target.checked);
@@ -258,7 +357,7 @@ console.log(result);
       let lngT=lat===null || lng===undefined?0:lng;
       let response = await setregistrarseCM(user.toLowerCase(), nombre, password, celular, 
                                                           provincia, municipio, contenidofoto, modifica, 
-                                                          plan, latT, lngT, isBase64ToBlob);
+                                                          plan, latT, lngT, isBase64ToBlob, datos, otrosDatos);
 //      let response = await apiBaseDatos("setregistrarse", user.toLowerCase(), nombre, password, celular, 
 //                                                          provincia, municipio, contenidofoto, modifica, 
 //                                                          plan, latT, lngT, isBase64ToBlob);
@@ -268,8 +367,7 @@ console.log(result);
       if (isOk===false)
       {
         setMessage("Ocurrio un error mientras se registraba el usuario.");
-        setOpen(true);
-          
+        setOpen(true);          
       }
       else {
         setMessage("El usuario se registró correctamente.");
@@ -296,6 +394,10 @@ console.log(result);
     setNombrefoto(valor);
   };
  
+  const cambiaFoto = (contenidofoto)=>{
+    setContenidofoto(contenidofoto);
+  }
+
   const lngLatSelected = (point, lngLat) => {
     setLng(lngLat.lng);
     setLat(lngLat.lat);
@@ -327,6 +429,18 @@ console.log(result);
           <div className="container-registrarse">
             <label className="label-grupo label-registrase-size strong">Registrarse</label>
             <label className="label-grupo label-datos-size strong">Datos Generales</label>
+            {editarUser===true?
+            <div className="input-area-registrarse-usuario">
+                 <label className="select-usuario">* Usuario:</label>
+                 <select  className="select-registrarse-plan"  id="usuario" onChange={handleselect} value={usuario}>
+                 {arrayUsuarios.map((item, i) => {
+                  return <option key={i} value={item.iduser} >{item.nombre}</option>
+                })}
+                 </select>
+            </div>:""
+
+            }
+            {editarUser===false?
             <div className="input-area-registrarse">
               <label className="usuario" >* Usuario:</label>
               <input
@@ -335,16 +449,18 @@ console.log(result);
                 color="black"
                 disabled={modifica}
                 onChange={handleInput}
+                placeholder="ID usuario "
                 type="text"
                 required
               />
-            </div>
+            </div>:""}
             <div className="input-area-registrarse">
               <label className="pw">* Password:</label>
               <input
                 id="password"
                 value={password}
                 onChange={handleInput}
+                placeholder="Contraseña"
                 type="password"
                 required
               />
@@ -355,6 +471,7 @@ console.log(result);
                 id="rpassword"
                 value={rpassword}
                 onChange={handleInput}
+                placeholder="repetir contraseña"
                 type="password"
                 required
               />
@@ -369,7 +486,7 @@ console.log(result);
                 id="celular"
                 value={celular}
                 onChange={handleInput}
-                type="phone"
+                placeholder="número celular"
                 required
               />
             </div>
@@ -389,17 +506,35 @@ console.log(result);
                 id="nombre"
                 value={nombre}
                 onChange={handleInput}
+                placeholder="Nombre del negocio"
                 type="text"
                 required
               />
             </div>
 
-              {(nombrefoto!=="") && cbvista?
-              <div className="img-class">
-                  <img className="img-registrarse" src={contenidofoto} />
-              </div>:""
-              }
-            
+            <div className="input-area-registrarse">
+              <label className="datos" >Datos:</label>
+              <input
+                id="datos"
+                value={datos}
+                onChange={handleInput}
+                placeholder="Descripción del negocio"
+                type="text"
+                required
+              />
+            </div>
+            <div className="input-area-registrarse">
+              <label className="otros-datos" >Otros datos:</label>
+              <input
+                id="otrosdatos"
+                value={otrosDatos}
+                onChange={handleInput}
+                placeholder="Más datos del negocio"
+                type="text"
+                required
+              />
+            </div>
+
             <div className="input-area-registrarse-provincia">
               <label>Provincia:</label>
               <select  className="select-registrarse-prov"  id="provincia" onChange={handleselect} value={provincia}>
@@ -417,6 +552,12 @@ console.log(result);
               </select>
             </div>
 
+            {(nombrefoto!=="") && cbvista?
+              <div className="img-class">
+                  <img className="img-registrarse" src={contenidofoto} />
+              </div>:""
+              }
+
             <div className="grupo-button-registrarse">
                      {nombrefoto!==""?
                      <Tippy content="Vista previa">
@@ -429,7 +570,7 @@ console.log(result);
                         </button>
                       </Tippy>:""
                       }
-                      {inicia === false  && user!=="" && password!=="" && celular!==""? 
+                      {inicia === false  && user!=="" && password!=="" && celular!=="" && modifica===false? 
                          <label className="producto-button primary label-photo">
                           <input
                             id="foto"
@@ -443,7 +584,7 @@ console.log(result);
                             <AddPhotoAlternateIcon />
                           </Tippy>
                         </label>:""}
-                        {inicia === false && showMap !== true ? (
+                        {inicia === false && showMap !== true && modifica===true? (
                           <Tippy content={`Galeria de fotos del producto`}>
                             <button
                               type="button"
@@ -461,7 +602,7 @@ console.log(result);
                           <Tippy content="Ubicar el negocio en el mapa">
                             <button
                               type="button"
-                              className="negocio-button primary"
+                              className="producto-button primary"
                               onClick={() => setShowMap(!showMap)}
                             >
                               <PlaceOutlinedIcon/>
@@ -481,12 +622,17 @@ console.log(result);
               </div>
               {inicia === false && showGalerias === true && showMap === false ? (
                     <ComGalerias
-                      deQuien={user}
+                      deQuien={"Imagenes"}
                       ruta={"usuarios/" + user}
                       perfil={user}
                       permiso={true}
                       botonCerrar={false}
                       cambiaNombreFoto={cambiaNombreFoto}
+                      cambiaFoto={cambiaFoto}
+                      idsb={idsb}
+                      nophoto={nophoto}
+                      tabla={"tablausuarios"}
+                      campo={"iduser"}
                     />
                   ) : (
                     ""

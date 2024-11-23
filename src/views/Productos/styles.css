@@ -263,7 +263,6 @@ margin-right: 30px;
 .productos-nombre{
   display: flex;
   flex-direction: row;
-  padding-left: 30px;
 }
 .div-Papa-Productos{
   display: flex;
@@ -272,4 +271,14 @@ margin-right: 30px;
   margin: 0 auto;
   /*width: 100%;*/
   width: 375px;
+}
+.placeoutlined{
+  background: transparent !important;
+  border: none;
+  color: aliceblue;
+  margin-top: 5px;
+  cursor: pointer;
+}
+.p-productos-nombre{
+  margin-top: 5px;
 }

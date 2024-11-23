@@ -39,7 +39,7 @@ const CatCategorias = () => {
   const [eliminarsn, setEliminarsn] = useState(false);
   const [categoria, setCategoria] = useState(0);
   const [arrayCategorias, setArrayCategorias] = useState([]);
-  const arraynoCategorias = [{ categorianegocio: 99999999, desc: "Desconocida" }];
+  const arraynoCategorias = [{ categorianegocio: 99999999, desc: "Desconocida", nick: "Desconocida" }];
   const [isBase64ToBlob, setIsBase64ToBlob]=useState(true);
   // Estados para almacenar los datos del negocio activo
   const [contenido, setContenido] = useState("");
@@ -59,28 +59,28 @@ const CatCategorias = () => {
         return
     }
 
-    if (sessionStorage.getItem("tipouser")!=='1' && sessionStorage.getItem("tipouser")!=='2' && sessionStorage.getItem("tipouser")!=='3'){
-      setMessage("No tiene derechos para crear, editar o eliminar productos")
+    if (sessionStorage.getItem("tipouser")!=='3'){
+      setMessage("No tiene derechos para manipular las categorias de negocios")
       setOpen(true);
       navigate(`/`);
       return
     }
-    let resultcategorias = await getCategoriasNegociosCM();
+    let resultcategorias = await getCategoriasNegociosCM(true);
 //    let resultcategorias = await apiBaseDatos("getCategoriasNegocios")
-    if (isValid(resultcategorias)===false || isValid(resultcategorias.length) === false)
-    {
-      setArrayCategorias(arraynoCategorias);
-      setCategoria(arraynoCategorias[0].categorianegocio);
-    }
-    else 
-    {
+if (isValid(resultcategorias)===false || isValid(resultcategorias.length) === false || resultcategorias.length===0)
+  {
+    setArrayCategorias(arraynoCategorias);
+    setCategoria(buscaCategoria(arraynoCategorias, arraynoCategorias[0].categorianegocio));     
+  }
+  else
+  {
       guardaDatosCategoria(resultcategorias, 0)
       setArrayCategorias(resultcategorias);
       setCategoria(buscaCategoria(resultcategorias, resultcategorias[0].categorianegocio));
 
       setIsBase64ToBlob(true);
       let resultado = await getJpgFileSB(resultcategorias[0].categorianegocio + ".jpg", "./galerias/app_images/categorias_de_negocios/" + resultcategorias[0].categorianegocio, 
-                                     "categorias_de_negocios/" + resultcategorias[0].categorianegocio, resultcategorias[0].imagen, "tablacategorias", "categorianegocio", resultcategorias[0].categorianegocio);
+                                     "categorias_de_negocios/" + resultcategorias[0].categorianegocio, resultcategorias[0].idsb);
      if (resultado!== undefined && resultado!==null) {
         setIsBase64ToBlob(true);
         setContenidofoto(resultado);
@@ -121,6 +121,7 @@ const CatCategorias = () => {
     }
     return(j);
   }
+
   function recuperarDatosCategoria() 
   {
     setDesc(desct);
@@ -182,7 +183,7 @@ const CatCategorias = () => {
     let err= await setCategoriasNegociosCM(arrayCategorias[categoria].categorianegocio, desc, descold, "productos", nick, accion,  agregarsn, contenidofoto, isBase64ToBlob );
 //    let err= await apiBaseDatos("setCategoriasNegocios", arrayCategorias[categoria].categorianegocio, desc, descold, "productos", nick, accion,  agregarsn, contenidofoto, isBase64ToBlob );
     setLoading(false);
-    if (isValid(err)===true){
+    if (isValid(err)===true && isValid(err.length)===true){
         setMessage("Ocurrido un error al registrar la categoria");
         setOpen(true);
     }
@@ -202,8 +203,7 @@ const CatCategorias = () => {
           setCbvista(false);
           setIsBase64ToBlob(true);
           resultado = await getJpgFileSB(arrayCategorias[e.target.value].categorianegocio + ".jpg", "./galerias/app_images/categorias_de_negocios/" + arrayCategorias[e.target.value].categorianegocio,
-                                         "categorias_de_negocios/" + arrayCategorias[e.target.value].categorianegocio, arrayCategorias[e.target.value].imagen, "tablacategorias", "categorianegocio", 
-                                         arrayCategorias[e.target.value].categorianegocio);
+                                         "categorias_de_negocios/" + arrayCategorias[e.target.value].categorianegocio, arrayCategorias[e.target.value].idsb);
          if (resultado!== undefined && resultado!==null) {
             setIsBase64ToBlob(true);
             setContenidofoto(resultado);
@@ -440,6 +440,8 @@ const CatCategorias = () => {
                   }
 
                 </div>
+
+                
             </div>
           </div>
         </div>

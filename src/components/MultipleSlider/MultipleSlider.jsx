@@ -25,30 +25,26 @@ const BigSlider = (props) => {
   }, [currentIndex]);
 
   return (
-    <div className={`multiple-slider`}>
-    {movil===false && imgs.length >= 3 ? (
-        <button onClick={() => toRight()} className="multiple-slider-nav left">
-          {"<"}
-        </button>
-      ) : (
-        ""
-      )}
-      <div className={`${movil?"multi-slider-movil":""} multiple-slider-content ${transition ? "transition" : ""} ${css({transform: `translateX(${currentIndex * -1 * 129}px)`,})}`}>
-        {imgs?.map((item, i) => (
-          <div key={i} className={"multiple-slider-item"}>
-            {item}
+    <div className="sacar-flecha">
+        <div className={`multiple-slider`}>
+          {movil===false && imgs.length >= 3 ? (
+          <button onClick={() => toRight()} className="multiple-slider-nav left">
+             {"<"}
+          </button>):("")}
+          <div className={`${movil?"multi-slider-movil":""} multiple-slider-content ${transition ? "transition" : ""} ${css({transform: `translateX(${currentIndex * -1 * 129}px)`,})}`}>
+             {imgs?.map((item, i) => (
+             <div key={i} className={"multiple-slider-item"}>
+               {item}
+             </div>
+             ))}
           </div>
-        ))}
-      </div>
 
-      {movil===false && ((window.innerWidth <= 768 && imgs.length >= 3) ||
-      (window.innerWidth > 768 && imgs.length > 6)) && cantidad>0? (
-        <button onClick={() => toLeft()} className="multiple-slider-nav right">
-          {">"}
-        </button>
-      ) : (
-        ""
-      )}
+          {movil===false && ((window.innerWidth <= 768 && imgs.length >= 3) ||
+          (window.innerWidth > 768 && imgs.length > 6)) && cantidad>0? (
+            <button onClick={() => toLeft()} className="multiple-slider-nav right">
+               {">"}
+            </button>):("")}
+        </div>
     </div>
   );
 };

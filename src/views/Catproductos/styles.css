@@ -1,5 +1,7 @@
 .catalogo-producto {
   /*    width: 100%;*/
+  height: auto;
+  width: 340px;
   display: flex;
   flex-direction: column;
   background: rgb(20, 96, 172);
@@ -457,7 +459,7 @@
   justify-content: flex-end;
   align-items: center;
   display: flex;
-  gap: 1px;
+  gap: 5px;
 }
 
 .img-producto {

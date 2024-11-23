@@ -1,0 +1,19 @@
+.div-papa-categorias-1{
+    display: flex;
+    flex-direction: column;
+    margin: 0 auto;
+}
+.select-categorias-1{
+    width: 290px;
+    height: 32px;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+    padding-left: 7px;
+    margin-bottom: 8px;
+}
+.categoria-1{
+    font-size: 16px;
+}
+.categoria-2{
+    margin-right: 3px;
+}

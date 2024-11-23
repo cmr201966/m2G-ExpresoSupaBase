@@ -39,17 +39,23 @@ async function getanunciosCM() {
 
 function GeneraVistagetCategoriasNew(user, tipouser) {
   let condicion = "";
+  let tablas = "";
+  let condicion1="";
   if (isValid(user) === true && (tipouser === "1" || tipouser === "2")) {
     condicion =
       "and (tablacatproductos.iduser='" +
       user +
       "') and (tablausuarios.activo=true)";
+      tablas=", tablausuarios";
+      condicion1=" and (tablausuarios.iduser=tablacatproductos.iduser)";
+
   }
   return (
+
     "CREATE OR REPLACE VIEW getcategoriasnew  AS select DISTINCT tablacatproductos.categorianegocio as idcategoria, " +
-    'tablaCategorias."desc" as categoria, link, destodo, tablacategorias.nick(*) from tablacategorias, tablacatproductos' +
-    " where (tablaCategorias.categorianegocio=tablacatproductos.categorianegocio) and (tablacatproductos.activo=true)" +
-    condicion
+    'tablacategorias."desc" as categoria, link, destodo, tablacategorias.nick from tablacategorias, tablacatproductos' + tablas +
+    " where (tablacategorias.categorianegocio=tablacatproductos.categorianegocio) and (tablacatproductos.activo=true)" + condicion1 +
+    condicion + " order by destodo"
   );
 }
 
@@ -67,8 +73,8 @@ async function getcategoriasnewCM() {
       sessionStorage.getItem("user"),
       sessionStorage.getItem("tipouser")
     );
-    await supabase.rpc("execute_query", { query: sql });
-    const { data, error } = await supabase
+    const {error}=await supabase.rpc("exec_sql", { query: sql });
+    const { data } = await supabase
       .from("getcategoriasnew")
       .select("*")
       .order("destodo", { ascending: true });
@@ -77,7 +83,8 @@ async function getcategoriasnewCM() {
   }
 }
 
-async function getCategoriasNegociosCM() {
+async function getCategoriasNegociosCM(activo) {
+  console.log(activo);
   let datos;
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
     datos = await getCategoriasNegocios({});
@@ -86,6 +93,7 @@ async function getCategoriasNegociosCM() {
     const { data } = await supabase
       .from("tablacategorias")
       .select("*")
+      .eq("activo", activo)
       .order("nick", { ascending: true });
     datos = data;
   }
@@ -104,21 +112,31 @@ async function CategoriasInsertUpdate(
 ) {
   let err;
   if (insertar === true) {
-    const { error } = await supabase
+    // Ver si ya existe la descripcion
+    const { data: datos, error } = await supabase
+    .from("tablacategorias")
+    .select("*")
+    .eq("desc", desc)
+    if (isValid(datos)===false || datos.length===0){
+      const { error } = await supabase
       .from("tablacategorias")
       .insert({ desc: desc, link: link, accion: accion, nick: nick });
-    if (isValid(error) === false) {
-      const { data, error } = await supabase
+      if (isValid(error) === false) {
+      const { data } = await supabase
         .from("tablacategorias")
         .select("*")
         .order("categorianegocio", { ascending: false })
         .limit(1);
-      err = uploadBase64Image(
+      err = await uploadBase64Image(
         contenidofoto,
         "galerias",
         "categorias_de_negocios/" + data[0].categorianegocio + "/" + data[0].categorianegocio + ".jpg",
-        isBase64ToBlob
+        isBase64ToBlob, "tablacategorias", "categorianegocio", data[0].categorianegocio
       );
+      }
+    }
+    else{
+      err="Ya existe..."
     }
     return err;
   } else {
@@ -136,7 +154,7 @@ async function CategoriasInsertUpdate(
           "/" +
           categorianegocio +
           ".jpg",
-        isBase64ToBlob
+        isBase64ToBlob, "tablacategorias", "categorianegocio", categorianegocio
       );
       err=error;
     } 
@@ -224,7 +242,9 @@ async function setregistrarseCM(
   plan,
   lat,
   lng,
-  isBase64ToBlob
+  isBase64ToBlob,
+  datos,
+  otrosDatos
 ) {
   let response = [];
   let err;
@@ -259,6 +279,8 @@ async function setregistrarseCM(
         latitud: lat,
         longitud: lng,
         activo: activo,
+        datos: datos,
+        otrosdatos: otrosDatos,
       });
       err = error;
       if (isValid(error) === false) {
@@ -272,7 +294,7 @@ async function setregistrarseCM(
             contenidofoto,
             "galerias",
             "usuarios/" + data[0].iduser + "/" + data[0].iduser + ".jpg",
-            isBase64ToBlob
+            isBase64ToBlob, "tablausuarios", "iduser", data[0].iduser
           );
         }
       }
@@ -289,6 +311,8 @@ async function setregistrarseCM(
           tipouser: plan,
           latitud: lat,
           longitud: lng,
+          datos: datos,
+          otrosdatos: otrosDatos,
         })
         .eq("iduser", user);
       err = error;
@@ -297,7 +321,7 @@ async function setregistrarseCM(
           contenidofoto,
           "galerias",
           "usuarios/" + user + "/" + user + ".jpg",
-          isBase64ToBlob
+          isBase64ToBlob, "tablausuarios", "iduser", user
         );
       }
       return err;
@@ -330,8 +354,15 @@ async function setAplicacionesCM(
   agregarsn,
   contenidofoto,
   isBase64ToBlob,
-  imagen
 ) {
+  console.log(  id,
+    user,
+    nick,
+    desc,
+    tooltip,
+    categoria,
+    agregarsn,
+  );
   let err = "";
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
     let result = await setAplicaciones({
@@ -343,7 +374,6 @@ async function setAplicacionesCM(
       categoria,
       agregarsn,
       contenidofoto,
-      imagen
     });
     result = await result.json();
     err = result.error;
@@ -357,8 +387,8 @@ async function setAplicacionesCM(
         idcategoria: categoria,
         tooltip: tooltip,
         activo: activo,
-        imagen: true,
       });
+      console.log(error)
       if (isValid(error) === true) err = error;
       else {
         const { data, error } = await supabase
@@ -371,14 +401,13 @@ async function setAplicacionesCM(
             contenidofoto,
             "galerias",
             "aplicaciones/" + data[0].id + "/" + data[0].id + ".jpg",
-            isBase64ToBlob
+            isBase64ToBlob, "tablaanuncios","id",data[0].id
           );
           err = error;
         }
       }
     } else {
-      console.log(categoria)
-      const { error } = await supabase
+      const { data, error } = await supabase
         .from("tablaanuncios")
         .update({
           idapp: nick,
@@ -386,14 +415,14 @@ async function setAplicacionesCM(
           desc: desc,
           idcategoria: categoria,
           tooltip,
-          imagen: imagen
         })
         .eq("id", id);
       if (isValid(error) === false) {
         uploadBase64Image(
           contenidofoto,
           "galerias",
-          "aplicaciones/" + id + "/" + id + ".jpg"
+          "aplicaciones/" + id + "/" + id + ".jpg", 
+          isBase64ToBlob, "tablaanuncios","id", id
         );
       }
       err = error;
@@ -572,7 +601,7 @@ async function getparesgpscategoriaCM(categoria, user, anuncio) {
   } else {
     let sql = getParesGpsCategoria(categoria, user, anuncio);
 
-    await supabase.rpc("execute_query", { query: sql });
+    await supabase.rpc("exec_sql", { query: sql });
     const { data } = await supabase.from("getparesgpscategoria").select("*");
     resultgps = data;
   }
@@ -608,7 +637,7 @@ async function GeneraVistaGetProductos(categoria, userAnuncio, buscar) {
   }
   let sql =
     "CREATE OR REPLACE VIEW getProductos AS SELECT DISTINCT tablacatproductos.idproducto as idproducto,tablacatproductos.nick as producto,tablacatproductos.desc as descripcion," +
-    " tablausuarios.nombre as negocio, tablausuarios.iduser as idnegocio, ocupado, tipouser, tablausuarios.iduser, tarifa, costoDomicilio, domicilio, tablacatproductos.imagen" +
+    " tablausuarios.nombre as negocio, tablausuarios.iduser as idnegocio, ocupado, tipouser, tablausuarios.iduser, tarifa, costoDomicilio, domicilio, tablacatproductos.idsb" +
     " FROM tablacatproductos, tablausuarios, tablacatprovincias,tablacatmunicipios " +
     " WHERE (tablacatproductos.iduser=tablausuarios.iduser) and (tablacatprovincias.provincia=tablausuarios.provincia) and (tablacatmunicipios.provincia=" +
     "tablausuarios.provincia) and (tablacatmunicipios.municipio=tablausuarios.municipio) and (tablausuarios.activo=true) and (tablacatproductos.activo=true)" +
@@ -626,7 +655,7 @@ async function getProductosCM(categoria, userAnuncio, buscar) {
   } else {
     // Generar VISTA con API en SUPABASE
     let sql = await GeneraVistaGetProductos(categoria, userAnuncio, buscar);
-    await supabase.rpc("execute_query", { query: sql });
+    await supabase.rpc("exec_sql", { query: sql });
     // Ejecutar VISTA
     const { data } = await supabase.from("getproductos").select("*");
     result1 = data;
@@ -643,6 +672,36 @@ async function getProductosNewCM(idproducto) {
     const { data } = await supabase
       .from("getproductonew")
       .select("*")
+      .eq("idproducto", idproducto);
+    resultProduct = data;
+  }
+  return resultProduct;
+}
+
+async function getProductosActivaCM(activo) {
+  let resultProduct = [];
+  if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
+//    resultProduct = await getProductoNew({ idproducto });
+    //resultProduct = await resultProduct.json();
+  } else {
+    const { data } = await supabase
+      .from("tablacatproductos")
+      .select("*")
+      .eq("activo", activo);
+    resultProduct = data;
+  }
+  return resultProduct;
+}
+
+async function setProductosActivaCM(idproducto) {
+  let resultProduct = [];
+  if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
+//    resultProduct = await getProductoNew({ idproducto });
+    //resultProduct = await resultProduct.json();
+  } else {
+    const { data } = await supabase
+      .from("tablacatproductos")
+      .update({activo: true})
       .eq("idproducto", idproducto);
     resultProduct = data;
   }
@@ -734,7 +793,7 @@ async function delProductoCM(producto) {
   return err;
 }
 
-async function getcategoriasnegociosappCM() {
+async function getcategoriasnegociosappCM(activo) {
   let resulttnegocios = [];
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
     resulttnegocios = await getcategoriasnegociosapp({});
@@ -743,6 +802,7 @@ async function getcategoriasnegociosappCM() {
     const { data } = await supabase
       .from("tablacategorias")
       .select("*")
+      .eq('activo', activo)
       .order("nick", { ascending: true });
     resulttnegocios = data;
   }
@@ -795,7 +855,7 @@ async function getproductoscategoriaCM(user, tipouser, categoria, producto) {
       user,
       tipouser
     );
-    await supabase.rpc("execute_query", { query: sql });
+    await supabase.rpc("exec_sql", { query: sql });
     // Ejecutar VISTA
     const { data } = await supabase.from("getproductoscategoria").select("*");
     resultproductos = data;
@@ -870,9 +930,7 @@ async function setProductoCM(
         distanciamax,
         sciudad,
         activo: activo,
-        imagen: imagen
        });
-
       if (isValid(error) === true && error.length === 0) {
         err = error;
       } else {
@@ -890,14 +948,13 @@ async function setProductoCM(
               "/" +
               data[0].idproducto +
               ".jpg",
-            isBase64ToBlob
+            isBase64ToBlob, "tablacatproductos", "idproducto", data[0].idproducto
           );
           err = error;
         }
       }
     } else {
       let distanciamaxT = Number(distanciamax);
-      console.log("Imagen:", imagen, producto);
       const { error } = await supabase
         .from("tablacatproductos")
         .update({
@@ -917,7 +974,6 @@ async function setProductoCM(
           ocupado: ocupado,
           distanciamax: distanciamaxT,
           sciudad: sciudad,
-          imagen: imagen
         })
         .eq("idproducto", producto);
       if (isValid(error) === false)
@@ -925,7 +981,7 @@ async function setProductoCM(
           contenidofoto,
           "galerias",
           "productos/" + producto + "/" + producto + ".jpg",
-          isBase64ToBlob
+          isBase64ToBlob, "tablacatproductos", "idproducto", producto
         );
       err = error;
     }
@@ -933,7 +989,22 @@ async function setProductoCM(
   return err;
 }
 
-async function getUsuariosCM() {
+async function setActivaUsuarioCM(user) {
+  let err="";
+  if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
+  //  resultusuarios = await setactivausuario({});
+//    err = await resultusuarios.json();
+  } else {
+    const { data, error } = await supabase
+      .from("tablausuarios")
+      .update({activo: true})
+      .eq("iduser", user);
+      err=error;
+  }
+  return err;
+}
+
+async function getUsuariosCM(activo) {
   let resultusuarios = [];
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
     resultusuarios = await getusuarios({});
@@ -942,7 +1013,7 @@ async function getUsuariosCM() {
     const { data } = await supabase
       .from("tablausuarios")
       .select("*")
-      .eq("activo", true);
+      .eq("activo", activo);
     resultusuarios = data;
   }
   return resultusuarios;
@@ -955,14 +1026,21 @@ async function setConfigCM(provincia, municipio) {
     result = await setconfig({ provincia, municipio });
     err = result.error;
   } else {
-    const { error } = await supabase
+    const { data } = await supabase
       .from("tablaconfig")
-      .delete()
-      .gt("provincia", 0);
-    await supabase
-      .from("tablaconfig")
-      .insert({ provincia: provincia, municipio: municipio });
-    err = error;
+      .select('*')
+//      .gt("provincia", 0);
+    console.log(data);
+    if (isValid(data)!==true)
+       await supabase
+       .from("tablaconfig")
+       .insert({ provincia: provincia, municipio: municipio })
+    else  {
+       const {error} = await supabase
+       .from("tablaconfig")
+       .update({ provincia: provincia, municipio: municipio })
+       err = error;
+    }
   }
   return err;
 }
@@ -1003,7 +1081,7 @@ export {
   getanunciosCM,
   getcategoriasnewCM,
   getCategoriasNegociosCM,
-  setCategoriasNegociosCM,
+  getProductosActivaCM,
 };
 
 export {
@@ -1012,6 +1090,9 @@ export {
   setProductoCM,
   setConfigCM,
   setregistrarseCM,
+  setActivaUsuarioCM,
+  setCategoriasNegociosCM,
+  setProductosActivaCM,
 };
 export {
   updateOcupadoCM
@@ -1022,4 +1103,3 @@ export {
   delCategoriaCM,
   delAnuncioCM
 };
-

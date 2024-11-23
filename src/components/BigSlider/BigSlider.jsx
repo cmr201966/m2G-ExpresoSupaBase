@@ -17,7 +17,7 @@ const BigSlider = (props) => {
   const {
     imgsFileName = [],
     imgsFolder = [],
-    imgsImagen=[],
+    imgsId = [],
     categorias = [],
     users = [],
     nombres = [],
@@ -46,10 +46,7 @@ const BigSlider = (props) => {
       imgsFileName[i],
       imgsFolder[i],
       imgsFolder[i],
-      imgsImagen[i],
-      "tablaanuncios",
-      "id",
-      imgsFileName[i].split(".")[0],
+      imgsId[i],
       );
       if (isValid(resultado) === true) {
         imagenes.push(resultado);

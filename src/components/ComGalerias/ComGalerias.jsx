@@ -13,7 +13,7 @@ import {CircularProgress,} from "@mui/material";
 import Close from "@mui/icons-material/Close";
 import { Button } from "@mui/material";
 import DeleteIcon from "@mui/icons-material/Delete";
-import { getGalerias, isValid, getJpgFileSB, creaFileInFolder, deleteFileInFolder } from "../../Utiles/Utiles";
+import { getGaleriasSB, isValid, getJpgFileSB, creaFileInFolder, deleteFileInFolder } from "../../Utiles/Utiles";
 import AddAPhotoOutlinedIcon from '@mui/icons-material/AddAPhotoOutlined';
 import { useNotification } from "../../context/NotificationProvider";
 
@@ -27,6 +27,11 @@ const ComGalerias = (props) => {
     botonCerrar,
     deQuien,
     cambiaNombreFoto,
+    cambiaFoto,
+    idsb,
+    nophoto,
+    tabla,
+    campo
   } = props;
   const {setOpen, setMessage} = useNotification();
   const location = useLocation();
@@ -34,7 +39,7 @@ const ComGalerias = (props) => {
   const [arrayfotos, setArrayfotos] = useState([]);
   const [inicia, setInicia] = useState(true);
   const [contenidofoto, setContenidofoto] = useState([]);
-  const [file_Name, setFile_Name] = useState(0);
+  const [file_Name, setFile_Name] = useState(nophoto);
   const [fotoPerfil, setFotoPerfil] = useState(false);
   const [contenidophoto, setContenidophoto] = useState();
   const [selectfoto, setSelectfoto] = useState(0);
@@ -51,7 +56,7 @@ const ComGalerias = (props) => {
   }
 
   async function init1(ruta) {
-    let galeriasfolders = await getGalerias(ruta);
+    let galeriasfolders = await getGaleriasSB(ruta);
     let tarrayfotos = [];
     let cantPhotoT=1;
     for (const item of galeriasfolders) {
@@ -60,6 +65,9 @@ const ComGalerias = (props) => {
         cantPhotoT=cantPhotoT+1;
       }
     }
+    let {indexperfil, fp}=lastIndex(tarrayfotos);
+    let este = tarrayfotos.splice(indexperfil,1)[0];
+    tarrayfotos = [este,...tarrayfotos]
     setArrayfotos(tarrayfotos);
     setCantPhoto(tarrayfotos.length);
     let carpetaMYSQL = ruta === "" ? "" : "/" + ruta;
@@ -67,18 +75,16 @@ const ComGalerias = (props) => {
     contenidofoto.splice(0, contenidofoto.length);
     let tarray = [];
     for (const item of tarrayfotos) {
-      console.log(item);
-      let resultado = await getJpgFileSB(item, "./galerias/app_images" + carpetaMYSQL, carpetaSUPABASE,   );
+      let resultado = await getJpgFileSB(item, "./galerias/app_images" + carpetaMYSQL, carpetaSUPABASE, idsb);
       if (isValid(resultado)=== true && isValid(resultado.length) === true){ 
         tarray.push(resultado)
         }
     }
-    let {indexPhoto, fp}=lastIndex(tarrayfotos);
     if (fp===false){ 
       cambiaNombreFoto("")
     }
     else cambiaNombreFoto(perfil + ".jpg");
-    setFile_Name(indexPhoto + 1);
+    setFile_Name(file_Name + 1);
     setContenidofoto(tarray);
     setInicia(false);
   }
@@ -86,11 +92,13 @@ const ComGalerias = (props) => {
   function lastIndex(array){
     let endArray=[];
     let tfotoPerfil=false;
-    array.forEach((item) => {
+    let indexperfil;
+    array.forEach((item, i) => {
       if (item===perfil + ".jpg"){ 
         tfotoPerfil=true;
+        indexperfil=i;
       }
-       const index = item.split("-");
+       const index = item.split("foto-");
        if (index[1]!==undefined){
         const valor=index[1].split(".")
         endArray.push(Number(valor[0]));
@@ -98,7 +106,8 @@ const ComGalerias = (props) => {
     });
     endArray.sort((a, b) => a - b);
     setFotoPerfil(tfotoPerfil);
-    return {indexPhoto: endArray.length!==0?endArray[endArray.length-1]:0, fp: tfotoPerfil};
+    return {indexperfil: indexperfil, fp: tfotoPerfil};
+//    return {indexPhoto: endArray.length!==0?endArray[endArray.length-1]:0, fp: tfotoPerfil};
   }
 
   async function del_file_in_folder(folderSQL, folderSUPABASE, file) {
@@ -109,7 +118,7 @@ const ComGalerias = (props) => {
   }
 
   async function crea_file_in_folder(folderSQL, folderSUPABASE, file, contenidofoto) {
-    await creaFileInFolder( folderSQL, folderSUPABASE, file, contenidofoto )
+    await creaFileInFolder( folderSQL, folderSUPABASE, file, contenidofoto, file_Name, tabla, campo, perfil )
     setCantPhoto(cantPhoto+1);
     setMessage("Se agregó la imagen")
     setOpen(true);
@@ -137,7 +146,8 @@ const ComGalerias = (props) => {
 
   function selectFoto(i) {
     setSelectfoto(i);
-    setShowimg(true);
+/*    setShowimg(true);*/
+    cambiaFoto(contenidofoto[i]);
     sessionStorage.setItem("hd_i", i);
   }
 
@@ -165,10 +175,12 @@ const ComGalerias = (props) => {
   }, [location]);
 
   useEffect(() => {
-    if (inicia === false && contenidophoto.length !== 0) {
-      let nombre_file = fotoPerfil===false?perfil + ".jpg":"foto-" + file_Name + ".jpg";
-      crea_file_in_folder("./galerias/app_images/" + ruta, ruta, nombre_file, contenidophoto);  
-    }
+    if (isValid(contenidophoto)=== true){
+       if (inicia === false && contenidophoto.length !== 0) {
+          let nombre_file = fotoPerfil===false?perfil + ".jpg":"foto-" + file_Name + ".jpg";
+          crea_file_in_folder("./galerias/app_images/" + ruta, ruta, nombre_file, contenidophoto);  
+       }
+  }
   }, [contenidophoto]);
 
   useEffect(() => {
@@ -242,10 +254,10 @@ const ComGalerias = (props) => {
               ) : (
                 ""
               )}
-
+              <div className="scroll-fotos">
               {contenidofoto.map((item, i) => (
-              <div key={i} className="galeria-foto">
-                  <div key={i} className="imagen-borrar">
+                <div key={i} className="galeria-foto">
+                <div key={i} className="imagen-borrar">
                       <img
                         key={i}
                         onClick={() => selectFoto(i)}
@@ -268,10 +280,10 @@ const ComGalerias = (props) => {
                       ) : (
                         ""
                       )}
-                    </div>
+                  </div>
                </div>
               ))}
-
+              </div>
             </div>
             </>
         ) : (

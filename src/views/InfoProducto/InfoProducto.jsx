@@ -59,7 +59,7 @@ const InfoProducto = () => {
 //  const [duracion, setDuracion] = useState(0);
 
   async function init() {
-    let imagen="";
+    let idsb="";
     let result = await getInfoProductoCM(parsedParams.idproducto);
 //    let result = await getInfoProducto(parsedParams.idproducto);
     if (isValid(result)=== true) {
@@ -78,7 +78,7 @@ const InfoProducto = () => {
       setCostoDomicilio(result[0].costodomicilio);
       setDomicilio(result[0].domicilio);
       setAccion(result[0].accion)
-      imagen=result[0].imagen
+      idsb=result[0].idsb
     }
     result= await getParesGpsProductoCM(parsedParams.categoria,  parsedParams.idproducto);
 //    result= await getParesGpsProducto(parsedParams.categoria,  parsedParams.idproducto);
@@ -104,8 +104,7 @@ const InfoProducto = () => {
 
     for(let i=0; i<resultFiles.length; i+=1){
         let resultimg= await getJpgFileSB(resultFiles[i], "./galerias/app_images/productos/" + parsedParams.idproducto, 
-                                       "productos/" + parsedParams.idproducto, imagen, 
-                                      "tablacatproductos", "idproducto", result[0].idproducto);
+                                       "productos/" + parsedParams.idproducto, idsb);
         if (isValid(resultimg.url)===false || resultimg.url === "") tarray.push(resultimg);
         if (isValid(resultimg.url)===true) tarray.push(resultimg.url);
         setArrayFotoInfo(tarray);
@@ -245,6 +244,7 @@ if (puntosState===2){
   }, []);
 
   return (
+    
     <div className="Info-Productos">
       <Navbar
          nivel={1}
@@ -407,6 +407,7 @@ if (puntosState===2){
       </Hero>
     </div>
   );
+
 };
 
 export default InfoProducto;

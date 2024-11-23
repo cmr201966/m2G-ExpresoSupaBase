@@ -123,6 +123,8 @@ const CatProductos = () => {
   const [modelot, setModelot] = useState("");
   const [tallat, setTallat] = useState("");
   const [colort, setColort] = useState("");
+  const [idsb, setIdsb] = useState("");
+  const [nophoto, setNophoto] = useState("");
 
   async function init() {
     setShow(true);
@@ -148,7 +150,7 @@ const CatProductos = () => {
       return;
     }
     let ttarraytnegocios;
-    let resulttnegocios = await getcategoriasnegociosappCM();
+    let resulttnegocios = await getcategoriasnegociosappCM(true);
     //    let resulttnegocios = await apiBaseDatos("getcategoriasnegociosapp");
     if (resulttnegocios.length === 0) {
       setArraytnegocios(arraynonegocios);
@@ -164,18 +166,19 @@ const CatProductos = () => {
     );
     posicion = posicion === -1 ? 0 : posicion;
     setTnegocio(posicion);
-    let resultusuarios = await getUsuariosCM();
+    let resultusuarios = await getUsuariosCM(true);
     //    let resultusuarios = await apiBaseDatos("getUsuarios");
-    if (isValid(resultusuarios) === false) setArrayUsuarios(arrayNoUsuarios);
+    if (isValid(resultusuarios) === false) 
+      setArrayUsuarios(arrayNoUsuarios);
     else {
-      setUsuario(0);
       setArrayUsuarios(resultusuarios);
     }
+    setUsuario(0);
     let resultproductos = await getproductoscategoriaCM(
-      sessionStorage.getItem("user"),
-      sessionStorage.getItem("tipouser"),
-      ttarraytnegocios[posicion].categorianegocio,
-      producto
+    sessionStorage.getItem("user"),
+    sessionStorage.getItem("tipouser"),
+    ttarraytnegocios[posicion].categorianegocio,
+    producto
     );
     //let resultproductos = await apiBaseDatos("getproductoscategoria", sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), ttarraytnegocios[posicion].categorianegocio, producto);
     if (resultproductos.length === 0) {
@@ -188,7 +191,6 @@ const CatProductos = () => {
         resultproductos[0].idproducto,
         "idproducto"
       );
-      console.log(resultproductos);
       setArrayproductos(resultproductos);
       setProducto({ label: resultproductos[0].desc, value: 0 });
 
@@ -202,11 +204,12 @@ const CatProductos = () => {
         //setEditarsn(true);
       }
       setIsBase64ToBlob(true);
+      setIdsb(resultproductos[0].idsb);
+      setNophoto(resultproductos[0].nophoto);
       let resultado = await getJpgFileSB(
         resultproductos[0].idproducto + ".jpg",
         "./galerias/app_images/productos/" + resultproductos[0].idproducto,
-        "productos/" + resultproductos[0].idproducto, resultproductos[0].imagen, "tablacatproductos", "idproducto", resultproductos[0].idproducto
-      );
+        "productos/" + resultproductos[0].idproducto, resultproductos[0].idsb);
       if (
         isValid(resultado) === true &&
         resultado !== "" &&
@@ -227,17 +230,19 @@ const CatProductos = () => {
   }
 
   const handleProducto = async (_, value) => {
-    console.log(arrayproductos);
     setProducto(value);
-    recuperardatosproducto(arrayproductos, value.value);
+    if (isValid(value)===false){      
+      return
+     }
+     recuperardatosproducto(arrayproductos, isValid(value)===false?0:value.value);
     setIsBase64ToBlob(true);
+    setIdsb(arrayproductos[value?.value].idsb);
+    setNophoto(arrayproductos[value?.value].nophoto);
     let resultado = await getJpgFileSB(
       arrayproductos[value?.value].idproducto + ".jpg",
       "./galerias/app_images/productos/" +
         arrayproductos[value?.value].idproducto,
-      "productos/" + arrayproductos[value?.value].idproducto, arrayproductos[value?.value].imagen, "tablacatproductos", "idproducto", 
-      arrayproductos[value?.value].idproducto
-    );
+      "productos/" + arrayproductos[value?.value].idproducto, arrayproductos[value?.value].idsb);
     if (resultado.length !== 0) {
       setContenidofoto(resultado);
       setNombrefoto(arrayproductos[value?.value].idproducto);
@@ -262,11 +267,12 @@ const CatProductos = () => {
       setArrayproductos(resultproductos);
       setNombrefoto(resultproductos[0].idproducto);
       recuperardatosproducto(resultproductos, 0);
+      setIdsb(resultproductos[0].idsb);
+      setNophoto(resultproductos[0].nophoto);
       let resultado = await getJpgFileSB(
-        resultproductos[0].idproducto + ".jpg",
+      resultproductos[0].idproducto + ".jpg",
         "./galerias/app_images/productos/" + resultproductos[0].idproducto,
-        "productos/" + resultproductos[0].idproducto, resultproductos[0].imagen, "tablacatproductos", "idproducto", resultproductos[0].idproducto
-      );
+        "productos/" + resultproductos[0].idproducto, resultproductos[0].idsb);
       if (isValid(resultado) === true) {
         setIsBase64ToBlob(true);
         setContenidofoto(resultado);
@@ -445,7 +451,6 @@ const CatProductos = () => {
 
   async function confirmar() {
     setLoading(true);
-
     let mproducto = 0;
     if (producto === null) mproducto = 0;
     else mproducto = arrayproductos[producto?.value].idproducto;
@@ -510,7 +515,7 @@ const CatProductos = () => {
         editar: editarsn ? true : false,
       });
     }
-    setMessage("El producto '" + descripcion + "' se registró correctamente.");
+    setMessage("El producto '" + nombrecorto + "' se registró correctamente.");
     setOpen(true);
     setShowMap(false);
     setShowGalerias(false);
@@ -534,7 +539,7 @@ const CatProductos = () => {
     setEliminarsn(true);
     setContenido(
       "¿Está seguro que desea eliminar a " +
-        arrayproductos[producto?.value].desc +
+        arrayproductos[producto?.value].nick +
         "?"
     );
     setShow1(true);
@@ -568,6 +573,10 @@ const CatProductos = () => {
   const cambiaNombreFoto = (valor) => {
     setNombrefoto(valor);
   };
+
+  const cambiaFoto = (contenidofoto)=>{
+    setContenidofoto(contenidofoto);
+  }
 
   useEffect(() => {
     init();
@@ -624,10 +633,6 @@ const CatProductos = () => {
               <div className="div-papa-catProductos">
                 <Encabezado />
                 <form
-                  onSubmit={(e) => {
-                    e.preventDefault();
-                    setCbvista(!cbvista);
-                  }}
                   className="catalogo-producto"
                 >
                   <p className="strong">Publicar un producto</p>
@@ -933,8 +938,10 @@ const CatProductos = () => {
                     descripcion !== "" ? (
                       <Tippy content="Vista previa">
                         <button
-                          type="submit"
+                          type="button"
                           className="producto-button primary"
+                          onClick={()=> setCbvista(!cbvista)
+                          }
                         >
                           <Visibility />
                         </button>
@@ -942,10 +949,9 @@ const CatProductos = () => {
                     ) : (
                       ""
                     )}
-
-                    {(agregarsn === true || editarsn === true) &&
-                    nombrecorto != "" &&
-                    descripcion !== "" ? (
+                    {(agregarsn === true) &&
+                      nombrecorto != "" &&
+                      descripcion !== "" ? (
                       <label className="producto-button primary label-photo">
                         <input
                           id="foto"
@@ -979,7 +985,7 @@ const CatProductos = () => {
                     {producto &&
                     arrayproductos[producto?.value].desc!== "Desconocido" ? (
                       <>
-                        {agregarsn === false && editarsn === false ? (
+                        {agregarsn === false && editarsn === false && isValid(producto?.value)===true ? (
                           <Tippy content="Clic para editar el producto">
                             <button
                               type="button"
@@ -996,7 +1002,7 @@ const CatProductos = () => {
                           ""
                         )}
 
-                        {agregarsn === false && editarsn === false ? (
+                        {agregarsn === false && editarsn === false  && isValid(producto?.value)===true ? (
                           <Tippy content="Clic para eliminar el producto">
                             <button
                               type="button"
@@ -1014,7 +1020,7 @@ const CatProductos = () => {
                         )}
 
                         {inicia === false &&
-                        (agregarsn || editarsn) &&
+                        (editarsn === true) &&
                         showMap !== true ? (
                           <Tippy content={`Galeria de fotos del producto`}>
                             <button
@@ -1038,7 +1044,7 @@ const CatProductos = () => {
                           <Tippy content="Ubicar el producto en el mapa">
                             <button
                               type="button"
-                              className="negocio-button primary"
+                              className="producto-button primary"
                               onClick={() => setShowMap(!showMap)}
                             >
                               <PlaceOutlined />
@@ -1096,8 +1102,8 @@ const CatProductos = () => {
                       ""
                     )}
                   </div>
-                </form>
-                {inicia === false &&
+
+                  {inicia === false &&
                 showGalerias === true &&
                 showMap === false ? (
                   <ComGalerias
@@ -1109,6 +1115,11 @@ const CatProductos = () => {
                     permiso={true}
                     botonCerrar={false}
                     cambiaNombreFoto={cambiaNombreFoto}
+                    cambiaFoto={cambiaFoto}
+                    idsb={idsb}
+                    nophoto={nophoto}
+                    tabla={"tablacatproductos"}
+                    campo={"idproducto"}
                   />
                 ) : (
                   ""
@@ -1131,6 +1142,10 @@ const CatProductos = () => {
                 ) : (
                   ""
                 )}
+
+
+                </form>
+                
               </div>
             </>
           ) : (

@@ -16,6 +16,7 @@
     justify-content: flex-end;
     align-items: center;
     margin-top: 10px;
+    gap: 5px;
   }
 
 .label-registrase-size{
@@ -31,6 +32,12 @@
     margin-top: 15px;
     margin-bottom: 10px;
 }
+.input-area-registrarse-usuario label {
+    color: aliceblue;
+    margin-right:34px;
+    border: none;
+  }
+
 .input-area-registrarse-plan label {
     color: aliceblue;
     margin-right:69px;
@@ -142,8 +149,9 @@
   .img-registrarse{
     height: 280px;
     width: 247px;
-    object-fit: cover;
-    padding-left: 40px; }
+    object-fit: contain;
+/*    padding-left: 40px; */
+}
 
  .select-registrarse-plan{
     width: 203px;
@@ -263,4 +271,9 @@
  .mapa-registrarse-1{
     background: rgb(20, 96, 172);
   }
-
+.datos{
+    margin-right: 69px;
+}
+.otros-datos{
+    margin-right: 21px;
+}

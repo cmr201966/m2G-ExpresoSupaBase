@@ -3,6 +3,9 @@
     display: flex;
     align-content: center;
     overflow: hidden;
+  }
+
+  .sacar-flecha{
     position: relative;
   }
   .multi-slider-movil {
@@ -42,12 +45,12 @@
   }
   
   .multiple-slider-nav.right {
-    right: -13px;
+    right: -30px;
     font-size: 35px;
   }
   
   .multiple-slider-nav.left {
-    left: -13px;
+    left: -28px;
     font-size: 35px;
   }
   

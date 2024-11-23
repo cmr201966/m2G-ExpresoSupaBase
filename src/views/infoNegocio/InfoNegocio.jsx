@@ -26,6 +26,8 @@ const InfoNegocio = () => {
   const [celular, setCelular]=useState("");
   const [tipoUser, setTipoUser]=useState("Desconocido");
   const [provincia, setProvincia]=useState("");
+  const [datos, setDatos]=useState("");
+  const [otrosDatos, setOtrosDatos]=useState("");
   const [municipio, setMunicipio]=useState("");
   const [inicio, setInicio]=useState(true);
   const [gps, setGps]=useState(true);
@@ -45,18 +47,23 @@ const InfoNegocio = () => {
 
   async function init(){
     let result = await getInfoNegocioCM(parsedParams.idnegocio);
-    console.log(result);
 //    let result = await getInfoNegocio(parsedParams.idnegocio);
     let resultFiles = await getFilesInFolderSB("./galerias/app_images/usuarios/" + parsedParams.idnegocio, "usuarios/" + parsedParams.idnegocio, "galerias");
-    setArrayFotos(resultFiles);
+    let tarrayfotos=[];
+    let cantPhotoT=1;
+    for (const item of resultFiles) {
+      if (item.toLowerCase().indexOf(".jpg") >= 0 && cantPhotoT<=4) {
+        tarrayfotos.push(item);
+        cantPhotoT=cantPhotoT+1;
+      }
+    }
+    let index = indexPerfil(tarrayfotos, parsedParams.idnegocio);
+    let este = tarrayfotos.splice(index)[0];
+    tarrayfotos = [este,...tarrayfotos]
+    setArrayFotos(tarrayfotos);
     let tarray=[];
-
-    for(let i=0; i<resultFiles.length; i+=1)
-      if (resultFiles[i].indexOf(".jpg") === -1) resultFiles.splice(i, 1)
-    for(let i=0; i<resultFiles.length; i+=1){
-        let resultimg= await getJpgFileSB(resultFiles[i], "./galerias/app_images/usuarios/" + parsedParams.idnegocio, "usuarios/" + parsedParams.idnegocio, 
-                                       result[0].imagen, "tablausuarios", "iduser", result[0].idnegocio);
-        console.log(isValid(resultimg.url)===false || resultimg.url === "", isValid(resultimg.url)===true);
+    for(let i=0; i<tarrayfotos.length; i+=1){
+        let resultimg= await getJpgFileSB(tarrayfotos[i], "./galerias/app_images/usuarios/" + parsedParams.idnegocio, "usuarios/" + parsedParams.idnegocio, result[0].idsb);
         if (isValid(resultimg.url)===false || resultimg.url === "") tarray.push(resultimg);
         if (isValid(resultimg.url)===true) tarray.push(resultimg.url);
         setArrayFotoInfo(tarray);
@@ -68,6 +75,8 @@ const InfoNegocio = () => {
       if (result[0].tipouser===3) setTipoUser("Administrador");
       setNegocio(result[0].negocio);
       setCelular(result[0].celular);
+      setDatos(result[0].datos);
+      setOtrosDatos(result[0].otrosdatos);
       setProvincia(result[0].provincia);
       setMunicipio(result[0].municipio);
       setLat(result[0].latitud);
@@ -78,6 +87,18 @@ const InfoNegocio = () => {
    setInicio(false);
    setshowCircularProgress(false);
 }
+
+function indexPerfil(array, user){
+  let indexperfil=-1;
+  array.forEach((item, i) => {
+    if (item===user + ".jpg"){ 
+      indexperfil=i;
+    }
+  });
+  return indexperfil;
+//    return {indexPhoto: endArray.length!==0?endArray[endArray.length-1]:0, fp: tfotoPerfil};
+}
+
 
 function viewPhoto(i){
   setContenidofoto(arrayFotoInfo[i])
@@ -120,10 +141,15 @@ useEffect(() => {
         <Encabezado/>
         <main className="main">
         <span className="encabezado-Info-Producto">{negocio}</span>
-          <section className="perfil-info-producto">
-             <div className="imagenes-laterales-del-negocio">
+          <section className="perfil-info-producto-1">
+             <div className="img-class-info-producto">
+                 <img className="img-info-producto" src={contenidofoto} alt="Imagen del producto" />
+             </div> 
+
+             <div className="sliderVertical">
                 {arrayFotos.map((item, i) => (                  
                   <div key={i} className="producto-fotos">
+                    {console.log(arrayFotoInfo[i])}
                       <img
                         className="img-info-producto-lateral"
                         src={arrayFotoInfo[i]}
@@ -134,12 +160,7 @@ useEffect(() => {
                 ))}
             </div>
 
-             <div className="img-class-info-producto">
-                  <img className="img-info-negocio" src={contenidofoto} alt="Imagen del producto" />
-             </div> 
           </section>
-
-
           <div className="negocio-info">
                  <div className="ws">
                       <p className="strong font-size1"> Datos del negocio</p>
@@ -147,6 +168,17 @@ useEffect(() => {
                          <a href={url} target="_blank" rel="noopener noreferrer"><WhatsAppIcon  className="ws-1" /></a>
                       </Tippy>
                  </div>
+                 <div className="parrafo">
+                     <p>
+                       {datos}
+                     </p>
+                 </div>
+                 <div className="parrafo">
+                     <p>
+                       {otrosDatos}
+                     </p>
+                 </div>
+
                  <div className="parrafo">
                      <p>
                        Plan:

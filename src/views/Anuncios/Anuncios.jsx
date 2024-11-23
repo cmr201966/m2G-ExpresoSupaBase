@@ -61,7 +61,7 @@ const Aplicaciones = () => {
   const [eliminarsn, setEliminarsn] = useState(false);
   const [aplicacion, setAplicacion] = useState(0);
   const [arrayAplicaciones, setArrayAplicaciones] = useState([]);
-  const arraynoaplicaciones = [{ id: 0, desc: "Desconocida" }];
+  const arraynoaplicaciones = [{ id: 0, idapp: "Desconocida", desc: "Desconocida" }];
   const [isBase64ToBlob, setIsBase64ToBlob] = useState(true);
   // Estados para almacenar los datos del negocio activo
   const [nickt, setNickt] = useState("");
@@ -87,11 +87,9 @@ const Aplicaciones = () => {
       return;
     }
     if (
-      sessionStorage.getItem("tipouser") !== "1" &&
-      sessionStorage.getItem("tipouser") !== "2" &&
       sessionStorage.getItem("tipouser") !== "3"
     ) {
-      setMessage("No tiene derechos para crear, editar o eliminar productos");
+      setMessage("No tiene derechos para crear, editar o eliminar Anuncios");
       setOpen(true);
       navigate(`/`);
       return;
@@ -99,7 +97,7 @@ const Aplicaciones = () => {
     let result = await getAplicacionesCM();
     console.log(result);
     //      let result = await apiBaseDatos("getAplicaciones");
-    if ((isValid(result) === true && result.err) || isValid(result) === false) {
+    if ((isValid(result) === true && result.err) || isValid(result) === false || result.length===0) {
       setArrayAplicaciones(arraynoaplicaciones);
       setAplicacion(
         buscarEnArreglo(arraynoaplicaciones, arraynoaplicaciones[0].id, "id")
@@ -109,6 +107,7 @@ const Aplicaciones = () => {
       setAplicacion(buscarEnArreglo(result, result[0].id, "id"));
     }
     let resultcategorias = await getCategoriasNegociosCM();
+    console.log(resultcategorias);
     //      let resultcategorias= await apiBaseDatos("getCategoriasNegocios");
     if (resultcategorias.length === 0) {
       setArrayCategorias(arraynoCategorias);
@@ -222,9 +221,8 @@ const Aplicaciones = () => {
   };
 
   async function confirmar() {
-    console.log(arrayAplicaciones[aplicacion].id)
-    console.log(arrayCategorias[categoria].categorianegocio);
     setLoading(true);
+    console.log("1")
     let result = await setAplicacionesCM(
       arrayAplicaciones[aplicacion].id,
       sessionStorage.getItem("user"),
@@ -235,10 +233,10 @@ const Aplicaciones = () => {
       agregarsn,
       contenidofoto,
       isBase64ToBlob,
-      imagen
     );
     //    let result= await apiBaseDatos("setAplicaciones", arrayAplicaciones[aplicacion].id, sessionStorage.getItem("user"), nick, desc,
     //                                    ttip, arrayCategorias[categoria].categorianegocio, agregarsn, contenidofoto, isBase64ToBlob);
+
     if (isValid(result) === true) {
       setLoading(false);
       setMessage("Ocurrio un error al registrar el anuncio");
@@ -414,6 +412,7 @@ const Aplicaciones = () => {
                             onChange={handleInput}
                             value={aplicacion}
                           >
+                          {console.log(arrayAplicaciones)}
                             {arrayAplicaciones.map((item, i) => {
                               return (
                                 <option key={i} value={i}>
@@ -452,7 +451,7 @@ const Aplicaciones = () => {
                               {arrayCategorias.map((item, i) => {
                                 return (
                                   <option key={i} value={i}>
-                                    {item.desc}
+                                    {item.nick}
                                   </option>
                                 );
                               })}

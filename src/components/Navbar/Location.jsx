@@ -41,6 +41,8 @@ function Location(props) {
     if (whereIs!=="movil" && whereIs!==""){
     setLoading(true);
     await setConfigCM(province, municipal);
+    sessionStorage.setItem("ubicacion-provincia", province);
+    sessionStorage.setItem("ubicacion-municipio", municipal);
 //    await apiBaseDatos("setConfig", province, municipal);
     }
     else{

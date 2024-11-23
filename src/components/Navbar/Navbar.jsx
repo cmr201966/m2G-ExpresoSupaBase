@@ -19,7 +19,7 @@ import {
   PlaceOutlined,
   PersonAddAlt1,
 } from "@mui/icons-material";
-
+import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 // utils
 import {
   isValid,
@@ -89,9 +89,8 @@ const Navbar = (props) => {
       inserta: "inserta=true&where=false",
       tipo: 0,
     },
-    /*
     {
-      label: "Categorias",
+      label: "Ir a categoria",
       to: "/categorias",
       tooltips: "Ir a los productos de una categoria",
       depende: 0,
@@ -99,7 +98,6 @@ const Navbar = (props) => {
       inserta: "",
       tipo: 0,
     },
-  */
     {
       label: "Publicar",
       to: "/catproductos",
@@ -152,14 +150,14 @@ const Navbar = (props) => {
   const onModalClose = useCallback(() => cierraDialogo(), [setShowDialog]);
 
   async function init() {
+    setInicia(true)
     if (
       sessionStorage.getItem("deDonde") !== "infoProducto" &&
       sessionStorage.getItem("deDonde") !== "infoNegocio"
-    ) {
-      borraSessionStorage(["categoria", "login", "idproducto"]);
-    }
+    ) {borraSessionStorage(["categoria", "login", "idproducto"])}
 
     const config = await getConfigCM();
+    sessionStorage.setItem("idapp", config[0].idapp)
     //    const config = await apiBaseDatos("getConfig");
 
     if (!config?.length) setShowDialog(true);
@@ -168,12 +166,12 @@ const Navbar = (props) => {
     let resultado = await getJpgFileSB(
       "logo.jpg",
       "./galerias/app_images/destodo",
-      "destodo", false, "", "",""
+      "destodo", ""
     );
     if (isValid(resultado) === true) {
       setContenidofoto(resultado);
     } else {
-      setMessage("Error al recuperar la imagen del negocio");
+      setMessage("Error al recuperar la imagen de " + config[0].idapp);
       setOpen(true);
     }
 
@@ -182,7 +180,6 @@ const Navbar = (props) => {
   }
 
   function goToUbica() {
-    console.log("Aqui...");
     setWhereIs("Unica");
     setShowDialog(true);
   }
@@ -193,11 +190,13 @@ const Navbar = (props) => {
 
   return (
     <>
+    {inicia===false?
+    <>
       <div className="navbar-row">
         <div className="navbar-main">
           <Link className="link-logo" to="/">
             <img className="logo-img-one" src={contenidofoto} />
-            Expreso
+            {sessionStorage.getItem("idapp")}
           </Link>
 
           <SearchWrapper />
@@ -234,6 +233,7 @@ const Navbar = (props) => {
                 )}
 
                 {Number(sessionStorage.getItem("tipouser")) === 3 ? (
+                  <>
                   <Tippy content={"Agregar un usuario"}>
                     <Link to="/registrarse?inserta=true&where=true">
                       <IconButton sx={{ color: "aliceblue" }} id="user">
@@ -241,7 +241,15 @@ const Navbar = (props) => {
                       </IconButton>
                     </Link>
                   </Tippy>
-                ) : (
+                  <Tippy content={"Editar un usuario"}>
+                  <Link to="/registrarse?inserta=false&where=true">
+                    <IconButton sx={{ color: "aliceblue" }} id="user">
+                      <ManageAccountsOutlinedIcon />
+                    </IconButton>
+                  </Link>
+                </Tippy>
+                </>
+              ) : (
                   ""
                 )}
               </div>
@@ -416,6 +424,8 @@ const Navbar = (props) => {
         onClose={() => setShowMenu(false)}
         openLocation={() => goToUbica()}
       />
+      </>
+      :""}
     </>
   );
 };

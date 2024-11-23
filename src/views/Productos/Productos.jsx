@@ -2,6 +2,7 @@ import { useLocation } from "react-router-dom";
 import Navbar from "../../components/Navbar/Navbar";
 import Hero from "../../layouts/Hero/Hero";
 //import ShoppingCartOutlinedIcon from "@mui/icons-material/ShoppingCartOutlined";
+import {PlaceOutlined,} from "@mui/icons-material";
 import WhatsAppIcon from '@mui/icons-material/WhatsApp';
 import Checkbox from "@mui/material/Checkbox";
 import { Box, CircularProgress } from "@mui/material";
@@ -79,28 +80,6 @@ const Productos = () => {
         else sessionStorage.setItem(element, null);           
     });
 
-/*
-    if (isValid(parsedParams.categoria) === true && parsedParams.categoria !== "") sessionStorage.setItem("categoria", decodeURIComponent(parsedParams.categoria))
-      else sessionStorage.setItem("categoria", null);
-
-      if (isValid(parsedParams.user) === true  && parsedParams.user !== "") sessionStorage.setItem("user", decodeURIComponent(parsedParams.user));
-      else sessionStorage.setItem("user", null);
-
-      if (isValid(parsedParams.nombre) === true  && parsedParams.nombre !== "") sessionStorage.setItem("nombre", decodeURIComponent(parsedParams.nombre));
-      else sessionStorage.setItem("nombre", null);
-
-      if (isValid(parsedParams.nivel) === true  && parsedParams.nivel !== "") sessionStorage.setItem("nivel", decodeURIComponent(parsedParams.nivel));
-      else sessionStorage.setItem("nivel", null);
-
-      if (isValid(parsedParams.mapa) === true  && parsedParams.mapa !== "") sessionStorage.setItem("mapa", decodeURIComponent(parsedParams.mapa));
-      else sessionStorage.setItem("mapa", null);
-      
-      if (isValid(parsedParams.userAnuncio) === true && parsedParams.userAnuncio !== "") sessionStorage.setItem("userAnuncio", parsedParams.userAnuncio);
-      else sessionStorage.setItem("userAnuncio", null);  
-
-      if (isValid(parsedParams.buscar) === true  && parsedParams.buscar !== "") sessionStorage.setItem("buscar", decodeURIComponent(parsedParams.buscar));
-      else sessionStorage.setItem("buscar", null);
-*/
   }
   function init() {
     setShowMap(isValid(parsedParams.mapa)===true?parsedParams.mapa:sessionStorage.getItem("mapa"));
@@ -321,7 +300,7 @@ function contains(lat, lon, bbox) {
           tarifa: item.tarifa,
           costodomicilio: item.costodomicilio,
           domicilio: item.domicilio,
-          imagen: item.imagen
+          idsb: item.idsb
         };
         if (result1[0].idnaturaleza === 62) {
           obj.Habilidades = item.adicional;
@@ -336,8 +315,7 @@ function contains(lat, lon, bbox) {
     // Obtener el contenido de la foto de perfil
     contenidofoto.splice(0, contenidofoto.length);
     for (let i = 0; i < newResult.length; i += 1) {
-      let resultado= await getJpgFileSB(newResult[i].photo, newResult[i].folderMYSQL, newResult[i].folderSUPABASE, newResult[i].imagen,
-                                         "tablacatproductos", "idproducto", newResult[i].idproducto);
+      let resultado= await getJpgFileSB(newResult[i].photo, newResult[i].folderMYSQL, newResult[i].folderSUPABASE, newResult[i].idsb);
       if (resultado!==undefined && resultado!==null) {
         contenidofoto.push(resultado);
       }
@@ -387,9 +365,6 @@ let paresgps = [];
     setPuntosState(0);
     setShowMap(!showMap);
   }
-
-  function whatsapp(){
- }
 
   async function otroPunto() {
     let tpuntos = [...puntos];
@@ -494,10 +469,20 @@ let paresgps = [];
           <Encabezado/>
           {inicia===false?
           <div className="productos-nombre">
-              <p >({cantidadproductos}) - {nombre}</p>
+              <p className="p-productos-nombre" >({cantidadproductos}) - {nombre}</p>
+              {/*
+              {
+              <button
+                   type="button"
+                   className="placeoutlined"
+                   onClick={shooping}
+                >
+                   <PlaceOutlined />
+                </button>
+              }*/}
           </div>:""
           }
-          {/*
+          {/*}
             {(((puntosState === 2 && viewCarrito && showMap===true) || (showMap === false && puntos.length !== 0 && viewCarrito))
                && (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL' || (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='SUPABASE' && showMap===false)))?
                 <Tippy content={`Ordenar un producto`}>

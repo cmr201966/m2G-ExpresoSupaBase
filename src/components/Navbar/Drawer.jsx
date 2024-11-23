@@ -16,6 +16,7 @@ import {
 } from "@mui/material";
 // @mui/icons
 import { Person, Settings, PersonAddAlt1 } from "@mui/icons-material";
+import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
 
 // utils
 import { isValid } from "../../Utiles/Utiles";
@@ -32,6 +33,7 @@ export default function NavigationDrawer({
       ? "/login"
       : "/cerrarsesion",
     "/registrarse?inserta=true",
+    "/catcategorias",
     "/categorias",
     "/catproductos",
     "/anuncios",
@@ -39,6 +41,7 @@ export default function NavigationDrawer({
   const [hamburguesa1Depende] = useState([0, 0, 1, 0, 0, 0, 0]);
   const [hamburguesa1Nivel] = useState([1, 0, 0, 0, 0, 0, 0]);
   const [hamburguesa2] = useState(["/acercade"]);
+  const [hamburguesa3] = useState(["/activarusuarios", "/activarproductos"]);
 
   const DrawerList = (
     <Box sx={{ width: 250 }} role="presentation" onClick={onClose}>
@@ -50,6 +53,7 @@ export default function NavigationDrawer({
             : "Cerrar sesion",
           "Registrarse",
           "Categorias",
+          "Ir a categoria",
           "Publicar",
           "Anuncios",
         ].map((text, i) => (
@@ -71,6 +75,20 @@ export default function NavigationDrawer({
           </ListItemButton>
         </ListItem>
       </List>
+      {Number(sessionStorage.getItem("tipouser")) === 3 ? 
+      <>
+      <Divider />
+      <List>
+        {["Activar usuario", "Activar productos"].map((text, i) => (
+          <ListItem key={i} disablePadding>
+            <ListItemButton LinkComponent="a" href={hamburguesa3[i]}>
+              <ListItemText primary={text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+      </>:""
+      }
       <Divider />
       <List>
         {["Acerca de"].map((text, i) => (
@@ -114,6 +132,18 @@ export default function NavigationDrawer({
             <Link to="/registrarse?inserta=true&where=true">
               <IconButton id="user">
                 <PersonAddAlt1 />
+              </IconButton>
+            </Link>
+          </Tippy>
+        ) : (
+          ""
+        )}
+
+        {Number(sessionStorage.getItem("tipouser")) === 3 ? (
+          <Tippy content={"Editar un usuario"}>
+            <Link to="/registrarse?inserta=false&where=true">
+              <IconButton id="user">
+                 <ManageAccountsOutlinedIcon />
               </IconButton>
             </Link>
           </Tippy>
