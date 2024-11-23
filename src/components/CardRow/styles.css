@@ -1,34 +1,37 @@
 .card-row {
   display: flex;
+  position: relative;
   background-color: rgb(2, 114, 226);
-  border-radius: 15px;
+  border-radius: 18px;
   flex-direction: column;
   justify-content: space-between;
 }
-.card-image-onoff{
+
+.card-image-button {
   border-radius: 100%;
+  background: aliceblue;
   border: none;
-  color:#04f804;
-  background:transparent;
   position: absolute;
   z-index: 10;
-  right: -5px;
-  top: 5px
+  right: 5px;
+  top: 5px;
+  width: 34px;
+  height: 34px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid;
 }
-.card-image-onoff svg{
-  font-size: 1.2rem;
+
+.on {
+  color: rgb(2, 128, 2);
 }
-.card-image-offon{
-  border-radius: 100%;
-  background:transparent;
-  border: none;
-  color:red;
-  position: absolute;
-  z-index: 10;
-  right: -5px;
-  top: 5px
+
+.off {
+  color: red;
 }
-.card-image-offon svg{
+
+.card-image-button svg {
   font-size: 1.2rem;
 }
 
@@ -37,27 +40,18 @@
   margin: 0;
 }
 
-.card-image {
-  /*height: 150px;*/
-  position: relative;
-}
-
-.card-image img {
-  padding-top: 10px;
-  width: 58%;
-  height: 70%;
+.card-row img {
   cursor: pointer;
   object-fit: contain;
   border-radius: 15px 15px 0px 0px;
-  padding-left: 27px;}
+}
 
 .card-row .button-container {
   display: flex;
-  gap: 5px;
-  justify-content: space-evenly;
+  gap: 9px;
+  justify-content: flex-end;
   align-items: center;
   padding: 10px;
-/*  margin-top: 10px;*/
 }
 
 .card-row .button-container button {
@@ -89,6 +83,7 @@
 
 .card-texts {
   flex: 1;
+  padding-top: 10px;
   gap: 5px;
   display: flex;
   flex-direction: column;
@@ -172,13 +167,14 @@
   gap: 10px;
 }
 
-.texto-1{
- font-size: 12px;
- color: rgb(255, 255, 255);
- width: 100%;
- display: flex;
-}    
-.irA{
+.texto-1 {
+  font-size: 12px;
+  color: rgb(255, 255, 255);
+  width: 100%;
+  display: flex;
+}
+
+.irA {
   width: 1rem;
   height: 1.3rem;
   color: aliceblue;

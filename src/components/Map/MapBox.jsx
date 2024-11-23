@@ -16,7 +16,7 @@ import PropTypes from "prop-types";
 // local hooks
 import { useMapBox } from "./map-box-util";
 import "mapbox-gl/dist/mapbox-gl.css";
-import { isValid  } from "../../Utiles/Utiles";
+import { isValid } from "../../Utiles/Utiles";
 import config from "../../config";
 
 const Route = loadable(() => import("./Route"));
@@ -33,7 +33,8 @@ const mapboxgl = loadable(() => import("mapbox-gl"));
 // import "./style.css";
 
 function MapBox({
-  sx= {
+  className,
+  sx = {
     width: "100%",
     height: "100%",
   },
@@ -42,7 +43,7 @@ function MapBox({
   point,
   flyTo,
   visible,
-//  sx,
+  //  sx,
   style,
   remoteZoom,
   lat,
@@ -52,8 +53,12 @@ function MapBox({
   onMapClick,
 }) {
   const [zoom] = useState(remoteZoom ?? 16);
-  const [latitude, setLatitude] = useState(isValid(lat) && lat!==0?lat: 20.0217583);
-  const [longitude, setLongitude] = useState(isValid(lng) && lng!==0?lng: -75.829090519);
+  const [latitude, setLatitude] = useState(
+    isValid(lat) && lat !== 0 ? lat : 20.0217583
+  );
+  const [longitude, setLongitude] = useState(
+    isValid(lng) && lng !== 0 ? lng : -75.829090519
+  );
   const [localMarker, setLocalMarker] = useState(null);
   const flyToPoint = useCallback(
     (longitude, latitude, zoom) => {
@@ -163,7 +168,7 @@ function MapBox({
   }, [onLoadMap]);
 
   return (
-    <div id="map-container" className={css({ ...sx })}>
+    <div id="map-container" className={`${className} ${css({ ...sx })}`}>
       <Map
         ref={map}
         initialViewState={viewState}
@@ -228,7 +233,7 @@ MapBox.propTypes = {
   onLoadMap: PropTypes.func,
   onMapClick: PropTypes.func,
   remotesShowMap: PropTypes.bool,
-  index:  PropTypes.number,
+  index: PropTypes.number,
   lat: PropTypes.number,
   lng: PropTypes.number,
   onChangeMap: PropTypes.func,
