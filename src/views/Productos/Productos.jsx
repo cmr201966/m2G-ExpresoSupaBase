@@ -268,6 +268,7 @@ function contains(lat, lon, bbox) {
     let result1 = await getProductosCM(sessionStorage.getItem("categoria"), 
                                      sessionStorage.getItem("userAnuncio"), 
                                      sessionStorage.getItem("buscar"));
+                                     console.log(result1);
 //    let result1 = await apiBaseDatos("getProductos", sessionStorage.getItem("categoria"), 
 //                                     sessionStorage.getItem("userAnuncio"), 
 //                                     sessionStorage.getItem("buscar"));
@@ -468,18 +469,19 @@ let paresgps = [];
         <div className="div-Papa-Productos">
           <div className={"productos-cabeza"}>
           <Encabezado/>
+          
           {inicia===false?
           <div className="productos-nombre">
               <p className="p-productos-nombre" >({cantidadproductos}) - {nombre}</p>
-              <button
-                   type="button"
-                   className="placeoutlined"
+{/*              <button
+                   type="button"                   
                    onClick={shooping}
                 >
-                   <PlaceOutlined />
-                </button>
+                   <PlaceOutlined className="placeoutlined"/>
+                </button>*/}
           </div>:""
           }
+          
 {/*
             {(((puntosState === 2 && viewCarrito && showMap===true) || (showMap === false && puntos.length !== 0 && viewCarrito))
                && (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL' || (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='SUPABASE' && showMap===false)))?
