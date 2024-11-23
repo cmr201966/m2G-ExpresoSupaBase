@@ -697,7 +697,8 @@ const Productos = () => {
                 </Tippy>
                 <Map
                   points={puntos}
-                  sx={{ height: "900px", width: "100%" }}
+                  sx={{ width: "100%", marginBottom: "20px" }}
+                  className="product-map"
                   onMapClick={lngLatSelected}
                   remoteshowMap={showMap}
                   flyTo={toFly}
