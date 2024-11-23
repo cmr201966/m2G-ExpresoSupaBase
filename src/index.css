@@ -121,13 +121,23 @@ code {
   color: aliceblue;
   border-radius: 15px;
 }
+
 .cabeza {
   display: flex;
   align-items: center;
 }
+
 .encabezado {
   display: flex;
   align-items: center;
+  width: 70%;
+  margin: 0 auto;
+}
+
+@media (max-width: 1100px) {
+  .encabezado {
+    width: 90%;
+  }
 }
 
 .h3-1-cabeza {

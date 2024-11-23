@@ -20,15 +20,11 @@ const Encabezado = () => {
   }
 
   return (
-    <div className="grip-flecha">
-      <div></div>
-      <div className="encabezado">
-        <IconButton color="primary" onClick={regresa}>
-          <ArrowBack className="color-flecha" />
-        </IconButton>
-        {/*<h4 className="color-encabezado">Atrás</h4>*/}
-      </div>
-      <div></div>
+    <div className="encabezado">
+      <IconButton color="primary" onClick={regresa}>
+        <ArrowBack className="color-flecha" />
+      </IconButton>
+      {/*<h4 className="color-encabezado">Atrás</h4>*/}
     </div>
   );
 };

@@ -1,26 +1,36 @@
 .main-info-producto {
   display: flex;
   flex-direction: column;
+  background: rgb(20, 96, 172);
+  width: 360px;
+  padding: 10px;
+  border-radius: 16px;
+  gap: 10px;
+}
+
+.main-info-producto select {
+  border-radius: 100px;
+  padding: 3px 10px;
+  border: none;
 }
 
 .perfil-info-producto-1 {
   display: flex;
   flex-direction: column;
-  /*justify-content: center;*/
   background: rgb(20, 96, 172);
   width: 360px;
-  /*height: 340px;
-  gap:5px;*/
 }
 
-.img-class-info-producto{
+.img-class-info-producto {
   display: flex;
   flex-direction: row;
   position: relative;
 }
+
 .img-class-info-producto img {
   border-radius: 15px;
 }
+
 .product-info-1 {
   display: flex;
   flex-direction: column;
@@ -32,7 +42,8 @@
   padding-left: 28px;
   position: relative;
 }
-.mapa-producto{
+
+.mapa-producto {
   position: relative;
   height: 100vh;
 }
@@ -45,127 +56,141 @@
 p {
   margin: 1px;
 }
-.img-info-producto
-{
+.img-info-producto {
   height: 280px;
   width: 360px;
   object-fit: contain;
-  margin-top: 10px; 
+  margin-top: 10px;
 }
 
- .offon-info-producto{
+.offon-info-producto {
   border-radius: 100%;
-  background:white;
+  background: white;
   border: none;
-  color:red;
+  color: red;
   position: absolute;
   z-index: 10;
   right: 0;
 }
 
-.info-image-onoff{
+.info-image-onoff {
   border-radius: 100%;
   border: none;
-  color:#04ee04;
-  background:transparent;
+  color: #04ee04;
+  background: transparent;
   position: absolute;
   z-index: 10;
   right: 6px;
   top: -59px;
-  margin-top: 32px;}
+  margin-top: 32px;
+}
 
-  .info-image-offon{
+.info-image-offon {
   border-radius: 100%;
-  background:transparent;
+  background: transparent;
   border: none;
-  color:red;
+  color: red;
   position: absolute;
   z-index: 10;
   right: 3px;
-  margin-top: 3px;}
+  margin-top: 3px;
+}
 
-.distancia{
+.distancia {
   display: flex;
   flex-direction: row;
   width: 100%;
   align-items: center;
-  color:white;
+  color: white;
   margin-left: 20px;
 }
-.producto-fotos{
+
+.producto-fotos {
   display: flex;
   /*flex-direction: column;*/
-  }
-  .img-info-producto-lateral{
-    height: 60px;
-    width: 60px;
-    object-fit: cover;
-    border-radius: 15px;
-    border: 1px solid aliceblue;
-    margin-top: 13px;
-    margin-left: 8px;
-  }
-  .div-papa-infoProducto{
-    display: flex;
-    flex-direction: column;
-    background: rgb(20, 96, 172);
-    margin: 0 auto;
-    /*width: 100%;*/
-    width: 368px;
-  }
+}
 
-  .mapa-1{
-    width: 340px;
-    height: 340px;
-    margin-left: 8px;
-    background: rgb(20, 96, 172);
-  }
-  .font-size1{
-    font-size: 18px;
-    text-decoration: none;
-  }
-  .car-info{
-    margin-left: 50px;
-    margin-top: 100px ;
-  }
-  .agrupa-info{
-    display: flex;
-    justify-content: center;
-    background: rgb(20, 96, 172);
-  }
-  .mapa-9{
-    width: 100%;
-    display: flex;
-    justify-content: center;
-  }
-  .ws{
-    display: flex;
-    width: 100%;
-    justify-content: space-between;
-    align-items: center;
-  }
-  .wapp{
-    margin-right: 5px;
-  }
-  .Info-Productos{
-    background-color: rgb(22, 104, 187);  
-  }
-  .encabezado-Info-Producto{
-    color:aliceblue;
-    margin-left: 29px;
-  }
-  .ws-1{
-    background: none;
-    border-radius: 5px;
-    border: none;
-    color:rgb(27 225 44);
-    position: absolute;
-    right: 21px;
-    top: 5px;
-    font-size: 1.7rem !important;
-  }
-  .sliderVertical{
-    display: flex;
-    flex-direction: row;
-    justify-content: center;
-  }
+.img-info-producto-lateral {
+  height: 60px;
+  width: 60px;
+  object-fit: cover;
+  border-radius: 15px;
+  border: 1px solid aliceblue;
+  margin-top: 13px;
+  margin-left: 8px;
+}
+
+.div-papa-infoProducto {
+  display: flex;
+  flex-direction: column;
+  background: rgb(20, 96, 172);
+  margin: 0 auto;
+  /*width: 100%;*/
+  width: 368px;
+}
+
+.mapa-1 {
+  width: 340px;
+  height: 340px;
+  margin-left: 8px;
+  background: rgb(20, 96, 172);
+}
+
+.font-size1 {
+  font-size: 18px;
+  text-decoration: none;
+}
+
+.car-info {
+  margin-left: 50px;
+  margin-top: 100px;
+}
+
+.agrupa-info {
+  display: flex;
+  justify-content: center;
+  background: rgb(20, 96, 172);
+}
+
+.mapa-9 {
+  width: 100%;
+  display: flex;
+  justify-content: center;
+}
+
+.ws {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.wapp {
+  margin-right: 5px;
+}
+
+.Info-Productos {
+  background-color: rgb(22, 104, 187);
+}
+
+.encabezado-Info-Producto {
+  color: aliceblue;
+  margin-left: 29px;
+}
+
+.ws-1 {
+  background: none;
+  border-radius: 5px;
+  border: none;
+  color: rgb(27 225 44);
+  position: absolute;
+  right: 21px;
+  top: 5px;
+  font-size: 1.7rem !important;
+}
+
+.sliderVertical {
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+}
