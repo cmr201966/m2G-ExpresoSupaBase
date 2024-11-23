@@ -2,7 +2,8 @@ import Tippy from "@tippyjs/react";
 import ShoppingCartCheckoutOutlinedIcon from '@mui/icons-material/ShoppingCartCheckoutOutlined';
 import BusinessCenterOutlinedIcon from '@mui/icons-material/BusinessCenterOutlined';
 import PowerSettingsNewIcon from '@mui/icons-material/PowerSettingsNew';
-import { useState } from "react";
+import OpenInBrowserIcon from '@mui/icons-material/OpenInBrowser';            
+import { useEffect, useState, useRef } from "react";
 import { isValid } from "../../Utiles/Utiles";
 import { updateOcupadoCM } from "../../Utiles/apiBaseDatos";
 
@@ -11,19 +12,26 @@ import { updateOcupadoCM } from "../../Utiles/apiBaseDatos";
 import "./styles.css";
 
 const CardRow = (props) => {
-  const { tipouser, user, mapLoading, noproducto, i, item, selectcard, contenidofoto, verproducto, vernegocio, paresGps, onMapClick } = props
+  const { tipouser, user, mapLoading, noproducto, i, item, selectcard, contenidofoto, 
+          verproducto, vernegocio, paresGps, onMapClick, pagina, link } = props
   const [ocupado, setOcupado]=useState(item.ocupado);
+  const linkRef = useRef(null);
   async function powerSettings(){
     if (user!=="" && isValid(user)===true){
         setOcupado(ocupado===0?1:0);
     }
     updateOcupadoCM(item.idproducto, ocupado===0?1:0);
 //    apiBaseDatos("updateOcupado", item.idproducto, ocupado===0?1:0)
-
     paresGps();
 
   }
-``
+  useEffect(() => {
+    // Simula un clic en el <a>
+    if (linkRef.current) {
+      linkRef.current.click();
+    }
+  }, []);
+
   return (
     <div
       key={i}
@@ -61,13 +69,18 @@ const CardRow = (props) => {
           <>
             <Tippy content={`${ocupado===0?"Datos del producto y ordenar":"Datos del producto"}`}>
               <button onClick={() => verproducto(i, item)}>
-                <ShoppingCartCheckoutOutlinedIcon /> {/*<span>Producto</span>*/}
+                <ShoppingCartCheckoutOutlinedIcon /> 
               </button>
             </Tippy>
             <Tippy content={`Más datos del negocio`}>
               <button onClick={() => vernegocio(i, item)}>
-                <BusinessCenterOutlinedIcon  />{/*<span>Negocio</span>*/}
+                <BusinessCenterOutlinedIcon  />
               </button>
+            </Tippy>
+            <Tippy content={`Ir a ${pagina}`}>
+              <a className="irA" ref={linkRef} href={item.link} target="_blank" rel="noopener noreferrer">
+                <OpenInBrowserIcon />
+              </a>  
             </Tippy>
           </>
         ) : (

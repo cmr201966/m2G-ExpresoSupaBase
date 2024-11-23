@@ -258,7 +258,10 @@ const CatProductos = () => {
       sessionStorage.getItem("tipouser"),
       arraytnegocios[value].categorianegocio
     );
-    //    let resultproductos = await apiBaseDatos("getproductoscategoria", sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), arraytnegocios[value].categorianegocio);
+//    let resultproductos = await apiBaseDatos("getproductoscategoria", 
+//                                              sessionStorage.getItem("user"), 
+//                                              sessionStorage.getItem("tipouser"), 
+//                                              arraytnegocios[value].categorianegocio);
     setProducto(null);
     if (isValid(resultproductos) === false || resultproductos.length === 0) {
       setArrayproductos(arraynoproductos);
@@ -806,6 +809,7 @@ const CatProductos = () => {
                               />
                             </Tippy>
                           </div>
+                          {sessionStorage.getItem("idapp")==="Expreso"?
                           <div>
                             <p className="label-datos-catproducto plazas">
                               Plazas
@@ -819,7 +823,8 @@ const CatProductos = () => {
                               type="text"
                               required
                             />
-                          </div>
+                          </div>:""
+                          }
                           <div>
                             <p className="label-datos-catproducto color">
                               Color
@@ -850,6 +855,7 @@ const CatProductos = () => {
                               Domicilio
                             </label>
                           </div>
+                          {sessionStorage.getItem("idapp")==="Expreso"?
                           <div className="input-area4">
                             <Checkbox
                               id="ocupado"
@@ -863,8 +869,9 @@ const CatProductos = () => {
                             <label className="label-datos-catproducto input-cataproducto-12 ocupado">
                               Ocupado
                             </label>
-                          </div>
-                          {domicilio !== true ? (
+                          </div>:""
+                          }
+                          {domicilio !== true || sessionStorage.getItem("idapp")!=="Expreso"? (
                             <div className="input-area4">
                               <Checkbox
                                 className="combo-gps"
@@ -884,8 +891,7 @@ const CatProductos = () => {
                             ""
                           )}
                         </div>
-
-                        {domicilio === true ? (
+                        {domicilio === true && sessionStorage.getItem("idapp")==="Expreso"? (
                           <>
                             <p className="lejania">Lejanía kms:</p>
                             <div className="distancia-sciudad">

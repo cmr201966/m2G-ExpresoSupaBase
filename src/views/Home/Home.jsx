@@ -95,7 +95,6 @@ const Home = () => {
       setUsers(users1);
       setNombres(nombres1);
       let result = await getcategoriasnewCM();
-      console.log(result)
 //      let result = await apiBaseDatos("getcategoriasnew");
       let longitug = isValid(result) === true ? result.length : 0;
       let arrayContenidoFoto = [];
@@ -152,7 +151,6 @@ const Home = () => {
   }
 
   const arrayOfCards = useMemo(() => {
-    console.log(result)
     const resultOfCards = [];
     result.forEach((prop, i) =>
       resultOfCards.push(

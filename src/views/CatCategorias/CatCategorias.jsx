@@ -54,7 +54,9 @@ const CatCategorias = () => {
       sessionStorage.setItem(prop, parsedParams[prop])
     }
 
-    if ((sessionStorage.getItem("login")===1 || sessionStorage.getItem("login")==='1') && (isValid(sessionStorage.getItem("user"))===false)){
+    if ((sessionStorage.getItem("login")===1 || 
+         sessionStorage.getItem("login")==='1') && 
+         (isValid(sessionStorage.getItem("user"))===false)){
         navigate(`/login?login=1&regreso=${sessionStorage.getItem("regreso")}`);
         return
     }
@@ -67,7 +69,9 @@ const CatCategorias = () => {
     }
     let resultcategorias = await getCategoriasNegociosCM(true);
 //    let resultcategorias = await apiBaseDatos("getCategoriasNegocios")
-if (isValid(resultcategorias)===false || isValid(resultcategorias.length) === false || resultcategorias.length===0)
+if (isValid(resultcategorias)===false || 
+    isValid(resultcategorias.length) === false || 
+    resultcategorias.length===0)
   {
     setArrayCategorias(arraynoCategorias);
     setCategoria(buscaCategoria(arraynoCategorias, arraynoCategorias[0].categorianegocio));     
