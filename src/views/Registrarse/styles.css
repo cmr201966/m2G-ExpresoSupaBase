@@ -1,279 +1,272 @@
-
 .container-registrarse {
-    height: auto;
-    width: 340px;
-    display: flex;
-    flex-direction: column;
-    padding: 10px;
-    background: rgb(20, 96, 172);
-    border-radius: 15px;
-    margin:  0 auto;
+  height: auto;
+  width: 340px;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  background: rgb(20, 96, 172);
+  border-radius: 15px;
+  margin: 0 auto;
 }
 
 .grupo-button-registrarse {
-    display: flex;
-    flex-direction: row;
-    justify-content: flex-end;
-    align-items: center;
-    margin-top: 10px;
-    gap: 5px;
-  }
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-end;
+  align-items: center;
+  margin-top: 10px;
+  gap: 5px;
+}
 
-.label-registrase-size{
-    font-size: 20px;
+.label-registrase-size {
+  font-size: 20px;
 }
-.label-datos-size{
-    font-size: 16px;
+.label-datos-size {
+  font-size: 16px;
 }
-  .label-grupo {
-    display: flex;
-    flex-direction: column;
-    color: whitesmoke;
-    margin-top: 15px;
-    margin-bottom: 10px;
+.label-grupo {
+  display: flex;
+  flex-direction: column;
+  color: whitesmoke;
+  margin-top: 15px;
+  margin-bottom: 10px;
 }
 .input-area-registrarse-usuario label {
-    color: aliceblue;
-    margin-right:34px;
-    border: none;
-  }
+  color: aliceblue;
+  margin-right: 34px;
+  border: none;
+}
 
 .input-area-registrarse-plan label {
-    color: aliceblue;
-    margin-right:69px;
-  }
-  .input-area-registrarse-plan{
-    margin-top: 10px;
-  }
+  color: aliceblue;
+  margin-right: 69px;
+}
+.input-area-registrarse-plan {
+  margin-top: 10px;
+}
 .input-area-registrarse-provincia label {
-    color: aliceblue;
-    margin-right: 43px;
-  }
+  color: aliceblue;
+  margin-right: 43px;
+}
 .input-area-registrarse-municipio label {
-    color: aliceblue;
-    margin-right: 39px;
-  }
+  color: aliceblue;
+  margin-right: 39px;
+}
 .input-area-registrarse input {
-    background: none;
-    border: none;
-    padding: 3px 10px;
-    border-radius: 15px;
-    border: 1px solid aliceblue;
-    width: 180px;
-    background-color: white;
-  }
-  .input-area-registrarse {
-    color: aliceblue;
-    display: flex;
-    margin-top: 10px;
-  }
+  background: none;
+  border: none;
+  padding: 3px 10px;
+  border-radius: 15px;
+  border: 1px solid aliceblue;
+  width: 180px;
+  background-color: white;
+}
+.input-area-registrarse {
+  color: aliceblue;
+  display: flex;
+  margin-top: 10px;
+}
 .registrarse h2 {
-    color: aliceblue;
+  color: aliceblue;
 }
 
 .registrarse-button {
-    background: none;
-    border: none;
-    padding: 7px 15px;
-    cursor: pointer;
-    color: aliceblue;
-    border-radius: 15px;
+  background: none;
+  border: none;
+  padding: 7px 15px;
+  cursor: pointer;
+  color: aliceblue;
+  border-radius: 15px;
 }
 
 .input-cp {
-    display: flex;
-    margin: 10px 10px 10px 0;
-    margin-left: 170px;
-}    
+  display: flex;
+  margin: 10px 10px 10px 0;
+  margin-left: 170px;
+}
 .cp {
-    width: 12px !important;
-    justify-content: center !important;
-    color: aliceblue;
-    margin-right: 10px;
+  width: 12px !important;
+  justify-content: center !important;
+  color: aliceblue;
+  margin-right: 10px;
 }
 
 .lseguridad {
-    color: aliceblue;
-    background-color: crimson;
-    font-weight: bold;
-    width: 295px;
-    margin-top: 10px;
+  color: aliceblue;
+  background-color: crimson;
+  font-weight: bold;
+  width: 295px;
+  margin-top: 10px;
 }
 
 .label-pin {
-    display: flex;
-    flex-direction: row;
-    justify-content: left;
-    align-items: left;
-    color: whitesmoke;
-    margin-top: 5px;
-
+  display: flex;
+  flex-direction: row;
+  justify-content: left;
+  align-items: left;
+  color: whitesmoke;
+  margin-top: 5px;
 }
-.label-comprobacion{
-    margin-right: 20px;
+.label-comprobacion {
+  margin-right: 20px;
 }
-.label-pin-1{
-    margin-left: 125px;
+.label-pin-1 {
+  margin-left: 125px;
 }
 .label-aster {
-    margin-left: 10px;
+  margin-left: 10px;
 }
-.input-area-foto-registrarse{
-    display: flex;
-    width: 100%;
-    justify-content: flex-start;
-    align-items: center;
-    margin-top: 5px;
+.input-area-foto-registrarse {
+  display: flex;
+  width: 100%;
+  justify-content: flex-start;
+  align-items: center;
+  margin-top: 5px;
 }
-.label-2-registrarse{
-    color:aliceblue;
-    margin-right: 80px;
-}
-
-.label-2-1-registrarse{
-    background-color: white;
-    color: black;
-    cursor: pointer;
-    border-radius: 15px;
-    border: none;
-    padding: 5px;
-    font-size: 13px;
-    height: 20px;
-}
-.label-vista-registrase-1-1{
-    color:aliceblue;
-    width: 82px;
-    margin-top: 3px;
-    margin-left: 8px;
-  }
-  .img-registrarse{
-    height: 280px;
-    width: 247px;
-    object-fit: contain;
-/*    padding-left: 40px; */
+.label-2-registrarse {
+  color: aliceblue;
+  margin-right: 80px;
 }
 
- .select-registrarse-plan{
-    width: 203px;
-    border: none;
-    padding: 3px 10px;
-    border-radius: 15px;
-    border: 1px solid aliceblue;
-   
+.label-2-1-registrarse {
+  background-color: white;
+  color: black;
+  cursor: pointer;
+  border-radius: 15px;
+  border: none;
+  padding: 5px;
+  font-size: 13px;
+  height: 20px;
 }
- .select-registrarse-prov{
-    width: 203px;
-    border: none;
-    padding: 3px 10px;
-    border-radius: 15px;
-    border: 1px solid aliceblue;
-    margin-bottom: 5px;
+.label-vista-registrase-1-1 {
+  color: aliceblue;
+  width: 82px;
+  margin-top: 3px;
+  margin-left: 8px;
 }
-.select-registrarse-munic{
-    width: 203px;
-    border: none;
-    padding: 3px 10px;
-    border-radius: 15px;
-    border: 1px solid aliceblue;
-    margin-bottom: 5px;
+.img-registrarse {
+  height: 280px;
+  width: 247px;
+  object-fit: contain;
+  /*    padding-left: 40px; */
 }
-.select-registrarse-poblado{
-    width: 210px;    
-    border: none;
-    padding: 7px 15px;
-    border-radius: 15px;
-    border: 1px solid aliceblue;
-    margin-bottom: 5px;
+
+.select-registrarse-plan {
+  width: 203px;
+  border: none;
+  padding: 3px 10px;
+  border-radius: 15px;
+  border: 1px solid aliceblue;
 }
-.select-registrarse-reparto{
-    width: 210px;    
-    border: none;
-    padding: 7px 15px;
-    border-radius: 15px;
-    border: 1px solid aliceblue;
-    margin-bottom: 5px;
+.select-registrarse-prov {
+  width: 203px;
+  border: none;
+  padding: 3px 10px;
+  border-radius: 15px;
+  border: 1px solid aliceblue;
+  margin-bottom: 5px;
 }
-.mlc{
-    margin-right: 0px;
+.select-registrarse-munic {
+  width: 203px;
+  border: none;
+  padding: 3px 10px;
+  border-radius: 15px;
+  border: 1px solid aliceblue;
+  margin-bottom: 5px;
 }
-.cup{
-    margin-right: 2px;
+.select-registrarse-poblado {
+  width: 210px;
+  border: none;
+  padding: 7px 15px;
+  border-radius: 15px;
+  border: 1px solid aliceblue;
+  margin-bottom: 5px;
 }
-.usuario{
-    margin-right: 43px;
+.select-registrarse-reparto {
+  width: 210px;
+  border: none;
+  padding: 7px 15px;
+  border-radius: 15px;
+  border: 1px solid aliceblue;
+  margin-bottom: 5px;
 }
-.email{
-    margin-right: 68px;
+.mlc {
+  margin-right: 0px;
 }
-.celular{
-    margin-right: 47px;
+.cup {
+  margin-right: 2px;
 }
-.pw{
-    margin-right: 26px;
+.usuario {
+  margin-right: 43px;
 }
-.rpw{
-    margin-right: 20px;
+.email {
+  margin-right: 68px;
 }
-.nombre{
-    margin-right: 53px;
+.celular {
+  margin-right: 47px;
 }
-.ci{
-    margin-right: 85px;
+.pw {
+  margin-right: 26px;
 }
-.fijo{
-    margin-right: 53px;
+.rpw {
+  margin-right: 20px;
 }
-.sede{
-    margin-right: 32px;
+.nombre {
+  margin-right: 53px;
 }
-.desc{
-    margin-right: 16px;
+.ci {
+  margin-right: 85px;
 }
-.registrarse-cabeza
-{
-    color:aliceblue;
+.fijo {
+  margin-right: 53px;
 }
-.registrarse-cabeza-1
-{
-    color:aliceblue;
-    margin-top:3px;
+.sede {
+  margin-right: 32px;
 }
-.resultado-registrarse
-{
-    color: rgb(128, 243, 233);
-    margin-left: 120px;
-    margin-top: 5px;
-    font-size: 15px;
+.desc {
+  margin-right: 16px;
 }
-.resultadopw-registrarse
-{
-    color: rgb(128, 243, 233);
-    margin-left: 120px;
-    margin-top: 5px;
-    font-size: 15px;
+.registrarse-cabeza {
+  color: aliceblue;
 }
-.confirmar{
-    margin-left: 195px;
+.registrarse-cabeza-1 {
+  color: aliceblue;
+  margin-top: 3px;
 }
-.input-area-registrarse-provincia{
-    display: flex;
-    align-items: center;
-    margin-top: 5px;
+.resultado-registrarse {
+  color: rgb(128, 243, 233);
+  margin-left: 120px;
+  margin-top: 5px;
+  font-size: 15px;
 }
-.mapa-registrarse{
-    display: flex;
-    justify-content: center;
-    height: auto;
-    width: 100%;
-    margin: 0 auto;
-    margin-top: 15px;
- }
- .mapa-registrarse-1{
-    background: rgb(20, 96, 172);
-  }
-.datos{
-    margin-right: 69px;
+.resultadopw-registrarse {
+  color: rgb(128, 243, 233);
+  margin-left: 120px;
+  margin-top: 5px;
+  font-size: 15px;
 }
-.otros-datos{
-    margin-right: 21px;
+.confirmar {
+  margin-left: 195px;
+}
+.input-area-registrarse-provincia {
+  display: flex;
+  align-items: center;
+  margin-top: 5px;
+}
+.mapa-registrarse {
+  display: flex;
+  justify-content: center;
+  height: auto;
+  width: 100%;
+  margin: 0 auto;
+  margin-top: 15px;
+}
+.mapa-registrarse-1 {
+  background: rgb(20, 96, 172);
+}
+.datos {
+  margin-right: 69px;
+}
+.otros-datos {
+  margin-right: 21px;
 }
