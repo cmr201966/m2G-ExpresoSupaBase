@@ -264,6 +264,13 @@
   position: absolute;
   z-index: 10;
   right: 3px;
+  top: 3px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 35px;
+  height: 35px;
+  border: 1px solid;
 }
 
 .productos-nombre {
