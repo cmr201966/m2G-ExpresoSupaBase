@@ -183,6 +183,7 @@ if (isValid(resultcategorias)===false ||
     }
 
     async function confirmar() {
+      console.log("1")
       setLoading(true);
     let err= await setCategoriasNegociosCM(arrayCategorias[categoria].categorianegocio, desc, descold, "productos", nick, accion,  agregarsn, contenidofoto, isBase64ToBlob );
 //    let err= await apiBaseDatos("setCategoriasNegocios", arrayCategorias[categoria].categorianegocio, desc, descold, "productos", nick, accion,  agregarsn, contenidofoto, isBase64ToBlob );

@@ -111,16 +111,20 @@ async function CategoriasInsertUpdate(
   isBase64ToBlob
 ) {
   let err;
+  console.log("3")
   if (insertar === true) {
     // Ver si ya existe la descripcion
     const { data: datos, error } = await supabase
     .from("tablacategorias")
     .select("*")
     .eq("desc", desc)
+    console.log(error)
     if (isValid(datos)===false || datos.length===0){
+      console.log("4")
       const { error } = await supabase
       .from("tablacategorias")
       .insert({ desc: desc, link: link, accion: accion, nick: nick });
+      console.log(error)
       if (isValid(error) === false) {
       const { data } = await supabase
         .from("tablacategorias")
