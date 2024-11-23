@@ -1,7 +1,7 @@
 {
   "hosting": {
     "public": "dist",
-    "site": "expreso-cb7f2",
+    "site": "m2g-fotos-stgo",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "frameworksBackend": {
       "region": "us-central1"
