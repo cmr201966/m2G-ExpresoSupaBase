@@ -53,7 +53,7 @@ function GeneraVistagetCategoriasNew(user, tipouser) {
   return (
 
     "CREATE OR REPLACE VIEW getcategoriasnew  AS select DISTINCT tablacatproductos.categorianegocio as idcategoria, " +
-    'tablacategorias."desc" as categoria, link, destodo, tablacategorias.nick from tablacategorias, tablacatproductos' + tablas +
+    'tablacategorias."desc" as categoria, tablacategorias.link, destodo, tablacategorias.nick, tablacategorias.idsb from tablacategorias, tablacatproductos' + tablas +
     " where (tablacategorias.categorianegocio=tablacatproductos.categorianegocio) and (tablacatproductos.activo=true)" + condicion1 +
     condicion + " order by destodo"
   );
@@ -73,7 +73,9 @@ async function getcategoriasnewCM() {
       sessionStorage.getItem("user"),
       sessionStorage.getItem("tipouser")
     );
+    console.log(sql)
     const {error}=await supabase.rpc("exec_sql", { query: sql });
+    console.log(error)
     const { data } = await supabase
       .from("getcategoriasnew")
       .select("*")
