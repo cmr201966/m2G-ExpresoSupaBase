@@ -61,6 +61,7 @@ const InfoProducto = () => {
   async function init() {
     let idsb="";
     let result = await getInfoProductoCM(parsedParams.idproducto);
+    console.log(result);
 //  let result = await getInfoProducto(parsedParams.idproducto);
     if (isValid(result)=== true) {
       setIdproducto(parsedParams.idproducto);
@@ -78,6 +79,8 @@ const InfoProducto = () => {
       setCostoDomicilio(result[0].costodomicilio);
       setDomicilio(result[0].domicilio);
       setAccion(result[0].accion)
+      setLat(result[0].latitud);
+      setLng(result[0].longitud);
       idsb=result[0].idsb
     }
     result=await getParesGpsProductoCM(parsedParams.categoria,  parsedParams.idproducto);
