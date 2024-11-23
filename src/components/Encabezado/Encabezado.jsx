@@ -5,7 +5,9 @@ import { useNavigate } from "react-router-dom";
 // styles
 import "./styles.css";
 
-const Encabezado = () => {
+const Encabezado = (props) => {
+  const { children } = props;
+
   let donde = sessionStorage.getItem("deDonde");
   const navigate = useNavigate();
 
@@ -24,6 +26,7 @@ const Encabezado = () => {
       <IconButton color="primary" onClick={regresa}>
         <ArrowBack className="color-flecha" />
       </IconButton>
+      {children}
       {/*<h4 className="color-encabezado">Atrás</h4>*/}
     </div>
   );
