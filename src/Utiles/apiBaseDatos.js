@@ -123,7 +123,7 @@ async function CategoriasInsertUpdate(
       console.log("4")
       const { error } = await supabase
       .from("tablacategorias")
-      .insert({ desc: desc, link: link, accion: accion, nick: nick });
+      .insert({ desc: desc, link: link, accion: accion, nick: nick, activo: true });
       console.log(error)
       if (isValid(error) === false) {
       const { data } = await supabase
