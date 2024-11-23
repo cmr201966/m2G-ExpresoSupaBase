@@ -266,7 +266,8 @@ async function setregistrarseCM(
     return err;
   } else {
     if (modifica === false) {
-      let activo=sessionStorage.getItem("tipouser")==="3"?true:false;
+      const activo=sessionStorage.getItem("tipouser")==="3"?true:false;
+      const gpssn=1;
       const { error } = await supabase.from("tablausuarios").insert({
         iduser: user,
         nombre: nombre,
@@ -280,6 +281,7 @@ async function setregistrarseCM(
         activo: activo,
         datos: datos,
         otrosdatos: otrosDatos,
+        gpssn: gpssn,
       });
       err = error;
       if (isValid(error) === false) {

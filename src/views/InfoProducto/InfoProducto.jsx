@@ -77,8 +77,7 @@ const InfoProducto = () => {
   async function init() {
     let idsb = "";
     let result = await getInfoProductoCM(parsedParams.idproducto);
-    //  let result = await getInfoProducto(parsedParams.idproducto);
-    if (isValid(result) === true) {
+    if (isValid(result)=== true) {
       setIdproducto(parsedParams.idproducto);
       setUsert(result[0].idnegocio);
       setNegocio(result[0].negocio);
@@ -93,8 +92,10 @@ const InfoProducto = () => {
       setTarifa(result[0].tarifa);
       setCostoDomicilio(result[0].costodomicilio);
       setDomicilio(result[0].domicilio);
-      setAccion(result[0].accion);
-      idsb = result[0].idsb;
+      setAccion(result[0].accion)
+      setLat(result[0].latitud);
+      setLng(result[0].longitud);
+      idsb=result[0].idsb
     }
     result = await getParesGpsProductoCM(
       parsedParams.categoria,
