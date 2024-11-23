@@ -14,10 +14,7 @@ import "./styles.css";
 // @mui/icons
 import {
   ArrowBack,
-  ContactPhone,
   WhatsApp,
-  AlternateEmail,
-  SettingsCell,
   Email,
   PhoneAndroid,
   Phone,
