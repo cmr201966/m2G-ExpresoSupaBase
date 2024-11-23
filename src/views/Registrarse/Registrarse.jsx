@@ -152,7 +152,7 @@ const Registrarse = () => {
     setEditarUser(false);
     if (
       isValid(sessionStorage.getItem("user")) === true &&
-      parsedParams.where !== "true"
+      parsedParams.where === "false" && parsedParams.inserta==="false"
     ) {
       let result = await getdatosuserCM(sessionStorage.getItem("user"));
       //      let result = await apiBaseDatos("getdatosuser", sessionStorage.getItem("user"));
@@ -191,13 +191,19 @@ const Registrarse = () => {
       if (resultado !== undefined && resultado !== null) {
         setContenidofoto(resultado);
         setNombrefoto(result[0].iduser);
-      } else {
+      } 
+    
+      if (parsedParams.inserta==="true" && parsedParams.where==="true")  {
         setIsBase64ToBlob(false);
         setNombrefoto("");
+        setNombre("");
+        setDatos("");
+        setOtrosDatos("");
         setMessage("Error al recuperar la imagen del usuario");
         setOpen(true);
       }
-    } else {
+     
+    
       if (parsedParams.where === "false" && parsedParams.inserta === "true") {
         provinciachange(14, 6, resultprovincia, resultmunicipio);
         setLat(
@@ -212,7 +218,6 @@ const Registrarse = () => {
         setEditarUser(true);
         let resultusuarios = await getUsuariosCM(true);
         //    let resultusuarios = await apiBaseDatos("getUsuarios");
-        console.log(resultusuarios);
         if (isValid(resultusuarios) === false || resultusuarios.length === 0)
           setArrayUsuarios(arrayNoUsuarios);
         else {
