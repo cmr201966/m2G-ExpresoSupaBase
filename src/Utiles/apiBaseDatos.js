@@ -119,6 +119,7 @@ async function CategoriasInsertUpdate(
     .select("*")
     .eq("desc", desc)
     console.log(error)
+    console.log(datos);
     if (isValid(datos)===false || datos.length===0){
       console.log("4")
       const { error } = await supabase
