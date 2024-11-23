@@ -111,7 +111,6 @@ async function CategoriasInsertUpdate(
   isBase64ToBlob
 ) {
   let err;
-  console.log("3")
   if (insertar === true) {
     // Ver si ya existe la descripcion
     const { data: datos, error } = await supabase
