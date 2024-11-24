@@ -562,6 +562,7 @@ const Productos = () => {
                 <p className="p-productos-nombre">
                   ({cantidadproductos}) - {nombre}
                 </p>
+{/*
                 <button
                   type="button"
                   className="placeoutlined"
@@ -569,6 +570,7 @@ const Productos = () => {
                 >
                   <PlaceOutlined />
                 </button>
+*/}
               </div>
             ) : (
               ""
