@@ -1,17 +1,24 @@
+import { useEffect, useRef } from "react";
+
 // styles
 import "./styles.css";
 
 const Home = () => {
+  const linkRef = useRef(null);
+  useEffect(() => {
+    // Simula un clic en el <a>
+    if (linkRef.current) {
+      linkRef.current.click();
+    }
+  }, []);
+
   return (
-    <>
-    <span className="expreso-stgo">Este sitio fue eliminado ahora es </span>
     <a
-    href={"https://expreso-stgo.web.app/"}
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-expreso-stgo.web.app  </a>
-</>
+       href={"https://expreso-stgo.web.app/"}
+       target="_blank"
+       rel="noopener noreferrer"
+    >
+    </a>
   );
 };
 
