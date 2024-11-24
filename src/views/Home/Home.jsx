@@ -14,10 +14,12 @@ const Home = () => {
 
   return (
     <a
+       ref={linkRef}
        href={"https://expreso-stgo.web.app/"}
        target="_blank"
        rel="noopener noreferrer"
     >
+      Este sitio cambio click para ir al sitio nuevo
     </a>
   );
 };
