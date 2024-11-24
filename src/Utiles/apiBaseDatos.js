@@ -176,6 +176,7 @@ async function loginCM(param1, param2) {
       .eq("iduser", param1.toLowerCase())
       .eq("pw", param2.toLowerCase())
       .eq("activo", true);
+      console.log(error);
     err = error;
     result = data;
     return err, result;
