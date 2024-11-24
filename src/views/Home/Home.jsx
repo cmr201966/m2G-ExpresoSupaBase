@@ -56,6 +56,7 @@ const Home = () => {
   const [nombres, setNombres] = useState([]);
 
   async function init() {
+    console.log("Hola...")
     setInicia(true);
     setShow(true);
     sessionStorage.setItem("deDonde", "Home")

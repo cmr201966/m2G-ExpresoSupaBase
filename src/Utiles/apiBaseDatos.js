@@ -74,12 +74,10 @@ async function getcategoriasnewCM() {
       sessionStorage.getItem("tipouser")
     );
     const {error}=await supabase.rpc("exec_sql", { query: sql });
-    console.log(error);
     const { data } = await supabase
       .from("getcategoriasnew")
       .select("*")
       .order("destodo", { ascending: true });
-      console.log(data)
     datos = data;
     return datos;
   }
@@ -338,12 +336,11 @@ async function getAplicacionesCM() {
     result = await getAplicaciones({});
     result = await result.json();
   } else {
-    const { data, error } = await supabase
+    const { data} = await supabase
       .from("tablaanuncios")
       .select("*")
       .eq("activo", true);
     result = data;
-    console.log(error);
   }
   return result;
 }

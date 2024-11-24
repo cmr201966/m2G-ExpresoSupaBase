@@ -101,6 +101,7 @@ const CardRow = (props) => {
                 <BusinessCenterOutlined />
               </button>
             </Tippy>
+            {console.log(item.link)}
             {item.link !== "" ? (
               <Tippy content={`Ir a ${item.idnegocio}`}>
                 <a
