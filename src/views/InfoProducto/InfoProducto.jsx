@@ -77,7 +77,7 @@ const InfoProducto = () => {
   async function init() {
     let idsb = "";
     let result = await getInfoProductoCM(parsedParams.idproducto);
-    if (isValid(result)=== true) {
+    if (isValid(result) === true) {
       setIdproducto(parsedParams.idproducto);
       setUsert(result[0].idnegocio);
       setNegocio(result[0].negocio);
@@ -92,10 +92,10 @@ const InfoProducto = () => {
       setTarifa(result[0].tarifa);
       setCostoDomicilio(result[0].costodomicilio);
       setDomicilio(result[0].domicilio);
-      setAccion(result[0].accion)
+      setAccion(result[0].accion);
       setLat(result[0].latitud);
       setLng(result[0].longitud);
-      idsb=result[0].idsb
+      idsb = result[0].idsb;
     }
     result = await getParesGpsProductoCM(
       parsedParams.categoria,
@@ -308,16 +308,16 @@ const InfoProducto = () => {
         )}
 
         {inicio === false ? (
-          <div className="div-papa-infoProducto">
-            <section className="main-info-producto">
+          <div className="div-papa-info">
+            <section className="main-info">
               {showMap === true ? (
                 <>
-                  <span className="encabezado-Info-Producto">{producto}</span>
-                  <div className="info-product-content">
-                    <div className="perfil-info-producto-1">
-                      <div className="img-class-info-producto">
+                  <span className="encabezado-info">{producto}</span>
+                  <div className="info-content">
+                    <div className="perfil-info-1">
+                      <div className="img-class-info">
                         <img
-                          className="img-info-producto"
+                          className="img-info"
                           src={contenidofoto}
                           alt="Imagen del producto"
                         />
@@ -337,7 +337,7 @@ const InfoProducto = () => {
                         {arrayFotos.map((item, i) => (
                           <div key={i} className="producto-fotos">
                             <img
-                              className="img-info-producto-lateral"
+                              className="img-info-lateral"
                               src={arrayFotoInfo[i]}
                               alt="Imagen del producto"
                               onClick={() => viewPhoto(i)}
@@ -348,7 +348,7 @@ const InfoProducto = () => {
                     </div>
 
                     <div className="agrupa-info">
-                      <div className="product-info-1">
+                      <div className="info-1">
                         <div className="ws">
                           <span className="strong font-size1">
                             Datos del producto
@@ -363,6 +363,7 @@ const InfoProducto = () => {
                             </a>
                           </Tippy>
                         </div>
+
                         <span>{negocio}</span>
 
                         {isValid(precio) === true && precio !== 0 ? (
