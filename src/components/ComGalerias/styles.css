@@ -182,3 +182,30 @@
   width: 100%;
   /*height: 175px;*/
 }
+
+.card-image-onoff{
+  border-radius: 100%;
+  border: none;
+  color:#04f804;
+  background:transparent;
+  position: absolute;
+  z-index: 10;
+  right: -5px;
+  top: 5px
+}
+.card-image-onoff svg{
+  font-size: 1.2rem;
+}
+.card-image-offon{
+  border-radius: 100%;
+  background:transparent;
+  border: none;
+  color:red;
+  position: absolute;
+  z-index: 10;
+  right: -5px;
+  top: 5px
+}
+.card-image-offon svg{
+  font-size: 1.2rem;
+}
