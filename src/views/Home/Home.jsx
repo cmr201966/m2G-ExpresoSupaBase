@@ -69,6 +69,7 @@ const Home = () => {
     ) {
       setNivel(0);
       let resultApp = await getanunciosCM();
+      console.log(resultApp)
 //      let resultApp = await apiBaseDatos("anuncios");
       let imgsFileName1 = [];
       let imgsFolder1 = [];
@@ -94,13 +95,13 @@ const Home = () => {
       setCategorys(category1);
       setUsers(users1);
       setNombres(nombres1);
-      let result = await getcategoriasnewCM();
+      let result = await getcategoriasnewCM(true);
+      console.log(result)
 //      let result = await apiBaseDatos("getcategoriasnew");
       let longitug = isValid(result) === true ? result.length : 0;
       let arrayContenidoFoto = [];
       let resultado = [];
       for (let i = 0; i < longitug; i += 1) {
-        console.log(result[i]);
         resultado = await getJpgFileSB(
           result[i].idcategoria + ".jpg",
           "./galerias/app_images/categorias_de_negocios/" +
@@ -118,7 +119,6 @@ const Home = () => {
           setOpen(true);
         }
       }
-      console.log(arrayContenidoFoto)
       if (longitug !== 0) {
          if (sessionStorage.getItem("sgbd").toLocaleUpperCase() !== "MYSQL")
             result.forEach((item, i) => {

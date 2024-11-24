@@ -74,10 +74,12 @@ async function getcategoriasnewCM() {
       sessionStorage.getItem("tipouser")
     );
     const {error}=await supabase.rpc("exec_sql", { query: sql });
+    console.log(error);
     const { data } = await supabase
       .from("getcategoriasnew")
       .select("*")
       .order("destodo", { ascending: true });
+      console.log(data)
     datos = data;
     return datos;
   }
