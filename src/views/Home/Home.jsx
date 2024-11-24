@@ -1,25 +1,16 @@
-import { useEffect, useRef } from "react";
+import React from 'react';
 
 // styles
 import "./styles.css";
 
 const Home = () => {
-  const linkRef = useRef(null);
-  useEffect(() => {
-    // Simula un clic en el <a>
-    if (linkRef.current) {
-      linkRef.current.click();
-    }
-  }, []);
-
   return (
     <a
-       ref={linkRef}
        href={"https://expreso-stgo.web.app/"}
        target="_blank"
        rel="noopener noreferrer"
     >
-      Este sitio cambio click para ir al sitio nuevo
+      Este sitio cambio click para ir al sitio nuevo https://expreso-stgo.web.app
     </a>
   );
 };
