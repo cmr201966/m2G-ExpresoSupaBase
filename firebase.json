@@ -1,7 +1,7 @@
 {
   "hosting": {
     "public": "dist",
-    "site": "expreso-stgo",
+    "site": "expreso-cb7f2",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "frameworksBackend": {
       "region": "us-central1"

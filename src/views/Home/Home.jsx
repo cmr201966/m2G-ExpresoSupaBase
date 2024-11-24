@@ -229,22 +229,7 @@ const Home = () => {
           </Box>
         ) : null}
         {inicia === false ? (
-          <>
-            <BigSlider
-              imgsFolder={imgsFolder}
-              imgsFileName={imgsFileName}
-              imgsId={imgsId}
-              categorias={categorys}
-              users={users}
-              nombres={nombres}
-            />
-            <div className="main-grid negative-margin">
-              <div className="grid-letf"></div>
-              <div className="gradient-background"></div>
-              <MultipleSlider imgs={arrayOfCards} />
-              <div className="grid-rigth"></div>
-            </div>
-          </>
+          <p>Este sitio fue eliminado ahora es expreso-stgo.web.app</p>
         ) : (
           ""
         )}
