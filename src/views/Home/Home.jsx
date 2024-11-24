@@ -94,7 +94,7 @@ const Home = () => {
       setCategorys(category1);
       setUsers(users1);
       setNombres(nombres1);
-      let result = await getcategoriasnewCM();
+      let result = await getcategoriasnewCM(true);
 //      let result = await apiBaseDatos("getcategoriasnew");
       let longitug = isValid(result) === true ? result.length : 0;
       let arrayContenidoFoto = [];
