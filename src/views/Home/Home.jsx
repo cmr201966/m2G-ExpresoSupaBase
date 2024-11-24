@@ -100,7 +100,6 @@ const Home = () => {
       let arrayContenidoFoto = [];
       let resultado = [];
       for (let i = 0; i < longitug; i += 1) {
-        console.log(result[i]);
         resultado = await getJpgFileSB(
           result[i].idcategoria + ".jpg",
           "./galerias/app_images/categorias_de_negocios/" +
@@ -118,7 +117,6 @@ const Home = () => {
           setOpen(true);
         }
       }
-      console.log(arrayContenidoFoto)
       if (longitug !== 0) {
          if (sessionStorage.getItem("sgbd").toLocaleUpperCase() !== "MYSQL")
             result.forEach((item, i) => {
