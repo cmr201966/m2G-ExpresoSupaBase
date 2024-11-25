@@ -74,13 +74,11 @@ async function getcategoriasnewCM() {
       sessionStorage.getItem("tipouser")
     );
     const {error}=await supabase.rpc("exec_sql", { query: sql });
-    console.log(error)
     const { data } = await supabase
       .from("getcategoriasnew")
       .select("*")
 /*      .order("destodo", { ascending: true });*/
     datos = data;
-    console.log(data);
     return datos;
   }
 }
@@ -178,7 +176,6 @@ async function loginCM(param1, param2) {
       .eq("iduser", param1.toLowerCase())
       .eq("pw", param2.toLowerCase())
       .eq("activo", true);
-      console.log(error);
     err = error;
     result = data;
     return err, result;
