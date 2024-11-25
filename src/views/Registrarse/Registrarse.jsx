@@ -47,6 +47,7 @@ const Registrarse = () => {
   const location = useLocation();
   const parsedParams = {};
   const [showGalerias, setShowGalerias] = useState(false);
+  const [loading, setLoading] = useState(false);
   const { setOpen, setMessage } = useNotification();
   const [user, setUser] = useState("");
   const [idsb, setIdsb] = useState("");
@@ -465,7 +466,9 @@ const Registrarse = () => {
   }
 
   async function confirmar() {
+    setLoading(true);
     if (password !== rpassword) {
+      setLoading(false);
       setMessage("Contraseña incorrecta");
       setOpen(true);
       document.getElementById("password").focus();
@@ -494,6 +497,7 @@ const Registrarse = () => {
       //      let response = await apiBaseDatos("setregistrarse", user.toLowerCase(), nombre, password, celular,
       //                                                          provincia, municipio, contenidofoto, modifica,
       //                                                          plan, latT, lngT, isBase64ToBlob);
+      setLoading(false);
       let isOk = true;
       if (isValid(response) === true)
         if (isValid(response.length) === true) isOk = false;
@@ -825,7 +829,11 @@ const Registrarse = () => {
                           className="producto-button primary "
                           onClick={confirmar}
                         >
-                          <Check />
+                      {loading ? (
+                            <CircularProgress color="inherit" size={16} />
+                          ) : (
+                            <Check />
+                          )}
                         </button>
                       ) : (
                         ""
