@@ -73,9 +73,10 @@ const Productos = () => {
   const [tarifa, setTarifa] = useState(0);
   const [costoDomicilio, setCostoDomicilio] = useState(0);
   const [index, setIndex] = useState(0);
-  const [marca, setMarca] = useState(0);
+  const [nick, setNick] = useState(0);
+/*  const [marca, setMarca] = useState(0);
   const [color, setColor] = useState(0);
-  const [chapa, setChapa] = useState(0);
+  const [chapa, setChapa] = useState(0);*/
   const [celular, setCelular] = useState(0);
 
   // Estados para la posición GPS del mapa
@@ -103,7 +104,7 @@ const Productos = () => {
     setShowMap(
       isValid(parsedParams.mapa) === true
         ? parsedParams.mapa
-        : sessionStorage.getItem("mapa")
+        : setShowMap(false)
     );
     setNivel(
       isValid(parsedParams.nivel) === true
@@ -164,7 +165,6 @@ const Productos = () => {
     distanciaDerecha
   ) => {
     const [lat, lon] = centerPoint;
-
     const deltaLatArriba = kmToDegrees(distanciaArriba);
     const deltaLatAbajo = kmToDegrees(distanciaAbajo);
     const deltaLonIzquierda = kmToDegrees(
@@ -213,6 +213,7 @@ const Productos = () => {
   }
 
   const lngLatSelected = async (point, lngLat) => {
+    if ((puntosState===1 || puntos.length===0) && sessionStorage.getItem("idapp")!=="Expreso") return;
     setLng(lngLat.lng);
     setLat(lngLat.lat);
     let lat1 = puntos[puntos.length - 1].lat;
@@ -241,7 +242,6 @@ const Productos = () => {
         setDuracion(duracion.toFixed(2));
       }
     }
-
     if (puntosState === 2) {
       setCarrera(0);
       setPuntosState(1);
@@ -404,7 +404,7 @@ const Productos = () => {
         lat: item.latitud,
         lng: item.longitud,
         image: libre,
-        info: item.celular,
+        info: item.nick,
         distanciamax: item.distanciamax,
         sciudad: item.sciudad,
         imageClassName: "",
@@ -423,6 +423,7 @@ const Productos = () => {
   }
 
   async function shooping() {
+    if (isValid(showMap)===false) setShowMap(false);
     if (showMap === true) {
       // Insertar el movimiento y poner showmap en false
       let tindex = puntos.length;
@@ -506,9 +507,10 @@ const Productos = () => {
           let resultProduct = await getProductosNewCM(items[i].idproducto);
           //          let resultProduct = await apiBaseDatos("getProductoNew", items[i].idproducto);
           if (resultProduct.length !== 0) {
-            setMarca(resultProduct[0].marca);
+            setNick(resultProduct[0].nick);
+            /*setMarca(resultProduct[0].marca);
             setColor(resultProduct[0].color);
-            setChapa(resultProduct[0].chapa);
+            setChapa(resultProduct[0].chapa);*/
             setCelular(resultProduct[0].celular);
           }
           setTarifa(items[i].tarifa);
@@ -535,7 +537,8 @@ const Productos = () => {
 
   useEffect(() => {
     if (puntos.length !== 0) {
-      if (puntosState == 1) otroPunto();
+//      if ((puntosState===1) && sessionStorage.getItem("idapp")==="Expreso") otroPunto();
+      if ((puntosState===1)) otroPunto();
     }
   }, [lng]);
 
@@ -562,7 +565,6 @@ const Productos = () => {
                 <p className="p-productos-nombre">
                   ({cantidadproductos}) - {nombre}
                 </p>
-{/*
                 <button
                   type="button"
                   className="placeoutlined"
@@ -570,7 +572,6 @@ const Productos = () => {
                 >
                   <PlaceOutlined />
                 </button>
-*/}
               </div>
             ) : (
               ""
@@ -591,7 +592,6 @@ const Productos = () => {
                 </button>
               </Tippy>
             :""}
-*/}
               {((puntosState === 2 && viewCarrito && showMap === true) ||
                 (showMap === false && puntos.length !== 0 && viewCarrito)) &&
               sessionStorage.getItem("sgbd").toLocaleUpperCase() ===
@@ -622,6 +622,7 @@ const Productos = () => {
               ) : (
                 ""
               )}
+*/}
             </div>
 
             {show1 ? (
@@ -642,7 +643,14 @@ const Productos = () => {
             (verOtraVez === true && mascerca > 0 && mascerca != 999999) ? (
               <>
                 <div className="result">
-                  {mascerca !== 0 && <span>Recogida a {mascerca} Kms </span>}
+                  {mascerca !== 0 && <span>{nick} está a {mascerca} Kms </span>}
+                  {sessionStorage.getItem("idapp")!=="Expreso" && puntosState===1?
+                  <Tippy content={`Ordenar via WhatsApp`}>
+                     <a className="ws-productos" href={url} target="_blank" rel="noopener noreferrer">
+                        <WhatsApp />
+                     </a>
+                  </Tippy>:""}
+
                   {carrera !== 0 && <span>, carrera {carrera} Kms</span>}
                   {(carrera * tarifa).toFixed(2) != 0.0 && (
                     <span>
@@ -650,10 +658,6 @@ const Productos = () => {
                     </span>
                   )}
                   {
-                    <span>
-                      , Marca: {marca}, Color: {color}, Chapa: {chapa},
-                      teléfono: {celular}
-                    </span>
                   }
                 </div>
               </>

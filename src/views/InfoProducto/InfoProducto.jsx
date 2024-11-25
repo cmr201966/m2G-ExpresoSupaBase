@@ -387,7 +387,7 @@ const InfoProducto = () => {
                         ) : (
                           ""
                         )}
-
+{/*
                         {isValid(celular) === true &&
                         sessionStorage.getItem("sgbd").toLocaleUpperCase() !==
                           "MYSQL" ? (
@@ -395,6 +395,7 @@ const InfoProducto = () => {
                         ) : (
                           ""
                         )}
+*/}                          
                         {((distancia !== 0 &&
                           showMap === true &&
                           puntosState === 2 &&
