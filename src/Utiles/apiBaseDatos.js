@@ -575,7 +575,7 @@ function getParesGpsCategoria(categoria, user, userAnuncio) {
   }
   return (
     'CREATE OR REPLACE VIEW getparesgpscategoria AS SELECT celular, tablacatproductos.latitud, tablacatproductos.longitud, ocupado, idproducto, tablacatproductos."desc" as nombre,' +
-    " tarifa, costodomicilio, domicilio, distanciamax, sciudad FROM Tablacatproductos, tablausuarios WHERE (ocupado=0) and (tablacatproductos.iduser=tablausuarios.iduser) and " +
+    " tarifa, costodomicilio, domicilio, distanciamax, sciudad , tablacatproductos.nick FROM tablacatproductos, tablausuarios WHERE (ocupado=0) and (tablacatproductos.iduser=tablausuarios.iduser) and " +
     " (tablacatproductos.activo=true) and (tablausuarios.activo=true)" +
     condicion1 +
     condicion2 +
@@ -594,7 +594,6 @@ async function getparesgpscategoriaCM(categoria, user, anuncio) {
     resultgps = await resultgps.json();
   } else {
     let sql = getParesGpsCategoria(categoria, user, anuncio);
-
     await supabase.rpc("exec_sql", { query: sql });
     const { data } = await supabase.from("getparesgpscategoria").select("*");
     resultgps = data;

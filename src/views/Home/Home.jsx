@@ -56,7 +56,6 @@ const Home = () => {
   const [nombres, setNombres] = useState([]);
 
   async function init() {
-    console.log("Hola...")
     setInicia(true);
     setShow(true);
     sessionStorage.setItem("deDonde", "Home")
@@ -70,7 +69,6 @@ const Home = () => {
     ) {
       setNivel(0);
       let resultApp = await getanunciosCM();
-      console.log(resultApp)
 //      let resultApp = await apiBaseDatos("anuncios");
       let imgsFileName1 = [];
       let imgsFolder1 = [];
