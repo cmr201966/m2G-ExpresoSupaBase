@@ -94,7 +94,7 @@ const Aplicaciones = () => {
       navigate(`/`);
       return;
     }
-    let result = await getAplicacionesCM();
+    let result = await getAplicacionesCM(true);
     //      let result = await apiBaseDatos("getAplicaciones");
     if ((isValid(result) === true && result.err) || isValid(result) === false || result.length===0) {
       setArrayAplicaciones(arraynoaplicaciones);
@@ -106,7 +106,6 @@ const Aplicaciones = () => {
       setAplicacion(buscarEnArreglo(result, result[0].id, "id"));
     }
     let resultcategorias = await getCategoriasNegociosCM(true);
-    console.log(resultcategorias);
     //      let resultcategorias= await apiBaseDatos("getCategoriasNegocios");
     if (resultcategorias.length === 0) {
       setArrayCategorias(arraynoCategorias);
@@ -221,7 +220,6 @@ const Aplicaciones = () => {
 
   async function confirmar() {
     setLoading(true);
-    console.log("1")
     let result = await setAplicacionesCM(
       arrayAplicaciones[aplicacion].id,
       sessionStorage.getItem("user"),
@@ -411,7 +409,6 @@ const Aplicaciones = () => {
                             onChange={handleInput}
                             value={aplicacion}
                           >
-                          {console.log(arrayAplicaciones)}
                             {arrayAplicaciones.map((item, i) => {
                               return (
                                 <option key={i} value={i}>

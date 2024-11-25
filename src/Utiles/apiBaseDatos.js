@@ -338,7 +338,7 @@ async function getAplicacionesCM() {
     result = await getAplicaciones({});
     result = await result.json();
   } else {
-    const { data } = await supabase
+    const { data} = await supabase
       .from("tablaanuncios")
       .select("*")
       .eq("activo", true);
