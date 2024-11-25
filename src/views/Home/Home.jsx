@@ -56,6 +56,7 @@ const Home = () => {
   const [nombres, setNombres] = useState([]);
 
   async function init() {
+    console.log("Hola...")
     setInicia(true);
     setShow(true);
     sessionStorage.setItem("deDonde", "Home")
@@ -69,6 +70,7 @@ const Home = () => {
     ) {
       setNivel(0);
       let resultApp = await getanunciosCM();
+      console.log(resultApp)
 //      let resultApp = await apiBaseDatos("anuncios");
       let imgsFileName1 = [];
       let imgsFolder1 = [];
@@ -94,7 +96,8 @@ const Home = () => {
       setCategorys(category1);
       setUsers(users1);
       setNombres(nombres1);
-      let result = await getcategoriasnewCM();
+      let result = await getcategoriasnewCM(true);
+      console.log(result)
 //      let result = await apiBaseDatos("getcategoriasnew");
       let longitug = isValid(result) === true ? result.length : 0;
       let arrayContenidoFoto = [];
