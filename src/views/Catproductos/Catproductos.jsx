@@ -379,7 +379,7 @@ const CatProductos = () => {
 
   function recuperardatosproducto(data, i) {
     let index = buscarEnArreglo(data, data[i].idproducto, "idproducto");
-    setUsuariot(data[i].iduser);
+    setUsuariot(isValid(data[i].user)===true?data[i].user:data[i].iduser);
     setProducto({ label: data[i].nick, value: index });
     setNombrecortot(data[i].nick);
     setDescripciont(data[i].desc);
@@ -991,14 +991,11 @@ const CatProductos = () => {
                     {producto &&
                     arrayproductos[producto?.value].desc!== "Desconocido" ? (
                       <>
-                        {agregarsn === false && editarsn === false && isValid(producto?.value)===true ? (
+                        {agregarsn === false && editarsn === false && isValid(producto?.value)===true && arrayproductos[0].desc!=="Desconocido"? (
                           <Tippy content="Clic para editar el producto">
                             <button
                               type="button"
                               className="producto-button primary"
-                              disabled={
-                                arrayproductos[0].desc=== "Desconocido"
-                              }
                               onClick={editar}
                             >
                               <Edit />
@@ -1008,14 +1005,11 @@ const CatProductos = () => {
                           ""
                         )}
 
-                        {agregarsn === false && editarsn === false  && isValid(producto?.value)===true ? (
+                        {agregarsn === false && editarsn === false  && isValid(producto?.value)===true && arrayproductos[0].desc!=="Desconocido" ? (
                           <Tippy content="Clic para eliminar el producto">
                             <button
                               type="button"
                               className="producto-button primary"
-                              disabled={
-                                arrayproductos[0].desc=== "Desconocido"
-                              }
                               onClick={eliminar}
                             >
                               <Delete />
