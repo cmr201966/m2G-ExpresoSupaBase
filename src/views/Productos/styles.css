@@ -230,8 +230,11 @@
   margin-bottom: 10px;
   margin-left: 15px;
   color: white;
-  font-size: 15px;
-}
+  font-size: 14px;
+  display: flex
+;
+  width: 100%;
+  align-items: center;}
 
 .input-productos-12 {
   margin-right: 5px;
@@ -309,4 +312,9 @@
   .product-map {
     height: 100%;
   }
+}
+.ws-productos{
+  color: rgb(57, 235, 12) !important;
+  padding-left: 5px;
+  font-size: 5px;
 }

@@ -101,7 +101,7 @@ const CardRow = (props) => {
                 <BusinessCenterOutlined />
               </button>
             </Tippy>
-            {item.link !== "" ? (
+            {isValid(item.link)===true && item.link!== "" ? (
               <Tippy content={`Ir a ${item.idnegocio}`}>
                 <a
                   className="irA"
