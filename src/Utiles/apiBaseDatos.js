@@ -52,9 +52,9 @@ function GeneraVistagetCategoriasNew(user, tipouser) {
   }
   return (
 
-    "CREATE OR REPLACE VIEW getcategoriasnew  AS select DISTINCT tablacatproductos.categorianegocio as idcategoria, " +
+    "CREATE OR REPLACE VIEW getcategoriasnew  AS select DISTINCT tablacategorias.categorianegocio as idcategoria, " + 
     'tablacategorias."desc" as categoria, tablacategorias.link, destodo, tablacategorias.nick, tablacategorias.idsb from tablacategorias, tablacatproductos' + tablas +
-    " where (tablacategorias.categorianegocio=tablacatproductos.categorianegocio) and (tablacatproductos.activo=true)" + condicion1 +
+    " where ((tablacategorias.categorianegocio=tablacatproductos.categorianegocio) or (tablacategorias.link LIKE '%https:%')) and (tablacatproductos.activo=true)" + condicion1 +
     condicion + " and (app=true) order by destodo"
   );
 }
