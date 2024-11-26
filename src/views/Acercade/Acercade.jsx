@@ -87,7 +87,7 @@ const Acercade = () => {
           <p>{sessionStorage.getItem("idapp")} Versión 1.0</p>
           <div className="acercade-flex-1">
              <p>Desarrollado por</p>
-             {setMessage.getItem("idapp")==="m2G-Software"?"m2G-Software":
+             {sessionStorage.getItem("idapp")==="m2G-Software"?"m2G-Software":
              <a href="https://m2g-software-stgo.web.app" target='_blank' rel='noopener noreferrer' className='acercade-row'>
                 <span>m2G-Software </span>
              </a>
