@@ -118,14 +118,10 @@ const Aplicaciones = () => {
       );
     } else {
       setArrayCategorias(resultcategorias);
+      setIsBase64ToBlob(false);
+      setNombrefoto("");
       if (result.length > 0) {
-        setCategoria(
-          buscarEnArreglo(
-            resultcategorias,
-            result[buscarEnArreglo(result, result[0].id, "id")].idcategoria,
-            "categorianegocio"
-          )
-        );
+        setCategoria(buscarEnArreglo(resultcategorias, result[buscarEnArreglo(result, result[0].id, "id")].idcategoria, "categorianegocio"));
         setIsBase64ToBlob(true);
         let resultado = await getJpgFileSB(
           result[0].id + ".jpg",
@@ -138,11 +134,12 @@ const Aplicaciones = () => {
           setContenidofoto(resultado);
           setNombrefoto(result[0].id);
         } else {
-          setIsBase64ToBlob(false);
-          setNombrefoto("");
           setMessage("Error al recuperar la imagen del usuario");
           setOpen(true);
         }
+      }
+      else{
+        setCategoria(0);
       }
     }
 
@@ -219,6 +216,8 @@ const Aplicaciones = () => {
   };
 
   async function confirmar() {
+    console.log(arrayCategorias);
+    console.log(categoria);
     setLoading(true);
     let result = await setAplicacionesCM(
       arrayAplicaciones[aplicacion].id,
