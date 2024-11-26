@@ -633,10 +633,10 @@ async function GeneraVistaGetProductos(categoria, userAnuncio, buscar) {
   let sql =
     "CREATE OR REPLACE VIEW getProductos AS SELECT DISTINCT tablacatproductos.idproducto as idproducto,tablacatproductos.nick as producto, " +
     "tablacatproductos.desc as descripcion, tablausuarios.nombre as negocio, tablausuarios.iduser as idnegocio, ocupado, tipouser, " + 
-    "tablausuarios.iduser, tarifa, costoDomicilio, domicilio, tablacatproductos.idsb, tablacatproductos.link FROM tablacatproductos, tablausuarios, " + 
-    "tablacatprovincias,tablacatmunicipios WHERE (tablacatproductos.iduser=tablausuarios.iduser) and (tablacatprovincias.provincia=tablausuarios.provincia)" +
+    "tablausuarios.iduser, tarifa, costoDomicilio, domicilio, tablacatproductos.idsb, tablacatproductos.link, tablacategorias.estado FROM tablacatproductos, tablausuarios, " + 
+    "tablacatprovincias, tablacatmunicipios, tablacategorias WHERE (tablacatproductos.iduser=tablausuarios.iduser) and (tablacatprovincias.provincia=tablausuarios.provincia)" +
     " and (tablacatmunicipios.provincia=tablausuarios.provincia) and (tablacatmunicipios.municipio=tablausuarios.municipio) and (tablausuarios.activo=true)" +
-    " and (tablacatproductos.activo=true)" + condicion1 + condicion2 + condicion3;
+    " and (tablacatproductos.activo=true) and (tablacategorias.categorianegocio=tablacatproductos.categorianegocio) " + condicion1 + condicion2 + condicion3;
   return sql;
 }
 
@@ -648,7 +648,7 @@ async function getProductosCM(categoria, userAnuncio, buscar) {
   } else {
     // Generar VISTA con API en SUPABASE
     let sql = await GeneraVistaGetProductos(categoria, userAnuncio, buscar);
-    await supabase.rpc("exec_sql", { query: sql });
+    let error = await supabase.rpc("exec_sql", { query: sql });
     // Ejecutar VISTA
     const { data } = await supabase.from("getproductos").select("*");
     result1 = data;
