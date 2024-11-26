@@ -120,7 +120,7 @@ async function CategoriasInsertUpdate(
     if (isValid(datos)===false || datos.length===0){
       const { error } = await supabase
       .from("tablacategorias")
-      .insert({ desc: desc, link: link, accion: accion, nick: nick, activo: true });
+      .insert({ desc: desc, link: link, accion: accion, nick: nick, activo: true, app: true, anuncio: true });
       if (isValid(error) === false) {
       const { data } = await supabase
         .from("tablacategorias")
