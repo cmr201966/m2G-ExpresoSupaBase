@@ -55,7 +55,7 @@ function GeneraVistagetCategoriasNew(user, tipouser) {
     "CREATE OR REPLACE VIEW getcategoriasnew  AS select DISTINCT tablacatproductos.categorianegocio as idcategoria, " +
     'tablacategorias."desc" as categoria, tablacategorias.link, destodo, tablacategorias.nick, tablacategorias.idsb from tablacategorias, tablacatproductos' + tablas +
     " where (tablacategorias.categorianegocio=tablacatproductos.categorianegocio) and (tablacatproductos.activo=true)" + condicion1 +
-    condicion + " order by destodo"
+    condicion + " and (app=true) order by destodo"
   );
 }
 
@@ -95,6 +95,7 @@ async function getCategoriasNegociosCM(activo) {
       .from("tablacategorias")
       .select("*")
       .eq("activo", activo)
+      .eq("app", true)
       .order("nick", { ascending: true });
     datos = data;
   }
@@ -341,7 +342,8 @@ async function getAplicacionesCM() {
     const { data} = await supabase
       .from("tablaanuncios")
       .select("*")
-      .eq("activo", true);
+      .eq("activo", true)
+      .eq("anuncio", true);
     result = data;
   }
   return result;
@@ -794,6 +796,7 @@ async function getcategoriasnegociosappCM(activo) {
       .from("tablacategorias")
       .select("*")
       .eq('activo', activo)
+      .eq("app", true)
       .order("nick", { ascending: true });
     resulttnegocios = data;
   }
