@@ -1,6 +1,7 @@
 {
   "hosting": {
-    "source": ".",
+    "public": "dist",
+    "site": "m2g-software-stgo",
     "ignore": [
       "firebase.json",
       "**/.*",
@@ -8,6 +9,12 @@
     ],
     "frameworksBackend": {
       "region": "us-central1"
-    }
+    },
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
   }
 }
