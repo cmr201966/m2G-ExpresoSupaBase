@@ -22,7 +22,7 @@ async function creaFileInFolder(
       contenidofoto,
       "galerias",
       folderSUPABASE + "/" + file,
-      false
+      false, tabla, campo, valor
     );
     await supabase
     .from(tabla)

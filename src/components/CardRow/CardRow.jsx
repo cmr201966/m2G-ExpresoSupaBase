@@ -59,7 +59,7 @@ const CardRow = (props) => {
     >
       <img src={contenidofoto} alt="Imagen" />
       {noproducto === false ? (
-        <Tippy content={`Libre/Ocupado`}>
+        <Tippy content={`${item.estado}`}>
           <button
             className={`card-image-button ${ocupado === 0 ? "off" : "on"}`}
             disabled={tipouser === null || tipouser === 0 ? true : false}
