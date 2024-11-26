@@ -1,16 +1,13 @@
 {
   "hosting": {
-    "public": "dist",
-    "site": "destodo",
-    "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
+    "source": ".",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
     "frameworksBackend": {
       "region": "us-central1"
-    },
-    "rewrites": [
-      {
-        "source": "**",
-        "destination": "/index.html"
-      }
-    ]
+    }
   }
 }
