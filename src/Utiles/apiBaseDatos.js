@@ -343,7 +343,6 @@ async function getAplicacionesCM() {
       .from("tablaanuncios")
       .select("*")
       .eq("activo", true)
-      .eq("anuncio", true);
     result = data;
   }
   return result;
