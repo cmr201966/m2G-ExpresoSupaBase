@@ -88,10 +88,10 @@ const Acercade = () => {
           <p>{sessionStorage.getItem("idapp")} Versión 1.0</p>
           <p>Desarrollado por m2G-Software.</p>
           <div className="acercade-flex">
-            <div className="acercade-row">
+            <a href="tel:+5352675359" className="acercade-row">
               <PhoneAndroid />
               <span> +(53)52675359 </span>
-            </div>
+            </a>
             <a href="tel:+5322657241" className="acercade-row">
               <Phone />
               <span>+(53)22657241</span>
