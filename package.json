@@ -9,8 +9,7 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "deploy": "firebase deploy --only hosting:expreso-stgo",
-    "deploy-destodo": "firebase deploy --only hosting:destodo"
-  },
+    "deploy-software": "firebase deploy --only hosting:m2g-software-stgo"  },
   "dependencies": {
     "@emotion/css": "^11.11.2",
     "@emotion/react": "^11.11.4",
