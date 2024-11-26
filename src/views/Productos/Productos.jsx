@@ -368,6 +368,7 @@ const Productos = () => {
           domicilio: item.domicilio,
           idsb: item.idsb,
           link: item.link,
+          estado: item.estado
         };
         if (result1[0].idnaturaleza === 62) {
           obj.Habilidades = item.adicional;
