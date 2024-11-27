@@ -443,7 +443,6 @@ async function getInfoProductoCM(producto) {
       .from("getinfoproducto")
       .select("*")
       .eq("idproducto", producto);
-      console.log(error);
     result = data;
   }
   return result;
