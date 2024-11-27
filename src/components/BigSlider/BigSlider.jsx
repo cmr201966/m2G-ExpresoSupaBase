@@ -116,7 +116,11 @@ const BigSlider = (props) => {
                   <div key={i} className="big-slider-item">
                        <img className="img-slider" src={imagenes[i]} alt={nombres[i]} />
                   </div>
-                </a>:""
+                </a>:
+                  <div key={i} className="big-slider-item">
+                      <img className="img-slider" src={imagenes[i]} alt={nombres[i]} />
+                  </div>
+
             ))}
           {imgsFileName?.length && (
             links[0]?.indexOf("https:") === -1 && links[0]?.length!==0 ?
@@ -139,7 +143,10 @@ const BigSlider = (props) => {
             <div key={0} className="big-slider-item">
                      <img className="img-slider" src={imagenes[0]} alt={nombres[0]} />
                 </div>
-              </a>:""
+              </a>:
+                  <div key={0} className="big-slider-item">
+                     <img className="img-slider" src={imagenes[0]} alt={nombres[0]} />
+                  </div>
 
           )}
         </div>
