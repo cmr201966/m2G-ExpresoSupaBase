@@ -216,8 +216,6 @@ const Aplicaciones = () => {
   };
 
   async function confirmar() {
-    console.log(arrayCategorias);
-    console.log(categoria);
     setLoading(true);
     let result = await setAplicacionesCM(
       arrayAplicaciones[aplicacion].id,

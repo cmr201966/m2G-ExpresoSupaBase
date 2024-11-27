@@ -21,8 +21,8 @@ const BigSlider = (props) => {
     categorias = [],
     users = [],
     nombres = [],
+    links = [],
   } = props;
-
   const [currentIndex, setCurrentIndex] = useState(0);
   const [transition, setTransition] = useState(true);
   const [inicia, setInicia] = useState(true);
@@ -77,7 +77,7 @@ const BigSlider = (props) => {
   useEffect(() => {
     setTimeout(() => {
       toLeft();
-    }, 3000);
+    }, 6000);
   }, [currentIndex, toLeft]);
 
   return (
@@ -96,18 +96,30 @@ const BigSlider = (props) => {
           })}`}
         >
           {imgsFileName?.map((item, i) => (
+            links[i]?.indexOf("https:") === -1 && links[i]?.length!==0 ?
             <Link
               key={i}
               to={`/productos?categoria=${
                 categorias[i]
               }&user=${sessionStorage.getItem("user")}&nombre=${nombres[i]}`}
             >
-              <div key={i} className="big-slider-item">
-                <img className="img-slider" src={imagenes[i]} alt="Foto" />
+            <div key={i} className="big-slider-item">
+                <img className="img-slider" src={imagenes[i]} alt={nombres[i]} />
               </div>
-            </Link>
-          ))}
+            </Link>:
+            links[i]?.indexOf("https:") !== -1 ?
+                <a key={i}
+                  href={links[i]}
+                  target="_blank"
+                  rel="noopener noreferrer"
+                >
+                  <div key={i} className="big-slider-item">
+                       <img className="img-slider" src={imagenes[i]} alt={nombres[i]} />
+                  </div>
+                </a>:""
+            ))}
           {imgsFileName?.length && (
+            links[0]?.indexOf("https:") === -1 && links[0]?.length!==0 ?
             <Link
               key={0}
               to={`/productos?categoria=${
@@ -115,9 +127,20 @@ const BigSlider = (props) => {
               }&user=${sessionStorage.getItem("user")}&nombre=${nombres[0]}`}
             >
               <div className="big-slider-item">
-                <img className="img-slider" src={imagenes[0]} alt="Foto" />
+                <img className="img-slider" src={imagenes[0]} alt={nombres[0]} />
               </div>
-            </Link>
+            </Link>:
+            links[0]?.indexOf("https:") !== -1 ?
+            <a key={0}
+                href={links[0]}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+            <div key={0} className="big-slider-item">
+                     <img className="img-slider" src={imagenes[0]} alt={nombres[0]} />
+                </div>
+              </a>:""
+
           )}
         </div>
       ) : (
