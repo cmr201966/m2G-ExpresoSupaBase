@@ -136,10 +136,13 @@ const BigSlider = (props) => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-            <div key={0} className="big-slider-item">
+                <div key={0} className="big-slider-item">
                      <img className="img-slider" src={imagenes[0]} alt={nombres[0]} />
                 </div>
-              </a>:""
+              </a>:
+                <div key={0} className="big-slider-item">
+                   <img className="img-slider" src={imagenes[0]} alt={nombres[0]} />
+                </div>
 
           )}
         </div>
