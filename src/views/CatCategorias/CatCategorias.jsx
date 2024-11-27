@@ -195,7 +195,8 @@ if (isValid(resultcategorias)===false ||
         setMessage("La categoria se agrego correctamente.");
         setOpen(true);
     }
-    tcancelar();
+    init();
+    //tcancelar();
   }
 
   async function handleInput(e) {
