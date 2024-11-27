@@ -54,6 +54,7 @@ const Home = () => {
   const [categorys, setCategorys] = useState([]);
   const [users, setUsers] = useState([]);
   const [nombres, setNombres] = useState([]);
+  const [links, setLinks] = useState([]);
 
   async function init() {
     setInicia(true);
@@ -76,6 +77,7 @@ const Home = () => {
       let category1 = [];
       let users1 = [];
       let nombres1 = [];
+      let links1 = [];
       let ruta =
         sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL"
           ? "./galerias/app_images/aplicaciones"
@@ -87,6 +89,7 @@ const Home = () => {
         category1.push(item.idcategoria);
         users1.push(item.iduser);
         nombres1.push(item.desc);
+        links1.push(item.link);
       });
       setImgsFileName(imgsFileName1);
       setImgsFolder(imgsFolder1);
@@ -94,6 +97,7 @@ const Home = () => {
       setCategorys(category1);
       setUsers(users1);
       setNombres(nombres1);
+      setLinks(links1);
       let result = await getcategoriasnewCM(true);
 //      let result = await apiBaseDatos("getcategoriasnew");
       let longitug = isValid(result) === true ? result.length : 0;
@@ -235,6 +239,7 @@ const Home = () => {
               categorias={categorys}
               users={users}
               nombres={nombres}
+              links={links}
             />
             <div className="main-grid negative-margin">
               <div className="grid-letf"></div>
