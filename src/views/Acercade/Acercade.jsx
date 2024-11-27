@@ -43,11 +43,7 @@ const Acercade = () => {
     let resultado = await getJpgFileSB(
       "logo.jpg",
       "./galerias/app_images/destodo/",
-      "destodo/",
-      false,
-      "",
-      "",
-      ""
+      "destodo/",Date.now()
     );
     if (isValid(resultado) === true) {
       setContenidofoto(resultado);
