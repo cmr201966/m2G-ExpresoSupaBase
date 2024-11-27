@@ -19,6 +19,8 @@ import {
   PhoneAndroid,
   Phone,
 } from "@mui/icons-material";
+//import {  CreaTablaBaseDatos} from "../../Utiles/apiBaseDatos";
+
 // @mui/material
 import { IconButton } from "@mui/material";
 
@@ -36,6 +38,8 @@ const Acercade = () => {
   const url = `https://wa.me/52675359?text=`;
 
   async function init() {
+    //let db = await CreaTablaBaseDatos();
+    //console.log(db)
     let resultado = await getJpgFileSB(
       "logo.jpg",
       "./galerias/app_images/destodo/",
