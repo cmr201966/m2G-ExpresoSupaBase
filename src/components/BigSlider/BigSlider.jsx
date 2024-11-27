@@ -77,7 +77,7 @@ const BigSlider = (props) => {
   useEffect(() => {
     setTimeout(() => {
       toLeft();
-    }, 3000);
+    }, 6000);
   }, [currentIndex, toLeft]);
 
   return (
