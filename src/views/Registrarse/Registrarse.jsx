@@ -46,6 +46,7 @@ import "./styles.css";
 const Registrarse = () => {
   const location = useLocation();
   const parsedParams = {};
+  const [loading, setLoading] = useState(false);
   const [showGalerias, setShowGalerias] = useState(false);
   const [loading, setLoading] = useState(false);
   const { setOpen, setMessage } = useNotification();
@@ -829,7 +830,7 @@ const Registrarse = () => {
                           className="producto-button primary "
                           onClick={confirmar}
                         >
-                      {loading ? (
+                          {loading ? (
                             <CircularProgress color="inherit" size={16} />
                           ) : (
                             <Check />
