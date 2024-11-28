@@ -168,7 +168,6 @@ const InfoNegocio = () => {
                   </div>
 
                   <div className="sliderVertical">
-                    {console.log(arrayFotos)}
                     {arrayFotos.map((item, i) => (
                       <div key={i} className="producto-fotos">
                         <img
