@@ -55,6 +55,7 @@ const Home = () => {
   const [users, setUsers] = useState([]);
   const [nombres, setNombres] = useState([]);
   const [links, setLinks] = useState([]);
+  const screenWidth = window.innerWidth;
 
   async function init() {
     setInicia(true);
@@ -83,7 +84,8 @@ const Home = () => {
           ? "./galerias/app_images/aplicaciones"
           : "aplicaciones";
       resultApp.forEach((item) => {
-        imgsFileName1.push(item.id + ".jpg");
+        let pcMovil=screenWidth<=400?"-movil":"";
+        imgsFileName1.push(item.id + pcMovil + ".jpg");
         imgsFolder1.push(ruta + "/" + item.id);
         imgsId1.push(item.idsb);
         category1.push(item.idcategoria);
