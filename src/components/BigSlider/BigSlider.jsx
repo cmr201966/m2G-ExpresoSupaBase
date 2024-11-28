@@ -23,6 +23,7 @@ const BigSlider = (props) => {
     nombres = [],
     links = [],
   } = props;
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [transition, setTransition] = useState(true);
   const [inicia, setInicia] = useState(true);
@@ -43,10 +44,10 @@ const BigSlider = (props) => {
     setInicia(true);
     for (let i = 0; i < imgsFileName.length; i += 1) {
       let resultado = await getJpgFileSB(
-      imgsFileName[i],
-      imgsFolder[i],
-      imgsFolder[i],
-      imgsId[i],
+        imgsFileName[i],
+        imgsFolder[i],
+        imgsFolder[i],
+        imgsId[i],
       );
       if (isValid(resultado) === true) {
         imagenes.push(resultado);
