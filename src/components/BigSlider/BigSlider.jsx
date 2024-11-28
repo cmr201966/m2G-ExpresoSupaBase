@@ -23,7 +23,6 @@ const BigSlider = (props) => {
     nombres = [],
     links = [],
   } = props;
-
   const [currentIndex, setCurrentIndex] = useState(0);
   const [transition, setTransition] = useState(true);
   const [inicia, setInicia] = useState(true);
