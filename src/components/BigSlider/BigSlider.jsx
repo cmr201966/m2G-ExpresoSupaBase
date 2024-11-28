@@ -47,7 +47,8 @@ const BigSlider = (props) => {
         imgsFileName[i],
         imgsFolder[i],
         imgsFolder[i],
-        imgsId[i],
+        Date.now(),
+//        imgsId[i],
       );
       if (isValid(resultado) === true) {
         imagenes.push(resultado);
