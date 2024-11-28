@@ -39,7 +39,6 @@ const Acercade = () => {
 
   async function init() {
     //let db = await CreaTablaBaseDatos();
-    //console.log(db)
     let resultado = await getJpgFileSB(
       "logo.jpg",
       "./galerias/app_images/destodo/",
