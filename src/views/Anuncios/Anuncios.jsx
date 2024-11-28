@@ -63,6 +63,7 @@ const Aplicaciones = () => {
   const [arrayAplicaciones, setArrayAplicaciones] = useState([]);
   const arraynoaplicaciones = [{ id: 0, idapp: "Desconocida", desc: "Desconocida" }];
   const [isBase64ToBlob, setIsBase64ToBlob] = useState(true);
+  const [isBase64ToBlobMovil, setIsBase64ToBlobMovil] = useState(true);
   // Estados para almacenar los datos del negocio activo
   const [nickt, setNickt] = useState("");
   const [desct, setDesct] = useState("");
@@ -70,8 +71,10 @@ const Aplicaciones = () => {
   const [contenido, setContenido] = useState("");
   const [nombrefoto, setNombrefoto] = useState("");
   const [contenidofoto, setContenidofoto] = useState("");
+  const [contenidofotomovil, setContenidofotomovil] = useState("");
   const [cbvista, setCbvista] = useState(false);
   const [foto] = useState();
+  const [fotomovil] = useState();
 
   async function init() {
     for (let prop in parsedParams) {
@@ -119,6 +122,7 @@ const Aplicaciones = () => {
     } else {
       setArrayCategorias(resultcategorias);
       setIsBase64ToBlob(false);
+      setIsBase64ToBlobMovil(false);
       setNombrefoto("");
       if (result.length > 0) {
         setCategoria(buscarEnArreglo(resultcategorias, result[buscarEnArreglo(result, result[0].id, "id")].idcategoria, "categorianegocio"));
@@ -184,12 +188,16 @@ const Aplicaciones = () => {
     setEditarsn(false);
     setEliminarsn(false);
     setDesc("");
+    setContenidofoto("");
+    setContenidofotomovil("");
   }
 
   function limpiardatosaplicacion() {
     setNick("");
     setDesc("");
     setTtip("");
+    setContenidofoto("");
+    setContenidofotomovil("");
   }
   const onModalClose = () => {
     setShow(false);
@@ -227,6 +235,9 @@ const Aplicaciones = () => {
       agregarsn,
       contenidofoto,
       isBase64ToBlob,
+      contenidofotomovil,
+      isBase64ToBlobMovil,
+
     );
     //    let result= await apiBaseDatos("setAplicaciones", arrayAplicaciones[aplicacion].id, sessionStorage.getItem("user"), nick, desc,
     //                                    ttip, arrayCategorias[categoria].categorianegocio, agregarsn, contenidofoto, isBase64ToBlob);
@@ -298,15 +309,23 @@ const Aplicaciones = () => {
   }
 
   const onPhotoChange = (e) => {
+    const id=e.target.id;
     setImagen(true);
     const file = e.target.files[0];
     setNombrefoto(e.target.value);
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (e) => {
-      const content = e.target.result;
-      setContenidofoto(content);
-      setIsBase64ToBlob(false);
+    const content = e.target.result;
+    if (id==="foto") {
+        setContenidofoto(content)
+        setIsBase64ToBlob(false);
+      }
+    else
+    {
+       setContenidofotomovil(content);
+       setIsBase64ToBlobMovil(false);
+      }
     };
     reader.readAsDataURL(file);
     setCbvista(true);
@@ -491,13 +510,35 @@ const Aplicaciones = () => {
                           required
                           multiple
                         />
-                        <Tippy content="Añadir foto">
+                        <Tippy content="Añadir foto PC">
                           <AddPhotoAlternate />
                         </Tippy>
                       </label>
                     ) : (
                       ""
                     )}
+
+                    {(agregarsn === true || editarsn === true) &&
+                    nick !== "" &&
+                    desc !== "" ? (
+                      <label className="producto-button primary label-photo">
+                        <input
+                          id="fotomovil"
+                          value={fotomovil}
+                          onChange={onPhotoChange}
+                          type="file"
+                          required
+                          multiple
+                        />
+                        <Tippy content="Añadir foto movil">
+                          <AddPhotoAlternate />
+                        </Tippy>
+                      </label>
+                    ) : (
+                      ""
+                    )}
+
+
                     {agregarsn === false && editarsn === false ? (
                       <Tippy content="Añadir Anuncio">
                         <button
