@@ -145,15 +145,9 @@ const BigSlider = (props) => {
                      <img className="img-slider" src={imagenes[0]} alt={nombres[0]} />
                 </div>
               </a>:
-<<<<<<< HEAD
-                  <div key={0} className="big-slider-item">
-                     <img className="img-slider" src={imagenes[0]} alt={nombres[0]} />
-                  </div>
-=======
                 <div key={0} className="big-slider-item">
                    <img className="img-slider" src={imagenes[0]} alt={nombres[0]} />
                 </div>
->>>>>>> maindestodo
 
           )}
         </div>
