@@ -99,6 +99,7 @@ const Home = () => {
       setNombres(nombres1);
       setLinks(links1);
       let result = await getcategoriasnewCM(true);
+      console.log(result)
 //      let result = await apiBaseDatos("getcategoriasnew");
       let longitug = isValid(result) === true ? result.length : 0;
       let arrayContenidoFoto = [];

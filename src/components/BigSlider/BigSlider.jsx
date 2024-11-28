@@ -94,7 +94,7 @@ const BigSlider = (props) => {
           } ${css({
             transform: `translateX(${currentIndex * -1 * 100}vw)`,
           })}`}
-        >
+         >
           {imgsFileName?.map((item, i) => (
             links[i]?.indexOf("https:") === -1 && links[i]?.length!==0 ?
             <Link
@@ -103,7 +103,7 @@ const BigSlider = (props) => {
                 categorias[i]
               }&user=${sessionStorage.getItem("user")}&nombre=${nombres[i]}`}
             >
-            <div key={i} className="big-slider-item">
+              <div key={i} className="big-slider-item">
                 <img className="img-slider" src={imagenes[i]} alt={nombres[i]} />
               </div>
             </Link>:
