@@ -166,7 +166,7 @@ const Navbar = (props) => {
     let resultado = await getJpgFileSB(
       "logo.jpg",
       "./galerias/app_images/destodo",
-      "destodo", ""
+      "destodo", Date.now()
     );
     if (isValid(resultado) === true) {
       setContenidofoto(resultado);

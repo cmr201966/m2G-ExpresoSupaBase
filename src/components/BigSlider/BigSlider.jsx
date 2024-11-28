@@ -23,6 +23,7 @@ const BigSlider = (props) => {
     nombres = [],
     links = [],
   } = props;
+
   const [currentIndex, setCurrentIndex] = useState(0);
   const [transition, setTransition] = useState(true);
   const [inicia, setInicia] = useState(true);
@@ -43,10 +44,10 @@ const BigSlider = (props) => {
     setInicia(true);
     for (let i = 0; i < imgsFileName.length; i += 1) {
       let resultado = await getJpgFileSB(
-      imgsFileName[i],
-      imgsFolder[i],
-      imgsFolder[i],
-      imgsId[i],
+        imgsFileName[i],
+        imgsFolder[i],
+        imgsFolder[i],
+        imgsId[i],
       );
       if (isValid(resultado) === true) {
         imagenes.push(resultado);
@@ -94,7 +95,7 @@ const BigSlider = (props) => {
           } ${css({
             transform: `translateX(${currentIndex * -1 * 100}vw)`,
           })}`}
-        >
+         >
           {imgsFileName?.map((item, i) => (
             links[i]?.indexOf("https:") === -1 && links[i]?.length!==0 ?
             <Link
@@ -103,7 +104,7 @@ const BigSlider = (props) => {
                 categorias[i]
               }&user=${sessionStorage.getItem("user")}&nombre=${nombres[i]}`}
             >
-            <div key={i} className="big-slider-item">
+              <div key={i} className="big-slider-item">
                 <img className="img-slider" src={imagenes[i]} alt={nombres[i]} />
               </div>
             </Link>:
@@ -118,7 +119,7 @@ const BigSlider = (props) => {
                   </div>
                 </a>:
                   <div key={i} className="big-slider-item">
-                      <img className="img-slider" src={imagenes[i]} alt={nombres[i]} />
+                     <img className="img-slider" src={imagenes[i]} alt={nombres[i]} />
                   </div>
 
             ))}
@@ -140,13 +141,19 @@ const BigSlider = (props) => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-            <div key={0} className="big-slider-item">
+                <div key={0} className="big-slider-item">
                      <img className="img-slider" src={imagenes[0]} alt={nombres[0]} />
                 </div>
               </a>:
+<<<<<<< HEAD
                   <div key={0} className="big-slider-item">
                      <img className="img-slider" src={imagenes[0]} alt={nombres[0]} />
                   </div>
+=======
+                <div key={0} className="big-slider-item">
+                   <img className="img-slider" src={imagenes[0]} alt={nombres[0]} />
+                </div>
+>>>>>>> maindestodo
 
           )}
         </div>
