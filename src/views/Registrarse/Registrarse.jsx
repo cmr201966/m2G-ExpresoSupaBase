@@ -46,6 +46,7 @@ import "./styles.css";
 const Registrarse = () => {
   const location = useLocation();
   const parsedParams = {};
+  const [loading, setLoading] = useState(false);
   const [showGalerias, setShowGalerias] = useState(false);
   const { setOpen, setMessage } = useNotification();
   const [user, setUser] = useState("");
@@ -465,6 +466,7 @@ const Registrarse = () => {
   }
 
   async function confirmar() {
+    setLoading(true);
     if (password !== rpassword) {
       setMessage("Contraseña incorrecta");
       setOpen(true);
@@ -825,7 +827,11 @@ const Registrarse = () => {
                           className="producto-button primary "
                           onClick={confirmar}
                         >
-                          <Check />
+                          {loading ? (
+                            <CircularProgress color="inherit" size={16} />
+                          ) : (
+                            <Check />
+                          )}
                         </button>
                       ) : (
                         ""
