@@ -61,7 +61,7 @@ const CardRow = (props) => {
       {noproducto === false ? (
         <Tippy content={`${item.estado}`}>
           <button
-            className={`card-image-button ${ocupado === 0 ? "off" : "on"}`}
+            className={`card-image-button ${ocupado === 1 ? "off" : "on"}`}
             disabled={tipouser === null || tipouser === 0 ? true : false}
             onClick={powerSettings}
           >
