@@ -25,6 +25,7 @@ import Categorias from "./views/Categorias/Categorias";
 import CatCategorias from "./views/CatCategorias/CatCategorias.jsx";
 import ActivarUsuarios from "./views/ActivarUsuarios/ActivarUsuarios.jsx";
 import ActivarProductos from "./views/ActivarProductos/ActivarProductos.jsx";
+import Vista404 from "./views/Vista404/Vista404.jsx";
 
 import "tippy.js/dist/tippy.css";
 import "./index.css";
@@ -60,6 +61,7 @@ ReactDOM.createRoot(document.getElementById("root")).render(
               <Route exact path="/catcategorias" element={<CatCategorias />} />
               <Route exact path="/activarusuarios" element={<ActivarUsuarios />} />
               <Route exact path="/activarproductos" element={<ActivarProductos />} />
+              <Route exact path="/*" element={<Vista404 />} />
             </Routes>
           </BrowserRouter>
         </NotificationProvider>
