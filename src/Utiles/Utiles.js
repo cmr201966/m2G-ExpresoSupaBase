@@ -116,6 +116,7 @@ async function filesList(bucketName, directory){
 }  
 
 async function getUrlPublic(bucketName, directory, fileName){
+/*
   let fe=true;
   if (fileName.indexOf("-movil")!==-1){
      const { data, error } = await supabase
@@ -128,10 +129,12 @@ async function getUrlPublic(bucketName, directory, fileName){
         fe=fileExists;
       }
   }
+
   let fileName1 = fe===false?fileName.replace("-movil",""):fileName;
+*/
   const {data} = supabase.storage
   .from(bucketName)
-  .getPublicUrl(directory + "/" + fileName1);
+  .getPublicUrl(directory + "/" + fileName);
   return data;  
 }
 
