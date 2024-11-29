@@ -132,9 +132,10 @@ async function getUrlPublic(bucketName, directory, fileName){
 
   let fileName1 = fe===false?fileName.replace("-movil",""):fileName;
 */
+
   const {data} = supabase.storage
   .from(bucketName)
-  .getPublicUrl(directory + "/" + fileName);
+  .getPublicUrl(directory + "/" + fileName); 
   return data;  
 }
 

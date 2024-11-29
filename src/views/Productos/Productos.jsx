@@ -397,6 +397,7 @@ const Productos = () => {
     let resultgps = await getparesgpscategoriaCM(
       sessionStorage.getItem("categoria")
     );
+    console.log(resultgps)
     //    let resultgps = await apiBaseDatos("getparesgpscategoria", sessionStorage.getItem("categoria"));
     let paresgps = [];
     let itemst = [];

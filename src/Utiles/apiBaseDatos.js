@@ -612,7 +612,7 @@ async function getparesgpscategoriaCM(categoria, user, anuncio) {
     resultgps = await resultgps.json();
   } else {
     let sql = getParesGpsCategoria(categoria, user, anuncio);
-    await supabase.rpc("exec_sql", { query: sql });
+    let err=await supabase.rpc("exec_sql", { query: sql });
     const { data } = await supabase.from("getparesgpscategoria").select("*");
     resultgps = data;
   }
