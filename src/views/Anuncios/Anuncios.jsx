@@ -63,15 +63,21 @@ const Aplicaciones = () => {
   const [arrayAplicaciones, setArrayAplicaciones] = useState([]);
   const arraynoaplicaciones = [{ id: 0, idapp: "Desconocida", desc: "Desconocida" }];
   const [isBase64ToBlob, setIsBase64ToBlob] = useState(true);
+  const [isBase64ToBlobMovil, setIsBase64ToBlobMovil] = useState(true);
   // Estados para almacenar los datos del negocio activo
   const [nickt, setNickt] = useState("");
   const [desct, setDesct] = useState("");
   const [ttipt, setTtipt] = useState("");
   const [contenido, setContenido] = useState("");
   const [nombrefoto, setNombrefoto] = useState("");
+  const [nombrefotomovil, setNombrefotomovil] = useState("");
   const [contenidofoto, setContenidofoto] = useState("");
+  const [contenidofotomovil, setContenidofotomovil] = useState("");
+  const [contenidofotoView, setContenidofotoView] = useState("");
   const [cbvista, setCbvista] = useState(false);
   const [foto] = useState();
+  const [fotomovil] = useState();
+  const [buttonPc, setButtonPc] = useState(true);
 
   async function init() {
     for (let prop in parsedParams) {
@@ -94,6 +100,8 @@ const Aplicaciones = () => {
       navigate(`/`);
       return;
     }
+
+    // Leer los anuncios
     let result = await getAplicacionesCM(true);
     //      let result = await apiBaseDatos("getAplicaciones");
     if ((isValid(result) === true && result.err) || isValid(result) === false || result.length===0) {
@@ -105,6 +113,8 @@ const Aplicaciones = () => {
       guardaDatosAplicacion(result, 0);
       setAplicacion(buscarEnArreglo(result, result[0].id, "id"));
     }
+
+    // Leer las categorias
     let resultcategorias = await getCategoriasNegociosCM(true);
     //      let resultcategorias= await apiBaseDatos("getCategoriasNegocios");
     if (resultcategorias.length === 0) {
@@ -117,35 +127,59 @@ const Aplicaciones = () => {
         )
       );
     } else {
-      setArrayCategorias(resultcategorias);
       setIsBase64ToBlob(false);
+      setIsBase64ToBlobMovil(false);
       setNombrefoto("");
-      if (result.length > 0) {
-        setCategoria(buscarEnArreglo(resultcategorias, result[buscarEnArreglo(result, result[0].id, "id")].idcategoria, "categorianegocio"));
-        setIsBase64ToBlob(true);
-        let resultado = await getJpgFileSB(
-          result[0].id + ".jpg",
-          "./galerias/app_images/aplicaciones/" + result[0].id,
-          "aplicaciones/" + result[0].id, imagen, "tablaanuncios", "id", result[0].id
-        );
-        //           let resultado = await getJpgFileSB(result[0].id + ".jpg", "./galerias/app_images/aplicaciones/" + result[0].id, "aplicaciones/" + result[0].id);
-        if (isValid(resultado) === true) {
-          setIsBase64ToBlob(true);
-          setContenidofoto(resultado);
-          setNombrefoto(result[0].id);
-        } else {
-          setMessage("Error al recuperar la imagen del usuario");
-          setOpen(true);
-        }
-      }
-      else{
-        setCategoria(0);
-      }
+      setNombrefotomovil(""); 
+      setNombrefoto(await leerFotoAnuncio(resultcategorias, result, 0, "PC"));
+      setNombrefotomovil(await leerFotoAnuncio(resultcategorias, result, 0, "MOVIL"));
     }
 
     setShow(false);
     setInicia(false);
   } // init
+
+
+  async function leerFotoAnuncio(resultcategorias, result, index, cual){
+    setArrayCategorias(resultcategorias);
+    let nombre="";
+    if (result.length > 0) {
+      setCategoria(buscarEnArreglo(resultcategorias, result[buscarEnArreglo(result, result[index].id, "id")].idcategoria, "categorianegocio"));
+      setIsBase64ToBlob(true);
+      let este=cual==="PC"?"":"-movil";
+      let resultado = await getJpgFileSB(result[index].id + este +  ".jpg", 
+                                         "./galerias/app_images/aplicaciones/" + result[index].id, 
+                                         "aplicaciones/" + result[index].id, 
+                                         result[index].idsb);
+      // let resultado = await getJpgFileSB(result[index].id + ".jpg", "./galerias/app_images/aplicaciones/" + result[index].id, "aplicaciones/" + result[index].id);
+      console.log(resultado);
+      if (isValid(resultado) === true) {
+        if (cual==="PC"){
+          setIsBase64ToBlob(true);
+          setContenidofoto(resultado);
+          setNombrefoto(result[index].id);
+          setButtonPc(true);
+        }
+        else{
+          setIsBase64ToBlobMovil(true);
+          setContenidofotomovil(resultado);
+          setNombrefotomovil(result[index].id);
+          setButtonPc(false);
+        }
+        nombre=result[index].id;
+        setContenidofotoView(resultado);
+      } else {
+        nombre="";
+        setMessage("Error al recuperar la imagen del anuncio " + result[index].id + este + ".jpg" );
+        setOpen(true);
+      }
+    }
+    else{
+      setCategoria(0);
+    }
+    return nombre;
+  }
+
 
   function guardaDatosAplicacion(data, i) {
     setArrayAplicaciones(data);
@@ -184,12 +218,22 @@ const Aplicaciones = () => {
     setEditarsn(false);
     setEliminarsn(false);
     setDesc("");
+    setContenidofoto("");
+    setContenidofotomovil("");
+    setContenidofotoView("");
+    setNombrefoto("")
+    setNombrefotomovil("")
   }
 
   function limpiardatosaplicacion() {
     setNick("");
     setDesc("");
     setTtip("");
+    setContenidofoto("");
+    setContenidofotomovil("");
+    setContenidofotoView("");
+    setNombrefoto("")
+    setNombrefotomovil("")
   }
   const onModalClose = () => {
     setShow(false);
@@ -227,6 +271,9 @@ const Aplicaciones = () => {
       agregarsn,
       contenidofoto,
       isBase64ToBlob,
+      contenidofotomovil,
+      isBase64ToBlobMovil,
+
     );
     //    let result= await apiBaseDatos("setAplicaciones", arrayAplicaciones[aplicacion].id, sessionStorage.getItem("user"), nick, desc,
     //                                    ttip, arrayCategorias[categoria].categorianegocio, agregarsn, contenidofoto, isBase64ToBlob);
@@ -256,29 +303,12 @@ const Aplicaciones = () => {
       case "idapp":
         setAplicacion(e.target.value);
         recuperardatosproducto(arrayAplicaciones, e.target.value);
-        setCategoria(
-          buscarEnArreglo(
-            arrayCategorias,
-            arrayAplicaciones[e.target.value].idcategoria,
-            "categorianegocio"
-          )
-        );
-
-        resultado = await getJpgFileSB(
-          arrayAplicaciones[e.target.value].id + ".jpg",
-          "./galerias/app_images/aplicaciones/" +
-            arrayAplicaciones[e.target.value].id,
-          "aplicaciones/" + arrayAplicaciones[e.target.value].id, arrayAplicaciones[e.target.value].imagen
-        );
-        if (isValid(resultado) === true) {
-          setIsBase64ToBlob(true);
-          setContenidofoto(resultado);
-          setNombrefoto(arrayAplicaciones[e.target.value].id);
-        } else {
-          setNombrefoto("");
-          setMessage("Error al recuperar la imagen del usuario");
-          setOpen(true);
-        }
+        setIsBase64ToBlob(false);
+        setIsBase64ToBlobMovil(false);
+        setNombrefoto("");
+        setNombrefotomovil(""); 
+        setNombrefoto(await leerFotoAnuncio(arrayCategorias, arrayAplicaciones, e.target.value, "PC"));
+        setNombrefotomovil(await leerFotoAnuncio(arrayCategorias, arrayAplicaciones, e.target.value, "MOVIL"));
         break;
       case "desc":
         setDesc(e.target.value);
@@ -298,15 +328,26 @@ const Aplicaciones = () => {
   }
 
   const onPhotoChange = (e) => {
+    const id=e.target.id;
     setImagen(true);
     const file = e.target.files[0];
-    setNombrefoto(e.target.value);
     if (!file) return;
     const reader = new FileReader();
     reader.onload = (e) => {
-      const content = e.target.result;
-      setContenidofoto(content);
-      setIsBase64ToBlob(false);
+    const content = e.target.result;
+    if (id==="foto") {
+        setContenidofoto(content)
+        setContenidofotoView(content)
+        setIsBase64ToBlob(false);
+        setNombrefoto(e.target.value);
+      }
+    else
+    {
+       setContenidofotomovil(content);
+       setIsBase64ToBlobMovil(false);
+       setContenidofotoView(content)
+       setNombrefotomovil(e.target.value);
+      }
     };
     reader.readAsDataURL(file);
     setCbvista(true);
@@ -456,13 +497,45 @@ const Aplicaciones = () => {
                       )}
                     </div>
                     {nombrefoto !== "" && cbvista ? (
-                      <img className="img-producto" src={contenidofoto} />
+                      <img className="img-producto" src={contenidofotoView} />
                     ) : (
                       ""
                     )}
                   </div>
 
                   <div className="grupo-button-app">
+                  {(agregarsn === true || editarsn === true) && nombrefoto !== ""  && cbvista===true ? (
+                      <Tippy content="Vista previa PC">
+                        <button
+                          type="button"
+                          className={`producto-button primary ${buttonPc===true ? 'button-on' : 'button-off'}`}
+                          onClick={() => {
+                            setButtonPc(!buttonPc);
+                            setContenidofotoView(contenidofoto);
+                          }}                          
+                        >
+                          PC
+                        </button>
+                      </Tippy>
+                    ) : (
+                      ""
+                    )}
+                    {(agregarsn === true || editarsn === true) && nombrefotomovil!== "" && cbvista===true ? (
+                      <Tippy content="Vista previa Movil">
+                        <button
+                          type="button"
+                          className={`producto-button primary ${buttonPc===true ? 'button-off' : 'button-on'}`}
+                          onClick={() => {
+                            setButtonPc(!buttonPc);
+                            setContenidofotoView(contenidofotomovil);
+                          }}                          
+                        >
+                          Movil
+                        </button>
+                      </Tippy>
+                    ) : (
+                      ""
+                    )}
                     {(agregarsn === true || editarsn === true) &&
                     nombrefoto !== "" &&
                     nick !== "" &&
@@ -479,6 +552,7 @@ const Aplicaciones = () => {
                     ) : (
                       ""
                     )}
+
                     {(agregarsn === true || editarsn === true) &&
                     nick !== "" &&
                     desc !== "" ? (
@@ -491,13 +565,35 @@ const Aplicaciones = () => {
                           required
                           multiple
                         />
-                        <Tippy content="Añadir foto">
+                        <Tippy content="Añadir foto PC">
                           <AddPhotoAlternate />
                         </Tippy>
                       </label>
                     ) : (
                       ""
                     )}
+
+                    {(agregarsn === true || editarsn === true) &&
+                    nick !== "" &&
+                    desc !== "" ? (
+                      <label className="producto-button primary label-photo">
+                        <input
+                          id="fotomovil"
+                          value={fotomovil}
+                          onChange={onPhotoChange}
+                          type="file"
+                          required
+                          multiple
+                        />
+                        <Tippy content="Añadir foto movil">
+                          <AddPhotoAlternate />
+                        </Tippy>
+                      </label>
+                    ) : (
+                      ""
+                    )}
+
+
                     {agregarsn === false && editarsn === false ? (
                       <Tippy content="Añadir Anuncio">
                         <button
