@@ -355,6 +355,8 @@ async function setAplicacionesCM(
   agregarsn,
   contenidofoto,
   isBase64ToBlob,
+  contenidofotomovil,
+  isBase64ToBlobMovil,
 ) {
   let err = "";
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
@@ -388,16 +390,25 @@ async function setAplicacionesCM(
           .select("*")
           .order("id", { ascending: false })
           .limit(1);
-        if (isValid(error) === false) {
-          await uploadBase64Image(
+        if (isValid(error) === false && contenidofoto!=="") {          
+            await uploadBase64Image(
             contenidofoto,
             "galerias",
             "aplicaciones/" + data[0].id + "/" + data[0].id + ".jpg",
             isBase64ToBlob, "tablaanuncios","id",data[0].id
+            );
+            err = error;
+        }
+        if (isValid(error) === false && contenidofotomovil!=="") {          
+          await uploadBase64Image(
+          contenidofotomovil,
+          "galerias",
+          "aplicaciones/" + data[0].id + "/" + data[0].id + "-movil.jpg",
+          isBase64ToBlobMovil, "tablaanuncios","id",data[0].id
           );
           err = error;
-        }
       }
+    }
     } else {
       const { data, error } = await supabase
         .from("tablaanuncios")
@@ -409,14 +420,23 @@ async function setAplicacionesCM(
           tooltip,
         })
         .eq("id", id);
-      if (isValid(error) === false) {
-        uploadBase64Image(
+        if (isValid(error) === false && contenidofoto!=="") { 
+          uploadBase64Image(
           contenidofoto,
           "galerias",
           "aplicaciones/" + id + "/" + id + ".jpg", 
           isBase64ToBlob, "tablaanuncios","id", id
         );
       }
+      if (isValid(error) === false && contenidofotomovil!=="") {          
+        await uploadBase64Image(
+        contenidofotomovil,
+        "galerias",
+        "aplicaciones/" + id + "/" + id + "-movil.jpg",
+        isBase64ToBlobMovil, "tablaanuncios","id", id
+        );
+        err = error;
+    }
       err = error;
     }
   }

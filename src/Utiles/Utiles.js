@@ -116,19 +116,22 @@ async function filesList(bucketName, directory){
 }  
 
 async function getUrlPublic(bucketName, directory, fileName){
+/*
   let fe=true;
   if (fileName.indexOf("-movil")!==-1){
      const { data, error } = await supabase
        .storage
        .from(bucketName)
-       .list(directory, { limit: 100, offset: 0 }); // Puedes ajustar el limit si es necesario
+       .list(directory, { limit: 100, offset: 0 });
 
       if (isValid(error)===false) {
         const fileExists = data.some(file => file.name === fileName);
         fe=fileExists;
       }
   }
+
   let fileName1 = fe===false?fileName.replace("-movil",""):fileName;
+*/
   const {data} = supabase.storage
   .from(bucketName)
   .getPublicUrl(directory + "/" + fileName1);
