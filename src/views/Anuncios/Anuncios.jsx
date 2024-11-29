@@ -149,10 +149,10 @@ const Aplicaciones = () => {
       let este=cual==="PC"?"":"-movil";
       let resultado = await getJpgFileSB(result[index].id + este +  ".jpg", 
                                          "./galerias/app_images/aplicaciones/" + result[index].id, 
-                                         "aplicaciones/" + result[index].id, imagen, 
-                                         "tablaanuncios", "id", 
-                                         result[index].id);
+                                         "aplicaciones/" + result[index].id, 
+                                         result[index].idsb);
       // let resultado = await getJpgFileSB(result[index].id + ".jpg", "./galerias/app_images/aplicaciones/" + result[index].id, "aplicaciones/" + result[index].id);
+      console.log(resultado);
       if (isValid(resultado) === true) {
         if (cual==="PC"){
           setIsBase64ToBlob(true);
