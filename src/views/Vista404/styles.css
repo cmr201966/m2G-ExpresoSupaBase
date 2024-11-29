@@ -1,0 +1,15 @@
+
+.vista404{
+    display: flex;
+    justify-content: center;
+    font-size: 14px !important;
+}
+.rojo{
+    font-size: 18px;
+    font-weight: bold;
+    color: rgb(235, 10, 10);
+}
+.texto{
+    margin-top: 5px;
+    margin-left: 5px;
+}
