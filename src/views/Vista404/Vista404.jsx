@@ -41,7 +41,8 @@ const Vista404 = () => {
           )}
         </div>
         <div className="vista404">
-            <h3>La página que buscas no existe.</h3>
+            <p className="rojo">404.</p>
+            <p className="texto"> La página que buscas no existe.</p>
         </div>
       </Hero>
     </div>
