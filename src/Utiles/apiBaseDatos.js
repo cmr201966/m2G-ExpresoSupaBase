@@ -894,7 +894,6 @@ async function setProductoCM(
   sciudad,
   distanciamax,
   isBase64ToBlob,
-  imagen
 ) {
   let err = "";
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL")

@@ -60,7 +60,6 @@ const CatProductos = () => {
   const parsedParams = {};
   const { setOpen, setMessage } = useNotification();
   const [loading, setLoading] = useState(false);
-  const [imagen, setImagen] = useState(false);
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
   const [showGalerias, setShowGalerias] = useState(false);
@@ -383,11 +382,11 @@ const CatProductos = () => {
     setProducto({ label: data[i].nick, value: index });
     setNombrecortot(data[i].nick);
     setDescripciont(data[i].desc);
-    setPreciot(data[i].precio);
-    setMarcat(data[i].marca);
-    setModelot(data[i].modelo);
-    setTallat(data[i].talla);
-    setColort(data[i].color);
+    setPreciot(isValid(data[i].precio)===true?data[i].precio:"");
+    setMarcat(isValid(data[i].marca)===true?data[i].marca:"");
+    setModelot(isValid(data[i].modelo)===true?data[i].modelo:"");
+    setTallat(isValid(data[i].talla)===true?data[i].talla:"");
+    setColort(isValid(data[i].color)===true?data[i].color:"");
     setDomiciliot(data[i].domicilio === 0 ? false : true);
     setOcupadot(data[i].ocupado === 0 ? false : true);
     setGpst(data[i].gpssn === 1 ? true : false);
@@ -438,7 +437,6 @@ const CatProductos = () => {
   }
 
   const onPhotoChange = (e) => {
-    setImagen(true);
     const file = e.target.files[0];
     setNombrefoto(e.target.value);
     if (!file) return;
@@ -481,7 +479,6 @@ const CatProductos = () => {
       cbsCiudad === true ? 1 : 0,
       distanciaMax,
       isBase64ToBlob,
-      imagen,
     );
 
     if (isValid(result?.err) === true) {
@@ -749,7 +746,6 @@ const CatProductos = () => {
                         <div className="label-datos-catproducto-1 strong">
                           Datos del nuevo producto{" "}
                         </div>
-
                         <div className="input-area2">
                           <input
                             className="input-cataproducto"
@@ -772,6 +768,7 @@ const CatProductos = () => {
                             required
                           />
                         </div>
+                        {console.log(marca)}
                         <div className="input-area2">
                           <input
                             className="input-cataproducto"
@@ -783,6 +780,7 @@ const CatProductos = () => {
                             required
                           />
                         </div>
+                        {console.log(modelo)}
                         <div className="input-area2">
                           <input
                             className="input-cataproducto"
@@ -794,6 +792,7 @@ const CatProductos = () => {
                             required
                           />
                         </div>
+                        {console.log(precio)}
                         <div className="precio-capacidad-color">
                           <div>
                             <p className="label-datos-catproducto">Precio</p>
@@ -809,6 +808,7 @@ const CatProductos = () => {
                               />
                             </Tippy>
                           </div>
+                          {console.log(talla)}
                           {sessionStorage.getItem("idapp")==="Expreso"?
                           <div>
                             <p className="label-datos-catproducto plazas">
@@ -825,7 +825,8 @@ const CatProductos = () => {
                             />
                           </div>:""
                           }
-                          <div>
+                         {console.log(color)}
+                         <div>
                             <p className="label-datos-catproducto color">
                               Color
                             </p>
