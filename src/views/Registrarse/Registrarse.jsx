@@ -52,8 +52,8 @@ const Registrarse = () => {
   const [user, setUser] = useState("");
   const [idsb, setIdsb] = useState("");
   const [nophoto, setNophoto] = useState("");
-  const [password, setPassword] = useState();
-  const [rpassword, setRpassword] = useState();
+  const [password, setPassword] = useState("");
+  const [rpassword, setRpassword] = useState("");
   const [nombre, setNombre] = useState("");
   const [celular, setCelular] = useState("");
   const [foto] = useState();
