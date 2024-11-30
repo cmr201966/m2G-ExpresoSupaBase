@@ -52,8 +52,8 @@ const Registrarse = () => {
   const [user, setUser] = useState("");
   const [idsb, setIdsb] = useState("");
   const [nophoto, setNophoto] = useState("");
-  const [password, setPassword] = useState();
-  const [rpassword, setRpassword] = useState();
+  const [password, setPassword] = useState("");
+  const [rpassword, setRpassword] = useState("");
   const [nombre, setNombre] = useState("");
   const [celular, setCelular] = useState("");
   const [foto] = useState();
@@ -153,7 +153,8 @@ const Registrarse = () => {
     setEditarUser(false);
     if (
       isValid(sessionStorage.getItem("user")) === true &&
-      parsedParams.where === "false" && parsedParams.inserta==="false"
+      parsedParams.where === "false" &&
+      parsedParams.inserta === "false"
     ) {
       let result = await getdatosuserCM(sessionStorage.getItem("user"));
       //      let result = await apiBaseDatos("getdatosuser", sessionStorage.getItem("user"));
@@ -192,7 +193,7 @@ const Registrarse = () => {
       if (resultado !== undefined && resultado !== null) {
         setContenidofoto(resultado);
         setNombrefoto(result[0].iduser);
-      } else{
+      } else {
         setIsBase64ToBlob(false);
         setNombrefoto("");
         setNombre("");
@@ -201,80 +202,80 @@ const Registrarse = () => {
         setMessage("Error al recuperar la imagen del usuario");
         setOpen(true);
       }
-      }
-     
-      if (parsedParams.inserta === "true" && parsedParams.where === "true") {
-        provinciachange(14, 6, resultprovincia, resultmunicipio);
+    }
+
+    if (parsedParams.inserta === "true" && parsedParams.where === "true") {
+      provinciachange(14, 6, resultprovincia, resultmunicipio);
+      setLat(
+        ttmunicipios[buscarEnArreglo(ttmunicipios, 6, "municipio")].latitud
+      );
+      setLng(
+        ttmunicipios[buscarEnArreglo(ttmunicipios, 6, "municipio")].longitud
+      );
+    }
+    if (parsedParams.inserta === "false" && parsedParams.where === "true") {
+      /* Traer usuarios y poner select con ellos*/
+      /*Poner los datos del primer user y en handleselect poner el que cojan*/
+      setEditarUser(true);
+      let resultusuarios = await getUsuariosCM(true);
+      //    let resultusuarios = await apiBaseDatos("getUsuarios");
+      if (isValid(resultusuarios) === false || resultusuarios.length === 0)
+        setArrayUsuarios(arrayNoUsuarios);
+      else {
+        setArrayUsuarios(resultusuarios);
+        setUser(resultusuarios[0].iduser);
+        setPassword(resultusuarios[0].pw);
+        setNombre(resultusuarios[0].nombre);
+        setPlan(resultusuarios[0].tipouser);
+        setCelular(resultusuarios[0].celular);
+        setNophoto(resultusuarios[0].nophoto);
+        setDatos(resultusuarios[0].datos);
+        setOtrosDatos(resultusuarios[0].otrosdatos);
+        setProvincia(resultusuarios[0].provincia);
+        setMunicipio(resultusuarios[0].municipio);
         setLat(
-          ttmunicipios[buscarEnArreglo(ttmunicipios, 6, "municipio")].latitud
+          isValid(resultusuarios[0].latitud) === true &&
+            resultusuarios[0].latitud !== 0
+            ? resultusuarios[0].latitud
+            : ttmunicipios[
+                buscarEnArreglo(
+                  ttmunicipios,
+                  resultusuarios[0].municipio,
+                  "municipio"
+                )
+              ].latitud
         );
         setLng(
-          ttmunicipios[buscarEnArreglo(ttmunicipios, 6, "municipio")].longitud
+          isValid(resultusuarios[0].longitud) === true &&
+            resultusuarios[0].longitud !== 0
+            ? resultusuarios[0].longitud
+            : ttmunicipios[
+                buscarEnArreglo(
+                  ttmunicipios,
+                  resultusuarios[0].municipio,
+                  "municipio"
+                )
+              ].longitud
         );
-      } 
-      if (parsedParams.inserta === "false" && parsedParams.where === "true"){
-        /* Traer usuarios y poner select con ellos*/
-        /*Poner los datos del primer user y en handleselect poner el que cojan*/
-        setEditarUser(true);
-        let resultusuarios = await getUsuariosCM(true);
-        //    let resultusuarios = await apiBaseDatos("getUsuarios");
-        if (isValid(resultusuarios) === false || resultusuarios.length === 0)
-          setArrayUsuarios(arrayNoUsuarios);
-        else {
-          setArrayUsuarios(resultusuarios);
-          setUser(resultusuarios[0].iduser);
-          setPassword(resultusuarios[0].pw);
-          setNombre(resultusuarios[0].nombre);
-          setPlan(resultusuarios[0].tipouser);
-          setCelular(resultusuarios[0].celular);
-          setNophoto(resultusuarios[0].nophoto);
-          setDatos(resultusuarios[0].datos);
-          setOtrosDatos(resultusuarios[0].otrosdatos);
-          setProvincia(resultusuarios[0].provincia);
-          setMunicipio(resultusuarios[0].municipio);
-          setLat(
-            isValid(resultusuarios[0].latitud) === true &&
-              resultusuarios[0].latitud !== 0
-              ? resultusuarios[0].latitud
-              : ttmunicipios[
-                  buscarEnArreglo(
-                    ttmunicipios,
-                    resultusuarios[0].municipio,
-                    "municipio"
-                  )
-                ].latitud
-          );
-          setLng(
-            isValid(resultusuarios[0].longitud) === true &&
-              resultusuarios[0].longitud !== 0
-              ? resultusuarios[0].longitud
-              : ttmunicipios[
-                  buscarEnArreglo(
-                    ttmunicipios,
-                    resultusuarios[0].municipio,
-                    "municipio"
-                  )
-                ].longitud
-          );
-          setIdsb(resultusuarios[0].idsb);
-          setIsBase64ToBlob(true);
-          let resultado = await getJpgFileSB(
-            resultusuarios[0].iduser + ".jpg",
-            "./galerias/app_images/usuarios/" + resultusuarios[0].iduser,
-            "usuarios/" + resultusuarios[0].iduser,
-            resultusuarios[0].idsb
-          );
-          if (resultado !== undefined && resultado !== null) {
-            setContenidofoto(resultado);
-            setNombrefoto(resultusuarios[0].iduser);
-          } else {
-            setIsBase64ToBlob(false);
-            setNombrefoto("");
-            setMessage("Error al recuperar la imagen del usuario");
-            setOpen(true);
-          }
+        setIdsb(resultusuarios[0].idsb);
+        setIsBase64ToBlob(true);
+        let resultado = await getJpgFileSB(
+          resultusuarios[0].iduser + ".jpg",
+          "./galerias/app_images/usuarios/" + resultusuarios[0].iduser,
+          "usuarios/" + resultusuarios[0].iduser,
+          resultusuarios[0].idsb
+        );
+        if (resultado !== undefined && resultado !== null) {
+          setContenidofoto(resultado);
+          setNombrefoto(resultusuarios[0].iduser);
+        } else {
+          setIsBase64ToBlob(false);
+          setNombrefoto("");
+          setMessage("Error al recuperar la imagen del usuario");
+          setOpen(true);
         }
-        setUsuario(0);
+      }
+      setUsuario(0);
     }
     setInicia(false);
     setShow1(false);
@@ -546,9 +547,8 @@ const Registrarse = () => {
       <div>
         <Navbar />
         <Hero>
+          <Encabezado />
           <div className="div-papa">
-            <Encabezado />
-
             {inicia === true && show1 === true ? (
               <Box
                 sx={{
