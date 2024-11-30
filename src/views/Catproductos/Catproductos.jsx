@@ -35,7 +35,7 @@ import {
   getUsuariosCM,
   getproductoscategoriaCM,
   delProductoCM,
-  setProductoCM
+  setProductoCM,
 } from "../../Utiles/apiBaseDatos";
 
 // contexts
@@ -60,7 +60,6 @@ const CatProductos = () => {
   const parsedParams = {};
   const { setOpen, setMessage } = useNotification();
   const [loading, setLoading] = useState(false);
-  const [imagen, setImagen] = useState(false);
   const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
   const [showGalerias, setShowGalerias] = useState(false);
@@ -168,17 +167,16 @@ const CatProductos = () => {
     setTnegocio(posicion);
     let resultusuarios = await getUsuariosCM(true);
     //    let resultusuarios = await apiBaseDatos("getUsuarios");
-    if (isValid(resultusuarios) === false) 
-      setArrayUsuarios(arrayNoUsuarios);
+    if (isValid(resultusuarios) === false) setArrayUsuarios(arrayNoUsuarios);
     else {
       setArrayUsuarios(resultusuarios);
     }
     setUsuario(0);
     let resultproductos = await getproductoscategoriaCM(
-    sessionStorage.getItem("user"),
-    sessionStorage.getItem("tipouser"),
-    ttarraytnegocios[posicion].categorianegocio,
-    producto
+      sessionStorage.getItem("user"),
+      sessionStorage.getItem("tipouser"),
+      ttarraytnegocios[posicion].categorianegocio,
+      producto
     );
     //let resultproductos = await apiBaseDatos("getproductoscategoria", sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), ttarraytnegocios[posicion].categorianegocio, producto);
     if (resultproductos.length === 0) {
@@ -209,7 +207,9 @@ const CatProductos = () => {
       let resultado = await getJpgFileSB(
         resultproductos[0].idproducto + ".jpg",
         "./galerias/app_images/productos/" + resultproductos[0].idproducto,
-        "productos/" + resultproductos[0].idproducto, resultproductos[0].idsb);
+        "productos/" + resultproductos[0].idproducto,
+        resultproductos[0].idsb
+      );
       if (
         isValid(resultado) === true &&
         resultado !== "" &&
@@ -231,10 +231,13 @@ const CatProductos = () => {
 
   const handleProducto = async (_, value) => {
     setProducto(value);
-    if (isValid(value)===false){      
-      return
-     }
-     recuperardatosproducto(arrayproductos, isValid(value)===false?0:value.value);
+    if (isValid(value) === false) {
+      return;
+    }
+    recuperardatosproducto(
+      arrayproductos,
+      isValid(value) === false ? 0 : value.value
+    );
     setIsBase64ToBlob(true);
     setIdsb(arrayproductos[value?.value].idsb);
     setNophoto(arrayproductos[value?.value].nophoto);
@@ -242,7 +245,9 @@ const CatProductos = () => {
       arrayproductos[value?.value].idproducto + ".jpg",
       "./galerias/app_images/productos/" +
         arrayproductos[value?.value].idproducto,
-      "productos/" + arrayproductos[value?.value].idproducto, arrayproductos[value?.value].idsb);
+      "productos/" + arrayproductos[value?.value].idproducto,
+      arrayproductos[value?.value].idsb
+    );
     if (resultado.length !== 0) {
       setContenidofoto(resultado);
       setNombrefoto(arrayproductos[value?.value].idproducto);
@@ -258,10 +263,10 @@ const CatProductos = () => {
       sessionStorage.getItem("tipouser"),
       arraytnegocios[value].categorianegocio
     );
-//    let resultproductos = await apiBaseDatos("getproductoscategoria", 
-//                                              sessionStorage.getItem("user"), 
-//                                              sessionStorage.getItem("tipouser"), 
-//                                              arraytnegocios[value].categorianegocio);
+    //    let resultproductos = await apiBaseDatos("getproductoscategoria",
+    //                                              sessionStorage.getItem("user"),
+    //                                              sessionStorage.getItem("tipouser"),
+    //                                              arraytnegocios[value].categorianegocio);
     setProducto(null);
     if (isValid(resultproductos) === false || resultproductos.length === 0) {
       setArrayproductos(arraynoproductos);
@@ -273,9 +278,11 @@ const CatProductos = () => {
       setIdsb(resultproductos[0].idsb);
       setNophoto(resultproductos[0].nophoto);
       let resultado = await getJpgFileSB(
-      resultproductos[0].idproducto + ".jpg",
+        resultproductos[0].idproducto + ".jpg",
         "./galerias/app_images/productos/" + resultproductos[0].idproducto,
-        "productos/" + resultproductos[0].idproducto, resultproductos[0].idsb);
+        "productos/" + resultproductos[0].idproducto,
+        resultproductos[0].idsb
+      );
       if (isValid(resultado) === true) {
         setIsBase64ToBlob(true);
         setContenidofoto(resultado);
@@ -379,15 +386,15 @@ const CatProductos = () => {
 
   function recuperardatosproducto(data, i) {
     let index = buscarEnArreglo(data, data[i].idproducto, "idproducto");
-    setUsuariot(isValid(data[i].user)===true?data[i].user:data[i].iduser);
+    setUsuariot(isValid(data[i].user) === true ? data[i].user : data[i].iduser);
     setProducto({ label: data[i].nick, value: index });
     setNombrecortot(data[i].nick);
     setDescripciont(data[i].desc);
-    setPreciot(data[i].precio);
-    setMarcat(data[i].marca);
-    setModelot(data[i].modelo);
-    setTallat(data[i].talla);
-    setColort(data[i].color);
+    setPreciot(isValid(data[i].precio) === true ? data[i].precio : "");
+    setMarcat(isValid(data[i].marca) === true ? data[i].marca : "");
+    setModelot(isValid(data[i].modelo) === true ? data[i].modelo : "");
+    setTallat(isValid(data[i].talla) === true ? data[i].talla : "");
+    setColort(isValid(data[i].color) === true ? data[i].color : "");
     setDomiciliot(data[i].domicilio === 0 ? false : true);
     setOcupadot(data[i].ocupado === 0 ? false : true);
     setGpst(data[i].gpssn === 1 ? true : false);
@@ -438,7 +445,6 @@ const CatProductos = () => {
   }
 
   const onPhotoChange = (e) => {
-    setImagen(true);
     const file = e.target.files[0];
     setNombrefoto(e.target.value);
     if (!file) return;
@@ -480,8 +486,7 @@ const CatProductos = () => {
       lng,
       cbsCiudad === true ? 1 : 0,
       distanciaMax,
-      isBase64ToBlob,
-      imagen,
+      isBase64ToBlob
     );
 
     if (isValid(result?.err) === true) {
@@ -577,9 +582,9 @@ const CatProductos = () => {
     setNombrefoto(valor);
   };
 
-  const cambiaFoto = (contenidofoto)=>{
+  const cambiaFoto = (contenidofoto) => {
     setContenidofoto(contenidofoto);
-  }
+  };
 
   useEffect(() => {
     init();
@@ -633,11 +638,9 @@ const CatProductos = () => {
           ) : null}
           {inicia === false ? (
             <>
+              <Encabezado />
               <div className="div-papa-catProductos">
-                <Encabezado />
-                <form
-                  className="catalogo-producto"
-                >
+                <form className="catalogo-producto">
                   <p className="strong">Publicar un producto</p>
                   {showMap === true || showMap === false ? (
                     <>
@@ -749,7 +752,6 @@ const CatProductos = () => {
                         <div className="label-datos-catproducto-1 strong">
                           Datos del nuevo producto{" "}
                         </div>
-
                         <div className="input-area2">
                           <input
                             className="input-cataproducto"
@@ -772,6 +774,7 @@ const CatProductos = () => {
                             required
                           />
                         </div>
+                        {console.log(marca)}
                         <div className="input-area2">
                           <input
                             className="input-cataproducto"
@@ -783,6 +786,7 @@ const CatProductos = () => {
                             required
                           />
                         </div>
+                        {console.log(modelo)}
                         <div className="input-area2">
                           <input
                             className="input-cataproducto"
@@ -794,6 +798,7 @@ const CatProductos = () => {
                             required
                           />
                         </div>
+                        {console.log(precio)}
                         <div className="precio-capacidad-color">
                           <div>
                             <p className="label-datos-catproducto">Precio</p>
@@ -809,22 +814,26 @@ const CatProductos = () => {
                               />
                             </Tippy>
                           </div>
-                          {sessionStorage.getItem("idapp")==="Expreso"?
-                          <div>
-                            <p className="label-datos-catproducto plazas">
-                              Plazas
-                            </p>
-                            <input
-                              className="input-cataproducto-999"
-                              id="talla"
-                              placeholder="Plazas"
-                              value={talla}
-                              onChange={handleInput}
-                              type="text"
-                              required
-                            />
-                          </div>:""
-                          }
+                          {console.log(talla)}
+                          {sessionStorage.getItem("idapp") === "Expreso" ? (
+                            <div>
+                              <p className="label-datos-catproducto plazas">
+                                Plazas
+                              </p>
+                              <input
+                                className="input-cataproducto-999"
+                                id="talla"
+                                placeholder="Plazas"
+                                value={talla}
+                                onChange={handleInput}
+                                type="text"
+                                required
+                              />
+                            </div>
+                          ) : (
+                            ""
+                          )}
+                          {console.log(color)}
                           <div>
                             <p className="label-datos-catproducto color">
                               Color
@@ -855,23 +864,26 @@ const CatProductos = () => {
                               Domicilio
                             </label>
                           </div>
-                          {sessionStorage.getItem("idapp")==="Expreso"?
-                          <div className="input-area4">
-                            <Checkbox
-                              id="ocupado"
-                              sx={{
-                                color: "white",
-                                "&.Mui-checked": { color: "white" },
-                              }}
-                              checked={ocupado}
-                              onClick={handleInput}
-                            />
-                            <label className="label-datos-catproducto input-cataproducto-12 ocupado">
-                              Ocupado
-                            </label>
-                          </div>:""
-                          }
-                          {domicilio !== true || sessionStorage.getItem("idapp")!=="Expreso"? (
+                          {sessionStorage.getItem("idapp") === "Expreso" ? (
+                            <div className="input-area4">
+                              <Checkbox
+                                id="ocupado"
+                                sx={{
+                                  color: "white",
+                                  "&.Mui-checked": { color: "white" },
+                                }}
+                                checked={ocupado}
+                                onClick={handleInput}
+                              />
+                              <label className="label-datos-catproducto input-cataproducto-12 ocupado">
+                                Ocupado
+                              </label>
+                            </div>
+                          ) : (
+                            ""
+                          )}
+                          {domicilio !== true ||
+                          sessionStorage.getItem("idapp") !== "Expreso" ? (
                             <div className="input-area4">
                               <Checkbox
                                 className="combo-gps"
@@ -891,7 +903,8 @@ const CatProductos = () => {
                             ""
                           )}
                         </div>
-                        {domicilio === true && sessionStorage.getItem("idapp")==="Expreso"? (
+                        {domicilio === true &&
+                        sessionStorage.getItem("idapp") === "Expreso" ? (
                           <>
                             <p className="lejania">Lejanía kms:</p>
                             <div className="distancia-sciudad">
@@ -946,8 +959,7 @@ const CatProductos = () => {
                         <button
                           type="button"
                           className="producto-button primary"
-                          onClick={()=> setCbvista(!cbvista)
-                          }
+                          onClick={() => setCbvista(!cbvista)}
                         >
                           <Visibility />
                         </button>
@@ -955,9 +967,9 @@ const CatProductos = () => {
                     ) : (
                       ""
                     )}
-                    {(agregarsn === true) &&
-                      nombrecorto != "" &&
-                      descripcion !== "" ? (
+                    {agregarsn === true &&
+                    nombrecorto != "" &&
+                    descripcion !== "" ? (
                       <label className="producto-button primary label-photo">
                         <input
                           id="foto"
@@ -989,9 +1001,12 @@ const CatProductos = () => {
                       ""
                     )}
                     {producto &&
-                    arrayproductos[producto?.value].desc!== "Desconocido" ? (
+                    arrayproductos[producto?.value].desc !== "Desconocido" ? (
                       <>
-                        {agregarsn === false && editarsn === false && isValid(producto?.value)===true && arrayproductos[0].desc!=="Desconocido"? (
+                        {agregarsn === false &&
+                        editarsn === false &&
+                        isValid(producto?.value) === true &&
+                        arrayproductos[0].desc !== "Desconocido" ? (
                           <Tippy content="Clic para editar el producto">
                             <button
                               type="button"
@@ -1005,7 +1020,10 @@ const CatProductos = () => {
                           ""
                         )}
 
-                        {agregarsn === false && editarsn === false  && isValid(producto?.value)===true && arrayproductos[0].desc!=="Desconocido" ? (
+                        {agregarsn === false &&
+                        editarsn === false &&
+                        isValid(producto?.value) === true &&
+                        arrayproductos[0].desc !== "Desconocido" ? (
                           <Tippy content="Clic para eliminar el producto">
                             <button
                               type="button"
@@ -1020,7 +1038,7 @@ const CatProductos = () => {
                         )}
 
                         {inicia === false &&
-                        (editarsn === true) &&
+                        editarsn === true &&
                         showMap !== true ? (
                           <Tippy content={`Galeria de fotos del producto`}>
                             <button
@@ -1104,48 +1122,45 @@ const CatProductos = () => {
                   </div>
 
                   {inicia === false &&
-                showGalerias === true &&
-                showMap === false ? (
-                  <ComGalerias
-                    deQuien={arrayproductos[producto.value].nick}
-                    ruta={
-                      "productos/" + arrayproductos[producto.value].idproducto
-                    }
-                    perfil={arrayproductos[producto.value].idproducto}
-                    permiso={true}
-                    botonCerrar={false}
-                    cambiaNombreFoto={cambiaNombreFoto}
-                    cambiaFoto={cambiaFoto}
-                    idsb={idsb}
-                    nophoto={nophoto}
-                    tabla={"tablacatproductos"}
-                    campo={"idproducto"}
-                  />
-                ) : (
-                  ""
-                )}
-                {showMap === true &&
-                showGalerias === false &&
-                cbgps === true ? (
-                  <div className="mapa-catalogo">
-                    <Map
-                      sx={{ height: "340px", width: "100%" }}
-                      onMapClick={lngLatSelected}
-                      remoteshowMap={showMap}
-                      lat={lat}
-                      lng={lng}
-                      point={{ lat, lng }}
-                      onChange={onChangeMap}
-                      remoteZoom={zoom}
+                  showGalerias === true &&
+                  showMap === false ? (
+                    <ComGalerias
+                      deQuien={arrayproductos[producto.value].nick}
+                      ruta={
+                        "productos/" + arrayproductos[producto.value].idproducto
+                      }
+                      perfil={arrayproductos[producto.value].idproducto}
+                      permiso={true}
+                      botonCerrar={false}
+                      cambiaNombreFoto={cambiaNombreFoto}
+                      cambiaFoto={cambiaFoto}
+                      idsb={idsb}
+                      nophoto={nophoto}
+                      tabla={"tablacatproductos"}
+                      campo={"idproducto"}
                     />
-                  </div>
-                ) : (
-                  ""
-                )}
-
-
+                  ) : (
+                    ""
+                  )}
+                  {showMap === true &&
+                  showGalerias === false &&
+                  cbgps === true ? (
+                    <div className="mapa-catalogo">
+                      <Map
+                        sx={{ height: "340px", width: "100%" }}
+                        onMapClick={lngLatSelected}
+                        remoteshowMap={showMap}
+                        lat={lat}
+                        lng={lng}
+                        point={{ lat, lng }}
+                        onChange={onChangeMap}
+                        remoteZoom={zoom}
+                      />
+                    </div>
+                  ) : (
+                    ""
+                  )}
                 </form>
-                
               </div>
             </>
           ) : (
