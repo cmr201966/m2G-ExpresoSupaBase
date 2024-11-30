@@ -46,7 +46,7 @@ const Aplicaciones = () => {
   const location = useLocation();
   const parsedParams = {};
   const [loading, setLoading] = useState(false);
-  const [imagen, setImagen] = useState(false);
+  //const [imagen, setImagen] = useState(false);
   const [show, setShow] = useState(false);
   const { setOpen, setMessage } = useNotification();
   const [nick, setNick] = useState("");
@@ -295,7 +295,7 @@ const Aplicaciones = () => {
   }
 
   async function handleInput(e) {
-    let resultado = {};
+    //let resultado = {};
     switch (e.target.id) {
       case "nick":
         setNick(e.target.value);
@@ -329,7 +329,7 @@ const Aplicaciones = () => {
 
   const onPhotoChange = (e) => {
     const id=e.target.id;
-    setImagen(true);
+//    setImagen(true);
     const file = e.target.files[0];
     if (!file) return;
     const reader = new FileReader();
