@@ -27,7 +27,6 @@ const Encabezado = (props) => {
         <ArrowBack className="color-flecha" />
       </IconButton>
       {children}
-      {/*<h4 className="color-encabezado">Atrás</h4>*/}
     </div>
   );
 };

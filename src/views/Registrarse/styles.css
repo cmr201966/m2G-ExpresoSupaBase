@@ -49,7 +49,11 @@
   gap: 7px;
 }
 
-@media (max-width: 500px) {
+@media (max-width: 600px) {
+  .container-registrarse {
+    width: 285px;
+  }
+
   .input-area-registrarse {
     display: flex;
     flex-direction: column;
