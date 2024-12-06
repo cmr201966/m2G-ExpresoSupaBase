@@ -55,7 +55,7 @@ function GeneraVistagetCategoriasNew(user, tipouser) {
     "CREATE OR REPLACE VIEW getcategoriasnew  AS select DISTINCT tablacategorias.categorianegocio as idcategoria, " + 
     'tablacategorias."desc" as categoria, tablacategorias.link, destodo, tablacategorias.nick, tablacategorias.idsb from tablacategorias, tablacatproductos' + tablas +
     " where ((tablacategorias.categorianegocio=tablacatproductos.categorianegocio) or (tablacategorias.link LIKE '%https:%')) and (tablacatproductos.activo=true)" + condicion1 +
-    condicion + " and (app=true) order by destodo"
+    condicion + " and (app=true) and (tablacategorias.activo=true) order by destodo"
   );
 }
 
@@ -141,7 +141,7 @@ async function CategoriasInsertUpdate(
   } else {
     const { error } = await supabase
       .from("tablacategorias")
-      .update({ desc: desc, link: link, accion: accion, nick: nick })
+      .update({ desc: desc, accion: accion, nick: nick })
       .eq("categorianegocio", categorianegocio);
       err = error;
     if (isValid(error) === false) {
