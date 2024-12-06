@@ -58,10 +58,11 @@ const Home = () => {
   const screenWidth = window.innerWidth;
 
   async function init() {
-    console.log(parsedParams);
-    console.log(isValid(parsedParams.categoria) && parsedParams.categoria!=="");
     setInicia(true);
     setShow(true);
+    if (isValid(parsedParams.categoria) && parsedParams.categoria!==""){
+      navigate(`/productos?categoria=${parsedParams.categoria}`);
+    }
     sessionStorage.setItem("deDonde", "Home")
     if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "SUPABASE") creaBucket("galerias");
     borraSessionStorage(["categoria",]);
