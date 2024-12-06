@@ -1,0 +1,602 @@
+.container-contratosadmin 
+{
+    height: auto;
+    width: 355px;
+    display: flex;
+    flex-direction: column;
+    padding: 2px;
+    background: rgb(20, 96, 172);
+    border-radius: 15px;
+}
+.contratosadmin-button1
+{
+    background: none;
+    border: none;   
+    cursor: pointer;
+    color: aliceblue;
+    border-radius: 15px;
+    height: 30px;
+    width: 73px;
+    margin-bottom: 10px;
+    margin-right: 3px;
+}
+.contratosadmin-grupo-button
+{
+    margin-top: 15px;
+    display:flex;
+    justify-content: flex-end;
+    margin-right: 2px;
+}
+.grupo-contratos-label
+{
+   display:flex;
+}
+.contratosadmin-button-estado
+{
+    background: none;
+    border: none;   
+    cursor: pointer;
+    color: rgb(164, 175, 184);
+    border-radius: 15px;
+    height: 24px;
+    width: 60px;
+    margin-bottom: 10px;
+    margin-right: 16px;
+    margin-left: -10px;
+}
+.main-modal-contratosadmin
+{
+    margin-right: 15px;
+    margin-top: 11px;
+}
+.menu-contratosadmin
+{
+    display: flex;
+    justify-content: space-between;
+}
+.select-contratosadmin-1
+{
+    width: 280px;
+    margin-left: 33px;
+    margin-bottom: 3px;
+    height: 23px;;
+}
+.select-contratosadmin-2
+{
+    width: 280px;
+    margin-left: 12px;
+    margin-bottom: 4px;
+    height: 23px;    
+}
+.select-contratosadmin-estado
+{
+  width: 271px;
+  margin-left: 33px;
+  height: 23px;
+}
+.estados
+{
+   width: 150px;
+}   
+.label-1-contratosadmin
+{
+    margin-bottom: 5px;
+}
+.label-contratos-2
+{
+    margin-bottom: 5px;
+    color:aliceblue;
+}
+.label-contratos-3-1
+{
+    margin-bottom: 5px;
+    color:black;
+    margin-left: 23px;
+    background: aliceblue;
+    width: 278px;
+}
+.label-contratos-3-2
+{
+    margin-bottom: 5px;
+    color:black;
+    margin-left: 14px;
+    background: aliceblue;
+    width: 278px;
+}
+.label-contratos-3-3
+{
+    margin-bottom: 5px;
+    color:black;
+    margin-left: 17px;
+    background: aliceblue;
+    width: 278px;
+}
+.label-contratos-3-4
+{
+    margin-bottom: 4px;
+    color:black;
+    margin-left: 41px;
+    background: aliceblue;
+    width: 278px;
+}
+.label-menu-contratosadmin
+{
+    color: aliceblue;
+}
+.label-radio
+{
+    color: aliceblue !important;
+}
+.label-menu-grupo-1
+{
+    display: flex;
+}
+.label-menu-contratosadmin-1
+{
+    color: aliceblue;
+    margin-bottom: 10px;
+    margin-top: 10px;
+}
+.label-menu-contratosadmin-2
+{
+    color: aliceblue;
+  margin-left: 1px;
+  margin-right: 160px;
+}
+.label-menu-contratosadmin-3
+{
+    color: aliceblue;
+}
+.input-contratosadmin
+{
+    display: flex;
+    flex-direction: column;
+}
+.input-contratosadmin-1
+{
+    margin-left: 93px;
+    width: 242px;
+    margin-top: 8px;
+}
+.span1
+{
+    color:aliceblue;
+    margin-left: 19px;
+}
+.span2
+{
+    color:aliceblue;
+    margin-left: 13px;
+}
+.span3
+{
+    color:aliceblue;
+    margin-left: 18px;
+}
+.span4
+{
+    color:aliceblue;
+    margin-left: 37px;
+}
+.input-area-contratosadmin 
+{
+    display: flex;
+    align-items: center;
+} 
+.input-area-contratosadmin input 
+{
+    background: none;
+    border: none;
+    padding: 7px 15px;
+    color: aliceblue;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+}
+.input-area-contratosadmin label 
+{
+   color: aliceblue;
+}
+.modal-contratosadmin
+{
+    display: flex;
+    align-items:baseline;
+    justify-content:flex-start;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 226px;
+    left: 20px;
+    color:aliceblue;
+}    
+.h3-1-cabeza-contrato-admin
+{
+  color: aliceblue;
+  margin-left: 4px;
+  margin-top: 17px;
+}
+
+.container-filtrar-contratos 
+{
+    height: auto;
+    width: 350px;
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+    padding: 20px;
+    background: rgb(20, 96, 172);
+    border-radius: 15px;
+    margin-top: 10px;
+}
+.estado-filtrar-grupo-button{
+    width: 100%;
+    display: flex;
+    margin-top: 15px;
+}
+.input-area-filtro{
+    margin-top: 5px;
+}
+.input-fechai{
+    margin-left: 34px;
+    height: 15px;
+    width: 172px;
+}
+.input-fechaf{
+    margin-left: 42px;
+    height: 15px;
+    width: 172px;
+}
+.selectec{
+    margin-left: 5px;
+    width: 180px;
+}
+.selectTP{
+    margin-left: 24px;
+    width: 180px;
+}
+.selectca{
+    margin-left: 45px;
+    width: 180px;
+}
+.selectpro{
+    margin-left: 51px;
+    width: 180px;
+}
+.selectne{
+    margin-left: 55px;
+    width: 180px;
+}
+.Filtrarc{
+    margin-left: 90px;
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: aliceblue;
+    border-radius: 15px;
+    height: 30px;
+    width: 80px;
+    margin-right: 5px;
+    color: aliceblue !important;
+    background: dodgerblue !important;
+}
+.label-negocio{
+    color:aliceblue;
+}
+.label-datos-producto{
+    color:aliceblue;
+}
+.label-estado{
+    color:aliceblue;
+}
+.modal-filtrarcontrato
+{
+    display: flex;
+    align-items:baseline;
+    justify-content:flex-start;
+    width: 100vw;
+    height: 100vh;
+    position: fixed;
+    top: 226px;
+    left: 20px;
+    color:aliceblue;
+}    
+.label-m
+{
+   color:aliceblue;
+}
+.container-postponer 
+{
+    height: auto;
+    width: 370px;
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+    padding: 10px;
+    background: rgb(20, 96, 172);
+    border-radius: 15px;
+}
+.label-cliente
+{
+    color:aliceblue;
+}   
+.label-cliente-postponer
+{
+    margin-left: 81px;
+    background: aliceblue;
+    color:black !important;
+    width: 205px;
+}   
+.label-contrato-postponer
+{
+   margin-left: 70px;
+   background: aliceblue;
+   color:black !important;
+   width: 205px;
+ } 
+.input-postponer
+{
+  color: aliceblue;
+  margin-left: 0px;
+} 
+.select-contratopost
+{
+    width: 246px;
+    margin-left: 12px;
+}
+.postponer-grupo-button
+{
+    width: 100%;
+    display: flex;
+    margin-top: 15px;
+}  
+.postponer-button
+{
+    background: none;
+    border: none;   
+    cursor: pointer;
+    color: aliceblue;
+    border-radius: 15px;
+    height: 30px;
+    width: 80px;
+    margin-left: 173px;
+}
+.postponer-button1
+{
+    background: none;
+    border: none;   
+    cursor: pointer;
+    color: aliceblue;
+    border-radius: 15px;
+    height: 30px;
+    width: 80px;
+    margin-left: 10px;
+}
+.input-area-postponer 
+{
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px 10px 10px 0;
+    align-items: center;
+} 
+.input-area-postponer input 
+{
+    background: none;
+    border: none;
+    padding: 7px 15px;
+    color: aliceblue;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+}
+.input-area-postponer label 
+{
+    color: aliceblue;
+ }
+.input-actual
+{
+    width: 180px;
+    margin-left: 23px;
+}
+.input-actual
+{
+  color: aliceblue;
+  margin-left: 13px;
+} 
+.input-postponer
+{
+    width: 180px;
+    margin-left: 10px;
+}
+.label-cliente
+{
+    color:aliceblue;
+}
+.container-cancelar 
+{
+    height: auto;
+    width: 350px;
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+    padding: 20px;
+    background: rgb(20, 96, 172);
+    border-radius: 15px;
+    margin-top: 20px;
+  }
+  .input-area-cancelar
+  {
+      display: flex;
+      justify-content: flex-end;
+      margin: 10px 10px 10px 0;
+      align-items: center;
+  } 
+  .input-area-cancelar input 
+  {
+      background: none;
+      border: none;
+      padding: 7px 15px;
+      color: aliceblue;
+      border-radius: 15px;
+      border: 1px solid aliceblue;
+  }
+  .input-area-cancelar label 
+  {
+      color: aliceblue;
+   }
+  .input-actual
+  {
+      width: 190px;
+      margin-left: 17px;
+  }
+  .label-cliente
+  {
+      color:aliceblue;
+  }   
+  .label-contrato-nombre-cancelar
+{
+   margin-left: 50px;
+   background: aliceblue;
+   color:black !important;
+   width: 220px;
+ } 
+.label-contrato-cancelar
+  {
+     margin-left: 70px;
+     background: aliceblue;
+     color:black !important;
+     width: 220px;
+   } 
+   .cancelar-grupo-button
+   {
+       width: 100%;
+       display: flex;
+       margin-top: 15px;
+   }  
+   .cancelar-button
+   {
+       background: none;
+       border: none;   
+       cursor: pointer;
+       color: aliceblue;
+       border-radius: 15px;
+       height: 30px;
+       width: 80px;
+       margin-left: 173px;
+   }
+.cancelar-button1
+   {
+       background: none;
+       border: none;   
+       cursor: pointer;
+       color: aliceblue;
+       border-radius: 15px;
+       height: 30px;
+       width: 80px;
+       margin-left: 10px;
+   }
+.label-actual
+{
+    color:aliceblue;
+}
+.select-contratos-evaluar
+{
+    width: 223px;
+    margin-left: 38px;
+}
+.container-evaluar
+{
+    height: auto;
+    width: 360px;
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+    padding: 10px;
+    background: rgb(20, 96, 172);
+    border-radius: 15px;
+}
+.label-cliente-evaluar
+{
+    color:aliceblue;
+}   
+
+.label-nombre-evaluar
+{
+    margin-left: 73px;
+    background: aliceblue;
+    color:black !important;
+    width: 220px;
+}   
+.label-contrato-evaluar
+{
+    color:aliceblue;
+}   
+.label-contrato-nombre-evaluar
+{
+   margin-left: 59px;
+   background: aliceblue;
+   color:black !important;
+   width: 220px;
+ } 
+.comentario
+{
+    color: aliceblue;
+    margin-left: 14px;
+}
+.input-comentario
+{
+    margin-left: 14px;
+    width: 223px;
+    margin-bottom: 10px;
+    resize:none
+}
+.input-area-evaluar
+{
+    color: aliceblue;
+}
+.input-area-evaluar
+{
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px 10px 10px 0;
+    align-items: center;
+} 
+.input-area-evaluar input 
+{
+    background: none;
+    border: none;
+    padding: 7px 15px;
+    color: aliceblue;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+}
+.input-area-evaluar label 
+{
+    color: aliceblue;
+ }
+ .evaluar-grupo-button
+ {
+     width: 100%;
+     display: flex;
+     margin-top: 15px;
+ }  
+ .evaluar-button
+ {
+     background: none;
+     border: none;   
+     cursor: pointer;
+     color: aliceblue;
+     border-radius: 15px;
+     height: 30px;
+     width: 80px;
+     margin-left: 173px;
+ }
+ .evaluar-button1
+ {
+     background: none;
+     border: none;   
+     cursor: pointer;
+     color: aliceblue;
+     border-radius: 15px;
+     height: 30px;
+     width: 80px;
+     margin-left: 10px;
+ }
+ 
