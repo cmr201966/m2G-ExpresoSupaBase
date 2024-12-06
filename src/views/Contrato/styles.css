@@ -1,0 +1,552 @@
+.container-contrato 
+{
+    height: auto;
+    width: 350px;
+    display: flex;
+    align-items: start;
+    flex-direction: column;
+    background: rgb(20, 96, 172);
+    border-radius: 15px;
+}
+.container-opciones-posibles
+{
+    height: auto;
+    width: 350px;
+    background-color: rgb(20 96 172);
+}
+.contrato 
+{
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+}
+
+.contrato h2 
+{
+    color: aliceblue;
+}
+
+.contrato-input-area 
+{
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px 10px 10px 0;
+    align-items: center;
+}
+
+.contrato-input-input
+{
+  width: 170px;
+}
+.contrato-input-area label 
+{
+    color: aliceblue;
+    margin-right: 1px;
+    width: 130px;
+}
+
+.contrato-input-area input 
+{
+    background: none;
+    border: none;
+    padding: 7px 15px;
+    color: aliceblue;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+    width: 195px;
+}
+.input-area-cliente
+{
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px 10px 0px 0;
+    align-items: center;
+}
+
+.contrato-input-select
+{
+    background: none;
+    border: none;
+    color:aliceblue;
+    padding: 7px 12px;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+    width: 225px;
+}
+.contrato-input-select option
+{
+    background: none;
+    color:black   
+}
+.err 
+{
+    padding: 5px 10px;
+    color: aliceblue;
+    background: crimson;
+    width: 90%;
+    border-radius: 15px;
+}
+
+.contrato-grupo-button 
+{
+    display: flex;
+    margin-top: 10px;
+    margin-bottom: 15px;
+    width: 100%;   
+    justify-content: flex-end;
+}
+
+.contrato-grupo-button button:disabled 
+{
+    background: rgb(30, 130, 230);
+    color: #bdb;
+    cursor: initial;
+}
+
+.contrato-button 
+{
+    background: dodgerblue;
+    border: none;
+    padding: 7px 12px;
+    color: aliceblue;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 2px;
+    border-radius: 15px;
+}
+.modal-button-1
+{
+    margin-right: 5px;
+}
+.button9
+{
+    margin-left: 3px;
+}
+.button2
+{
+    width: 75px;
+}
+.button2:disabled
+{
+    color: gray!important;
+}
+.button3
+{
+    background: none !important;
+    border: 1px solid;
+    margin-left: 10px;
+    margin-right: 10px;
+    width: 75px;
+}
+.contrato-button1
+{
+    background: dodgerblue;
+    border: none;
+    padding: 7px 12px;
+    color: aliceblue;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 2px;
+    border-radius: 15px;
+}    
+.contrato-button2
+{
+    background: dodgerblue;
+    border: none;
+    padding: 7px 15px;
+    color: aliceblue;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 2px;
+    border-radius: 15px;
+}
+.contrato-button3
+{
+    background: dodgerblue;
+    border: none;
+    padding: 7px 12px;
+    color: aliceblue;
+    cursor: pointer;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    margin-right: 2px;
+    border-radius: 15px;
+}
+
+.contrato-cabeza 
+{
+    display: flex;
+    align-items: center;
+}
+
+.pmodal 
+{
+    margin-top: 1px;
+}
+.label
+{
+    color:aliceblue
+}
+.plabel 
+{
+    margin-right: 5px;
+    margin-top: 0px;
+    color: aqua
+}
+.pmodal-encabezado{
+   display: flex;
+}
+.pmodal-producto
+{
+   margin-right: 100px;
+}
+.pmodal-cantidad
+{
+    margin-right: 65px;
+}
+.pmodal-p{
+    display: flex;
+}
+.pmodal-p-1{
+    margin-right: 95px;;
+}
+.pmodal-p-2{
+    margin-right: 100px;;
+}
+.pagrupa {
+    display: flex;
+}
+
+.wmodal {
+    height: auto; 
+    width:auto ; 
+}
+
+.modalcalendario {
+    height: auto;
+    width: auto;
+}
+.label-menu-importe-1{
+    color:aliceblue
+}
+.label-menu-importe-2{
+    color:aliceblue;
+    margin-left: 177px;    
+}
+.label-menu-importe-3{
+    color:aliceblue;
+    margin-left: 229px;    
+}
+.label-menu-importe-4{
+    color:aliceblue;
+    margin-left: 80px;    
+}
+.label-menu-importe-5{
+    color:aliceblue;
+    margin-left: 253px;    
+}
+.label-menu-importe-6{
+    color:aliceblue;
+}
+.label-menu-importe-7{
+    color:aliceblue;
+    margin-left: 97px;    
+}
+.label-opciones-precio{
+    margin-top: 8px;
+}
+.label-opciones-desc{
+    margin-top: 8px;
+}    
+.selectop{
+    width: 215px;
+    margin-left: 5px;
+}
+.etiquetas{
+    color:aliceblue;
+}
+.label-menu-producto{
+    color:aliceblue;
+}
+.label-datos-producto{
+    color:aliceblue
+}
+.label-menu-producto-precio{
+    margin-left: 176px;
+}
+.label-menu-producto-cantidad{
+    margin-left: 10px;
+}
+.contrato-input-area1 {
+    display: flex;
+}
+.label-opciones-desc
+{
+    margin-top: 8px;
+}    
+.precio-cantidad{
+    width: 120px;
+    justify-content: space-between;
+    display: flex;
+    padding: 0 0px;
+}
+.label-opciones-precio{
+    margin-top: 8px;
+}
+.label-menu-producto-cantidad{
+    margin-left: 15px;
+}
+.menu-opciones{
+    display: flex;
+    justify-content: space-between;
+
+}
+.cantidad-contrato
+{
+    width: 40px;
+    height: 16px;
+    margin-top: 8px;
+ }
+ .container-opciones-del-menu
+ {
+    height: auto;
+    width: 360px;
+    background-color: rgb(20 96 172);
+    margin-top: 1px;
+    margin-bottom: 1px;
+   color:aliceblue;
+}
+.cp-button-select
+{
+   height: 22px;
+   margin-top: 8px;
+}
+.link-image-banner-opciones {
+    margin: 10px;
+    width: 150px;
+    height: 150px;
+    background-color: #383838;
+    border-radius: 15px;
+}
+.link-image-img-banner-opciones {
+    width: 150px;
+    height: 150px;
+    border-radius: 15px;
+    object-fit: cover;
+    cursor: pointer;
+}
+.images-banner-opciones{
+    overflow: scroll;
+    height: 330px;
+    width: 380px;
+    display: flex;
+    flex-wrap: wrap;
+} 
+.images-banner-selec{
+    height: auto;
+    width: 380px;
+    display: flex;
+    flex-wrap: wrap;
+} 
+.button-opciones{
+    margin-top: 10px;
+}
+.button-selec{
+    margin-top: 10px;
+}
+.modal-contrato{
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-start;
+    position: fixed;
+    top: 226px;
+    left: 80px;
+} 
+.modal-contrato-opciones{
+    display: flex;
+    align-items: baseline;
+    justify-content: flex-start;
+    width: auto;
+    height: auto;
+    top:25px;
+    position: fixed;  
+}
+.banner-opciones-borde
+{
+    border: 2px solid aliceblue;
+}
+.link-image-banner-selec
+{
+    margin: 10px;
+    width: 150px;
+    height: 150px;
+    background-color: #383838;
+    border-radius: 15px;
+}
+.link-image-img-banner-selec
+{
+    width: 150px;
+    height: 150px;
+    border-radius: 15px;
+    object-fit: cover;
+    cursor: pointer;
+}
+.contrato-input-area-tcantidad
+{
+  margin-left: 5px;
+  width: 50px;
+}
+.banner-selec-borde
+{
+    border: 2px solid aliceblue;
+}
+.seleccionar
+{
+    margin-top: 10px;
+}
+.pmodal-seleccionados
+{
+    color:aliceblue;
+}
+.plabel-producto
+{
+    margin-bottom: 10px;
+    color:aliceblue;
+}
+.plabel-cantidad
+{
+    margin-bottom: 10px;
+    color:aliceblue;
+}
+.pmodal-seleccionados
+{
+    color:aliceblue;
+}
+.card-img-add
+{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: none;
+  width: 100px;
+  height: 100px;
+  border: 2px #383838 dashed;
+}
+.card-img-ready
+{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: none;
+  width: 100px;
+  height: 100px;
+  margin-left: 10px;
+}
+.card-img-ready-border
+{
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: none;
+  width: 100px;
+  height: 100px;
+  margin-left: 10px;
+  border:2px solid black
+}
+.imgs-subir
+{
+    display:flex;
+    flex-wrap: wrap;
+}
+.grupo-button-subir-fotos
+{
+    display: flex;
+    justify-content: flex-end;
+    margin-top:10px;
+}
+.button-contrato-subir
+{
+    background: none;
+    border: none;   
+    cursor: pointer;
+    color: aliceblue;
+    border-radius: 15px;
+    height: 30px;
+    width: 70px;
+}
+.modal-subir-fotos-head
+{
+   margin-bottom: 10px;
+}
+.label-subir-fotos-producto
+{
+    margin-left: 5px;
+    color:aliceblue;
+}
+.h3-1-cabeza-contrato
+{
+  color: aliceblue;
+  margin-left: 4px;
+  margin-top: 17px;
+}
+.primary-contrato 
+{
+    color: aliceblue;
+    background: dodgerblue;
+}
+.contrato-input-area-cantidad
+{
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px 10px 10px 0;
+    align-items: center;
+}
+.contrato-input-area-cantidad:disabled
+{
+    display: flex;
+    justify-content: flex-end;
+    margin: 10px 10px 10px 0;
+    align-items: center;
+    color:gray;
+}
+.contrato-input-area-cantidad label 
+{
+    color: aliceblue;
+    margin-right: 1px;
+    width: 130px;
+}
+
+.contrato-input-area-cantidad input 
+{
+    background: none;
+    border: none;
+    padding: 7px 12px;
+    color: aliceblue;
+    border-radius: 15px;
+    border: 1px solid aliceblue;
+    width: 195px;
+}
+.label-mapa
+{
+    color:aliceblue;
+}
+.agrupa-1
+{
+    width: 100%;
+    display: flex;
+}
+.label-datos-cliente
+{
+    color:aliceblue;
+    margin-right: 79px;
+}
+.label-ahora
+{
+    color:aliceblue;
+    margin-right: 82px;
+}
