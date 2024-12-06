@@ -75,7 +75,6 @@ const CatCategorias = () => {
       return;
     }
     let resultcategorias = await getCategoriasNegociosCM(true);
-    console.log(resultcategorias);
     //    let resultcategorias = await apiBaseDatos("getCategoriasNegocios")
     if (
       isValid(resultcategorias) === false ||

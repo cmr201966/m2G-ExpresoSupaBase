@@ -141,7 +141,7 @@ async function CategoriasInsertUpdate(
   } else {
     const { error } = await supabase
       .from("tablacategorias")
-      .update({ desc: desc, link: link, accion: accion, nick: nick })
+      .update({ desc: desc, accion: accion, nick: nick })
       .eq("categorianegocio", categorianegocio);
       err = error;
     if (isValid(error) === false) {
