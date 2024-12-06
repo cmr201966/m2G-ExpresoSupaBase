@@ -150,6 +150,7 @@ const Productos = () => {
         setLng(Number(parsedParams.longitud));
       } else sessionStorage.setItem("longitud", null);
     }
+    sessionStorage.setItem("directo","1")
     init1();
   }
 
