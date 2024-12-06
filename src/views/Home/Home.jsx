@@ -59,6 +59,7 @@ const Home = () => {
 
   async function init() {
     console.log(parsedParams);
+    console.log(isValid(parsedParams));
     setInicia(true);
     setShow(true);
     sessionStorage.setItem("deDonde", "Home")
