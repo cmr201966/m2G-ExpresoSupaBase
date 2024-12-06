@@ -58,6 +58,7 @@ const Home = () => {
   const screenWidth = window.innerWidth;
 
   async function init() {
+    console.log(parsedParams);
     setInicia(true);
     setShow(true);
     sessionStorage.setItem("deDonde", "Home")
