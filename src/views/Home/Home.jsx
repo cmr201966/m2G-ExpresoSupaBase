@@ -58,9 +58,12 @@ const Home = () => {
   const screenWidth = window.innerWidth;
 
   async function init() {
+    console.log("1");
     setInicia(true);
     setShow(true);
-    if (isValid(parsedParams.categoria) && parsedParams.categoria!==""){
+    console.log(sessionStorage.getItem("directo"));
+    if (isValid(parsedParams.categoria) && parsedParams.categoria!=="" && isValid(sessionStorage.getItem("directo"))===false){
+      sessionStorage.setItem("directo","1")
       navigate(`/productos?categoria=${parsedParams.categoria}`);
     }
     sessionStorage.setItem("deDonde", "Home")

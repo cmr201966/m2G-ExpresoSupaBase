@@ -79,7 +79,6 @@ async function getcategoriasnewCM() {
       .select("*")
 /*      .order("destodo", { ascending: true });*/
     datos = data;
-    console.log(error);
     return datos;
   }
 }
