@@ -14,3 +14,11 @@ export async function makeRequest(url, body, method = "POST") {
 export async function getcontratoclientes(body) {
   return makeRequest("http://localhost:3001/getcontratoclientes", body);
 }
+
+export async function getdisponibilidad(body) {
+  return makeRequest("http://localhost:3001/getdisponibilidad", body);
+}
+
+export async function setcontrato(body) {
+  return makeRequest("http://localhost:3001/setcontrato", body);
+}

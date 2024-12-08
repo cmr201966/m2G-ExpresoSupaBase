@@ -20,7 +20,8 @@ import Check from "@mui/icons-material/Check";
 import Close from "@mui/icons-material/Close";
 import { useTheme } from "@mui/material";
 
-import { Box, Button } from "@mui/material"
+import { Box, Button, CircularProgress } from "@mui/material";
+import Encabezado from "../../components/Encabezado/Encabezado";
 
 // layouts
 import Hero from "../../layouts/Hero/Hero";
@@ -39,10 +40,12 @@ import { useNotification } from "../../context/NotificationProvider";
 // utils
 import {
   isValid,
-  getJpgFileSB,
 } from "../../Utiles/Utiles";
 import {
-  getContratoClientes, getInfoProductoCM
+  getContratoClientes, 
+  getInfoProductoCM, 
+  getDisponibilidad,
+  setContratoCM
 } from "../../Utiles/apiBaseDatos";
 
 
@@ -61,53 +64,25 @@ const Contrato = () => {
   const [fechat, setFechat] = useState(new Date().toDateInputValue());
   const [contrato, setContrato] = useState(0);
   const [sino, setSino] = useState(false);
-  const [show, setShow] = useState(false);
   const [show1, setShow1] = useState(false);
   const [show2, setShow2] = useState(false);
-  const [show4, setShow4] = useState(false);
   const [showGalerias, setShowGalerias] = useState(false);
-  const [showselectimg, setShowselecimg] = useState(false);
-  const [showimg, setShowimg] = useState(false);
-  const [menusn, setMenusn] = useState(false);
-  const [incluye, setIncluye] = useState(false);
-  const [elegirya, setElegirya] = useState(false);
-  const [foto, setFoto] = useState();
-  const [contenidofoto, setContenidofoto] = useState([]);
-  const [nombrefoto, setNombrefoto] = useState("");
   const [negocio, setNegocio] = useState(99999999);
   const [producto, setProducto] = useState("");
-  const [productos, setProductos] = useState([]);
   const [desc, setDesc] = useState("");
   const [precio, setPrecio] = useState(0);
   const [ya, setYa] = useState(false);
-  const [domicilioSN, setDomicilioSN] = useState(false);
   const [domicilio, setDomicilio] = useState(false);
   const [cantidad, setCantidad] = useState(1);
-  const [cantidadsn, setCantidadsn] = useState(false);
-  const [capacidadsn, setCapacidadsn] = useState(false);
   const [capacidad, setCapacidad] = useState(0);
-  const [nombremenu, setNombremenu] = useState("");
   const [disponible, setDisponible] = useState(0);
   const [showCalendario, setShowCalendario] = useState(false);
   const [contenidomodal, setContenidomodal] = useState("");
   const [contenidomodal2, setContenidomodal2] = useState("");
   const [inicia, setInicia] = useState(true);
   const [tinicia, setTinicia] = useState(false);
-  const [arraycantidad, setArraycantidad] = useState([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
-  const [cargandocantidades, setCargandocantidades] = useState(false);
-  const [arraycategoriasproductos, setArraycategoriasproductos] = useState([]);
-  const arraynocategoriasproductos = [{ idcategoria: 999999, desc: "Desconocida" }];
-  const [categoria, setCategoria] = useState(0);
   // Otros estados
-  const [productotmp, setProductotmp] = useState("");
-  const [categoriatmp, setCategoriatmp] = useState("");
-  const [tdesc, setTdesc] = useState("");
-  const [cantidadtmp, setCantidadtmp] = useState(0);
   const [indice, setindice] = useState(0);
-  const [selec, setSelec] = useState(false);
-  const [cantidadselec, setCantidadselec] = useState(0);
-  const [cambios, setCambios] = useState(0);
-  const [selectfoto, setSelectfoto] = useState(99999999);
   const theme = useTheme();
   const fixed="";
  //Parametros
@@ -115,7 +90,6 @@ const Contrato = () => {
   const [descnaturaleza, setDescnaturaleza] = useState("");
 
   // Estados para calculo de ganancias y costos
-  const [importe, setImporte] = useState(0);
   const [tcantidad, setTcantidad] = useState(0);
   const [hora, setHora] = useState("");
   const [minuto, setMinuto] = useState("");
@@ -123,21 +97,12 @@ const Contrato = () => {
   const [nombre, setNombre] = useState("");
   const [ape1, setApe1] = useState("");
   const [ape2, setApe2] = useState("");
-  const [nit, setNit] = useState("");
   const [celular, setCelular] = useState("");
-  const [fijo, setFijo] = useState("");
-  const [tproducto, setTproducto] = useState("");
-  const [tindice, setTindice] = useState(0);
-  const [contenidofotos, setContenidofotos] = useState([]);
-  const [showchat, setShowchat] = useState(false);
   const [añadir_user, setAñadir_user] = useState(false);
   const [arrayclientes, setArrayclientes] = useState([]);
   const arraynoclientes = [{ iduser: 99999999, nombre: "No hay clientes" }];
   const [cliente, setCliente] = useState(0);
-  const [agregando, setAgregando] = useState(false);
   const [cbahora, setCbahora] = useState(true);
-  let filedesc="";
-  let tfiles=".jpg";
 
   
   
@@ -172,8 +137,6 @@ const Contrato = () => {
       setKeyproducto(parsedParams.keyproducto);
       setDescnaturaleza(parsedParams.descnaturaleza);
     }
-    setMessage("Preparando condiciones, espere por favor...");
-    setOpen(true);
     let result = await getContratoClientes();
     if (
       (isValid(result) === true && result.err) ||
@@ -187,24 +150,22 @@ const Contrato = () => {
 
     let result2 = await getInfoProductoCM(tkeyproducto);
     if (isValid(result2) === true) {
+      setDomicilio(result2[0].domicilio===0?false:true);
+      console.log(result2[0].domicilio===0?false:true);
       setProducto(tkeyproducto);
-      setDesc(result2[0].desc);
+      setDesc(result2[0].producto);
       setPrecio(result2[0].precio);
-      setCantidad(result2[0].cantidad);
-      setDomicilio(result2[0].domicilio);
+      setCapacidad(result2[0].cantidad);
       setNegocio(result2[0].negocio);
       setLat(result2[0].latitud);
       setLng(result2[0].longitud);
     }
-
-    //let result9 = await getDisponibilidad(tkeyproducto, dia, mes, año);
-/*
-    if (isValid(result9)===true && result9.length === 0) {
-       setDisponible(0);
-    }
-    else {
-      setDisponible(result9[0].disponible);
-    }*/
+    let tdisponible=0;
+    let result9 = await getDisponibilidad(tkeyproducto, 1);
+    if (result9.length>0) tdisponible = result9[0].capacidad-result9[0].reservas;
+    let result10 = await getDisponibilidad(tkeyproducto, 2);
+    if (result10.length>0) tdisponible = tdisponible + result10[0].reservas;
+    setDisponible(tdisponible);
     //let result1 = await getdatosuserCM(sessionStorage.getItem("user"));
        
     setShow2(false);
@@ -262,42 +223,20 @@ const Contrato = () => {
         setFechat(e.target.value);
         setResultado("");
         break;
+      case "cbahora":
+        setCbahora(e.target.checked);
+        break;
       case "cantidad":
-
-        if (Number(e.target.value) > capacidad) {
+        if (Number(e.target.value) > disponible) {
           document.getElementById("cantidad").focus();
           setMessage(`La cantidad no puede exceder la capacidad (${capacidad})`);
           setOpen(true);
           }
         else {
           setCantidad(e.target.value);
-          setResultado("");
         }
         break;
       default:
-        if (Number(e.target.value) >= 0 && Number(e.target.value) < 50) {
-          setCambios(true);
-          setCargandocantidades(true);
-          arraycantidad[Number(e.target.id)] = Number(e.target.value);
-          setTcantidad(Number(e.target.value));
-          setCantidadtmp(Number(e.target.value));
-          let importeT = 0;
-          setImporte(importeT);
-        }
-        if (Number(e.target.id) >= 50 && Number(e.target.id) < 100) {
-          let i = Number(e.target.id) - 50;
-          setindice(i);
-          if (e.target.checked === true) {
-            setCantidadselec(cantidadselec + 1)
-          }
-          else {
-            setShowselecimg(false);
-            if (cantidadselec > 0) {
-              setCantidadselec(cantidadselec - 1);
-            }
-          }
-        }
-
         break;
     }
   }
@@ -319,9 +258,8 @@ const Contrato = () => {
       //await setUserExpress(tuser, nombre + " " + ape1 + " " + ape2, celular);
     }
     if (cantidad !== 0) {
-      let result = await setContrato(tuser, keyproducto, fechat, hora + ":" + minuto, cantidad, lng, lat);
-      const data = await result.data;
-      if (data.error) {
+      let result = await setContratoCM(tuser, keyproducto, fechat, hora + ":" + minuto, cantidad, lng, lat);
+      if (isValid(result)===false || result.length===0) {
         setMessage("Ocurrio un error mientras se registraba el contrato");
         setOpen(true);
       }
@@ -392,17 +330,22 @@ const Contrato = () => {
           ]}
         />
         <Hero>
-          <div className="cabeza">
-            {parsedParams.nivel === 0 ? "" :
-              <IconButton color="primary" onClick={() => {
-                navigate(`/?naturaleza=${sessionStorage.getItem("naturaleza")}&owner=${sessionStorage.getItem("idowner")}&nivel=${sessionStorage.getItem("nivel")}`);
-              }}>
-                <ArrowBack />
-              </IconButton>
-            }
-            <h3 className="h1-cabeza">Destodo.cu</h3>
-            <h4 className="h3-1-cabeza-contrato"> - {descnaturaleza}</h4>
-          </div>
+          {inicia === true ? (
+            <Box
+              sx={{
+                width: "100%",
+                height: "300px",
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+              }}
+            >
+              <CircularProgress color="checkbox" />
+            </Box>
+           ) : (
+            ""
+           )}
+          <Encabezado />
           {/* Este bloque solo se mostrara cuando termine init*/}
           {inicia === false ?
             <>
@@ -421,10 +364,9 @@ const Contrato = () => {
                       disabled
                     />
                   </div>
-                  {capacidadsn===true?
-                    <div className="contrato-input-area">
-                        <label>Capacidad:</label>
-                        <input
+                  <div className="contrato-input-area">
+                       <label>Capacidad:</label>
+                       <input
                            className="contrato-input-input"
                            id="capacidad"
                            value={capacidad}
@@ -432,9 +374,19 @@ const Contrato = () => {
                            type="text"
                            required
                            disabled
-                        />
-                    </div>:""
-                  }
+                       />
+                  </div>
+                  <div className="contrato-input-area-cantidad">
+                    <label>Disponible:</label>
+                    <input
+                      id="disponible"
+                      value={disponible}
+                      onChange={handleInput}
+                      type="number"
+                      required
+                      disabled
+                    />
+                  </div>
                   <div className="contrato-input-area-cantidad">
                     <label>Cantidad:</label>
                     <input
@@ -443,7 +395,7 @@ const Contrato = () => {
                       onChange={handleInput}
                       type="number"
                       required
-                      disabled={sino || (capacidad === 0)}
+                      disabled={sino || (disponible === 0)}
                     />
                   </div>
 
@@ -506,7 +458,7 @@ const Contrato = () => {
 
                     <div className="input-ahora">
                         <label className="label-ahora">Ahora:</label>
-                        <Checkbox id="cbahora" color="checkbox" defaultChecked checked={cbahora} onClick={handleInput} />
+                        <Checkbox id="cbahora" color="checkbox" checked={cbahora} onClick={handleInput} />
                     </div>
 
                     {cbahora===false?
@@ -563,8 +515,6 @@ const Contrato = () => {
                         />
                       </div>
                     </> : ""}
-                  {showselectimg === false ?
-                    <>
                       <div className="contrato-grupo-button">
                                                   
                         {((nombre !== "") && (ape1 !== "") && (ape2 !== "") && (celular.length >= 8 || fijo.length >= 8)) || añadir_user === false && sino === false && (capacidad !== 0) ?
@@ -587,20 +537,20 @@ const Contrato = () => {
                           </button>
                         </Tippy>
                       </div>
-                    </> : ""}
                 </div>
               </div>
               {/*Este bloque que termina solo se muestra cuando termina init */}
             </> : ""}
-
-          {domicilioSN === true && domicilio === true && showMap === true ?
+{console.log(showMap)}
+{console.log(domicilio)}
+          {domicilio === true && showMap === true ?
             <>
               <label className="label-mapa">Ubique donde recibirá el servicio:</label>
               <Map onMapClick={lngLatSelected} remoteshowMap={showMap} lat={lat} lng={lng} point={`${lat},${lng}`} onChange={onChangeMap} remoteZoom={zoom} />
             </> : ""
           }
 
-          {showGalerias && showchat === false ?
+          {showGalerias?
             <ComGalerias 
             deQuien={""}
             ruta={""}

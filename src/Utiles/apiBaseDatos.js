@@ -12,7 +12,7 @@ import { getparesgpscategoria, delAnuncio } from "../servicios/catalogos";
 import {getproductos, setMovimientosNew, updateOcupado,getProductoNew,} from "../servicios/productos";
 import { setCategoriasNegocios, delCategoria } from "../servicios/catalogos";
 import { getcategoriasnegociosapp } from "../servicios/negocios";
-import { getcontratoclientes, } from "../servicios/contratos";
+import { getcontratoclientes, getdisponibilidad, setcontrato} from "../servicios/contratos";
 import {
   getproductoscategoria,
   setproducto,
@@ -29,15 +29,58 @@ async function getContratoClientes(){
     datos = await datos.json();
     return datos;
   } else {
-    const { data } = await supabase
+    const { error, data } = await supabase
       .from("tablausuarios")
       .select("*")
-      .order("orden", { ascending: true })
+      .order("nombre", { ascending: true })
       .eq("activo", true);
     return data;
   }
-
 }
+
+async function setContratoCM(user, producto, fechat, hora, cantidad, lng, lat){
+  let datos;
+  if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
+    datos = await setcontrato({user, producto, fechat, hora, cantidad, lng, lat});
+    datos = await datos.json();
+    return datos;
+  } else {
+    const { error, data } = await supabase
+      .from("tablamovimientos")
+      .insert({ iduser: user, idproducto: producto, fecha: fechat, hora: hora, cantidad, latdestino: lat, lngdestino: lng});
+      if (isValid(error) === false) {
+      const { data, error: err1 } = await supabase
+        .from("tablacategorias")
+        .select("*")
+        .order("categorianegocio", { ascending: false })
+        .limit(1);
+    return data;
+  }
+}
+}
+
+function crearVistaReservar(producto, movimiento){
+  return "CREATE OR REPLACE VIEW getdisponibilidad  AS select tablacatproductos.cantidad as capacidad, tablamovimientos.cantidad as reservas from tablacatproductos, tablamovimientos where" +
+  " tablacatproductos.idproducto = " + producto + " and tablacatproductos.idproducto = tablamovimientos.idproducto and tablamovimientos.idmovimiento=" + movimiento
+}
+
+async function getDisponibilidad(producto, movimiento){
+  let datos;
+  if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
+    datos = await getdisponibilidad({});
+    datos = await datos.json();
+    return datos;
+  } else {
+    let sql = crearVistaReservar(producto, movimiento)
+    let {error:err}=await supabase.rpc("exec_sql", { query: sql });
+    if (isValid(err)===false || err.length>0){
+    const { data } = await supabase.from("getdisponibilidad").select("*");
+    return data;
+    }
+    else return ([]);
+  }
+}
+
 async function getanunciosCM() {
   let datos;
   if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
@@ -1108,6 +1151,7 @@ export {
   getCategoriasNegociosCM,
   getProductosActivaCM,
   getContratoClientes,
+  getDisponibilidad,
 };
 
 export {
@@ -1119,7 +1163,9 @@ export {
   setActivaUsuarioCM,
   setCategoriasNegociosCM,
   setProductosActivaCM,
+  setContratoCM,
 };
+
 export {
   updateOcupadoCM
 };

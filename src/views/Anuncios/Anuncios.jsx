@@ -399,7 +399,7 @@ const Aplicaciones = () => {
         onClose={onModalClose}
         className="cmodal wmodal"
         classContainer="modal-catalogo-productos"
-      >
+       >
         <div className="cerrar-button">
           <button className="cerrar" onClick={onModalClose}>
             X
