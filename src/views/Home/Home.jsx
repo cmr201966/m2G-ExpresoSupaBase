@@ -12,7 +12,6 @@ import { ArrowBack } from "@mui/icons-material";
 
 // components
 import Navbar from "../../components/Navbar/Navbar";
-//import QRCode from "react-qr-code";
 import BigSlider from "../../components/BigSlider/BigSlider";
 import MultipleSlider from "../../components/MultipleSlider/MultipleSlider";
 import CardMultipleSlider from "../../components/CardMultipleSlider/CardMultipleSlider";

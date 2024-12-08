@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Tippy from "@tippyjs/react";
+import BigSlider from "../../components/BigSlider/BigSlider";
 
 // components
 import CardRow from "../../components/CardRow/CardRow";
@@ -29,6 +30,7 @@ import {
   updateOcupadoCM,
   setMovimientosNewCM,
   getProductosNewCM,
+  getanunciosCM,
 } from "../../Utiles/apiBaseDatos";
 
 // config
@@ -64,7 +66,7 @@ const Productos = () => {
   const [viewCarrito, setViewCarrito] = useState(false);
   const [toFly] = useState(null);
   const url = `https://wa.me/${52675359}?text=`;
-  let users =
+  let user =
     sessionStorage.getItem("user") === null
       ? ""
       : sessionStorage.getItem("user");
@@ -86,6 +88,17 @@ const Productos = () => {
   // Estados para la posición GPS del mapa
   const [lng, setLng] = useState();
   const [lat, setLat] = useState();
+
+  // BigSlider
+  const [imgsFileName, setImgsFileName] = useState([]);
+  const [imgsFolder, setImgsFolder] = useState([]);
+  const [imgsId, setImgsId] = useState([]);
+  const [categorys, setCategorys] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [nombres, setNombres] = useState([]);
+  const [links, setLinks] = useState([]);
+  const screenWidth = window.innerWidth;
+
 
   function sessionSet(parsedParams, objeto) {
     objeto.forEach((element) => {
@@ -381,7 +394,6 @@ const Productos = () => {
       setCantidadproductos(result1.length);
       setResult(newResult);
     }
-    // Obtener el contenido de la foto de perfil
     contenidofoto.splice(0, contenidofoto.length);
     for (let i = 0; i < newResult.length; i += 1) {
       let resultado = await getJpgFileSB(
@@ -398,7 +410,6 @@ const Productos = () => {
     let resultgps = await getparesgpscategoriaCM(
       sessionStorage.getItem("categoria")
     );
-    //    let resultgps = await apiBaseDatos("getparesgpscategoria", sessionStorage.getItem("categoria"));
     let paresgps = [];
     let itemst = [];
     resultgps.forEach((item) => {
@@ -419,6 +430,40 @@ const Productos = () => {
       setPuntos(paresgps);
       setItems(itemst);
     });
+
+    let resultApp = await getanunciosCM();
+          let imgsFileName1 = [];
+          let imgsFolder1 = [];
+          let imgsId1 = [];
+          let category1 = [];
+          let users1 = [];
+          let nombres1 = [];
+          let links1 = [];
+          let ruta =
+            sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL"
+              ? "./galerias/app_images/aplicaciones"
+              : "aplicaciones";
+          resultApp.forEach((item) => {
+            let pcMovil=screenWidth<=600?"-movil":"";
+            imgsFileName1.push(item.id + pcMovil + ".jpg");
+            imgsFolder1.push(ruta + "/" + item.id);
+            imgsId1.push(item.idsb);
+            category1.push(item.idcategoria);
+            users1.push(item.iduser);
+            nombres1.push(item.desc);
+            links1.push(item.link);
+          });
+          setImgsFileName(imgsFileName1);
+          setImgsFolder(imgsFolder1);
+          console.log(imgsFileName1)
+          console.log(imgsFolder1)
+          setImgsId(imgsId1)
+          setCategorys(category1);
+          setUsers(users1);
+          setNombres(nombres1);
+          setLinks(links1);
+    
+
     setViewCarrito(paresgps.length > 0);
     setInicia(false);
     setShow1(false);
@@ -442,7 +487,7 @@ const Productos = () => {
         lngDestino,
         carrera * items[index].tarifa + items[index].costodomicilio,
         carrera,
-        users
+        user
       );
       await updateOcupadoCM(idproductot, 1);
       //      await apiBaseDatos("setmovimientosNew", 1, idproductot, latOrigen, latDestino, lngOrigen, lngDestino, carrera * items[index].tarifa + items[index].costodomicilio, carrera, users)
@@ -579,6 +624,18 @@ const Productos = () => {
               ""
             )}
           </Encabezado>
+          {inicia===false?
+            <BigSlider
+              imgsFolder={imgsFolder}
+              imgsFileName={imgsFileName}
+              imgsId={imgsId}
+              categorias={categorys}
+              users={users}
+              nombres={nombres}
+              links={links}
+            />:""
+            }
+
           <div className="div-Papa-Productos">
             <div className={"productos-cabeza"}>
               {/*

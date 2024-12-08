@@ -32,7 +32,6 @@ import { useNavigate } from "react-router-dom"
 import "./styles.css";
 
 import { useEffect, useState } from "react";
-import axios from "axios";
 //import styledEngineSc from "@mui/styled-engine-sc";
 
 import { useNotification } from "../../context/NotificationProvider";
