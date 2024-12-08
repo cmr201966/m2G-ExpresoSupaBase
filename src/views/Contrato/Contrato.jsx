@@ -422,6 +422,7 @@ const Contrato = () => {
                           required
                         />
                       </div>
+{/*                      
                       <div className="contrato-input-area">
                         <label>Apellido 1:</label>
                         <input className="contrato-input-input"
@@ -442,6 +443,7 @@ const Contrato = () => {
                           required
                         />
                       </div>
+*/}                      
                       <div className="contrato-input-area">
                         <label>Celular:</label>
                         <input className="contrato-input-input"
@@ -515,7 +517,8 @@ const Contrato = () => {
                     </> : ""}
                       <div className="contrato-grupo-button">
                                                   
-                        {((nombre !== "") && (ape1 !== "") && (ape2 !== "") && (celular.length >= 8)) || (añadir_user === false && sino === false && (capacidad !== 0)) ?
+{/*                        {((nombre !== "") && (ape1 !== "") && (ape2 !== "") && (celular.length >= 8)) || (añadir_user === false && sino === false && (capacidad !== 0)) ?*/}
+                        {((nombre !== "") && (celular.length >= 8)) || (añadir_user === false && sino === false && (capacidad !== 0)) ?
                           <Tippy content="Reservar" >
                             <button type="button" className="contrato-button primary-contrato" onClick={reservar}>
                               Reservar
