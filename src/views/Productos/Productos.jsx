@@ -455,8 +455,6 @@ const Productos = () => {
           });
           setImgsFileName(imgsFileName1);
           setImgsFolder(imgsFolder1);
-          console.log(imgsFileName1)
-          console.log(imgsFolder1)
           setImgsId(imgsId1)
           setCategorys(category1);
           setUsers(users1);
