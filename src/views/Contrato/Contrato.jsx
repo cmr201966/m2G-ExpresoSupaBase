@@ -88,7 +88,7 @@ const Contrato = () => {
   const [capacidadsn, setCapacidadsn] = useState(false);
   const [capacidad, setCapacidad] = useState(0);
   const [nombremenu, setNombremenu] = useState("");
-  const [capacidaddisponible, setCapacidaddisponible] = useState(0);
+  const [disponible, setDisponible] = useState(0);
   const [showCalendario, setShowCalendario] = useState(false);
   const [contenidomodal, setContenidomodal] = useState("");
   const [contenidomodal2, setContenidomodal2] = useState("");
@@ -186,106 +186,31 @@ const Contrato = () => {
       setArrayclientes(result);
     }
 
-
-    let idsb = "";
     let result2 = await getInfoProductoCM(tkeyproducto);
-    if (isValid(result) === true) {
+    if (isValid(result2) === true) {
       setProducto(tkeyproducto);
-      setNegocio(result[0].negocio);
-      setDesc(result[0].desc);
-      setPrecio(result[0].precio);
-      setCantidad(result[0].cantidad);
-      setDomicilio(result[0].domicilio);
-      setLat(result[0].latitud);
-      setLng(result[0].longitud);
-      idsb = result[0].idsb;
-    }
-
-    const result99 = await axios.post(
-      "http://localhost:3001/getproducto",
-      { keyproducto: tkeyproducto },
-      {}
-    );
-    if (!result2.error) 
-    {
-      setProducto(result2[0].keyproducto);
-      setDesc(result2[0].descripcion);
+      setDesc(result2[0].desc);
       setPrecio(result2[0].precio);
-      setCapacidadsn(result2[0].capacidadsn);
       setCantidad(result2[0].cantidad);
-      setCantidadsn(result2[0].cantidadsn);
-      setMenusn(result2[0].menuSN);
-      setDomicilioSN(result2[0].domicilioSN);
       setDomicilio(result2[0].domicilio);
-      setNegocio(result2.data[0].idnegocio);
-
-      const result9 = await axios.post(
-        "http://localhost:3001/getdisponibilidad",
-        { keyproducto: tkeyproducto, dia, mes, año },
-        {}
-      );
-
-      if (result9.data.length === 0) {
-        setCapacidaddisponible(0);
-      }
-      else {
-        setCapacidaddisponible(result9.data[0].capacidaddisponible);
-      }
-
-      const result0 = await axios.post(
-        "http://localhost:3001/getnegocioproducto",
-        { keyproducto: tkeyproducto },
-        {}
-      );
-      if (result2.data[0].cantidadsn===true)
-      {
-         setCapacidad(result2.data[0].cantidad);
-      }
-      else
-      {
-        if (result2.data[0].capacidadsn===true)
-        {
-           if (result9.data.length === 0) 
-           {
-              setCapacidad((result0.data[0].capacidadacontratar / result2.data[0].aportecapacidad).toFixed(0))
-           }
-           else 
-           {
-        //
-        // Preguntar si el negocio tiene capacidad, en caso positivo, verificar si hay capacidad
-        //
-            if (result9.data[0].capacidaddisponible === 0) 
-            {
-          // setCapacidad((result0.data[0].capacidadacontratar / result2.data[0].aportecapacidad).toFixed(0))
-              setCapacidad(0);
-            }
-            else 
-            {
-              if ((result9.data[0].capacidaddisponible / result2.data[0].aportecapacidad).toFixed(0) === "-0") 
-              {
-                 setCapacidad(0);
-              }
-              else 
-              {
-                 setCapacidad((result9.data[0].capacidaddisponible / result2.data[0].aportecapacidad).toFixed(0))
-              }
-             }
-           }
-         }
-        }
-      const result1 = await axios.post(
-        "http://localhost:3001/getuserdatos",
-        { user: sessionStorage.getItem("user") },
-        {}
-      );
+      setNegocio(result2[0].negocio);
+      setLat(result2[0].latitud);
+      setLng(result2[0].longitud);
     }
+
+    //let result9 = await getDisponibilidad(tkeyproducto, dia, mes, año);
+/*
+    if (isValid(result9)===true && result9.length === 0) {
+       setDisponible(0);
+    }
+    else {
+      setDisponible(result9[0].disponible);
+    }*/
+    //let result1 = await getdatosuserCM(sessionStorage.getItem("user"));
+       
     setShow2(false);
     setInicia(false);
   } //init
-
-  const onModalClose = () => {
-    setShow(false)
-  }
 
   const onModalClose1 = () => {
     if (document.getElementById("cantidad") !== null) document.getElementById("cantidad").focus();
@@ -306,17 +231,6 @@ const Contrato = () => {
   const onModalClose2 = () => {
     setShowCalendario(false)
   }
-  function onModalCloseShowimg() {
-    setShowimg(false);
-  }
-
-  const onModalClose3 = () => {
-    setShow2(false);
-  }
-  const onModalClose4 = () => {
-    setShow4(false);
-  }
-
 
   function handleInput(e) {
     switch (e.target.id) {
@@ -332,17 +246,8 @@ const Contrato = () => {
       case "ape2":
         setApe2(e.target.value);
         break;
-      case "nit":
-        setNit(e.target.value);
-        break;
       case "celular":
         setCelular(e.target.value);
-        break;
-      case "fijo":
-        setFijo(e.target.value);
-        break;
-      case "cbahora":
-        setCbahora(e.target.checked);
         break;
       case "hora":
         setHora(e.target.value);
@@ -359,23 +264,16 @@ const Contrato = () => {
         setResultado("");
         break;
       case "cantidad":
-        for (let i = 0; i < cbopciones.length; i += 1) {
-          cbopciones[i] = (false);
-          setCargandocbopciones(true);
-        }
 
         if (Number(e.target.value) > capacidad) {
-          setContenidomodal2(`La cantidad no puede exceder la capacidad (${capacidad})`);
           document.getElementById("cantidad").focus();
-          setShow2(true);
-        }
+          setMessage(`La cantidad no puede exceder la capacidad (${capacidad})`);
+          setOpen(true);
+          }
         else {
           setCantidad(e.target.value);
           setResultado("");
         }
-        break;
-      case "opcion":
-        setOpciones(e.target.value);
         break;
       default:
         if (Number(e.target.value) >= 0 && Number(e.target.value) < 50) {
@@ -385,20 +283,11 @@ const Contrato = () => {
           setTcantidad(Number(e.target.value));
           setCantidadtmp(Number(e.target.value));
           let importeT = 0;
-          arrayopcionesselect.forEach((item, i) => {
-            importeT = importeT + (item.precio * arraycantidad[i]);
-          })
           setImporte(importeT);
         }
         if (Number(e.target.id) >= 50 && Number(e.target.id) < 100) {
           let i = Number(e.target.id) - 50;
-          setProductotmp(arrayopcionesselect[i].producto);
-          setCategoriatmp(arrayopcionesselect[i].idcategoria);
-          setTdesc(arrayopcionesselect[i].desc);
-          setCantidadtmp(arraycantidad[i]);
           setindice(i);
-          setSelec(arrayopcionesselect[i].select);
-          cbopciones[Number(e.target.id) - 50] = (e.target.checked);
           if (e.target.checked === true) {
             setCantidadselec(cantidadselec + 1)
           }
@@ -408,7 +297,6 @@ const Contrato = () => {
               setCantidadselec(cantidadselec - 1);
             }
           }
-          setCargandocbopciones(true);
         }
 
         break;
@@ -421,209 +309,36 @@ const Contrato = () => {
     init(day, month + 1, year);
   }
 
-
   async function reservar() {
     let tuser = sessionStorage.getItem("user");
     if (Number(sessionStorage.getItem("tipouser")) === 1 && añadir_user === false && sessionStorage.getItem("dueño") === sessionStorage.getItem("user")) {
       tuser = arrayclientes[cliente].iduser;
     }
-    let resultuser = [];
     if (añadir_user === true) {
       // Registrar los datos del usuario en la tablausuarios
       tuser = nombre.substring(0, 1).toLowerCase() + ape1.substring(0, 1).toLowerCase() + ape2.substring(0, 1).toLowerCase();
-      resultuser = await axios.post(
-        "http://localhost:3001/setuserexpress",
-        {
-          user: tuser, nombre: nombre + " " + ape1 + " " + ape2,nit: nit, celular: celular, fijo: fijo
-        },
-        {}
-      );
-
+      //await setUserExpress(tuser, nombre + " " + ape1 + " " + ape2, celular);
     }
     if (cantidad !== 0) {
-
-      // productotmp,  producto para el que seleccionaros las imagenes
-      // arrayopcionesselect es el menu para este contrato
-      // arraycantidad son las cantidades de los productos del menu
-      const result = await axios.post(
-        "http://localhost:3001/setcontrato",
-        {
-          user: tuser, keyproducto, fechat, hora: hora + ":" + minuto, cantidad,
-          seleccionados: arraybannerseleccionados,
-          menu: arrayopcionesselect, producto: productotmp, cantidades: arraycantidad,
-          lng, lat
-        },
-        {}
-      );
+      let result = await setContrato(tuser, keyproducto, fechat, hora + ":" + minuto, cantidad, lng, lat);
       const data = await result.data;
       if (data.error) {
-        setContenidomodal2(data.error);
-        setShow2(true);
+        setMessage("Ocurrio un error mientras se registraba el contrato");
+        setOpen(true);
       }
       else {
-        setContenidomodal("No. del contrato-> " + data[0].contrato + ". Esto es una pre-reservación, se hará efectivo cuando pague el contrato." +
-          " En el botón ¿como transferir? se explica como transferir dinero a nuestra cuenta bancaria. Dentro de 24 horas esta pre-reservación será elimindada" +
-          " si no se paga el contrato y el día quedara disponible. Otra opción es contactar al dueño y concretar un acuerdo");
-        setContrato(data[0].contrato)
-        setSino(true);
-        setYa(true);
-        setShow1(true);
+        setMessage("No. del contrato-> " + result[0].contrato + ". Esto es una pre-reservación, se hará efectivo cuando pague el contrato." +
+          " En el botón ¿como transferir? se explica como transferir dinero a nuestra cuenta bancaria. Si no se transfiere, dentro de 1 hora esta pre-reservación será elimindada" +
+          " y la capacidad quedará disponible. Otra opción es contactar al dueño y concretar un acuerdo");
+        setOpen(true);
+        setContrato(result[0].contrato)
       }
     }
-  } // Confirmar
-
-  async function seleccionar(producto, tmpcantidad, indice) {
-    if (showselectimg === false) {
-      setTproducto(producto);
-      setTcantidad(tmpcantidad);
-      setTindice(indice);
-      setShowselecimg(true);
-      if (elegirya===false)
-      {
-        setElegirya(true);
-        arraybannerseleccionados.splice(0,arraybannerseleccionados.length);
-         rutatmp = "productos/" + productotmp;
-         init1(rutatmp, 0);
-      }
-    }
-    else {
-      setShowselecimg(false);
-    }
-  }
-
-  function selectitemselec(indice) 
-  {
-    setItemopcionselec(indice);
-    setShowimg(true);
-    sessionStorage.setItem("hd_i",indice);
-  }
-
-  function fsubirfotos() 
-  {
-    filedesc=tfichero===0?"Subir Foto":tfichero===1?"Subir Texto":tfichero===2?"Subir Video":tfichero===3?"Subir Audio":"";
-    tfiles=tfichero===0?".jpg":tfichero===1?".doc":tfichero===2?".avi;.mp4;.wav":tfichero===3?".mp3":""
-    setShow4(true);
-  }
-
-  const onPhotoChange = (e) => 
-  {
-    const file = e.target.files[0];
-    filesuploaded.push(e.target.files[0].name);
-    if (!file) return;
-    const reader = new FileReader();
-    reader.onload = (e) => 
-    {
-      const content = e.target.result;
-      setContenidophotoupload(content);
-    };
-    reader.readAsDataURL(file);
-  }
-
-  useEffect(() =>
-  {
-    if (inicia === false && contenidophotoupload.length !== 0)
-    {
-      contenidofotoupload.push(contenidophotoupload);
-      setContenidophotoupload("");
-      setAgregando(true);
-    }
-  }, [contenidophotoupload]);
-
-  async function confirma_subir() 
-  {
-    for (let i = 0; i < contenidofotoupload.length; i += 1) 
-    {
-      const resultado1 = await axios.post(
-        "http://localhost:3001/set-pedidos",
-        { user: sessionStorage.getItem("user"), keyproducto, rutafiles: "./galerias/app_images/productos/" + keyproducto + "/pedidos/", contenidos: contenidofotoupload[i], index: i },
-        {}
-      );
-    }
-    filesuploaded.splice(0, filesuploaded.length);
-    contenidofotoupload.splice(0, contenidofotoupload.length);
-    onModalClose4();
-  }
-
-  function set_borrarI(i) {
-    if (borrarI === i) {
-      setBorrarI(filesuploaded.length + 1);
-    }
-    else {
-      setBorrarI(i);
-    }
-  }
+  } 
 
   function sumamas() {
     setAñadir_user(!añadir_user);
   }
-
-  function eliminar_subir() {
-    let tfiles = filesuploaded;
-    let tcontenidos = contenidofotos;
-    tfiles.splice(borrarI, 1)
-    tcontenidos.splice(borrarI, 1)
-    setFilesuploaded(tfiles);
-    setContenidofotos(tcontenidos);
-    setEliminandosubir(true);
-  }
-
-  function callchat() {
-    if (showGalerias === false) setShowchat(!showchat)
-  }
-
-  function selectAlbum(i) {
-    setSelectalbum(i);
-    setAlbumtxt(arrayalbum[i]);
-    cambialbum(i);
-  }
-
-  function cambialbum(i) {
-    carpeta = arrayalbum[i].toLowerCase() === "perfil" ? "" : arrayalbum[i];
-    talbum = arrayalbum[i];
-    rutatmp = "productos/" + productotmp;
-    init1(rutatmp + "/" + carpeta, i);
-  }
-
-  function eliminaropcion(i)
-  {
-    let tcontenidofoto=[];
-    tcontenidofoto=contenidofoto;
-    tcontenidofoto.push(arraybannerseleccionados[i]);
-    setContenidofoto(tcontenidofoto);
-    let tarraybanner=[];
-    tarraybanner=arraybannerseleccionados;
-    tarraybanner.splice(i,1);
-    setArraybannerseleccionados(tarraybanner);
-    setAgregando(true);
-  }
-
-  function selectFoto(i)   
-  {
-    if (arraybannerseleccionados.length+1<=tcantidad) 
-    {
-    let tarraybanner=[];
-    tarraybanner=arraybannerseleccionados;
-    tarraybanner.push(contenidofoto[i]);
-    setArraybannerseleccionados(tarraybanner);
-    let tcontenidofoto=[];
-    tcontenidofoto=contenidofoto;
-    tcontenidofoto.splice(i,1);
-    setContenidofoto(tcontenidofoto);
-    setAgregando(true);
-    }
-    else
-    {
-      setContenidomodal2("Ya se seleccionaron las " + tcantidad + " opciones");
-      setShow2(true);
-    }
-  }
-
-  useEffect(() => {
-    if (agregando)
-      setTimeout(() => {
-        setAgregando(false)
-      }, 300)
-  }, [agregando])
 
   useEffect(() => {
     if (document.getElementById("nombre")) {
@@ -632,44 +347,9 @@ const Contrato = () => {
   }, [añadir_user])
 
   useEffect(() => {
-    if (eliminandosubir)
-      setTimeout(() => {
-        setEliminandosubir(false)
-      }, 300)
-  }, [eliminandosubir])
-
-  useEffect(() => {
-    if (cargandoarraybanneropciones)
-      setTimeout(() => {
-        setCargandoarraybanneropciones(false)
-      }, 300)
-  }, [cargandoarraybanneropciones])
-
-  useEffect(() => {
     const localParams = location.search.substring(1).split("&");
-    localParams.forEach((item, i) => { const [paramName, paramValue] = item.split("="); parsedParams[paramName] = paramValue });
+    localParams.forEach((item) => { const [paramName, paramValue] = item.split("="); parsedParams[paramName] = paramValue });
   }, [location])
-
-  useEffect(() => {
-    if (cargandocantidades)
-      setTimeout(() => {
-        setCargandocantidades(false)
-      }, 300)
-  }, [cargandocantidades])
-
-  useEffect(() => {
-    if (cargandocbopciones)
-      setTimeout(() => {
-        setCargandocbopciones(false)
-      }, 300)
-  }, [cargandocbopciones])
-
-  useEffect(() => {
-    if (cargandoarrayopcionesselect)
-      setTimeout(() => {
-        setCargandoarrayopcionesselect(false)
-      }, 300)
-  }, [cargandoarrayopcionesselect])
 
   useEffect(() => {
     init(new Date().getDate(), new Date().getMonth() + 1, new Date().getFullYear())
@@ -677,8 +357,6 @@ const Contrato = () => {
 
   useEffect(() => {
     if (document.getElementById("cantidad") !== null) document.getElementById("cantidad").focus();
-
-    if (inicia === false) restaurarmenut(producto, arrayopciones);
   }, [inicia])
 
   return (
@@ -704,75 +382,6 @@ const Contrato = () => {
         </div>
       </Modal>
 
-      <Modal visible={show2} onClose={onModalClose3} className="cmodal wmodal" classContainer="modal-contrato">
-        <div className="cerrar-button">
-          <button className="cerrar" onClick={onModalClose3}>X</button>
-        </div>
-        <div className="main-modal">
-          <p className="plabel">{contenidomodal2}</p>
-        </div>
-      </Modal>
-
-      <Modal visible={show4} onClose={onModalClose4} className="cmodal wmodal" classContainer="modal-contrato">
-        <div className="cerrar-button">
-          <button className="cerrar" onClick={onModalClose4}>X</button>
-        </div>
-        <div className="modal-subir-fotos-head">
-          <label className="label-subir-fotos">{filedesc}</label>
-          <label className="label-subir-fotos-producto">{desc}</label>
-        </div>
-
-        <div className="imgs-subir">
-          <label className="card-img-add">
-            <input
-              id="foto"
-              value={foto}
-              onChange={onPhotoChange}
-              type="file"
-              accept={tfichero===0?".jpg":tfichero===1?".docx;.doc":tfichero===2?".avi;.mp4;.wav":tfichero===3?".mp3":""}
-              required
-            />
-            <AddCircleIcon sx={{ fontSize: "22px" }} />
-          </label>
-          {inicia === false ?
-            <>
-              {filesuploaded.map((item, i) =>
-                <div key={i}>
-                    <img className={borrarI === i ? "card-img-ready-border" : "card-img-ready"} onClick={() => set_borrarI(i)} src={contenidofotoupload[i]} alt={filesuploaded[i]} />
-                </div>)
-              }
-            </> : ""
-          }
-        </div>
-        <div className="grupo-button-subir-fotos">
-          <Tippy content="Subir las fotos">
-            <button type="button" className="button-contrato-subir primary-contrato" onClick={confirma_subir}>
-              <Check />
-            </button>
-          </Tippy>
-          <Tippy content="Eliminar foto">
-            <button type="button" className="button-contrato-subir primary-contrato" onClick={eliminar_subir} disabled={borrarI === 99999999}>
-              <Delete />
-            </button>
-          </Tippy>
-          <Tippy content="Clic para volver">
-            <button type="button" className="button-contrato-subir primary-contrato" onClick={onModalClose4}>
-              <Close />
-            </button>
-          </Tippy>
-        </div>
-      </Modal>
-
-      <Modal visible={showimg} onClose={onModalCloseShowimg} className="cmodal" classContainer="modal-cardrow">
-      <div className="cerrar-button">
-           <button className="cerrar" onClick={onModalCloseShowimg}>
-                X
-           </button>
-      </div>
-      <div className="img_zoom">
-           <img src={arraybannerseleccionados[Number(sessionStorage.getItem("hd_i"))]} alt="dueño" />
-      </div>
-     </Modal>
 
       <div>
         <Navbar
@@ -835,7 +444,7 @@ const Contrato = () => {
                       onChange={handleInput}
                       type="number"
                       required
-                      disabled={sino || masdeuno === false || (capacidad === 0)}
+                      disabled={sino || (capacidad === 0)}
                     />
                   </div>
 
@@ -885,30 +494,10 @@ const Contrato = () => {
                         />
                       </div>
                       <div className="contrato-input-area">
-                        <label>C.I:</label>
-                        <input className="contrato-input-input"
-                          id="nit"
-                          value={nit}
-                          onChange={handleInput}
-                          type="text"
-                          required
-                        />
-                      </div>
-                      <div className="contrato-input-area">
                         <label>Celular:</label>
                         <input className="contrato-input-input"
                           id="celular"
                           value={celular}
-                          onChange={handleInput}
-                          type="text"
-                          required
-                        />
-                      </div>
-                      <div className="contrato-input-area">
-                        <label>Fijo:</label>
-                        <input className="contrato-input-input"
-                          id="fijo"
-                          value={fijo}
                           onChange={handleInput}
                           type="text"
                           required
@@ -933,7 +522,7 @@ const Contrato = () => {
                              type="text"
                              required
                              onClick={(e) => { e.preventDefault(); setShowCalendario(true) }}
-                             disabled={sino || unicavez === true}
+                             disabled={sino}
                           />
                     </div>
                     <div className="contrato-input-area">
@@ -975,120 +564,10 @@ const Contrato = () => {
                         />
                       </div>
                     </> : ""}
-                  {menusn === true && incluye === true ?
-                    <><label className="label-datos-producto label-head-menu">MENU </label>
-                      <div className="container-menu">
-
-                        <div className="container-opciones-posibles">
-                          <div className="agrupa-1">
-                            <Tippy content="Agregar al menú la opcion seleccionada en opciones posibles">
-                              <button type="button" className="contrato-button1" onClick={abajoprimero}>
-                                <Add />
-                              </button>
-                            </Tippy>
-                            {selec && cantidadselec === 1 && inicia === false ?
-                            <>
-                              <Tippy content={`Elejir ${arraycantidad[indice]} ${arrayopcionesselect[indice].desc}`}>
-                                <button type="button" className="contrato-button3" onClick={() => seleccionar(tdesc, cantidadtmp, indice)}>
-                                  Elejir
-                                </button>
-                              </Tippy></> : ""
-                            }
-                            {cantidadselec > 0 ?
-                              <Tippy content="Eliminar del menu la opcion seleccionada">
-                                <button type="button" className="contrato-button2" onClick={arriba}>
-                                  <Delete />
-                                </button>
-                              </Tippy> : ""
-                            }
-                            {menu_negocio === true ?
-                              <Tippy content="Crear un nuevo menú y desechar el que ofrece el negocio">
-                                <button type="button" className="contrato-button2" onClick={nuevomenu}>
-                                  Crear Menu
-                                </button>
-                              </Tippy> : ""
-                            }
-                            {menu_negocio === false ?
-                              <Tippy content="Volver al menú que ofrece el negocio">
-                                <button type="button" className="contrato-button2" onClick={menunegocio}>
-                                  Menu negocio
-                                </button>
-                              </Tippy> : ""
-                            }
-                          </div>
-                        </div>
-                        {showselectimg === false ?
-                          <>
-                            <div className="contrato-input-area1">
-                              <label className="label-menu-producto">Opciones posibles: </label>
-                              <select className="selectop" id="opcion" onChange={handleInput} value={opciones}>
-                                {arrayopciones.filter((item, i) => { if (item.show) { return item } }).map((item, i) => {
-                                  return <option key={i} value={item.indice} >{item.desc}</option>
-                                })}
-                              </select>
-                            </div>
-
-                            <div className="container-opciones-del-menu">
-                              <label className="label-menu-producto">Opciones seleccionadas: </label>
-                              <div className="etiquetas">
-                                <label className="label-menu-producto-desc">Producto</label>
-                                <label className="label-menu-producto-precio">Precio</label>
-                                <label className="label-menu-producto-cantidad">Cantidad</label>
-                              </div>
-                              {!cargandoarrayopcionesselect ? arrayopcionesselect.map((item, i) =>
-                                <div className='menu-opciones' key={i} id={i}>
-                                  <div className="menu-opciones-check">
-                                    <label className="label-menu-opciones-check"></label>
-                                    <Checkbox key={i} id={i + 50} color="checkbox" defaultChecked checked={cbopciones[i]} onClick={handleInput} />
-                                  </div>
-                                  <label className="label-opciones-desc">{item.desc}</label>
-                                  <div className='precio-cantidad'>
-                                    <label className="label-opciones-precio">{item.precio}</label>
-                                    <input className="cantidad-contrato"
-                                      id={i}
-                                      value={arraycantidad[i]}
-                                      onChange={handleInput}
-                                      type="number"
-                                      required
-                                    />
-                                  </div>
-                                </div>
-                              ) : ""
-                              }
-                            </div>
-                            <div>
-                              <label className="label-menu-importe-1">Importe:</label>
-                              <label className="label-menu-importe-2">{importe} </label>
-                            </div>
-                          </> : ""}
-                      </div></> : ""
-                  }
                   {showselectimg === false ?
                     <>
                       <div className="contrato-grupo-button">
-                        {subirfichero ?
-                          <>
-                            <Tippy content="Subir fotos relacionadas con el producto" >
-                              <button type="button" className="contrato-button primary-contrato" onClick={fsubirfotos}>
-                                {tfichero===0?"Subir Foto":tfichero===1?"Subir Texto":tfichero===2?"Subir Video":tfichero===3?"Subir Audio":""}
-                              </button>
-                            </Tippy>
-                          </> : ""}
-                        {menusn ?
-                          <>
-                            <Tippy content="Productos que incluye esta oferta" >
-                              <button type="button" className="contrato-button primary-contrato" onClick={incluir}>
-                                Incluye
-                              </button>
-                            </Tippy>
-                          </> : ""}
-                        {/*
-                    <Tippy content="Solicitar ahora" >
-                      <button type="button" className="contrato-button primary-contrato" onClick={reservar} >
-                        Solicitar
-                      </button>
-                    </Tippy>
-*/}
+                                                  
                         {((nombre !== "") && (ape1 !== "") && (ape2 !== "") && (celular.length >= 8 || fijo.length >= 8)) || añadir_user === false && sino === false && (capacidad !== 0) ?
                           <Tippy content="Reservar" >
                             <button type="button" className="contrato-button primary-contrato" onClick={reservar}>
@@ -1103,18 +582,6 @@ const Contrato = () => {
                             </button>
                           </Tippy > : ""
                         }
-                        <Tippy content="Enviar mensajes al dueño del negocio" >
-                          <button className="contrato-button primary-contrato" onClick={callchat}>
-                            <Chat />
-                          </button>
-                        </Tippy >
-                        {subirfichero === false ?
-                          <Tippy content="Galeria de fotos del producto" >
-                            <button type="button" className="contrato-button primary-contrato" onClick={galerias}>
-                              <CollectionsIcon />
-                            </button>
-                          </Tippy>
-                          : ""}
                         <Tippy content="Ver en el mapa ubicación del negocio" >
                           <button type="button" className="contrato-button primary-contrato" onClick={() => setShowMap(!showMap)}>
                             <MapIcon />
@@ -1127,108 +594,6 @@ const Contrato = () => {
               {/*Este bloque que termina solo se muestra cuando termina init */}
             </> : ""}
 
-          {/* Seleccionar un producto segun cantidad, ej. 4 trajes*/}
-          {tinicia === false && showselectimg === true ?
-            <>
-              <div className="seleccionar">
-                <div className="plabel-producto">
-                  <label>Producto: {tproducto}</label>
-                </div>
-                <div className="plabel-cantidad">
-                  <label >Cantidad:</label>
-                  <input className="contrato-input-area-tcantidad"
-                    id="tcantidad"
-                    value={tcantidad}
-                    onChange={handleInput}
-                    type="number"
-                    required
-                    disabled
-                  />
-                </div>
-
-      <Box sx={{background: theme.palette.primary.main, width: "100vw", position: !fixed ? "relative" : "fixed", left: 0, bottom: 0,}}>
-      {inicia === false ? (
-        <Box sx={{ paddingRight:"27px", position: "relative", height: "100%" }}>
-          <Button
-            variant="contained"
-            onClick={handleShowGaleries}
-            color="error"
-            sx={{
-              position: "absolute",
-              top: "5px",
-              right: "20px",
-              borderRadius: "100%",
-              minWidth: 0,
-              minHeight: 0,
-              width: "35px",
-              height: "35px",
-            }}
-          >
-            <Close />
-          </Button>
-          <label className="titulo-album">Albunes</label>
-          <div id="galeria-album" className="galeria-album">
-            {arrayalbum.map((item, i) => (
-              <div key={i}>
-                <div>
-                  <img
-                    id={`imagen-${i}`}
-                    onClick={() => selectAlbum(i)}
-                    className={
-                      selectalbum === i
-                        ? "image-galeria-border album-foto"
-                        : "image-galeria-noborder album-foto"
-                    }
-                    src={contenidoalbum[i]}
-                    alt={arrayalbum[i]}
-                  />
-                </div>
-                <div>
-                  <label className="label-img-galeria">{item}</label>
-                </div>
-              </div>
-            ))}
-          </div>
-          <label className="titulo-album">Album {albumtxt}</label>
-          <div className="galeria-foto">
-            <div className="galeria-fotos-view">
-              {contenidofoto.map((item, i) => (
-                <img
-                  key={i}
-                  onClick={() => selectFoto(i)}
-                  className={
-                    selectfoto === i
-                      ? "image-galeria-border album-foto"
-                      : "image-galeria-noborder album-foto"
-                  }
-                  src={contenidofoto[i]}
-                />
-              ))}
-            </div>
-          </div>
-        </Box>
-      ) : (
-        ""
-      )}
-    </Box>
-
-                <label className="pmodal-seleccionados">Seleccionados:</label>
-                <div className='galeria-foto'>
-                  <div className='galeria-fotos-view'>
-                    {arraybannerseleccionados.map((item, i) =>
-                      <Box sx={{ position: "relative" }} className="link-image-banner-selec" key={i}>
-                        <Button color="error" onClick={()=>eliminaropcion(i)} sx={{ position: "absolute", top: "-10px", right: "-10px", minWidth: 0, minHeight: 0, width: "40px", height: "40px", borderRadius: "100%" }} variant="contained" >
-                          <Delete />
-                        </Button>
-                        <div onClick={() => selectitemselec(i)}>
-                          <img className={`link-image-img-banner-selec ${itemopcionselec === i ? "banner-selec-borde" : ""}`} src={item} />
-                        </div>
-                      </Box>)}
-                  </div>
-                </div>
-              </div>
-            </> : ""}
-
           {domicilioSN === true && domicilio === true && showMap === true ?
             <>
               <label className="label-mapa">Ubique donde recibirá el servicio:</label>
@@ -1237,12 +602,19 @@ const Contrato = () => {
           }
 
           {showGalerias && showchat === false ?
-            <ComGalerias rutatmp={rutatmp} desctmp={desctmp} />
-            : ""
-          }
-
-          {showchat && showGalerias === false ?
-            <ChatDialogo user={chatuser} nombre={chatnombre} indexChat={indexChat} />
+            <ComGalerias 
+            deQuien={""}
+            ruta={""}
+            perfil={""}
+            permiso={true}
+            botonCerrar={false}
+            cambiaNombreFoto={""}
+            cambiaFoto={""}
+            idsb={""}
+            nophoto={""}
+            tabla={""}
+            campo={""}
+  />
             : ""
           }
 
