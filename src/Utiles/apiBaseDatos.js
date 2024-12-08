@@ -12,6 +12,7 @@ import { getparesgpscategoria, delAnuncio } from "../servicios/catalogos";
 import {getproductos, setMovimientosNew, updateOcupado,getProductoNew,} from "../servicios/productos";
 import { setCategoriasNegocios, delCategoria } from "../servicios/catalogos";
 import { getcategoriasnegociosapp } from "../servicios/negocios";
+import { getcontratoclientes, } from "../servicios/contratos";
 import {
   getproductoscategoria,
   setproducto,
@@ -21,6 +22,22 @@ import { getusuarios } from "../servicios/registrarse";
 import { setconfig, getconfig } from "../servicios/config";
 import supabase from "./connection";
 
+async function getContratoClientes(){
+  let datos;
+  if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
+    datos = await getcontratoclientes({});
+    datos = await datos.json();
+    return datos;
+  } else {
+    const { data } = await supabase
+      .from("tablausuarios")
+      .select("*")
+      .order("orden", { ascending: true })
+      .eq("activo", true);
+    return data;
+  }
+
+}
 async function getanunciosCM() {
   let datos;
   if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
@@ -1090,6 +1107,7 @@ export {
   getcategoriasnewCM,
   getCategoriasNegociosCM,
   getProductosActivaCM,
+  getContratoClientes,
 };
 
 export {

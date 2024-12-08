@@ -35,6 +35,18 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 //import styledEngineSc from "@mui/styled-engine-sc";
 
+import { useNotification } from "../../context/NotificationProvider";
+
+// utils
+import {
+  isValid,
+  getJpgFileSB,
+} from "../../Utiles/Utiles";
+import {
+  getContratoClientes, getInfoProductoCM
+} from "../../Utiles/apiBaseDatos";
+
+
 Date.prototype.toDateInputValue = (function () {
   let local = new Date(this);
   local.setMinutes(this.getMinutes() - this.getTimezoneOffset());
@@ -45,6 +57,7 @@ const Contrato = () => {
   const location = useLocation();
   const parsedParams = {}
   const navigate = useNavigate();
+  const { setOpen, setMessage } = useNotification();
   const [resultado, setResultado] = useState("");
   const [fechat, setFechat] = useState(new Date().toDateInputValue());
   const [contrato, setContrato] = useState(0);
@@ -61,8 +74,6 @@ const Contrato = () => {
   const [elegirya, setElegirya] = useState(false);
   const [foto, setFoto] = useState();
   const [contenidofoto, setContenidofoto] = useState([]);
-  const [contenidofotoupload, setContenidofotoupload] = useState([]);
-  const [contenidophotoupload, setContenidophotoupload] = useState("");
   const [nombrefoto, setNombrefoto] = useState("");
   const [negocio, setNegocio] = useState(99999999);
   const [producto, setProducto] = useState("");
@@ -70,15 +81,12 @@ const Contrato = () => {
   const [desc, setDesc] = useState("");
   const [precio, setPrecio] = useState(0);
   const [ya, setYa] = useState(false);
-  const [masdeuno, setMasdeuno] = useState();
-  const [publicar, setPublicar] = useState(false);
   const [domicilioSN, setDomicilioSN] = useState(false);
   const [domicilio, setDomicilio] = useState(false);
   const [cantidad, setCantidad] = useState(1);
   const [cantidadsn, setCantidadsn] = useState(false);
   const [capacidadsn, setCapacidadsn] = useState(false);
   const [capacidad, setCapacidad] = useState(0);
-  const [aportecapacidad, setAportecapacidad] = useState(0);
   const [nombremenu, setNombremenu] = useState("");
   const [capacidaddisponible, setCapacidaddisponible] = useState(0);
   const [showCalendario, setShowCalendario] = useState(false);
@@ -86,26 +94,11 @@ const Contrato = () => {
   const [contenidomodal2, setContenidomodal2] = useState("");
   const [inicia, setInicia] = useState(true);
   const [tinicia, setTinicia] = useState(false);
-  const [arraymenuopciones, setArraymenuopciones] = useState([]);
-  let [arrayopciones, setArrayopciones] = useState([]);
-  const arraynoopciones = [{ idproducto: 99999999, desc: "No hay opciones" }];
-  const [opciones, setOpciones] = useState("");
-  const [arrayopcionesselect, setArrayopcionesselect] = useState([]);
-  const [arraybannerseleccionados, setArraybannerseleccionados] = useState([]);
-  const [cargandocbopciones, setCargandocbopciones] = useState(false)
-  const [cargandoarrayopcionesselect, setCargandoarrayopcionesselect] = useState(false)
   const [arraycantidad, setArraycantidad] = useState([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1]);
-  const [cbopciones, setCbopciones] = useState([false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-    false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false, false,
-    false, false, false, false, false, false, false, false, false, false, false, false, false, false]);
-  const [cargandoarraybanneropciones, setCargandoarraybanneropciones] = useState(false);
-  const [cargandoopciones, setCargandoopciones] = useState(false);
   const [cargandocantidades, setCargandocantidades] = useState(false);
-  const [cporciento, setCporciento] = useState(0);
   const [arraycategoriasproductos, setArraycategoriasproductos] = useState([]);
   const arraynocategoriasproductos = [{ idcategoria: 999999, desc: "Desconocida" }];
   const [categoria, setCategoria] = useState(0);
-  const [menu_negocio, setMenu_negocio] = useState(true);
   // Otros estados
   const [productotmp, setProductotmp] = useState("");
   const [categoriatmp, setCategoriatmp] = useState("");
@@ -118,23 +111,11 @@ const Contrato = () => {
   const [selectfoto, setSelectfoto] = useState(99999999);
   const theme = useTheme();
   const fixed="";
-  const handleShowGaleries="";
-  const [arrayalbum, setArrayalbum] = useState([]);
-  const [selectalbum, setSelectalbum] = useState(0);
-  const [albumtxt, setAlbumtxt] = useState("");
-  let [talbum, setTalbum] = useState("");
-  let [carpeta, setCarpeta] = useState("");
-  const [contenidoalbum, setContenidoalbum] = useState([]);
-  const [arrayfotos, setArrayfotos] = useState([]);
-  const [file_Name, setFile_Name] = useState(0);
  //Parametros
   const [keyproducto, setKeyproducto] = useState(0);
   const [descnaturaleza, setDescnaturaleza] = useState("");
 
   // Estados para calculo de ganancias y costos
-  const [porciento, setPorciento] = useState(0);
-  const [ganancia, setGanancia] = useState(0);
-  const [costo, setCosto] = useState(0);
   const [importe, setImporte] = useState(0);
   const [tcantidad, setTcantidad] = useState(0);
   const [hora, setHora] = useState("");
@@ -148,17 +129,8 @@ const Contrato = () => {
   const [fijo, setFijo] = useState("");
   const [tproducto, setTproducto] = useState("");
   const [tindice, setTindice] = useState(0);
-  const [itemopcion, setItemopcion] = useState(0);
-  const [itemopcionselec, setItemopcionselec] = useState(0);
-  const [seleccionados, setSeleccionados] = useState(0);
-  const [subirfichero, setSubirfichero] = useState(false);
-  const [tfichero, setTfichero] = useState(0);
-  const [filesuploaded, setFilesuploaded] = useState([]);
   const [contenidofotos, setContenidofotos] = useState([]);
-  const [borrarI, setBorrarI] = useState(99999999);
-  const [eliminandosubir, setEliminandosubir] = useState(false);
   const [showchat, setShowchat] = useState(false);
-  const [unicavez, setUnicavez] = useState("");
   const [añadir_user, setAñadir_user] = useState(false);
   const [arrayclientes, setArrayclientes] = useState([]);
   const arraynoclientes = [{ iduser: 99999999, nombre: "No hay clientes" }];
@@ -168,15 +140,8 @@ const Contrato = () => {
   let filedesc="";
   let tfiles=".jpg";
 
-  // Estados para el CHAT
-  const [chatuser, setChatuser] = useState("");
-  const [chatnombre, setChatnombre] = useState("");
-  const [indexChat, setIndexChat] = useState(0);
-
-  // Estados para la Galeria
-  const [desctmp, setDesctmp] = useState("");
-  let rutatmp = "";
-
+  
+  
   // Estados para la posición GPS del mapa
   const [zoom, setZoom] = useState(15.00);
   const [showMap, setShowMap] = useState(false);
@@ -208,93 +173,52 @@ const Contrato = () => {
       setKeyproducto(parsedParams.keyproducto);
       setDescnaturaleza(parsedParams.descnaturaleza);
     }
-    setContenidomodal2("Preparando condiciones, espere por favor...");
-    setShow2(true);
-    const tclientes = await axios.post(
-      "http://localhost:3001/getcontratoclientes",
-      {},
-      {}
-    );
-    if (!tclientes.error) {
-      setArrayclientes(tclientes.data);
-    }
-    else {
+    setMessage("Preparando condiciones, espere por favor...");
+    setOpen(true);
+    let result = await getContratoClientes();
+    if (
+      (isValid(result) === true && result.err) ||
+      isValid(result) === false ||
+      result.length === 0
+    ) {
       setArrayclientes(arraynoclientes);
+    } else {
+      setArrayclientes(result);
     }
 
-    const result2 = await axios.post(
+
+    let idsb = "";
+    let result2 = await getInfoProductoCM(tkeyproducto);
+    if (isValid(result) === true) {
+      setProducto(tkeyproducto);
+      setNegocio(result[0].negocio);
+      setDesc(result[0].desc);
+      setPrecio(result[0].precio);
+      setCantidad(result[0].cantidad);
+      setDomicilio(result[0].domicilio);
+      setLat(result[0].latitud);
+      setLng(result[0].longitud);
+      idsb = result[0].idsb;
+    }
+
+    const result99 = await axios.post(
       "http://localhost:3001/getproducto",
       { keyproducto: tkeyproducto },
       {}
     );
-    console.log(result2.data);
     if (!result2.error) 
     {
-      rutatmp = "productos/" + result2.data[0].keyproducto;
-      setDesctmp(result2.data[0].descripcion);
-      setProducto(result2.data[0].keyproducto);
-      setDesc(result2.data[0].descripcion);
-      setPrecio(result2.data[0].precio);
-      setCapacidadsn(result2.data[0].capacidadsn);
-      setCantidad(result2.data[0].cantidad);
-      setCantidadsn(result2.data[0].cantidadsn);
-      setMenusn(result2.data[0].menuSN);
-      setDomicilioSN(result2.data[0].domicilioSN);
-      setDomicilio(result2.data[0].domicilio);
-      setMasdeuno(result2.data[0].masdeuno);
-      setPublicar(result2.data[0].publicar);
-      setAportecapacidad(result2.data[0].aportecapacidad.toFixed(2));
+      setProducto(result2[0].keyproducto);
+      setDesc(result2[0].descripcion);
+      setPrecio(result2[0].precio);
+      setCapacidadsn(result2[0].capacidadsn);
+      setCantidad(result2[0].cantidad);
+      setCantidadsn(result2[0].cantidadsn);
+      setMenusn(result2[0].menuSN);
+      setDomicilioSN(result2[0].domicilioSN);
+      setDomicilio(result2[0].domicilio);
       setNegocio(result2.data[0].idnegocio);
-      setSubirfichero(result2.data[0].subirfichero);
-      setTfichero(result2.data[0].tfichero);
-      setUnicavez(result2.data[0].onetime === 0 ? false : true);
-      if (result2.data[0].onetime === 1) {
-        const result7 = await axios.post(
-          "http://localhost:3001/getfechaonetime",
-          { keyproducto: tkeyproducto },
-          {}
-        );
-        console.log(result7)
-        if (result7.error===false) {
-          let tfecha = result7.data[0].fecha.substring(0, 10);
-          tfecha = tfecha.split("-");
-          setFechat(tfecha[2] + "/" + tfecha[1] + "/" + tfecha[0]);
-        }
-      }
 
-      //******************************************************************
-      // Recuperar los productos del negocio serán las posibles opciones *
-      //******************************************************************
-      const resultopciones = await axios.post(
-        "http://localhost:3001/getproductosopciones",
-        { negocio: result2.data[0].idnegocio },
-        {}
-      );
-      if (resultopciones.data.error || resultopciones.data.length === 0) {
-        // no encontraron productos para este negocio
-        setArrayopciones(arraynoopciones);
-      }
-      else {
-        setArrayopciones(resultopciones.data);
-      }
-      setOpciones(0);
-      // Buscar en la tablamenuproductos, las opciones del menú
-      const result3 = await axios.post(
-        "http://localhost:3001/getmenuopciones",
-        { producto: result2.data[0].keyproducto, user: sessionStorage.getItem("user") },
-        {}
-      );
-      let tproductos = [];
-      if (!result3.data.error) {
-        for (let i = 0; i < result3.data.length; i += 1) {
-          tproductos.push({
-            desc: result3.data[i].desc, precio: result3.data[i].precio, cantidad: result3.data[i].cantidad, select: result3.data[i].select,
-            categoriadesc: result3.data[i].categoriadesc
-          });
-        }
-      }
-      setProductos(tproductos);
-      setArraymenuopciones(result3.data);
       const result9 = await axios.post(
         "http://localhost:3001/getdisponibilidad",
         { keyproducto: tkeyproducto, dia, mes, año },
@@ -310,11 +234,9 @@ const Contrato = () => {
 
       const result0 = await axios.post(
         "http://localhost:3001/getnegocioproducto",
-        //      { keyproducto: parsedParams.keyproducto },
         { keyproducto: tkeyproducto },
         {}
       );
-      console.log(result2.data[0].cantidad,result2.data[0].cantidadsn);
       if (result2.data[0].cantidadsn===true)
       {
          setCapacidad(result2.data[0].cantidad);
@@ -351,170 +273,15 @@ const Contrato = () => {
            }
          }
         }
-      setChatuser(result0.data[0].user);
-      setChatnombre(result0.data[0].username);
-      setNombremenu(result0.data[0].nombremenu);
       const result1 = await axios.post(
         "http://localhost:3001/getuserdatos",
         { user: sessionStorage.getItem("user") },
         {}
       );
-      // Si el producto permite subir fotos recuperar las fotos
-      // que se hayan subido
-      {/*
-      const resultfiles = await axios.post(
-        "http://localhost:3001/getfiles_uploaded",
-        { keyproducto: tkeyproducto },
-        {}
-      );
-      //filesuploaded=resultfiles.data;
-      for (let i = 0; i < resultfiles.data.length; i += 1) 
-      {
-        filesuploaded.push(resultfiles.data[i]);
-      }
-      for (let i = 0; i < filesuploaded.length; i += 1) 
-      {
-        const resultado = await axios.post(
-          "http://localhost:3001/getjpg-file",
-          { file: "./galerias/app_images/productos/" + tkeyproducto + "/pedidos/" + filesuploaded[i] },
-          {}
-        );
-        if (resultado.data.length !== 0 && resultado.error === undefined) 
-        {
-          contenidoupload.push(resultado.data);
-        }
-      }
-      */}
     }
     setShow2(false);
     setInicia(false);
   } //init
-
-  async function init1(rutatmp, i)
-  {
-    const galeriasfolders = await axios.post(
-      "http://localhost:3001/getgalerias",
-      { ruta: rutatmp},
-      {}
-    );
-    let marrayalbum = [];
-    let tarrayalbum = [];
-    let tarrayfotos = [];
-    let j = 0;
-    for (const item of galeriasfolders.data) 
-    {
-      if (item.toLowerCase().indexOf(".jpg") <= 0)
-      {
-        if (arrayalbum.length === 0 && item.toLowerCase() !== "pedidos")
-        {
-          tarrayalbum.push(item);
-          if (talbum === item || selectalbum !== i)
-          {
-            setSelectalbum(j);
-          }
-          j = j += 1;
-          // obtener el contenido del primer jpg de cada album
-          carpeta = rutatmp === "" ? "" : rutatmp + "/" + item;
-          const galeriasfolders = await axios.post(
-            "http://localhost:3001/getgalerias",
-            { ruta: carpeta },
-            {}
-          );
-          if (galeriasfolders.data.length > 0) 
-          {
-            const primerjpg = await axios.post(
-              "http://localhost:3001/getjpg-file",
-              {
-                file: "./galerias/app_images/" + carpeta + "/" + galeriasfolders.data[0],
-              },
-              {}
-            );
-            if (primerjpg.data.length !== 0 && primerjpg.error === undefined) 
-            {
-              contenidoalbum.push(primerjpg.data);
-            }
-          }
-          else 
-          {
-            const primerjpg = await axios.post(
-              "http://localhost:3001/getjpg-file",
-              { file: "./galerias/app_images/" + carpeta + "/nada.nada" },
-              {}
-            );
-            if (primerjpg.data.length !== 0 && primerjpg.error === undefined) 
-            {
-              contenidoalbum.push(primerjpg.data);
-            }
-          }
-        }
-      } 
-      else 
-      {
-        if (arrayalbum.length !== 0) 
-        {
-           tarrayfotos.push(item);
-        }
-      }
-    }
-    if (arrayalbum.length === 0)
-    {
-      setArrayalbum(tarrayalbum);
-      marrayalbum = tarrayalbum;
-      carpeta = rutatmp === "" ? "" : rutatmp + "/" + tarrayalbum[0];
-      const galeriasfolders = await axios.post(
-        "http://localhost:3001/getgalerias",
-        { ruta: carpeta },
-        {}
-      );
-      setArrayfotos(galeriasfolders.data);
-      tarrayfotos=galeriasfolders.data;
-      rutatmp = rutatmp + "/" + tarrayalbum[0];
-    } 
-    else 
-    {
-      marrayalbum = arrayalbum;
-    }
-    // llenar el arreglo con las imagenes del album seleccionado
-    carpeta = rutatmp === "" ? "" : rutatmp + "/";
-    contenidofoto.splice(0, contenidofoto.length);
-    let tarray = [];
-    for (const item of tarrayfotos) 
-    {
-      const resultado = await axios.post(
-        "http://localhost:3001/getjpg-file",
-        { file: "./galerias/app_images/" + carpeta + item},
-        {}
-      );
-      if (resultado.data.length !== 0 && resultado.error === undefined) 
-      {
-        tarray.push(resultado.data);
-      }
-    }
-    setAlbumtxt(marrayalbum[i]);
-    setArrayfotos(tarrayfotos);
-    setFile_Name(tarrayfotos.length + 1);
-    let marray=tarray;
-    setContenidofoto(marray);
-  }
-
-  function incluir() {
-    if (incluye === true) {
-      setIncluye(false)
-    }
-    else {
-      setIncluye(true)
-    }
-  }
-
-  const galerias = () => {
-    if (showchat === true) return
-    if (showGalerias === false) {
-      setShowGalerias(true);
-    }
-    else {
-      setShowGalerias(false);
-    }
-  }
 
   const onModalClose = () => {
     setShow(false)
@@ -550,58 +317,6 @@ const Contrato = () => {
     setShow4(false);
   }
 
-  function restaurarmenut(producto, arrayopciones) {
-    if (menusn === true) {
-      restaurarmenu(producto, arrayopciones);
-    }
-  }
-
-  async function restaurarmenu(idproducto, data1) {
-    //idproducto es el producto en cuestion
-    // data1 es un arreglo con las opciones posible
-    // Recuperar el menu para este producto-user
-    const result = await axios.post(
-      "http://localhost:3001/getmenuopciones",
-      { user: sessionStorage.getItem("user"), producto: idproducto },
-      {});
-    setArraymenuopciones(result.data);
-    var tcantidad = [];
-    for (let i = 0; i < tcantidad.length; i += 1) {
-      tcantidad[i] = 1;
-    }
-    setArraycantidad(tcantidad);
-    var tselect = [];
-    for (let i = 0; i < arrayopciones.length; i += 1) {
-      arrayopciones[i].show = true;
-    }
-    if (!result.data.error) {
-      //  if
-      //  for (const item of result.data){
-      for (let j = 0; j < result.data.length; j += 1) {
-        // buscar cada una de las opciones del menu  en las opciones posibles, 
-        // cuando la encuentre mandarla a 
-        // poner en el menu
-        let k = 99999999;
-        for (let i = 0; i < data1.length; i += 1) {
-          if (data1[i].idproducto === result.data[j].producto) {
-            k = i;
-          }
-        }
-        // k es el indice de la opcion del menu en el arreglo de las opciones posibles
-        setOpciones(k);
-        if (k !== 99999999) abajo(data1[k].idproducto, data1[k].desc, data1[k].precio, result.data[j].cantidad, k, data1, tselect, j, data1[k].preciocosto);
-      } //fin del if para el else
-    }
-    else {
-      setImporte(0);
-      setCosto(0);
-      setGanancia(0);
-      setPorciento(0.00)
-      setArrayopcionesselect(tselect);
-      setCargandoarrayopcionesselect(true)
-    }
-    setShow2(false);
-  }
 
   function handleInput(e) {
     switch (e.target.id) {
@@ -706,111 +421,6 @@ const Contrato = () => {
     init(day, month + 1, year);
   }
 
-
-  function abajoprimero() {
-    setCambios(true);
-    abajo(arrayopciones[opciones].idproducto, arrayopciones[opciones].desc, arrayopciones[opciones].precio,
-      1, arrayopciones[opciones].indice, arrayopciones, arrayopcionesselect, arrayopcionesselect.length, arrayopciones[opciones].preciocosto);
-  }
-
-  function abajo(idproducto, desc, precio, mcantidad, indice, data1, tselect, j, preciocosto) {
-    //
-    // Poner una opcion en el menú
-    //
-    tselect.push(
-      {
-        producto: idproducto, desc: desc, precio: precio, preciocosto: preciocosto, indice: indice, select: data1[indice].select,
-        categoriadesc: data1[indice].categoriadesc, idcategoria: data1[indice].idcategoria
-      });
-    var tcantidad = arraycantidad;
-    tcantidad[j] = Number(mcantidad);
-    let importet = 0;
-    let gananciat = 0;
-    let costot = 0;
-    tselect.forEach((item, i) => {
-      importet = importet + (item.precio * tcantidad[i]);
-      costot = costot + (data1[item.indice].preciocosto * tcantidad[i]);
-    })
-    setImporte(importet);
-    setCosto(costot);
-    setGanancia(importet - costot);
-    //      setGanancia(gananciat)
-    setPorciento((((importet - costot) * 100) / importet).toFixed(2))
-    setCporciento((((importet - costot) * 100) / costot).toFixed(2))
-    //      gananciat = gananciat + ((item.precio*tcantidad[i])-(data1[item.indice].preciocosto*tcantidad[i]));
-    //arrayopciones[indice].show = false;
-    data1[Number(indice)].show = false;
-    // apuntar a la primera opcion posible
-    let primero = true;
-    //  arrayopciones.forEach((item,i)=>{
-    data1.forEach((item, i) => {
-      if (data1[i].show && primero)
-      //      if (arrayopciones[i].show && primero)
-      {
-        setOpciones(i);
-        primero = false;
-      }
-    })
-    setArraycantidad(tcantidad);
-    setArrayopciones(data1);
-    setCargandoopciones(true);
-    setArrayopcionesselect(tselect);
-    setCargandoarrayopcionesselect(true)
-
-  }
-
-  function nuevomenu() {
-    let importet = 0;
-    let gananciat = 0;
-    let costot = 0;
-    setImporte(importet);
-    setCosto(costot);
-    setGanancia(importet - costot);
-    setPorciento((((importet - costot) * 100) / importet).toFixed(2));
-    setCporciento((((importet - costot) * 100) / costot).toFixed(2));
-    setArrayopcionesselect([]);
-    setCargandoarrayopcionesselect(true);
-    let topciones = arrayopciones;
-    topciones.forEach((item, i) => {
-      item.show = true;
-    })
-    setArrayopciones(topciones);
-    setCargandoopciones(true);
-    setOpciones(0);
-    setMenu_negocio(false);
-  }
-
-  function menunegocio() {
-    setMenu_negocio(true);
-    setContenidomodal2("Preparando menú, espere por favor...");
-    setShow2(true);
-    restaurarmenut(producto, arrayopciones);
-  }
-
-  function arriba() {
-    // Quitar una opción del menú
-    setCambios(true);
-    arrayopcionesselect.forEach((item, i) => {
-      if (cbopciones[i]) {
-        arrayopciones[arrayopcionesselect[i].indice].show = true;
-        arrayopcionesselect.splice(i, 1);
-        arraycantidad.splice(i, 1);
-        cbopciones.splice(i, 1);
-      }
-    })
-    setCargandoarrayopcionesselect(true);
-    setCargandoopciones(true);
-    let importeT = 0;
-    arrayopcionesselect.forEach((item, i) => {
-      importeT = importeT + (item.precio * arraycantidad[i])
-    })
-    setImporte(importeT);
-    setCantidadselec(0);
-  }
-
-  function agregaruser() {
-
-  }
 
   async function reservar() {
     let tuser = sessionStorage.getItem("user");
@@ -1584,6 +1194,7 @@ const Contrato = () => {
             <div className="galeria-fotos-view">
               {contenidofoto.map((item, i) => (
                 <img
+                  key={i}
                   onClick={() => selectFoto(i)}
                   className={
                     selectfoto === i

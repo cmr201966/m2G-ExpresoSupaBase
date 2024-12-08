@@ -88,7 +88,7 @@ const Home = () => {
           ? "./galerias/app_images/aplicaciones"
           : "aplicaciones";
       resultApp.forEach((item) => {
-        let pcMovil=screenWidth<=400?"-movil":"";
+        let pcMovil=screenWidth<=600?"-movil":"";
         imgsFileName1.push(item.id + pcMovil + ".jpg");
         imgsFolder1.push(ruta + "/" + item.id);
         imgsId1.push(item.idsb);
