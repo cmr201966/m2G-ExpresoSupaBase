@@ -21,7 +21,6 @@
     display: flex;
     justify-content: center;
 }
-
 .contrato h2 
 {
     color: aliceblue;
@@ -34,7 +33,6 @@
     margin: 10px 10px 10px 0;
     align-items: center;
 }
-
 .contrato-input-input
 {
   width: 170px;
@@ -45,7 +43,6 @@
     margin-right: 1px;
     width: 130px;
 }
-
 .contrato-input-area input 
 {
     background: none;
