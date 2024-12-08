@@ -431,7 +431,7 @@ const Productos = () => {
       setItems(itemst);
     });
 
-    let resultApp = await getanunciosCM();
+    let resultApp = await getanunciosCM("1");
           let imgsFileName1 = [];
           let imgsFolder1 = [];
           let imgsId1 = [];

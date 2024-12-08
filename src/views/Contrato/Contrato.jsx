@@ -76,6 +76,7 @@ const Contrato = () => {
   const [cantidad, setCantidad] = useState(1);
   const [capacidad, setCapacidad] = useState(0);
   const [disponible, setDisponible] = useState(0);
+  const [mdisponible, setMdisponible] = useState(0);
   const [showCalendario, setShowCalendario] = useState(false);
   const [contenidomodal, setContenidomodal] = useState("");
   const [contenidomodal2, setContenidomodal2] = useState("");
@@ -98,7 +99,7 @@ const Contrato = () => {
   const [ape1, setApe1] = useState("");
   const [ape2, setApe2] = useState("");
   const [celular, setCelular] = useState("");
-  const [añadir_user, setAñadir_user] = useState(false);
+  const [añadir_user, setAñadir_user] = useState(true);
   const [arrayclientes, setArrayclientes] = useState([]);
   const arraynoclientes = [{ iduser: 99999999, nombre: "No hay clientes" }];
   const [cliente, setCliente] = useState(0);
@@ -151,7 +152,6 @@ const Contrato = () => {
     let result2 = await getInfoProductoCM(tkeyproducto);
     if (isValid(result2) === true) {
       setDomicilio(result2[0].domicilio===0?false:true);
-      console.log(result2[0].domicilio===0?false:true);
       setProducto(tkeyproducto);
       setDesc(result2[0].producto);
       setPrecio(result2[0].precio);
@@ -165,9 +165,10 @@ const Contrato = () => {
     if (result9.length>0) tdisponible = result9[0].capacidad-result9[0].reservas;
     let result10 = await getDisponibilidad(tkeyproducto, 2);
     if (result10.length>0) tdisponible = tdisponible + result10[0].reservas;
-    setDisponible(tdisponible);
+    setDisponible(tdisponible-cantidad);
+    setMdisponible(tdisponible);
     //let result1 = await getdatosuserCM(sessionStorage.getItem("user"));
-       
+    setAñadir_user(sessionStorage.getItem("user")==="" || isValid(sessionStorage.getItem("user"))===false);
     setShow2(false);
     setInicia(false);
   } //init
@@ -215,10 +216,6 @@ const Contrato = () => {
       case "minuto":
         setMinuto(e.target.value);
         break;
-      case "tcantidad":
-        setTcantidad(e.target.value);
-        arraycantidad[indice] = Number(e.target.value);
-        break;
       case "fechat":
         setFechat(e.target.value);
         setResultado("");
@@ -233,7 +230,9 @@ const Contrato = () => {
           setOpen(true);
           }
         else {
-          setCantidad(e.target.value);
+          let tvalor=e.target.value>=0?e.target.value:0;
+          setCantidad(tvalor);
+          setDisponible(mdisponible-Number(tvalor));
         }
         break;
       default:
@@ -274,6 +273,7 @@ const Contrato = () => {
   } 
 
   function sumamas() {
+    console.log("Hola")
     setAñadir_user(!añadir_user);
   }
 
@@ -345,10 +345,9 @@ const Contrato = () => {
            ) : (
             ""
            )}
-          <Encabezado />
-          {/* Este bloque solo se mostrara cuando termine init*/}
           {inicia === false ?
             <>
+              <Encabezado />
               <div className="contrato">
                 <div className="container-contrato">
                   <label className="label">CONTRATO{contrato === 0 ? "" : ` (${contrato})`}</label>
@@ -411,7 +410,6 @@ const Contrato = () => {
                       </div> : ""
 
                   }
-
                   {añadir_user === true ?
                     <>
                       <div className="contrato-input-area">
@@ -464,7 +462,7 @@ const Contrato = () => {
                     {cbahora===false?
                     <>
                     <div className="contrato-input-area">
-                         <label>Fecha del trabajo:</label>
+                         <label>Fecha:</label>
                          <input
                              className="contrato-input-input"
                              id="fechat"
@@ -517,14 +515,14 @@ const Contrato = () => {
                     </> : ""}
                       <div className="contrato-grupo-button">
                                                   
-                        {((nombre !== "") && (ape1 !== "") && (ape2 !== "") && (celular.length >= 8 || fijo.length >= 8)) || añadir_user === false && sino === false && (capacidad !== 0) ?
+                        {((nombre !== "") && (ape1 !== "") && (ape2 !== "") && (celular.length >= 8)) || (añadir_user === false && sino === false && (capacidad !== 0)) ?
                           <Tippy content="Reservar" >
                             <button type="button" className="contrato-button primary-contrato" onClick={reservar}>
                               Reservar
                             </button>
                           </Tippy> : ""
                         }
-                        {Number(sessionStorage.getItem("tipouser")) === 1 && sessionStorage.getItem("dueño") === sessionStorage.getItem("user") && sino === false && (capacidad !== 0) ?
+                        { (Number(sessionStorage.getItem("tipouser")) === 3 || sessionStorage.getItem("user")==="" || isValid(sessionStorage.getItem("user"))===false) || (Number(sessionStorage.getItem("tipouser")) === 1 && sessionStorage.getItem("dueño") === sessionStorage.getItem("user") && sino === false && (capacidad !== 0)) ?
                           <Tippy content="Añadir un usuario" >
                             <button className="contrato-button primary-contrato" onClick={sumamas}>
                               <Add />
@@ -541,8 +539,6 @@ const Contrato = () => {
               </div>
               {/*Este bloque que termina solo se muestra cuando termina init */}
             </> : ""}
-{console.log(showMap)}
-{console.log(domicilio)}
           {domicilio === true && showMap === true ?
             <>
               <label className="label-mapa">Ubique donde recibirá el servicio:</label>

@@ -81,7 +81,7 @@ async function getDisponibilidad(producto, movimiento){
   }
 }
 
-async function getanunciosCM() {
+async function getanunciosCM(frm) {
   let datos;
   if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
     datos = await getAplicaciones({});
@@ -92,7 +92,8 @@ async function getanunciosCM() {
       .from("tablaanuncios")
       .select("*")
       .order("orden", { ascending: true })
-      .eq("activo", true);
+      .eq("activo", true)
+      .eq("frm", frm);
     return data;
   }
 }
@@ -167,7 +168,7 @@ async function CategoriasInsertUpdate(
   accion,
   insertar,
   contenidofoto,
-  isBase64ToBlob
+  isBase64ToBlob,
 ) {
   let err;
   if (insertar === true) {
@@ -417,6 +418,7 @@ async function setAplicacionesCM(
   isBase64ToBlob,
   contenidofotomovil,
   isBase64ToBlobMovil,
+  frm,
 ) {
   let err = "";
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
@@ -429,6 +431,7 @@ async function setAplicacionesCM(
       categoria,
       agregarsn,
       contenidofoto,
+      frm,
     });
     result = await result.json();
     err = result.error;
@@ -442,6 +445,7 @@ async function setAplicacionesCM(
         idcategoria: categoria,
         tooltip: tooltip,
         activo: activo,
+        frm: frm,
       });
       if (isValid(error) === true) err = error;
       else {
@@ -478,6 +482,7 @@ async function setAplicacionesCM(
           desc: desc,
           idcategoria: categoria,
           tooltip,
+          frm: frm,
         })
         .eq("id", id);
         if (isValid(error) === false && contenidofoto!=="") { 
@@ -786,7 +791,7 @@ async function setCategoriasNegociosCM(
   accion,
   inserta,
   contenidofoto,
-  isBase64ToBlob
+  isBase64ToBlob,
 ) {
   let result = [];
   let err = "";
@@ -812,7 +817,7 @@ async function setCategoriasNegociosCM(
       accion,
       inserta,
       contenidofoto,
-      isBase64ToBlob
+      isBase64ToBlob,
     );
   }
   return err;

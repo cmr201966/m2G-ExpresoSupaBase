@@ -73,7 +73,7 @@ const Home = () => {
       parsedParams.nivel === "0"
     ) {
       setNivel(0);
-      let resultApp = await getanunciosCM();
+      let resultApp = await getanunciosCM("0");
 //      let resultApp = await apiBaseDatos("anuncios");
       let imgsFileName1 = [];
       let imgsFolder1 = [];

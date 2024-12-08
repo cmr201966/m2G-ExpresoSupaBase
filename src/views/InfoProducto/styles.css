@@ -174,6 +174,8 @@ p {
   color: aliceblue;
   display: flex;
   font-size: 1.7rem !important;
+  background: green;
+  border-radius: 30px;
 }
 
 .sliderVertical {
