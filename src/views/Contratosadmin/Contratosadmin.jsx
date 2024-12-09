@@ -22,6 +22,7 @@ import Navbar from "../../components/Navbar/Navbar"
 // layouts
 import Hero from "../../layouts/Hero/Hero";
 // 
+import { CircularProgress } from "@mui/material";
 import { useNavigate } from "react-router-dom"
 // styles
 import "./styles.css";
@@ -33,6 +34,12 @@ import axios from "axios";
 import { SetMealRounded } from "@mui/icons-material";
 //import styledEngineSc from "@mui/styled-engine-sc";
 import { useFilter } from "../../context/FilterProvider";
+import Encabezado from "../../components/Encabezado/Encabezado";
+// utils
+import {
+  isValid,
+  borraSessionStorage,
+} from "../../Utiles/Utiles";
 
 const ContratoAdmin = () => {
     const { filterState, setFilterState } = useFilter()
@@ -46,25 +53,19 @@ const ContratoAdmin = () => {
     const [cliente, setCliente] = useState(0);
     const arraynocliente = [{ iduser: 99999999, nombre: "No hay clientes"}];
     const arraymycliente = [{ iduser: sessionStorage.getItem("user"), nombre: sessionStorage.getItem("usernombre")}];
-    const [arraymenu, setArraymenu] = useState([]);
-    const arraynomenu = [{menu: 999999, producto: 999999, nick: "No hay menú"}];
     const [arrayestadoscontratos, setArrayestadoscontratos] = useState([]);
     const [estadocontrato, setEstadocontrato] = useState(0);
     const [arraycontrato, setArraycontrato] = useState([]);
     const [arraytcontrato, setArraytcontrato] = useState([]);
-    const arraynocontrato = [{ contrato: 99999999,idestado:99999999,idnegocio:99999999,idproducto: 99999999, fechatrabajo: "00/00/0000", corto: "No hay contratos", largo: "No hay contratos", estado: "Desconocido", menu:false }];
+    const arraynocontrato = [{ contrato: 99999999,idestado:99999999,idnegocio:99999999,idproducto: 99999999, fechatrabajo: "00/00/0000", corto: "No hay contratos", largo: "No hay contratos", estado: "Desconocido" }];
     const [contrato, setContrato] = useState(0);
-    const [arrayestadosproductos, setArrayestadosproductos] = useState([]);
-    const [estadoproducto, setEstadoproducto] = useState([]);
     const arraynoestados = [{estado: 999999, desc: "Desconocido"}];
     const [cambios, setCambios] = useState(false);
     const [inicia, setInicia] = useState(true);
     const tipouser = Number(sessionStorage.getItem("tipouser"));
     let   condicion="";
     const [filtro_contrato, setFiltro_contrato] = useState(sessionStorage.getItem("filtro_contrato"));
-    const [estado_contrato, setEstado_contrato] = useState(sessionStorage.getItem("estado_contrato"));
     const [negocio, setNegocio] = useState(sessionStorage.getItem("negocio"));
-    const [cproducto, setCproducto] = useState(sessionStorage.getItem("cproducto"));
     const [producto, setProducto] = useState(sessionStorage.getItem("producto"));
     const [estado, setEstado] = useState("");
     const [fechai, setFechai] = useState(sessionStorage.getItem("fechai"));
@@ -81,9 +82,6 @@ const ContratoAdmin = () => {
     const [arraynegocios, setArraynegocios] = useState([]);
     const [tnegocios, setTnegocios] = useState([]);
     const arraynonegocios = [{idnegocio:999999, desc:"No Hay negocios"}];
-    const [tcategoriasproductos, setTcategoriasproductos] = useState ([]);
-    const [arraycategoriasproductos, setArraycategoriasproductos] = useState ([]);
-    const arraynocategoriasproductos = [{keycategoria:999999, categoria:"No hay Categorias de Productos"}];
     const [arrayproductos, setArrayproductos] = useState ([]);
     const [tproductos, setTproductos] = useState ([]);
     const arraynoproductos = [{producto:999999, desc:"No hay productos"}];
@@ -100,14 +98,8 @@ const ContratoAdmin = () => {
     // Evaluar Contrato
     const [rbutton, setRbutton] = useState(0);
     const [comentario, setComentario] = useState("");
-    const [confirma, setConfirma] = useState(true);
-    const [asumido, setAsumido] = useState("");
     // Ubicar el cliente en el Mapa
-    const [domicilioSN, setDomicilioSN] = useState(false);
     const [domicilio, setDomicilio] = useState(false);
-    const [descnegocio, setDescnegocio] = useState("");
-    const [numcontrato, setNumcontrato] = useState(0);
-    const [publicar, setPublicar] = useState(false);
     
   
     // Estados para la posición GPS del mapa
@@ -130,14 +122,11 @@ const ContratoAdmin = () => {
   {
     condicion="";
     sessionStorage.setItem("filtro","Contratos")
-      setContenido("Preparando condiciones, espere por favor...");
-      setShow(true);
       if (sessionStorage.getItem("filtro_contrato") === null)
       { 
          sessionStorage.removeItem("estado_contrato");
          sessionStorage.removeItem("tnegocio");
          sessionStorage.removeItem("negocio");
-         sessionStorage.removeItem("cproducto");
          sessionStorage.removeItem("producto");
          sessionStorage.removeItem("fechai");
          sessionStorage.removeItem("fechaf");
@@ -151,7 +140,7 @@ const ContratoAdmin = () => {
       // tipouser=0 usuario DT ó usuario gratis, puede ver sus contratos
       // tipouser=1 y tipouser=2, es dueño de negocio, puede ver todos los contratos
       // realizados sobre los productos que el oferta.
-      // tipouser=9 SuperUser puede ver todos los contratos 
+      // tipouser=3 SuperUser puede ver todos los contratos 
       //
       
       if (sessionStorage.getItem("user") !== null && (tipouser!== 0))
@@ -183,10 +172,6 @@ const ContratoAdmin = () => {
       // Ya tengo los clientes, ahora buscar los contratos
       setCliente(0);
       // Buscar los contratos del primer cliente.
-      let tmenu=false;
-      let tnegocio=99999999;
-      let tproducto=99999999;
-      let arraytcontrato;
       const resultcontrato = await axios.post(
           "http://localhost:3001/getcontratos",
           {user: sessionStorage.getItem("user"), tipouser, usercontrato:resultcliente[0].iduser, condicion },
@@ -196,90 +181,20 @@ const ContratoAdmin = () => {
       {
           setLng(-75.829090519);
           setLat(20.0217583);
-          setDomicilioSN(false);
           setDomicilio(false);
-          setDescnegocio("");
-          setNumcontrato(0);
           setArraycontrato(arraynocontrato);
-          setArraytcontrato(arraynocontrato);
-          tproducto=arraynocontrato[0].idproducto;
           setEstadocontrato(arraynocontrato.idestado);
-          tnegocio=arraynocontrato[0].idnegocio;
-          tmenu=false;
       }
       else 
       {
          setLng(resultcontrato.data[0].longitud);
          setLat(resultcontrato.data[0].latitud);
-         setNumcontrato(resultcontrato.data[0].contrato);
-         setDescnegocio(resultcontrato.data[0].negocio);
-         setDomicilioSN(resultcontrato.data[0].domicilioSN);
          setDomicilio(resultcontrato.data[0].domicilio);
-         setPublicar(resultcontrato.data[0].publicar);
          setArraycontrato(resultcontrato.data);
          setArraytcontrato(resultcontrato.data);
-         tproducto=resultcontrato.data[0].idproducto;
          setEstadocontrato(resultcontrato.data[0].idestado);
-         tmenu=resultcontrato.data[0].menu;
-         tnegocio=resultcontrato.data[0].idnegocio;
       }
       setContrato(0);
-      let resultmenu;
-      if (tmenu)
-      {
-          let resultmenu1 = await axios.post(
-              "http://localhost:3001/getmenu",
-              {user: resultcliente[0].iduser, producto: tproducto, dueno:sessionStorage.getItem("user")},
-              {}
-          );
-          if (resultmenu1.data.error || resultmenu1.data.length === 0) {
-              setArraymenu(arraynomenu);
-              resultmenu=arraynomenu;
-          }
-          else 
-          {
-              setArraymenu(resultmenu1.data);
-              resultmenu=resultmenu1.data;
-            }     
-      }
-      // Recuperar los estados de los contratos
-      const resultestadoscontratos = await axios.post(
-          "http://localhost:3001/getestadoscontratos",
-          {},
-          {}
-      );
-
-      if (resultestadoscontratos.data.error || resultestadoscontratos.data.length === 0) 
-      {
-          setArrayestadoscontratos(arraynoestados);
-      }
-      else 
-      {
-          setArrayestadoscontratos(resultestadoscontratos.data);
-      }
-      // Recuperar los estados de los productos para este negocio
-      const resultestadosproductos = await axios.post(
-          "http://localhost:3001/getestadosproductos",
-          {tnegocio},
-          {}
-      );
-      if (resultestadosproductos.data.error || resultestadosproductos.data.length === 0) 
-      {
-          setArrayestadosproductos(arraynoestados);
-      }
-      else 
-      {
-          setArrayestadosproductos(resultestadosproductos.data);
-          const arraytmp = [];
-          if (resultmenu)
-          {
-             for (let i =0; i < resultmenu.length; i+= 1)
-             {
-                arraytmp.push(resultmenu[i].idestado);
-             }
-          }
-          setEstadoproducto(arraytmp);
-      }   
       /// Preparando condiciones para filtrar
       let tttnegocios=[];
       const resulttnegocios = await axios.post(
@@ -296,6 +211,7 @@ const ContratoAdmin = () => {
         setArraytnegocios(resulttnegocios.data);
         tttnegocios=resulttnegocios.data;
       }
+
       // Negocios pertenecientes al primer tipo  de negocio en arraytnegocios
       let ttnegocios=[];
       const resultnegocios = await axios.post(
@@ -341,51 +257,8 @@ const ContratoAdmin = () => {
           ttnegocios=arraynonegocios;
         }
       }
-      // Categorias de Productos
-      let ttcategoriasproductos=[];
-      const resultcategoriasproductos = await axios.post(
-          "http://localhost:3001/getcategorias",
-          {condicion:""},
-          {}
-        );
-        if (resultcategoriasproductos.data.error || resultcategoriasproductos.data.length === 0)
-        {
-          setArraycategoriasproductos(arraynocategoriasproductos);
-          setTcategoriasproductos(arraynocategoriasproductos);
-          ttcategoriasproductos=arraynocategoriasproductos;
-        }
-        else
-        {
-          setArraycategoriasproductos(resultcategoriasproductos.data);
-          // filtrar las categorias de productos para el negocio activo.
-          if (sessionStorage.getItem("negocio")!==null)
-          {
-            let j=0;
-            for (let i=0;i<ttnegocios.length;i+=1)
-            {
-             if (ttnegocios[i].idnegocio===Number(sessionStorage.getItem("negocio")))
-             {
-               j=i;
-             }
-            } 
-            ttcategoriasproductos=resultcategoriasproductos.data.filter((item,i)=>{if (item.idnegocio === Number(sessionStorage.getItem("negocio"))){return item}});
-          }
-          else
-          {
-            ttcategoriasproductos=resultcategoriasproductos.data;
-          }  
-          if (ttcategoriasproductos.length!==0)
-          {
-            setTcategoriasproductos(ttcategoriasproductos);
-          }
-          else
-          {
-            setTcategoriasproductos(arraynocategoriasproductos);
-            ttcategoriasproductos=arraynocategoriasproductos;
-          }
-        }
+
         let ttproductos=[];
-        // Productos de la primera categoria de productos  
         const resultproductos = await axios.post(
              "http://localhost:3001/getproductos-categoria",
              {categoriaproducto: ""},
@@ -400,23 +273,7 @@ const ContratoAdmin = () => {
          else
          {
             setArrayproductos(resultproductos.data);
-            // filtrar los productos de la primera categoria de negocios
-            if (sessionStorage.getItem("cproducto")!==null)
-            {
-              let j=0;
-              for (let i=0;i<ttcategoriasproductos.length;i+=1)
-              {
-               if (ttcategoriasproductos[i].idnegocio===Number(sessionStorage.getItem("cproducto")))
-               {
-                 j=i;
-               }
-              } 
-              ttproductos=resultproductos.data.filter((item,i)=>{if (item.idcategoria ===Number(sessionStorage.getItem("cproducto"))){return item}});
-            }
-            else
-            {
-              ttproductos=resultproductos.data;
-            }
+            ttproductos=resultproductos.data;
             if (ttproductos.length!==0)
             {
               setTproductos(ttproductos);
@@ -426,27 +283,7 @@ const ContratoAdmin = () => {
               setTproductos(arraynoproductos);
               ttproductos=arraynoproductos;
             }
-         }
-         let ttestado=[];
-         const resultestado = await axios.post(
-        "http://localhost:3001/getestadoscontratos",
-        {},
-        {}
-      );
-  
-      const data = resultestado.data;
-      if (data.error || data.length === 0)
-      {
-        setArrayestado(arraynoestado)
-        ttestado=arraynoestado;
-      }
-      else
-      {
-        setArrayestado(resultestado.data);
-        ttestado=resultestado.data;
-      }
-  
-      ///
+         }  
       setShow(false);
       setInicia(false);
    } //init 
@@ -491,18 +328,6 @@ const ContratoAdmin = () => {
              }
           }
 
-          if (sessionStorage.getItem("cproducto")!==null)
-          {
-            if (condicion.length!==0)
-            {
-               condicion = condicion + " and (tablacatcategoriasproductos.idcategoria=" + sessionStorage.getItem("cproducto") + ")";
-            }
-            else
-            {
-                condicion = "(tablacatcategoriasproductos.idcategoria=" + sessionStorage.getItem("cproducto") +")";
-            }
-          }
- 
           if (sessionStorage.getItem("producto")!==null)
             {
               if (condicion.length!==0)
@@ -514,6 +339,7 @@ const ContratoAdmin = () => {
                   condicion = "(tablacatproductos.idproducto" + sessionStorage.getItem("producto") + ")";
               }
             }
+
             if (sessionStorage.getItem("fechai")!==null)
             {
                 if (condicion.length!==0)
@@ -527,6 +353,7 @@ const ContratoAdmin = () => {
                 condicion = " (tablareservaciones.fechatrabajo>=cdate('" + fecha[2] + "/" + fecha[1] + "/" + fecha[0] + "'))";
               }
             }
+
             if (sessionStorage.getItem("fechaf")!==null)
             {
               if (condicion.length!==0)
@@ -549,7 +376,6 @@ const ContratoAdmin = () => {
     async function cambiacontratos(indexuser)
     {
         setInicia(true);
-        let ttcontrato=[];
         const resultcontrato = await axios.post(
             "http://localhost:3001/getcontratos",
             {user: sessionStorage.getItem("user"), tipouser, usercontrato:arraycliente[indexuser].iduser},
@@ -560,54 +386,31 @@ const ContratoAdmin = () => {
         {
             setArraycontrato(arraynocontrato);
             setEstadocontrato(arraynocontrato[0].idestado);
-            ttcontrato=arraynocontrato;
         }
         else 
         {
             setArraycontrato(resultcontrato.data);
             setEstadocontrato(resultcontrato.data[0].idestado);
-            ttcontrato=resultcontrato.data;
         }
         setContrato(0);
-        let resultmenu;
-        if (ttcontrato.menu)
-        {
-            let resultmenu1 = await axios.post(
-                "http://localhost:3001/getmenu",
-                {user: arraycliente[indexuser].iduser, producto: ttcontrato[0].idproducto, negocio: ttcontrato.data[0].idnegocio, dueno:sessionStorage.getItem("user")},
-                {}
-            );
-            resultmenu=resultmenu1.data;
-            if (resultmenu.error || resultmenu.length === 0) {
-                setArraymenu(arraynomenu);
-            }
-            else 
-            {
-                setArraymenu(resultmenu);
-            }       
-        }
         setInicia(false);  
     }
 
+    function seteaEstados(estado){
+      setCbestado(estado);
+      setCbtnegocio(estado);
+      setCbnegocio(estado);
+      setCbcproducto(estado);
+      setCbproducto(estado);
+      setCbfechai(estado);
+      setCbfechaf(estado);
+    }
     function borrarfiltro()
     {
-       sessionStorage.removeItem("filtro_contrato");
-       setCbestado(false);
-       setCbtnegocio(false);
-       setCbnegocio(false);
-       setCbcproducto(false);
-       setCbproducto(false);
-       setCbfechai(false);
-       setCbfechaf(false);
-       sessionStorage.removeItem("estado_contrato");
-       sessionStorage.removeItem("tnegocio");
-       sessionStorage.removeItem("negocio");
-       sessionStorage.removeItem("cproducto");
-       sessionStorage.removeItem("producto");
-       sessionStorage.removeItem("fechai");
-       sessionStorage.removeItem("fechaf");
-   }
-   
+       seteaEstados(false);
+       borraSessionStorage(["filtro_contrato", "estado_contrato", "tnegocio", "negocio", "producto", "fechai", "fechaf" ]);
+    }
+
    async function handleInput(e) {
     switch (e.target.id) {
             case "cliente":
@@ -616,33 +419,13 @@ const ContratoAdmin = () => {
                 break;
             case "contrato":              
                 setContrato(e.target.value);
-                setNumcontrato(arraycontrato[e.target.value].contrato);
                 setEstadocontrato(arraycontrato[e.target.value].idestado);
                 setLng(arraycontrato[e.target.value].longitud);
                 setLat(arraycontrato[e.target.value].latitud);
-                setDescnegocio(arraycontrato[e.target.value].negocio);
-                setDomicilioSN(arraycontrato[e.target.value].domicilioSN);
                 setDomicilio(arraycontrato[e.target.value].domicilio);
                 setInicia(true);
                 setContenido("Preparando información del contrato, espere por favor...");
                 setShow(true);
-//              Preparar el menu para este contrato 
-                let resultmenu;
-                if (arraycontrato[e.target.value].menu)
-                {
-                    let resultmenu1 = await axios.post(
-                        "http://localhost:3001/getmenu",
-                        {user: arraycliente[cliente].iduser, producto: arraycontrato[e.target.value].idproducto, negocio: arraycontrato[e.target.value].idnegocio},
-                        {}
-                    );
-                    resultmenu=resultmenu1;
-                    if (resultmenu.data.error || resultmenu.data.length === 0) {
-                        setArraymenu(arraynomenu);
-                    }
-                    else {
-                        setArraymenu(resultmenu.data);
-                    }               
-                }
                 setShow(false);
                 setInicia(false);
                 break;
@@ -671,14 +454,6 @@ const ContratoAdmin = () => {
                 case "cbnegocio":
                   setCbnegocio(e.target.checked);
                   cambia_negocio_cb(e.target.checked);
-                  break;
-                case "categoria":
-                  setCproducto(e.target.value);
-                  cambia_categoria_producto(tcategoriasproductos[Number(e.target.value)].keycategoria);
-                  break;
-                case "cbcproducto":
-                  setCbcproducto(e.target.checked);
-                  cambia_categoria_producto_cb(e.target.checked);
                   break;
                 case "cbproducto":
                   setCbproducto(e.target.checked);
@@ -715,15 +490,6 @@ const ContratoAdmin = () => {
                   break;
                            
             default:
-                setInicia(true);
-                const arraytmp = [];
-                for (let i =0; i < estadoproducto.length; i+= 1)  {
-                    arraytmp.push(estadoproducto[i]);
-                }
-                arraytmp[Number(e.target.id[e.target.id.length-1])]=Number(e.target.value);
-                setEstadoproducto(arraytmp);
-                setCambios(true);
-                setInicia(false);
                 break;      
         }
     }
@@ -731,17 +497,12 @@ const ContratoAdmin = () => {
     function cambia_tipo_tnegocio(tnegocio)
     {
       let ttarraynegocios=[];
-      let ttarraycategoriasproductos=[];
       let ttarrayproductos=[];
-      ttarraynegocios=arraynegocios.filter((item,i)=>{if (item.categorianegocio === tnegocio){return item}});
+      ttarraynegocios=arraynegocios.filter((item)=>{if (item.categorianegocio === tnegocio){return item}});
       if (ttarraynegocios.length!==0)
       {
          setTnegocios(ttarraynegocios);
-         ttarraycategoriasproductos=arraycategoriasproductos.filter((item,i)=>{if (item.idnegocio === ttarraynegocios[0].idnegocio){return item}});
-         if (ttarraycategoriasproductos.length!==0)
-         {
-            setTcategoriasproductos(ttarraycategoriasproductos);
-            ttarrayproductos = arrayproductos.filter((item,i)=>{if (item.idcategoria === ttarraycategoriasproductos[0].keycategoria){return item}});
+            ttarrayproductos = arrayproductos.filter((item)=>{if (item.iduser === negocio){return item}});
             if (ttarrayproductos.length!==0)
             {
               setTproductos(ttarrayproductos);
@@ -750,19 +511,12 @@ const ContratoAdmin = () => {
             {
               setTproductos(arraynoproductos);
             }
-         }
-         else
-         {
-            setTcategoriasproductos(arraynocategoriasproductos);
             setTproductos(arraynoproductos);
-         }
       }
       else
       {
         setTnegocios(arraynonegocios);
-        setTcategoriasproductos(arraynocategoriasproductos);
-        setTproductos(arraynoproductos);
-      
+        setTproductos(arraynoproductos);     
       }
     }
     
@@ -772,7 +526,7 @@ const ContratoAdmin = () => {
       if (cbtnegocio){// tnegocio true
          setTnegocio(0);
          if (cbnegocio)
-         {// cbtnegocio y cbnegocio en true, mostrar negocios del primer tnegocio
+         {
             ttarraynegocios=arraynegocios.filter((item,i)=>{if (item.categorianegocio === arraytnegocios[0].categorianegocio){return item}});
             if (ttarraynegocios.length!==0)
             {
@@ -784,42 +538,6 @@ const ContratoAdmin = () => {
             }
             setNegocio(0);
          }
-         if (cbcproducto)
-         {// categoria de producto en true
-          if (cbnegocio)
-            {//categoriaproducto en true y cbnegocio en true
-              // las categorias dependen del negocio
-              ttarraycategoriasproductos=arraycategoriasproductos.filter((item,i)=>{if (item.idnegocio === ttarraynegocios[0].idnegocio){return item}});
-              if (ttarraycategoriasproductos.length!==0)
-              {
-                setTcategoriasproductos(ttarraycategoriasproductos);
-              }
-              else
-              {
-                setTcategoriasproductos(arraynocategoriasproductos);
-              }
-          
-            }// cbnegocio true
-            else
-            {// categoriaproducto en true y cbnegocio en false y cbtnegocio en true
-             // las categoriasproductos dependen del tnegocio
-             const resultcproductos = await axios.post(
-              "http://localhost:3001/getcproductos-tnegocio",
-              {tnegocio: arraytnegocios[0].categorianegocio},
-              {}
-              );
-              if (resultcproductos.data.error || resultcproductos.data.length === 0)
-              {
-                 setTcategoriasproductos(arraynocategoriasproductos);
-              }
-              else
-              {
-                 setTcategoriasproductos(resultcproductos.data);
-                 ttarraycategoriasproductos=resultcproductos.data;
-              }
-              setCproducto(0);
-            } // cbtnegocio true y cbnegocio false
-         }//categoriaproducto true
 
          if (cbproducto)
          {//  producto en true
@@ -889,21 +607,16 @@ const ContratoAdmin = () => {
           if (cbnegocio)
           {  // cbnegocio true las categoriasproducto depende del negocio
              // getcategoriasproductos-negocio
-             setTcategoriasproductos(arraycategoriasproductos.filter((item,i)=>{if (item.idnegocio === ttarraynegocios[0].idnegocio){return item}}));
-             ttarraycategoriasproductos=arraycategoriasproductos.filter((item,i)=>{if (item.idnegocio === ttarraynegocios[0].idnegocio){return item}});
-             setCproducto(0);
           }
           else
           {  // cbtnegocio false, cbnegocio false, cproducto true mostrar todas la categoriasproducto
-             setTcategoriasproductos(arraycategoriasproductos);
-             ttarraycategoriasproductos=arraycategoriasproductos;
           }
        }
        if (cbproducto)//tnegocio false producto true
        {
           if (cbcproducto) 
           { // tnegocio false, cproducto true, producto true mostrar los productos de la categoriaproducto
-            let tmp=arrayproductos.filter((item,i)=>{if (item.idcategoria === ttarraycategoriasproductos[0].keycategoria){return item}});
+            let tmp=arrayproductos.filter((item)=>{if (item.idcategoria === ttarraycategoriasproductos[0].keycategoria){return item}});
             if (tmp.length!==0)
             {
               setTproductos(tmp);
@@ -912,7 +625,6 @@ const ContratoAdmin = () => {
             {
               setTproductos(arraynoproductos);
             }
-            setCproducto(0);
           }
           else
           { // tnegocio false,cproducto false preguntar por el negocio
@@ -947,13 +659,8 @@ const ContratoAdmin = () => {
 
     function cambia_negocio(negocio)
     {
-      let ttarraycategoriasproductos=[];
       let ttarrayproductos=[];
-      ttarraycategoriasproductos=arraycategoriasproductos.filter((item,i)=>{if (item.idnegocio === negocio){return item}});
-      if (ttarraycategoriasproductos.length!==0)
-      {
-        setTcategoriasproductos(ttarraycategoriasproductos);
-        ttarrayproductos =arrayproductos.filter((item,i)=>{if (item.idcategoria === ttarraycategoriasproductos[0].keycategoria){return item}});  
+      ttarrayproductos =arrayproductos.filter((item)=>{if (item.iduser === negocio){return item}});  
         if (ttarrayproductos.length!==0)
         {
           setTproductos(ttarrayproductos);  
@@ -961,26 +668,9 @@ const ContratoAdmin = () => {
         else
         {
           setTproductos(arraynoproductos);  
-        }
-      }
-      else
-      {
-        setTcategoriasproductos(arraynocategoriasproductos);
-        setTproductos(arraynoproductos);  
-      }
+        }     
      }
-    
-     function cambia_categoria_producto(categoriaproducto){
-      let ttproductos=arrayproductos.filter((item,i)=>{if (item.idcategoria === categoriaproducto){return item}});
-      if (ttproductos.length===0){
-           setTproductos(arraynoproductos);
-      }
-      else{
-           setTproductos(ttproductos);
-      }
-      setProducto(0);
-     }
-    
+       
      async function cambia_negocio_cb(cbnegocio)
      {
        let ttarraynegocios=[];
@@ -990,7 +680,7 @@ const ContratoAdmin = () => {
           if (cbtnegocio)
           {  // cbnegocio en true y cbtnegocio en true los negocios dependen
             // del tipo de negocio
-            ttarraynegocios=arraynegocios.filter((item,i)=>{if (item.categorianegocio === arraytnegocios[tnegocio].categorianegocio){return item}});
+            ttarraynegocios=arraynegocios.filter((item)=>{if (item.categorianegocio === arraytnegocios[tnegocio].categorianegocio){return item}});
             if (ttarraynegocios.length!==0)
             {
                setTnegocios(ttarraynegocios)
@@ -1010,22 +700,12 @@ const ContratoAdmin = () => {
           if (cbcproducto)
           {// negocio true y cbcproducto true
            // la categoriaproducto depende del negocio
-           ttarraycategoriasproductos=arraycategoriasproductos.filter((item,i)=>{if (item.idnegocio === ttarraynegocios[0].idnegocio){return item}});
-           if (ttarraycategoriasproductos.length!==0)
-           {
-              setTcategoriasproductos(ttarraycategoriasproductos)
-           }
-           else
-           {
-             setTcategoriasproductos(arraynocategoriasproductos);
-             ttarraycategoriasproductos=arraynocategoriasproductos;
-           }
           }
           if (cbproducto)
           {// negocio a true verificar cbcproducto
              if (cbcproducto)
              {// negocio true, producto true y cproducto true mostrar productos segun cproducto
-               let tmp=arrayproductos.filter((item,i)=>{if (item.idcategoria === ttarraycategoriasproductos[0].keycategoria){return item}});
+               let tmp=arrayproductos.filter((item)=>{if (item.idcategoria === ttarraycategoriasproductos[0].keycategoria){return item}});
                if (tmp.length!==0)
                {
                  setTproductos(tmp);
@@ -1034,7 +714,6 @@ const ContratoAdmin = () => {
                {
                  setTproductos(arraynoproductos);
                }
-               setCproducto(0);  
              }
              else
              {//negocio true, producto true y cproducto false mostrar productos segun negocio
@@ -1064,28 +743,9 @@ const ContratoAdmin = () => {
           // si cbtnegocio es false mostrar todas las categorias ne productos
            if (cbtnegocio)
            {// las categorias dependen del tnegocio
-             const resultcproductos = await axios.post(
-               "http://localhost:3001/getcproductos-tnegocio",
-               {tnegocio: arraytnegocios[tnegocio].categorianegocio},
-               {}
-               );
-               if (resultcproductos.data.error || resultcproductos.data.length === 0)
-               {
-                  setTcategoriasproductos(arraynocategoriasproductos);
-                  ttarraycategoriasproductos=arraynocategoriasproductos;
-               }
-               else
-               {
-                  setTcategoriasproductos(resultcproductos.data);
-                  ttarraycategoriasproductos=resultcproductos.data;
-               }
-               setCproducto(0);
            }
            else
            { // mostrar todas las cproductos
-             setTcategoriasproductos(arraycategoriasproductos);
-             ttarraycategoriasproductos=arraycategoriasproductos;
-             setCproducto(0);
            }
         }
         if (cbproducto)
@@ -1101,7 +761,6 @@ const ContratoAdmin = () => {
              {
                setTproductos(arraynoproductos);
              }
-             setCproducto(0);
            }
            else
            {
@@ -1127,144 +786,11 @@ const ContratoAdmin = () => {
       }
      }
  
-     async function cambia_categoria_producto_cb(cbcproducto){
-      let ttarraycategoriasproductos=[];
-      if (cbcproducto)
-      {// categoriaproducto true
-      // verificar cbnegocio y cbtnegocio
-         if (cbnegocio)
-         { // negocios true
-           // filtrar las categoriasproducto para el negocio activo
-           ttarraycategoriasproductos=arraycategoriasproductos.filter((item,i)=>{if (item.idnegocio === tnegocios[negocio].idnegocio){return item}});
-           if (ttarraycategoriasproductos.length!==0)
-           {
-           setTcategoriasproductos(ttarraycategoriasproductos);
-           }
-           else
-           {
-            setTcategoriasproductos(arraynocategoriasproductos);
-           }
-           setCproducto(0);
-         }
-         else
-         {// negocio false, verificar cbtnegocio
-             if (cbtnegocio)
-             {// tnegocio true
-              // filtrar las categoriasproducto para el tnegocio activo
-              const resultcproductos = await axios.post(
-                "http://localhost:3001/getcproductos-tnegocio",
-                {tnegocio: arraytnegocios[tnegocio].categorianegocio},
-                {}
-                );
-                if (resultcproductos.data.error || resultcproductos.data.length === 0)
-                {
-                  ttarraycategoriasproductos=arraynocategoriasproductos;
-                  setTcategoriasproductos(arraynocategoriasproductos);
-                }
-                else
-                {
-                  ttarraycategoriasproductos=resultcproductos.data;
-                  setTcategoriasproductos(resultcproductos.data);
-                }
-                setCproducto(0);    
-             }
-             else
-             { // cbnegocio es false y cbtnegocio es false, mostrar todas la cproductos
-               setTcategoriasproductos(arraycategoriasproductos);
-               ttarraycategoriasproductos=arraycategoriasproductos;
-              }
-          }
-          if (cbproducto)
-          { // cproducto true y  producto es true
-            // mostrar los productos para la primera categoria de productos
-            let tmp=arrayproductos.filter((item,i)=>{if (item.idcategoria === ttarraycategoriasproductos[0].keycategoria){return item}});
-            if (tmp.length!==0)
-            {
-               if (arrayproductos.filter((item,i)=>{if (item.idcategoria === ttarraycategoriasproductos[0].keycategoria){return item}}).length!==0)
-               {
-                  setTproductos(arrayproductos.filter((item,i)=>{if (item.idcategoria === ttarraycategoriasproductos[0].keycategoria){return item}}));
-               }
-               else
-               {
-                 setTproductos(arraynoproductos);
-               }
-            }
-            else
-            {
-              setTproductos(arraynoproductos);
-            }
-            setCproducto(0);
-          }
-        }        
-      else{ // cproducto false
-        if (cbproducto)
-        {// cproducto false, cbproducto true
-           if (cbnegocio)
-           {// cbnegocio true mostrar productos para el negocio activo
-            const resultproductos = await axios.post(
-              "http://localhost:3001/getproductos-negocio",
-              {negocio: tnegocios[negocio].idnegocio},
-              {}
-              );
-              if (resultproductos.data.error || resultproductos.data.length === 0)
-              {
-                 setTproductos(arraynoproductos);
-              }
-              else
-              {
-                  setTproductos(resultproductos.data);
-              }
-              setProducto(0);
-           }
-           else
-           {// no cbnegocio, verificar cbtnegocio
-           if (cbtnegocio)
-           {// si cbtnegocio true mostrar productos para el tnegocio activo
-            const resultproductos = await axios.post(
-              "http://localhost:3001/getproductos-tnegocio",
-              {categorianegocio: arraytnegocios[tnegocio].categorianegocio},
-              {}
-              );
-              if (resultproductos.data.error || resultproductos.data.length === 0)
-              {
-                 setTproductos(arraynoproductos);
-              }
-              else
-              {
-                  setTproductos(resultproductos.data);
-              }
-              setProducto(0);               
-           }
-           else
-           {// cbnegocio y cbtnegocio false mostrar todos los productos
-             setTproductos(arrayproductos);
-             setProducto(0);
-           }
-           }
-        }
-    }
-  }
-
-  async function cambia_producto_cb(cbproducto)
+   async function cambia_producto_cb(cbproducto)
   {
-    var tttcproductos=[];
-    var tttproductos=[];
    if (cbproducto){
       // producto true;
-      // verificar cbcproducto, cbnegocio, cbtnegocio 
-      if (cbcproducto)
-      {  
-        // cproducto true mostrar los productos para esta cproducto
-        if (arrayproductos.filter((item,i)=>{if (item.idcategoria === tcategoriasproductos[cproducto].keycategoria){return item}}).length!==0)
-        {
-         setTproductos(arrayproductos.filter((item,i)=>{if (item.idcategoria === tcategoriasproductos[cproducto].keycategoria){return item}}));
-        }
-        else
-        {
-          setTproductos(arraynoproductos);
-        }
-      }
-      else{ // cbcproducto en false, verificar cbnegocio y cbtnegocio
+      // verificar cbnegocio, cbtnegocio 
         if (cbnegocio){// el checkbox de negocio en true, filtrar los producto para el negocio activo
              // getproductos(negocio);
            // Productos de la primera categoria de productos  
@@ -1287,9 +813,9 @@ const ContratoAdmin = () => {
         else{// check de negocio en false verificar cbtnegocio
              if (cbtnegocio){ // checkbox de tnegocios en true, filtrar los productos para el tnegocio activo
                   // getproductos(tnegocio);
-                  if (arrayproductos.filter((item,i)=>{if (item.idcategoria === tcategoriasproductos[cproducto].keycategoria){return item}}).length!==0)
+                  if (arrayproductos.filter((item)=>{if (item.iduser === negocio){return item}}).length!==0)
                   {
-                     setTproductos(arrayproductos.filter((item,i)=>{if (item.idcategoria === tcategoriasproductos[cproducto].keycategoria){return item}}))
+                     setTproductos(arrayproductos.filter((item)=>{if (item.iduser === negocio){return item}}))
                   }
                   else
                   {
@@ -1308,11 +834,10 @@ const ContratoAdmin = () => {
                   }
              }
         }
-      }
    }
-  } // cambia_producto_cb
+  } 
 
-    function confirmarFiltro() 
+  function confirmarFiltro() 
     {
       let filtro=false;
       if (cbestado===true)
@@ -1328,11 +853,6 @@ const ContratoAdmin = () => {
       if (cbnegocio===true)
       {
          sessionStorage.setItem("negocio",tnegocios[Number(negocio)].idnegocio);
-         filtro=true;
-      }
-      if (cbcproducto===true)
-      {
-         sessionStorage.setItem("cproducto",tcategoriasproductos[Number(cproducto)].keycategoria);
          filtro=true;
       }
       if (cbproducto===true)
@@ -1506,7 +1026,6 @@ const ContratoAdmin = () => {
     else
     {
       setEvaluar(false);
-      setConfirma(false);
       setContenido("Se registró la evaluación.");
       setShow(true);
     }
@@ -1517,18 +1036,13 @@ const ContratoAdmin = () => {
        setRbutton(e.target.value);
     }
 
-    function fpublicar()
-    {
-      // publicar
-    }
-
     useEffect(() => {
       setFiltrar(filterState.show);
     }, [filterState])
   
   useEffect(() => {
     const localParams = location.search.substring(1).split("&");
-    localParams.forEach((item, i) => { const [paramName, paramValue] = item.split("="); parsedParams[paramName] = paramValue });
+    localParams.forEach((item) => { const [paramName, paramValue] = item.split("="); parsedParams[paramName] = paramValue });
   }, [location])
 
    useEffect(() => {
@@ -1549,28 +1063,24 @@ const ContratoAdmin = () => {
             </Modal>
 
             <div>
-            {inicia===false?
-            <Navbar
-                links={[
-                    { label: "Inicio", to: "/",tooltips: "Ir a la página principal" },
-                    { label: sessionStorage.getItem("user") === null ? "Iniciar sesión" : "Cerrar sesión", to: sessionStorage.getItem("user") === null ? "/login" : "/cerrarsesion", tooltips: sessionStorage.getItem("user") === null ? "Abrir sesión" : "Cerrar la sesión de " + sessionStorage.getItem("usernombre") },
-                    { label: "Registrarse", to: "/registrarse?inserta=true", tooltips: "Crear una cuenta de usuario" },
-                    { label: "Acerca de", to: "/Acercade", tooltips: "Acerca de Destodo.cu" },
-                      ]}  mcliente={arraycliente[cliente].iduser} mcontrato={arraycontrato[contrato].contrato}
-
-            />:""}
-                <Hero>
-                    <div className="cabeza">
-                    {parsedParams.nivel===0?"":
-                     <IconButton color="primary" onClick={() => {
-                         navigate(`/?naturaleza=${sessionStorage.getItem("naturaleza")}&owner=${sessionStorage.getItem("idowner")}&nivel=${sessionStorage.getItem("nivel")}`);
-                     }}>
-                      <ArrowBack />
-                      </IconButton>
-                    }
-                        <h3 className="h1-cabeza">DesTodo.cu</h3>
-                        <h4 className="h3-1-cabeza-contrato-admin"> - Contratos ({numcontrato})</h4>
-                    </div>
+             <Navbar nivel={1} />
+             <Hero>
+              {inicia === true ? (
+              <Box
+                sx={{
+                  width: "100%",
+                  height: "300px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                 }}
+               >
+               <CircularProgress color="checkbox" />
+              </Box>
+              ) : (
+               ""
+              )}
+               {inicia === false ? <Encabezado />:""}
                     <div className="contratosadmin">
                            <div className="container-contratosadmin">
                            {inicia === false?
@@ -1595,8 +1105,8 @@ const ContratoAdmin = () => {
                             }
                             {/* Esta información solo sale si hay algún contrato*/}
                             {arraycontrato.length>0 && arraycontrato[0].corto!=="No hay contratos"?
-                            <>
-                            <div className="input-contratosadmin">
+                             <>
+                             <div className="input-contratosadmin">
                                  { inicia === false ?
                                    <>
                                    <div className='grupo-contratos-label'>
@@ -1629,37 +1139,9 @@ const ContratoAdmin = () => {
                                    </div>
                                    </>:""
                                 }
-                                 { inicia === false ?
-                                   arraycontrato[contrato].menu ?
-                                    <label className="label-menu-contratosadmin-1">INCLUYE:</label>:"":""
-                                 }
-                                 { inicia === false ?
-                                   arraycontrato[contrato].menu ?
-                                   <>
-                                    <div className='label-menu-grupo-1'>
-                                        <label className="label-menu-contratosadmin-2">Producto</label>
-                                        <label className="label-menu-contratosadmin-3">Estado</label>
-                                    </div>
-                                    </>:"":""
-                                 }
-                                 { inicia === false ?
-                                  arraycontrato[contrato].menu ?
-                                  arraymenu.map((item1,i)=>
-                                    <>
-                                    <div key={i} className="menu-contratosadmin">
-                                         <label className="label-menu-contratosadmin">{item1.nick}</label>
-                                           <select className={"estados"} id={`selectproducto${i}`} onChange={handleInput} disabled={tipouser===0} value={estadoproducto[i]}>
-                                           {arrayestadosproductos.map((item, j) => {
-                                             return <option key={j} value={item.estado} >{item.desc}</option>
-                                           })}
-                                        </select>
-                                    </div>
-                                    </>
-                                        ):""
-                                 
-                                :""}
-                            </div> 
-                            </>:""}
+                              </div> 
+                             </>:""
+                            }
                             {/*} Fin de bloque si hay contratos*/}
 
                             <div className="contratosadmin-grupo-button">
@@ -1696,15 +1178,7 @@ const ContratoAdmin = () => {
                                 </Tippy>
                                 </>:""
                                 }
-                                {tipouser!==0 && arraycontrato[0].corto!=="No hay contratos" && inicia===false && publicar?
-                                 <>
-                                 <Tippy content="Publicar resultados">
-                                        <button type="button" className="contratosadmin-button1 primary" onClick={fpublicar}>
-                                                Publicar
-                                        </button>
-                                 </Tippy>
-                                </>:""
-                                }
+
                                 {tipouser===0 && arraycontrato[0].corto!=="No hay contratos" && inicia===false && arraycontrato[contrato].idestado===1?
                                 <>
                                 <Tippy content="Evaluar el comportamiento del negocio.">
@@ -1756,9 +1230,10 @@ const ContratoAdmin = () => {
 
                         </div>
                        {/* Filtrar Contratos */}
+
                        {inicia===false && filtrar===true && cancelar===false && postponer===false && evaluar===false && showMap===false?
-                       <>
-                       <div className="filtrar-contratos">
+                         <>
+                         <div className="filtrar-contratos">
                             <div className="container-filtrar-contratos">
                                 <label className="label-m">Filtrar los contratos:</label>
                                 <div className="input-area-filtro">
@@ -1791,17 +1266,6 @@ const ContratoAdmin = () => {
                                     <select className="selectne" id="negocio" onChange={handleInput} value={negocio}>
                                             {tnegocios.map((item, i) => {
                                             return <option key={i} value={i} >{item.desc}</option>
-                                     })}
-                                    </select>:""
-                                    }
-                                </div>
-                                <div className="input-area-filtro">
-                                    <Checkbox className="cbox-Cproducto" id="cbcproducto" color="checkbox" defaultChecked  checked={cbcproducto} onClick={handleInput}/>
-                                    <label className="label-datos-producto">Categorias:</label>
-                                    {cbcproducto?          
-                                    <select className="selectca" id="categoria" onChange={handleInput} value={cproducto}>
-                                            {tcategoriasproductos.map((item, i) => {
-                                            return <option key={i} value={i} >{item.categoria}</option>
                                      })}
                                     </select>:""
                                     }
@@ -1861,13 +1325,14 @@ const ContratoAdmin = () => {
                                       </Tippy>
                                 </div>
                             </div>
-                      </div>
-                      </>:""
+                        </div>
+                        </>:""
                       }
+
                       {/* Evaluar Contrato */}
                       {inicia===false && evaluar===true && cancelar===false && postponer===false && filtrar===false && showMap===false?
-                      <>
-                      <div className="evaluar">
+                        <>
+                        <div className="evaluar">
                          <div className="container-evaluar"> 
                               <label className="label-actual">Evaluar Contrato:</label>
                               <div className="input-area-evaluar">
@@ -1929,14 +1394,14 @@ const ContratoAdmin = () => {
                                   </Tippy>
                             </div>
 
-                         </div>
-                        </div>
-                        </>:""
+                            </div>
+                           </div>
+                          </>:""
                         }
                         {/* Cancelar Contrato */}
                         {inicia===false && cancelar===true && postponer===false && evaluar===false && filtrar===false && showMap===false?
-                        <>
-                        <div className="cancelar">
+                          <>
+                          <div className="cancelar">
                              <div className="container-cancelar"> 
                                   <label className="label-actual">Cancelar Contrato:</label>
                                   <div className="input-area-cancelar">
@@ -1971,13 +1436,13 @@ const ContratoAdmin = () => {
                                         </Tippy>
                                   </div>
                              </div>
-                        </div>
-                        </>:""
+                          </div>
+                         </>:""
                         }
                         {/* PostPoner Contrato */}
                         {inicia===false && postponer===true && cancelar===false && evaluar===false && showMap===false?
-                        <>
-                        <div className="postponer">
+                         <>
+                         <div className="postponer">
                            <div className="container-postponer"> 
                                <label className="label-cliente">PostPoner contrato:</label>
                                <div className="input-area-postponer">
@@ -2023,8 +1488,8 @@ const ContratoAdmin = () => {
                                    </Tippy>
                                </div>
                             </div>
-                       </div>
-                       </>:""
+                          </div>
+                         </>:""
                        }
                     </div>
                 </Hero>

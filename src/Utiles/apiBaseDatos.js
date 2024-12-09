@@ -100,7 +100,7 @@ async function setContratoCM(user, producto, fechat, hora, cantidad, lng, lat){
 }
 
 function crearVistaReservar(producto, movimiento){
-  return "CREATE OR REPLACE VIEW getdisponibilidad  AS select tablacatproductos.cantidad as capacidad, tablamovimientos.cantidad as reservas from tablacatproductos, tablamovimientos where" +
+  return "CREATE OR REPLACE VIEW getdisponibilidad  AS select sum(tablamovimientos.cantidad) as reservas from tablacatproductos, tablamovimientos where" +
   " tablacatproductos.idproducto = " + producto + " and tablacatproductos.idproducto = tablamovimientos.idproducto and tablamovimientos.idmovimiento=" + movimiento
 }
 

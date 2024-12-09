@@ -4,30 +4,24 @@ import Modal from "../../components/Modal/Modal";
 import { useLocation } from "react-router-dom";
 import Calendario from "../../components/Calendar/Calendar";
 import Navbar from "../../components/Navbar/Navbar"
-import ChatDialogo from "../../components/ChatDialogo/ChatDialogo";
 import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Map from "../../components/Map/Map";
 // @mui icons
 import MapIcon from "@mui/icons-material/Map";
-import Delete from "@mui/icons-material/Delete";
-import AddCircleIcon from "@mui/icons-material/AddCircle";
-import IconButton from "@mui/material/IconButton";
-import ArrowBack from "@mui/icons-material/ArrowBack";
-import CollectionsIcon from "@mui/icons-material/Collections";
-import Chat from "@mui/icons-material/Chat";
+//import AddCircleIcon from "@mui/icons-material/AddCircle";
+//import IconButton from "@mui/material/IconButton";
+//import ArrowBack from "@mui/icons-material/ArrowBack";
+//import CollectionsIcon from "@mui/icons-material/Collections";
 import Add from "@mui/icons-material/Add";
-import Check from "@mui/icons-material/Check";
-import Close from "@mui/icons-material/Close";
-import { useTheme } from "@mui/material";
+//import Check from "@mui/icons-material/Check";
+//import Close from "@mui/icons-material/Close";
+//import { useTheme } from "@mui/material";
 
-import { Box, Button, CircularProgress } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 import Encabezado from "../../components/Encabezado/Encabezado";
 
 // layouts
 import Hero from "../../layouts/Hero/Hero";
-
-// 
-import { useNavigate } from "react-router-dom"
 
 // styles
 import "./styles.css";
@@ -59,9 +53,7 @@ Date.prototype.toDateInputValue = (function () {
 const Contrato = () => {
   const location = useLocation();
   const parsedParams = {}
-  const navigate = useNavigate();
   const { setOpen, setMessage } = useNotification();
-  const [resultado, setResultado] = useState("");
   const [fechat, setFechat] = useState(new Date().toDateInputValue());
   const [contrato, setContrato] = useState(0);
   const [sino, setSino] = useState(false);
@@ -72,9 +64,8 @@ const Contrato = () => {
   const [producto, setProducto] = useState("");
   const [desc, setDesc] = useState("");
   const [precio, setPrecio] = useState(0);
-  const [ya, setYa] = useState(false);
   const [domicilio, setDomicilio] = useState(false);
-  const [cantidad, setCantidad] = useState(1);
+  const [cantidad, setCantidad] = useState(0);
   const [capacidad, setCapacidad] = useState(0);
   const [disponible, setDisponible] = useState(0);
   const [mdisponible, setMdisponible] = useState(0);
@@ -82,31 +73,20 @@ const Contrato = () => {
   const [contenidomodal, setContenidomodal] = useState("");
   const [contenidomodal2, setContenidomodal2] = useState("");
   const [inicia, setInicia] = useState(true);
-  const [tinicia, setTinicia] = useState(false);
-  // Otros estados
-  const [indice, setindice] = useState(0);
-  const theme = useTheme();
-  const fixed="";
  //Parametros
   const [keyproducto, setKeyproducto] = useState(0);
-  const [descnaturaleza, setDescnaturaleza] = useState("");
 
   // Estados para calculo de ganancias y costos
-  const [tcantidad, setTcantidad] = useState(0);
   const [hora, setHora] = useState("");
   const [minuto, setMinuto] = useState("");
   //
   const [nombre, setNombre] = useState("");
-  const [ape1, setApe1] = useState("");
-  const [ape2, setApe2] = useState("");
   const [celular, setCelular] = useState("");
   const [añadir_user, setAñadir_user] = useState(true);
   const [arrayclientes, setArrayclientes] = useState([]);
   const arraynoclientes = [{ iduser: 99999999, nombre: "No hay clientes" }];
   const [cliente, setCliente] = useState(0);
   const [cbahora, setCbahora] = useState(true);
-
-  
   
   // Estados para la posición GPS del mapa
   const [zoom, setZoom] = useState(15.00);
@@ -137,7 +117,6 @@ const Contrato = () => {
     if (keyproducto === 0) {
       tkeyproducto = parsedParams.keyproducto;
       setKeyproducto(parsedParams.keyproducto);
-      setDescnaturaleza(parsedParams.descnaturaleza);
     }
     let result = await getContratoClientes();
     if (
@@ -151,6 +130,7 @@ const Contrato = () => {
     }
 
     let result2 = await getInfoProductoCM(tkeyproducto);
+    console.log(result2)
     if (isValid(result2) === true) {
       setDomicilio(result2[0].domicilio===0?false:true);
       setProducto(tkeyproducto);
@@ -163,12 +143,12 @@ const Contrato = () => {
     }
     let tdisponible=0;
     let result9 = await getDisponibilidad(tkeyproducto, 1);
-    if (result9.length>0) tdisponible = result9[0].capacidad-result9[0].reservas;
+    if (result9.length>0  && isValid(result9[0].reservas)===true) tdisponible = result2[0].cantidad-result9[0].reservas;
     let result10 = await getDisponibilidad(tkeyproducto, 2);
-    if (result10.length>0) tdisponible = tdisponible + result10[0].reservas;
-    setDisponible(tdisponible-cantidad);
+    if (result10.length>0 && isValid(result10[0].reservas)===true) tdisponible = tdisponible + result10[0].reservas;
+    let tcantidad=isValid(cantidad)===true?cantidad:0;
+    setDisponible(tdisponible-tcantidad);
     setMdisponible(tdisponible);
-    //let result1 = await getdatosuserCM(sessionStorage.getItem("user"));
     setAñadir_user(sessionStorage.getItem("user")==="" || isValid(sessionStorage.getItem("user"))===false);
     setShow2(false);
     setInicia(false);
@@ -201,12 +181,6 @@ const Contrato = () => {
         break;
       case "nombre":
         setNombre(e.target.value);
-        break;
-      case "ape1":
-        setApe1(e.target.value);
-        break;
-      case "ape2":
-        setApe2(e.target.value);
         break;
       case "celular":
         setCelular(e.target.value);
@@ -280,10 +254,10 @@ const Contrato = () => {
         setOpen(true);
       }
       else {
-        console.log(result);
         setMessage("No. del contrato-> " + result[0].id + ". Esto es una pre-reservación, se hará efectivo cuando pague el contrato." +
           " En el botón ¿como transferir? se explica como transferir dinero a nuestra cuenta bancaria. Si no se transfiere, dentro de 1 hora esta pre-reservación será elimindada" +
           " y la capacidad quedará disponible. Otra opción es contactar al dueño y concretar un acuerdo");
+        setSino(true)  ;
         setOpen(true);
         setContrato(result[0].id)
       }
@@ -338,15 +312,8 @@ const Contrato = () => {
 
 
       <div>
-        <Navbar
-          links={[
-            { label: "Inicio", to: "/", tooltips: "Ir a la página principal" },
-            { label: sessionStorage.getItem("user") === null ? "Iniciar sesión" : "Cerrar sesión", to: sessionStorage.getItem("user") === null ? "/login" : "/cerrarsesion", tooltips: sessionStorage.getItem("user") === null ? "Abrir sesión" : "Cerrar la sesión de " + sessionStorage.getItem("usernombre") },
-            { label: "Registrarse", to: "/registrarse?inserta=true", tooltips: "Crear una cuenta de usuario" },
-            { label: "Acerca de", to: "/Acercade", tooltips: "Acerca de Destodo.cu" },
-          ]}
-        />
-        <Hero>
+      <Navbar nivel={1} />
+      <Hero>
           {inicia === true ? (
             <Box
               sx={{
@@ -438,28 +405,6 @@ const Contrato = () => {
                           required
                         />
                       </div>
-{/*                      
-                      <div className="contrato-input-area">
-                        <label>Apellido 1:</label>
-                        <input className="contrato-input-input"
-                          id="ape1"
-                          value={ape1}
-                          onChange={handleInput}
-                          type="text"
-                          required
-                        />
-                      </div>
-                      <div className="contrato-input-area">
-                        <label>Apellido 2:</label>
-                        <input className="contrato-input-input"
-                          id="ape2"
-                          value={ape2}
-                          onChange={handleInput}
-                          type="text"
-                          required
-                        />
-                      </div>
-*/}                      
                       <div className="contrato-input-area">
                         <label>Celular:</label>
                         <input className="contrato-input-input"
@@ -533,7 +478,6 @@ const Contrato = () => {
                     </> : ""}
                       <div className="contrato-grupo-button">
                                                   
-{/*                        {((nombre !== "") && (ape1 !== "") && (ape2 !== "") && (celular.length >= 8)) || (añadir_user === false && sino === false && (capacidad !== 0)) ?*/}
                         {((nombre !== "") && (celular.length >= 8)) || (añadir_user === false && sino === false && (capacidad !== 0)) ?
                           <Tippy content="Reservar" >
                             <button type="button" className="contrato-button primary-contrato" onClick={reservar}>
