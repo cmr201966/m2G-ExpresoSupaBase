@@ -95,20 +95,32 @@ async function getDisponibilidad(producto, movimiento){
   }
 }
 
-async function getanunciosCM(frm) {
+async function getanunciosCM(frm, categoria) {
   let datos;
   if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
     datos = await getAplicaciones({});
     datos = await datos.json();
     return datos;
   } else {
-    const { data } = await supabase
+    if (frm==="1"){
+      const { error, data } = await supabase
+      .from("tablaanuncios")
+      .select("*")
+      .order("orden", { ascending: true })
+      .eq("idcategoria", categoria)
+      .eq("activo", true)
+      .eq("frm", frm);
+      return data;
+    }
+    else{
+    const { error, data } = await supabase
       .from("tablaanuncios")
       .select("*")
       .order("orden", { ascending: true })
       .eq("activo", true)
       .eq("frm", frm);
-    return data;
+      return data;
+    }
   }
 }
 

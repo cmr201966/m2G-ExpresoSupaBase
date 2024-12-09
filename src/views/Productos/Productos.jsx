@@ -76,6 +76,7 @@ const Productos = () => {
   const [costoDomicilio, setCostoDomicilio] = useState(0);
   const [index, setIndex] = useState(0);
   const [nick, setNick] = useState(0);
+  const [hayAnuncios, setHayAnuncios] = useState(false);
 /*  const [marca, setMarca] = useState(0);
   const [color, setColor] = useState(0);
   const [chapa, setChapa] = useState(0);*/
@@ -431,7 +432,9 @@ const Productos = () => {
       setItems(itemst);
     });
 
-    let resultApp = await getanunciosCM("1");
+    let resultApp = await getanunciosCM("1", sessionStorage.getItem("categoria"));
+    console.log(resultApp)
+    setHayAnuncios(resultApp.length!==0)
           let imgsFileName1 = [];
           let imgsFolder1 = [];
           let imgsId1 = [];
@@ -622,7 +625,7 @@ const Productos = () => {
               ""
             )}
           </Encabezado>
-          {inicia===false?
+          {inicia===false && hayAnuncios?
             <BigSlider
               imgsFolder={imgsFolder}
               imgsFileName={imgsFileName}
@@ -631,7 +634,8 @@ const Productos = () => {
               users={users}
               nombres={nombres}
               links={links}
-            />:""
+            />
+            :""
             }
 
           <div className="div-Papa-Productos">
