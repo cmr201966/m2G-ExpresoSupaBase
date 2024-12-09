@@ -319,7 +319,7 @@
   font-size: 5px;
 }
 .gradient-background-producto {
-  background: linear-gradient(to top,blue -13%, white 52%, transparent 59%);
+  background: linear-gradient(to top, white 52%, transparent 59%);
   position: absolute;
   top: 0;
   height: 100vh; /* Para que ocupe toda la altura de la pantalla */
