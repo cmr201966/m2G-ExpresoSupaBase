@@ -637,8 +637,7 @@ const Productos = () => {
             />
             :""
             }
-        <div className="gradient-background-producto"></div>
-
+          <div className="gradient-background-producto"></div>
           <div className="div-Papa-Productos">
             <div className={"productos-cabeza"}>
               {/*
