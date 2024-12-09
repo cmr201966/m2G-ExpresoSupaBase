@@ -633,6 +633,7 @@ const Productos = () => {
               users={users}
               nombres={nombres}
               links={links}
+              sizeClass="chico"
             />
             :""
             }

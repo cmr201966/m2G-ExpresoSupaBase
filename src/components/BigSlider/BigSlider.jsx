@@ -22,6 +22,7 @@ const BigSlider = (props) => {
     users = [],
     nombres = [],
     links = [],
+    sizeClass,
   } = props;
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -83,7 +84,7 @@ const BigSlider = (props) => {
   }, [currentIndex, toLeft]);
 
   return (
-    <div className={`big-slider`}>
+    <div className={`big-slider-${sizeClass}`}>
       {/*
         <button onClick={() => toRight()} className="big-slider-nav left">
           L
@@ -105,7 +106,7 @@ const BigSlider = (props) => {
                 categorias[i]
               }&user=${sessionStorage.getItem("user")}&nombre=${nombres[i]}`}
             >
-              <div key={i} className="big-slider-item">
+              <div key={i} className={`big-slider-item-${sizeClass}`}>
                 <img className="img-slider" src={imagenes[i]} alt={nombres[i]} />
               </div>
             </Link>:
@@ -115,11 +116,11 @@ const BigSlider = (props) => {
                   target="_blank"
                   rel="noopener noreferrer"
                 >
-                  <div key={i} className="big-slider-item">
+                  <div key={i} className={`big-slider-item-${sizeClass}`}>
                        <img className="img-slider" src={imagenes[i]} alt={nombres[i]} />
                   </div>
                 </a>:
-                  <div key={i} className="big-slider-item">
+                  <div key={i} className={`big-slider-item-${sizeClass}`}>
                      <img className="img-slider" src={imagenes[i]} alt={nombres[i]} />
                   </div>
 
@@ -132,7 +133,7 @@ const BigSlider = (props) => {
                 categorias[0]
               }&user=${sessionStorage.getItem("user")}&nombre=${nombres[0]}`}
             >
-              <div className="big-slider-item">
+              <div className={`big-slider-item-${sizeClass}`}>
                 <img className="img-slider" src={imagenes[0]} alt={nombres[0]} />
               </div>
             </Link>:
@@ -142,11 +143,11 @@ const BigSlider = (props) => {
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <div key={0} className="big-slider-item">
+                <div key={0} className={`big-slider-item-${sizeClass}`}>
                      <img className="img-slider" src={imagenes[0]} alt={nombres[0]} />
                 </div>
               </a>:
-                <div key={0} className="big-slider-item">
+                <div key={0} className={`big-slider-item-${sizeClass}`}>
                    <img className="img-slider" src={imagenes[0]} alt={nombres[0]} />
                 </div>
 

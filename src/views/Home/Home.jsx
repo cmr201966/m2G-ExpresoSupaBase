@@ -245,6 +245,7 @@ const Home = () => {
               users={users}
               nombres={nombres}
               links={links}
+              sizeClass="grande"
             />
             <div className="main-grid negative-margin">
               <div className="grid-letf"></div>

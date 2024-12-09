@@ -52,3 +52,7 @@ export async function delCategoria(body) {
 export async function delAnuncio(body) {
   return makeRequest("http://localhost:3001/delAnuncio", body);
 }
+
+export async function setuserexpress(body) {
+  return makeRequest("http://localhost:3001/setuserexpress", body);
+}

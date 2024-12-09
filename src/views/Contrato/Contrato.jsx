@@ -45,7 +45,8 @@ import {
   getContratoClientes, 
   getInfoProductoCM, 
   getDisponibilidad,
-  setContratoCM
+  setContratoCM,
+  setUserExpress,
 } from "../../Utiles/apiBaseDatos";
 
 
@@ -125,7 +126,7 @@ const Contrato = () => {
   };
 
   async function init(dia, mes, año) {
-    if (sessionStorage.getItem("dueño") === null) {
+    if (isValid(sessionStorage.getItem("dueño")) === false) {
       sessionStorage.setItem("filtro", "")
       sessionStorage.setItem("naturaleza", parsedParams.naturaleza);
       sessionStorage.setItem("idowner", parsedParams.idowner);
@@ -248,32 +249,48 @@ const Contrato = () => {
 
   async function reservar() {
     let tuser = sessionStorage.getItem("user");
-    if (Number(sessionStorage.getItem("tipouser")) === 1 && añadir_user === false && sessionStorage.getItem("dueño") === sessionStorage.getItem("user")) {
+    if (Number(sessionStorage.getItem("tipouser")) === 1 && añadir_user === false && sessionStorage.getItem("dueño") === tuser) {
       tuser = arrayclientes[cliente].iduser;
     }
     if (añadir_user === true) {
       // Registrar los datos del usuario en la tablausuarios
-      tuser = nombre.substring(0, 1).toLowerCase() + ape1.substring(0, 1).toLowerCase() + ape2.substring(0, 1).toLowerCase();
-      //await setUserExpress(tuser, nombre + " " + ape1 + " " + ape2, celular);
+      let nombres = nombre.split(" ");
+      let lng="";
+      tuser="";
+      nombres.forEach((name) => {
+        tuser=tuser+name.substring(0, 1).toLowerCase()
+        lng = lng + name.length;
+      });      
+      //tuser = nombres[0].substring(0, 1).toLowerCase() + ape1.substring(0, 1).toLowerCase() + ape2.substring(0, 1).toLowerCase();
+      tuser=tuser + lng;
+      let err =await setUserExpress(tuser, nombre, celular);
+      if (isValid(err)===true){
+        setMessage(err + ", no se registro la reservación.");
+        setOpen(true);
+        return
+      }
     }
     if (cantidad !== 0) {
-      let result = await setContratoCM(tuser, keyproducto, fechat, hora + ":" + minuto, cantidad, lng, lat);
-      if (isValid(result)===false || result.length===0) {
+      let mhora=hora===''?"0":hora;
+      let mmin= minuto===''?"0":minuto;
+      let result = await setContratoCM(tuser, keyproducto, fechat, mhora + ":" + mmin, cantidad, lng, lat);
+      console.log(result);
+      if (result.length===0) {
         setMessage("Ocurrio un error mientras se registraba el contrato");
         setOpen(true);
       }
       else {
-        setMessage("No. del contrato-> " + result[0].contrato + ". Esto es una pre-reservación, se hará efectivo cuando pague el contrato." +
+        console.log(result);
+        setMessage("No. del contrato-> " + result[0].id + ". Esto es una pre-reservación, se hará efectivo cuando pague el contrato." +
           " En el botón ¿como transferir? se explica como transferir dinero a nuestra cuenta bancaria. Si no se transfiere, dentro de 1 hora esta pre-reservación será elimindada" +
           " y la capacidad quedará disponible. Otra opción es contactar al dueño y concretar un acuerdo");
         setOpen(true);
-        setContrato(result[0].contrato)
+        setContrato(result[0].id)
       }
     }
   } 
 
   function sumamas() {
-    console.log("Hola")
     setAñadir_user(!añadir_user);
   }
 
@@ -397,8 +414,7 @@ const Contrato = () => {
                       disabled={sino || (disponible === 0)}
                     />
                   </div>
-
-                  {
+                  { 
                     Number(sessionStorage.getItem("tipouser")) === 1 && añadir_user === false && sessionStorage.getItem("dueño") === sessionStorage.getItem("user") ?
                       <div className="input-area-cliente">
                         <label className="label-datos-cliente">Cliente: </label>

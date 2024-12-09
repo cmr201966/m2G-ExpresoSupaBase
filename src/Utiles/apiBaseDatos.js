@@ -1,6 +1,6 @@
 import {  isValid, uploadBase64Image} from "./Utiles";
 import { getCategoriasNew } from "../servicios/home";
-import { getCategoriasNegocios } from "../servicios/catalogos";
+import { getCategoriasNegocios, setuserexpress } from "../servicios/catalogos";
 import { getAplicaciones, setAplicaciones } from "../servicios/aplicaciones";
 import { login } from "../servicios/login";
 import { getprovincias, getmunicipios } from "../servicios/catalogos";
@@ -21,6 +21,29 @@ import {
 import { getusuarios } from "../servicios/registrarse";
 import { setconfig, getconfig } from "../servicios/config";
 import supabase from "./connection";
+
+async function setUserExpress(user, nombre, celular){
+  let datos;
+  if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
+    datos = await setuserexpress({user, nombre, celular});
+    datos = await datos.json();
+    return datos;
+  } else {
+    const { data } = await supabase
+      .from("tablausuarios")
+      .select("*")
+      .eq("celular", celular);
+    if (data.length!==0){
+      return "Ya existe un usuario con este celular (" + data[0].iduser + "), abra sesión con ese usuario o cambie el celular";
+    }
+    else{
+    const { error} = await supabase
+      .from("tablausuarios")
+      .insert({ iduser: user, tipouser: 0, nombre: nombre, celular: celular});
+    return error;
+    }
+  }
+}
 
 async function registraWS(quien){
   let datos;
@@ -53,23 +76,26 @@ async function getContratoClientes(){
 }
 
 async function setContratoCM(user, producto, fechat, hora, cantidad, lng, lat){
+  console.log(user, producto, fechat, hora, cantidad, lng, lat);
   let datos;
   if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
     datos = await setcontrato({user, producto, fechat, hora, cantidad, lng, lat});
     datos = await datos.json();
     return datos;
   } else {
-    const { error, data } = await supabase
+    const { error } = await supabase
       .from("tablamovimientos")
-      .insert({ iduser: user, idproducto: producto, fecha: fechat, hora: hora, cantidad, latdestino: lat, lngdestino: lng});
+      .insert({ idmovimiento: 1, iduser: user, idproducto: producto, fecha: fechat, hora: hora, cantidad, latdestino: lat, lngdestino: lng});
+      console.log(error);
       if (isValid(error) === false) {
-      const { data, error: err1 } = await supabase
-        .from("tablacategorias")
-        .select("*")
-        .order("categorianegocio", { ascending: false })
-        .limit(1);
-    return data;
-  }
+         const { data, error } = await supabase
+           .from("tablamovimientos")
+           .select("*")
+           .order("id", { ascending: false })
+           .limit(1);
+        if (isValid(error)===false) return data
+        else return [];
+     }
 }
 }
 
@@ -1196,6 +1222,7 @@ export {
   setProductosActivaCM,
   setContratoCM,
   registraWS,
+  setUserExpress,
 };
 
 export {
