@@ -637,11 +637,12 @@ const Productos = () => {
             />
             :""
             }
+        <div className="gradient-background-producto"></div>
 
           <div className="div-Papa-Productos">
             <div className={"productos-cabeza"}>
               {/*
-            {(((puntosState === 2 && viewCarrito && showMap===true) || (showMap === false && puntos.length !== 0 && viewCarrito))
+             {(((puntosState === 2 && viewCarrito && showMap===true) || (showMap === false && puntos.length !== 0 && viewCarrito))
                && (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL' || (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='SUPABASE' && showMap===false)))?
                 <Tippy content={`Ordenar un producto`}>
                 <button
@@ -652,7 +653,7 @@ const Productos = () => {
                    <ShoppingCartOutlinedIcon />
                 </button>
               </Tippy>
-            :""}
+             :""}
               {((puntosState === 2 && viewCarrito && showMap === true) ||
                 (showMap === false && puntos.length !== 0 && viewCarrito)) &&
               sessionStorage.getItem("sgbd").toLocaleUpperCase() ===
@@ -683,10 +684,10 @@ const Productos = () => {
               ) : (
                 ""
               )}
-*/}
-            </div>
+              */}
+             </div>
 
-            {show1 ? (
+             {show1 ? (
               <Box
                 sx={{
                   width: "100%",
@@ -698,10 +699,10 @@ const Productos = () => {
               >
                 <CircularProgress color="checkbox" />
               </Box>
-            ) : null}
+             ) : null}
 
-            {(showMap === true && mascerca > 0 && mascerca != 999999) ||
-            (verOtraVez === true && mascerca > 0 && mascerca != 999999) ? (
+             {(showMap === true && mascerca > 0 && mascerca != 999999) ||
+             (verOtraVez === true && mascerca > 0 && mascerca != 999999) ? (
               <>
                 <div className="result">
                   {mascerca !== 0 && <span>{nick} está a {mascerca} Kms </span>}
@@ -722,11 +723,11 @@ const Productos = () => {
                   }
                 </div>
               </>
-            ) : (
-              ""
-            )}
-
-            {inicia === false && showMap !== true ? (
+             ) : (
+               ""
+             )}
+ 
+             {inicia === false && showMap !== true ? (
               <div className="product-flex">
                 {result.map((item, i) => (
                   <CardRow
@@ -749,10 +750,10 @@ const Productos = () => {
                   />
                 ))}
               </div>
-            ) : (
+             ) : (
               ""
-            )}
-            {showMap === true ? (
+             )}
+             {showMap === true ? (
               <div className="mapa-productos">
                 <Tippy content={`Cerrar mapa`}>
                   <button
@@ -777,9 +778,9 @@ const Productos = () => {
                   remoteZoom={zoom}
                 />
               </div>
-            ) : (
+             ) : (
               ""
-            )}
+             )}
           </div>
         </Hero>
       </div>

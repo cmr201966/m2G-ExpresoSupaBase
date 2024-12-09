@@ -8,7 +8,7 @@
 }
 .big-slider-chico {
   width: 100vw;
-  height: 30vh;
+  height: 34vh;
   display: flex;
   align-content: center;
   overflow: hidden;
@@ -44,7 +44,7 @@
 
 .big-slider-item-chico {
   min-width: 100vw;
-  height: 30vh;
+  height: 32vh;
   display: flex;
   justify-content: center;
   align-content: center;
