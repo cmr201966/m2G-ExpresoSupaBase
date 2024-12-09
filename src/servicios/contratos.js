@@ -22,3 +22,6 @@ export async function getdisponibilidad(body) {
 export async function setcontrato(body) {
   return makeRequest("http://localhost:3001/setcontrato", body);
 }
+export async function registraws(body) {
+  return makeRequest("http://localhost:3001/registraws", body);
+}

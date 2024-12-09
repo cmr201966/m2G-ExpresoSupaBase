@@ -12,7 +12,7 @@ import { getparesgpscategoria, delAnuncio } from "../servicios/catalogos";
 import {getproductos, setMovimientosNew, updateOcupado,getProductoNew,} from "../servicios/productos";
 import { setCategoriasNegocios, delCategoria } from "../servicios/catalogos";
 import { getcategoriasnegociosapp } from "../servicios/negocios";
-import { getcontratoclientes, getdisponibilidad, setcontrato} from "../servicios/contratos";
+import { getcontratoclientes, getdisponibilidad, setcontrato, registraws} from "../servicios/contratos";
 import {
   getproductoscategoria,
   setproducto,
@@ -21,6 +21,20 @@ import {
 import { getusuarios } from "../servicios/registrarse";
 import { setconfig, getconfig } from "../servicios/config";
 import supabase from "./connection";
+
+async function registraWS(quien){
+  let datos;
+  if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
+    datos = await registraws({quien});
+    datos = await datos.json();
+    return datos;
+  } else {
+    const { error} = await supabase
+      .from("ws")
+      .insert({ quien});
+    return error;
+  }
+}
 
 async function getContratoClientes(){
   let datos;
@@ -1169,6 +1183,7 @@ export {
   setCategoriasNegociosCM,
   setProductosActivaCM,
   setContratoCM,
+  registraWS,
 };
 
 export {

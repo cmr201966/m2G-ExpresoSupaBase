@@ -31,6 +31,7 @@ import {
   getParesGpsProductoCM,
   setMovimientosNewCM,
   updateOcupadoCM,
+  registraWS,
 } from "../../Utiles/apiBaseDatos";
 
 // config
@@ -264,6 +265,10 @@ const InfoProducto = () => {
     setContenidofoto(arrayFotoInfo[i]);
   }
 
+  function registraws(){
+    registraWS("P" + idproducto);
+  }
+
   useEffect(() => {
     if (ocupado === 1) {
       return;
@@ -356,6 +361,7 @@ const InfoProducto = () => {
                           <Tippy content={`${accion} via WhatsApp`}>
                             <a
                               href={url}
+                              onClick={registraws}
                               target="_blank"
                               rel="noopener noreferrer"
                             >
