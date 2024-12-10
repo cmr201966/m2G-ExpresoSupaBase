@@ -22,7 +22,7 @@ const BigSlider = (props) => {
     users = [],
     nombres = [],
     links = [],
-    sizeClass,
+    sizeClass = "grande",
   } = props;
 
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -48,8 +48,8 @@ const BigSlider = (props) => {
         imgsFileName[i],
         imgsFolder[i],
         imgsFolder[i],
-//        Date.now(),
-        imgsId[i],
+        //        Date.now(),
+        imgsId[i]
       );
       if (isValid(resultado) === true) {
         imagenes.push(resultado);
@@ -84,7 +84,7 @@ const BigSlider = (props) => {
   }, [currentIndex, toLeft]);
 
   return (
-    <div className={`big-slider-${sizeClass}`}>
+    <div className={`big-slider ${sizeClass}`}>
       {/*
         <button onClick={() => toRight()} className="big-slider-nav left">
           L
@@ -97,61 +97,88 @@ const BigSlider = (props) => {
           } ${css({
             transform: `translateX(${currentIndex * -1 * 100}vw)`,
           })}`}
-         >
-          {imgsFileName?.map((item, i) => (
-            links[i]?.indexOf("https:") === -1 && links[i]?.length!==0 ?
-            <Link
-              key={i}
-              to={`/productos?categoria=${
-                categorias[i]
-              }&user=${sessionStorage.getItem("user")}&nombre=${nombres[i]}`}
-            >
-              <div key={i} className={`big-slider-item-${sizeClass}`}>
-                <img className="img-slider" src={imagenes[i]} alt={nombres[i]} />
+        >
+          {imgsFileName?.map((item, i) =>
+            links[i]?.indexOf("https:") === -1 && links[i]?.length !== 0 ? (
+              <Link
+                key={i}
+                to={`/productos?categoria=${
+                  categorias[i]
+                }&user=${sessionStorage.getItem("user")}&nombre=${nombres[i]}`}
+              >
+                <div key={i} className={`big-slider-item ${sizeClass}`}>
+                  <img
+                    className="img-slider"
+                    src={imagenes[i]}
+                    alt={nombres[i]}
+                  />
+                </div>
+              </Link>
+            ) : links[i]?.indexOf("https:") !== -1 ? (
+              <a
+                key={i}
+                href={links[i]}
+                target="_blank"
+                rel="noopener noreferrer"
+              >
+                <div key={i} className={`big-slider-item ${sizeClass}`}>
+                  <img
+                    className="img-slider"
+                    src={imagenes[i]}
+                    alt={nombres[i]}
+                  />
+                </div>
+              </a>
+            ) : (
+              <div key={i} className={`big-slider-item ${sizeClass}`}>
+                <img
+                  className="img-slider"
+                  src={imagenes[i]}
+                  alt={nombres[i]}
+                />
               </div>
-            </Link>:
-            links[i]?.indexOf("https:") !== -1 ?
-                <a key={i}
-                  href={links[i]}
-                  target="_blank"
-                  rel="noopener noreferrer"
-                >
-                  <div key={i} className={`big-slider-item-${sizeClass}`}>
-                       <img className="img-slider" src={imagenes[i]} alt={nombres[i]} />
-                  </div>
-                </a>:
-                  <div key={i} className={`big-slider-item-${sizeClass}`}>
-                     <img className="img-slider" src={imagenes[i]} alt={nombres[i]} />
-                  </div>
-
-            ))}
-          {imgsFileName?.length && (
-            links[0]?.indexOf("https:") === -1 && links[0]?.length!==0 ?
-            <Link
-              key={0}
-              to={`/productos?categoria=${
-                categorias[0]
-              }&user=${sessionStorage.getItem("user")}&nombre=${nombres[0]}`}
-            >
-              <div className={`big-slider-item-${sizeClass}`}>
-                <img className="img-slider" src={imagenes[0]} alt={nombres[0]} />
-              </div>
-            </Link>:
-            links[0]?.indexOf("https:") !== -1 ?
-            <a key={0}
+            )
+          )}
+          {imgsFileName?.length &&
+            (links[0]?.indexOf("https:") === -1 && links[0]?.length !== 0 ? (
+              <Link
+                key={0}
+                to={`/productos?categoria=${
+                  categorias[0]
+                }&user=${sessionStorage.getItem("user")}&nombre=${nombres[0]}`}
+              >
+                <div className={`big-slider-item ${sizeClass}`}>
+                  <img
+                    className="img-slider"
+                    src={imagenes[0]}
+                    alt={nombres[0]}
+                  />
+                </div>
+              </Link>
+            ) : links[0]?.indexOf("https:") !== -1 ? (
+              <a
+                key={0}
                 href={links[0]}
                 target="_blank"
                 rel="noopener noreferrer"
               >
-                <div key={0} className={`big-slider-item-${sizeClass}`}>
-                     <img className="img-slider" src={imagenes[0]} alt={nombres[0]} />
+                <div key={0} className={`big-slider-item ${sizeClass}`}>
+                  <img
+                    className="img-slider"
+                    src={imagenes[0]}
+                    alt={nombres[0]}
+                  />
                 </div>
-              </a>:
-                <div key={0} className={`big-slider-item-${sizeClass}`}>
-                   <img className="img-slider" src={imagenes[0]} alt={nombres[0]} />
-                </div>
-
-          )}
+              </a>
+            ) : (
+              <div key={0} className={`big-slider-item ${sizeClass}`}>
+                <img
+                  className="img-slider"
+                  src={imagenes[0]}
+                  alt={nombres[0]}
+                />
+              </div>
+            ))}
         </div>
       ) : (
         ""
