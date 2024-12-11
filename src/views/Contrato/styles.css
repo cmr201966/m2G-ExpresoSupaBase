@@ -1,19 +1,3 @@
-.container-contrato 
-{
-    height: auto;
-    width: 350px;
-    display: flex;
-    align-items: start;
-    flex-direction: column;
-    background: rgb(20, 96, 172);
-    border-radius: 15px;
-}
-.container-opciones-posibles
-{
-    height: auto;
-    width: 350px;
-    background-color: rgb(20 96 172);
-}
 .contrato 
 {
     width: 100%;
@@ -21,6 +5,26 @@
     display: flex;
     justify-content: center;
 }
+
+.container-contrato 
+{
+    height: auto;
+    width: 380px;
+    display: flex;
+    align-items: start;
+    justify-content: center;
+    flex-direction: column;
+    background: rgb(20, 96, 172);
+    border-radius: 15px;
+    padding-left: 10px;
+}
+.container-opciones-posibles
+{
+    height: auto;
+    width: 350px;
+    background-color: rgb(20 96 172);
+}
+
 .contrato h2 
 {
     color: aliceblue;

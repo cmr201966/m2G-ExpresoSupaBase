@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 import Calendario from "../../components/Calendar/Calendar";
 import Navbar from "../../components/Navbar/Navbar"
 import ComGalerias from "../../components/ComGalerias/ComGalerias";
-import Map from "../../components/Map/Map";
+import Map from "../../components/Map/MapBox";
 // @mui icons
 import MapIcon from "@mui/icons-material/Map";
 //import AddCircleIcon from "@mui/icons-material/AddCircle";
@@ -73,6 +73,7 @@ const Contrato = () => {
   const [contenidomodal, setContenidomodal] = useState("");
   const [contenidomodal2, setContenidomodal2] = useState("");
   const [inicia, setInicia] = useState(true);
+  const [loading, setLoading] = useState(false);
  //Parametros
   const [keyproducto, setKeyproducto] = useState(0);
 
@@ -130,7 +131,6 @@ const Contrato = () => {
     }
 
     let result2 = await getInfoProductoCM(tkeyproducto);
-    console.log(result2)
     if (isValid(result2) === true) {
       setDomicilio(result2[0].domicilio===0?false:true);
       setProducto(tkeyproducto);
@@ -143,9 +143,11 @@ const Contrato = () => {
     }
     let tdisponible=0;
     let result9 = await getDisponibilidad(tkeyproducto, 1);
-    if (result9.length>0  && isValid(result9[0].reservas)===true) tdisponible = result2[0].cantidad-result9[0].reservas;
+    let treservas=isValid(result9[0].reservas)===true?result9[0].reservas:0
+    if (result9.length>0) tdisponible = result2[0].cantidad-treservas;
     let result10 = await getDisponibilidad(tkeyproducto, 2);
-    if (result10.length>0 && isValid(result10[0].reservas)===true) tdisponible = tdisponible + result10[0].reservas;
+    let tcancela=isValid(result10[0].reservas)===true?result10[0].reservas:0
+    if (result10.length>0) tdisponible = tdisponible + tcancela;
     let tcantidad=isValid(cantidad)===true?cantidad:0;
     setDisponible(tdisponible-tcantidad);
     setMdisponible(tdisponible);
@@ -193,7 +195,6 @@ const Contrato = () => {
         break;
       case "fechat":
         setFechat(e.target.value);
-        setResultado("");
         break;
       case "cbahora":
         setCbahora(e.target.checked);
@@ -222,6 +223,7 @@ const Contrato = () => {
   }
 
   async function reservar() {
+    setLoading(true);
     let tuser = sessionStorage.getItem("user");
     if (Number(sessionStorage.getItem("tipouser")) === 1 && añadir_user === false && sessionStorage.getItem("dueño") === tuser) {
       tuser = arrayclientes[cliente].iduser;
@@ -248,7 +250,6 @@ const Contrato = () => {
       let mhora=hora===''?"0":hora;
       let mmin= minuto===''?"0":minuto;
       let result = await setContratoCM(tuser, keyproducto, fechat, mhora + ":" + mmin, cantidad, lng, lat);
-      console.log(result);
       if (result.length===0) {
         setMessage("Ocurrio un error mientras se registraba el contrato");
         setOpen(true);
@@ -261,6 +262,7 @@ const Contrato = () => {
         setOpen(true);
         setContrato(result[0].id)
       }
+      setLoading(false)
     }
   } 
 
@@ -478,10 +480,14 @@ const Contrato = () => {
                     </> : ""}
                       <div className="contrato-grupo-button">
                                                   
-                        {((nombre !== "") && (celular.length >= 8)) || (añadir_user === false && sino === false && (capacidad !== 0)) ?
+                        {((nombre !== "") && (celular.length >= 8)) || (añadir_user === false && sino === false) && (cantidad >0) && (disponible>0) ?
                           <Tippy content="Reservar" >
                             <button type="button" className="contrato-button primary-contrato" onClick={reservar}>
-                              Reservar
+                            {loading ? (
+                            <CircularProgress color="inherit" size={16} />
+                          ) : (
+                            "Reservar"
+                          )}                    
                             </button>
                           </Tippy> : ""
                         }
@@ -498,17 +504,30 @@ const Contrato = () => {
                           </button>
                         </Tippy>
                       </div>
+
+                      {showMap === true ?
+                  <div className="mapa-catalogo">
+                     <Map
+                       sx={{ height: "340px", width: "100%" }}
+                       onMapClick={lngLatSelected}
+                       remoteshowMap={showMap}
+                       lat={lat}
+                       lng={lng}
+                       point={{ lat, lng }}
+                       onChange={onChangeMap}
+                       remoteZoom={zoom}
+                     />
+                  </div>:""
+                }
+
+
                 </div>
+
+
+
               </div>
               {/*Este bloque que termina solo se muestra cuando termina init */}
             </> : ""}
-          {domicilio === true && showMap === true ?
-            <>
-              <label className="label-mapa">Ubique donde recibirá el servicio:</label>
-              <Map onMapClick={lngLatSelected} remoteshowMap={showMap} lat={lat} lng={lng} point={`${lat},${lng}`} onChange={onChangeMap} remoteZoom={zoom} />
-            </> : ""
-          }
-
           {showGalerias?
             <ComGalerias 
             deQuien={""}
