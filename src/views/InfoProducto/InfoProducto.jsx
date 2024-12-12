@@ -276,7 +276,6 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
   }
 
   function ordenar(){
-    console.log("Hola....")
     navigate(`/contrato?keyproducto=${idproducto}&dueno=${sessionStorage.getItem("user")}`);
   }
 
