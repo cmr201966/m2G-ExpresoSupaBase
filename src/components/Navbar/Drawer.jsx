@@ -126,7 +126,6 @@ export default function NavigationDrawer({
         ) : (
           ""
         )}
-        {console.log("ppp")}
         {isValid(sessionStorage.getItem("user")) ? (
           <Tippy
             content={`Actualizar datos de ${sessionStorage.getItem("user")}`}
