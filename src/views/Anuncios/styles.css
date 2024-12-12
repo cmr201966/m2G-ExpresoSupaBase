@@ -121,3 +121,9 @@ border: 1px solid aliceblue;
 .button-off{
 border: none;
 }
+.select-frm {
+  height: 32px;
+  border-radius: 15px;
+  border: 1px solid aliceblue;
+  padding-left: 7px;
+}

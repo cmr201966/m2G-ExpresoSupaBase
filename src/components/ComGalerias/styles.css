@@ -169,6 +169,7 @@
   /*width: 90%;*/
   align-items: center;
   gap:10px;
+  margin-bottom: 10px;
 }
 .addcss {
   font-size: 2.0rem !important;

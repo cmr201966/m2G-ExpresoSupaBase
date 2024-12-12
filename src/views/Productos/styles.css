@@ -181,6 +181,7 @@
   grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
   gap: 20px 10px;
   width: 100%;
+  margin-top: 0px;
 }
 
 .select-naturaleza-prod {
@@ -288,6 +289,7 @@
   margin: 0 auto;
   width: 70%;
   margin-top: 20px;
+  z-index: 10;
 }
 
 @media (max-width: 1100px) {
@@ -317,4 +319,12 @@
   color: rgb(57, 235, 12) !important;
   padding-left: 5px;
   font-size: 5px;
+}
+.gradient-background-producto {
+  background: linear-gradient(to top, white 50%, transparent 52%);
+  position: absolute;
+  top: 0;
+  height: 100vh; /* Para que ocupe toda la altura de la pantalla */
+  width: 100vw;
+  pointer-events: none;
 }
