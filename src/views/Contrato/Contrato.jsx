@@ -179,7 +179,7 @@ const Contrato = () => {
         setCbahora(e.target.checked);
         break;
       case "cantidad":
-        if (Number(e.target.value) > disponible) {
+        if ((Number(e.target.value) > disponible) && (capacidad>0)) {
           document.getElementById("cantidad").focus();
           setMessage(`La cantidad no puede exceder la capacidad (${capacidad})`);
           setOpen(true);
@@ -339,7 +339,9 @@ const Contrato = () => {
                       disabled
                     />
                   </div>
-                  <div className="contrato-input-area">
+                  {capacidad>0?
+                    <>
+                    <div className="contrato-input-area">
                        <label>Capacidad:</label>
                        <input
                            className="contrato-input-input"
@@ -350,18 +352,21 @@ const Contrato = () => {
                            required
                            disabled
                        />
-                  </div>
-                  <div className="contrato-input-area-cantidad">
-                    <label>Disponible:</label>
-                    <input
-                      id="disponible"
-                      value={disponible}
-                      onChange={handleInput}
-                      type="number"
-                      required
-                      disabled
-                    />
-                  </div>
+                    </div>
+                    <div className="contrato-input-area-cantidad">
+                      <label>Disponible:</label>
+                        <input
+                          id="disponible"
+                          value={disponible}
+                          onChange={handleInput}
+                          type="number"
+                          required
+                          disabled
+                        />
+                    </div>
+                    </>:""
+                  }
+
                   <div className="contrato-input-area-cantidad">
                     <label>Cantidad:</label>
                     <input

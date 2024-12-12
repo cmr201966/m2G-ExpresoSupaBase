@@ -479,7 +479,7 @@ const CatProductos = () => {
       agregarsn ? true : false,
       marca,
       modelo,
-      talla,
+      isValid(talla)===false?0:talla,
       color,
       cbgps === true || domicilio === true ? 1 : 0,
       lat,
@@ -811,24 +811,20 @@ const CatProductos = () => {
                               />
                             </Tippy>
                           </div>
-                          {sessionStorage.getItem("idapp") === "Expreso" ? (
                             <div>
                               <p className="label-datos-catproducto plazas">
-                                Plazas
+                                Cantidad
                               </p>
                               <input
                                 className="input-cataproducto-999"
                                 id="talla"
-                                placeholder="Plazas"
+                                placeholder="Cantidad"
                                 value={talla}
                                 onChange={handleInput}
                                 type="text"
                                 required
                               />
                             </div>
-                          ) : (
-                            ""
-                          )}
                           <div>
                             <p className="label-datos-catproducto color">
                               Color
