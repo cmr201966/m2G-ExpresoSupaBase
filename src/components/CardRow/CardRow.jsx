@@ -1,14 +1,16 @@
 import { useEffect, useState, useRef } from "react";
 import Tippy from "@tippyjs/react";
+import { useNavigate } from "react-router-dom";
+
 
 // @mui/icons
 import {
-  ShoppingCartCheckoutOutlined,
+  ShoppingCartOutlined,
   BusinessCenterOutlined,
   PowerSettingsNew,
   OpenInBrowser,
 } from "@mui/icons-material/";
-
+import InfoIcon from '@mui/icons-material/Info';
 // utils
 import { isValid } from "../../Utiles/Utiles";
 import { updateOcupadoCM } from "../../Utiles/apiBaseDatos";
@@ -34,6 +36,8 @@ const CardRow = (props) => {
   const [ocupado, setOcupado] = useState(item.ocupado);
   const [inicia, setInicia] = useState(true);
   const linkRef = useRef(null);
+  const navigate = useNavigate();
+
   async function powerSettings() {
     if (user !== "" && isValid(user) === true) {
       setOcupado(ocupado === 0 ? 1 : 0);
@@ -42,6 +46,11 @@ const CardRow = (props) => {
     //    apiBaseDatos("updateOcupado", item.idproducto, ocupado===0?1:0)
     paresGps();
   }
+
+  function ordenar(){
+    navigate(`/contrato?keyproducto=${item.idproducto}&dueno=${sessionStorage.getItem("user")}`);
+  }
+
   useEffect(() => {
     // Simula un clic en el <a>
     if (linkRef.current && inicia === false) {
@@ -84,8 +93,13 @@ const CardRow = (props) => {
       </div>
       <div className="button-container" id={`boton${i}`}>
         {noproducto === false ? (
-          <>
-            <Tippy
+          <>              
+              <Tippy content={`${"Ordenar el producto"}`}>
+                 <button onClick={() => ordenar()}>
+                    <ShoppingCartOutlined/>
+                 </button>
+              </Tippy>
+              <Tippy
               content={`${
                 ocupado === 0
                   ? "Datos del producto y ordenar"
@@ -93,7 +107,8 @@ const CardRow = (props) => {
               }`}
             >
               <button onClick={() => verproducto(i, item)}>
-                <ShoppingCartCheckoutOutlined />
+{/*                <ShoppingCartCheckoutOutlined />*/}
+                <InfoIcon/>
               </button>
             </Tippy>
             <Tippy content={`Más datos del negocio`}>

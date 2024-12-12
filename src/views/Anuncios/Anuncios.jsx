@@ -80,6 +80,9 @@ const Aplicaciones = () => {
   const [foto] = useState();
   const [fotomovil] = useState();
   const [buttonPc, setButtonPc] = useState(true);
+  const [frm, setFrm] = useState(0);
+  const arrayfrm = [{desc: "Home"}, {desc: "Productos"}];
+
 
   async function init() {
     for (let prop in parsedParams) {
@@ -287,7 +290,8 @@ const Aplicaciones = () => {
       contenidofoto,
       isBase64ToBlob,
       contenidofotomovil,
-      isBase64ToBlobMovil
+      isBase64ToBlobMovil,
+      frm,
     );
     //    let result= await apiBaseDatos("setAplicaciones", arrayAplicaciones[aplicacion].id, sessionStorage.getItem("user"), nick, desc,
     //                                    ttip, arrayCategorias[categoria].categorianegocio, agregarsn, contenidofoto, isBase64ToBlob);
@@ -350,6 +354,10 @@ const Aplicaciones = () => {
       case "vista":
         setCbvista(e.target.checked);
         break;
+      case "frm":
+        setFrm(e.target.value);
+        console.log(e.target.value);
+        break  
       default:
         break;
     }
@@ -399,7 +407,7 @@ const Aplicaciones = () => {
         onClose={onModalClose}
         className="cmodal wmodal"
         classContainer="modal-catalogo-productos"
-      >
+       >
         <div className="cerrar-button">
           <button className="cerrar" onClick={onModalClose}>
             X
@@ -441,7 +449,7 @@ const Aplicaciones = () => {
             ""
           )}
 
-          <Encabezado />
+          {inicia === false ? <Encabezado />:""}
           {inicia === false ? (
             <div className="div-papa-aplicaciones">
               <div className="aplicaciones">
@@ -514,6 +522,24 @@ const Aplicaciones = () => {
                                     {item.nick}
                                   </option>
                                 );
+                              })}
+                            </select>
+                          </div>
+                          <div className="form-control">
+                            <label>Vista </label>
+                            <select
+                              className="select-frm"
+                              disabled={editarsn === true || agregarsn === true ? false : true}
+                              id="frm"
+                              onChange={handleInput}
+                              value={frm}
+                             >
+                              {arrayfrm.map((item, i) => {
+                               return (
+                                <option key={i} value={i}>
+                                  {item.desc}
+                                </option>
+                              );
                               })}
                             </select>
                           </div>

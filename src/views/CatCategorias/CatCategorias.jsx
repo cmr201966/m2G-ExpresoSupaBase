@@ -204,7 +204,7 @@ const CatCategorias = () => {
       accion,
       agregarsn,
       contenidofoto,
-      isBase64ToBlob
+      isBase64ToBlob,
     );
     //    let err= await apiBaseDatos("setCategoriasNegocios", arrayCategorias[categoria].categorianegocio, desc, descold, "productos", nick, accion,  agregarsn, contenidofoto, isBase64ToBlob );
     setLoading(false);
@@ -298,7 +298,7 @@ const CatCategorias = () => {
         onClose={onModalClose}
         className="cmodal wmodal"
         classContainer="modal-catalogo-productos"
-      >
+       >
         <div className="cerrar-button">
           <button className="cerrar" onClick={onModalClose}>
             X
@@ -381,12 +381,13 @@ const CatCategorias = () => {
                             type="text"
                             required
                           />
+
                         </>
                       ) : (
                         ""
                       )}
                       {agregarsn === false && editarsn === false ? (
-                        <div className="">
+                        <div>
                           <select
                             className="select-categorias"
                             disabled={editarsn === true ? true : false}
