@@ -464,6 +464,7 @@ const CatProductos = () => {
     if (producto === null) mproducto = 0;
     else mproducto = arrayproductos[producto?.value].idproducto;
     // let result = await apiBaseDatos("setProducto",
+    let mtalla=isValid(talla)===false || talla===""?0:talla;
     let result = await setProductoCM(
       sessionStorage.getItem("tipouser") === "3"
         ? arrayUsuarios[usuario].iduser
@@ -479,7 +480,7 @@ const CatProductos = () => {
       agregarsn ? true : false,
       marca,
       modelo,
-      isValid(talla)===false?0:talla,
+      mtalla,
       color,
       cbgps === true || domicilio === true ? 1 : 0,
       lat,
