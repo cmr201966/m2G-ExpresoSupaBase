@@ -59,10 +59,10 @@ const Home = () => {
   async function init() {
     setInicia(true);
     setShow(true);
-    if (isValid(parsedParams.categoria) && parsedParams.categoria!=="" && isValid(sessionStorage.getItem("directo"))===false){
-      sessionStorage.setItem("directo","1")
+    if (isValid(parsedParams.categoria)===true && parsedParams.categoria!=="" && isValid(sessionStorage.getItem("directo"))===false){
       navigate(`/productos?categoria=${parsedParams.categoria}`);
     }
+    sessionStorage.setItem("directo","1")
     sessionStorage.setItem("deDonde", "Home")
     if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "SUPABASE") creaBucket("galerias");
     borraSessionStorage(["categoria",]);
