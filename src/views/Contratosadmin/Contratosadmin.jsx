@@ -23,7 +23,6 @@ import Navbar from "../../components/Navbar/Navbar"
 import Hero from "../../layouts/Hero/Hero";
 // 
 import { CircularProgress } from "@mui/material";
-import { useNavigate } from "react-router-dom"
 // styles
 import "./styles.css";
 import { useEffect, useState } from "react";
@@ -31,7 +30,8 @@ import { useEffect, useState } from "react";
 import Encabezado from "../../components/Encabezado/Encabezado";
 // utils
 import { isValid,} from "../../Utiles/Utiles";
-import { getClientesContratos, 
+import { 
+         getClientesContratos, 
          getContratos, 
          getCategorias, 
          getProductosCategoriaContrato,
@@ -44,10 +44,6 @@ import { getClientesContratos,
 const ContratoAdmin = () => {
     const location = useLocation();
     const parsedParams = {}
-    const navigate = useNavigate();
-    const [show, setShow] = useState(false);
-    const [showMap, setshowMap] = useState(false);
-    const [contenido, setContenido] = useState("");
     const [arraycliente, setArraycliente] = useState([]);
     const [cliente, setCliente] = useState(0);
     const arrayestadoscontratos = [{ estado: 0, desc: "Pendiente"}, { estado: 1, desc: "Ejecutado"}, { estado: 2, desc: "Cancelado"}];
@@ -65,6 +61,7 @@ const ContratoAdmin = () => {
     const [categoria, setCategoria] = useState(0);
     const [inicia, setInicia] = useState(true);
     const tipouser = Number(sessionStorage.getItem("tipouser"));
+    const user = sessionStorage.getItem("user");
     const [producto, setProducto] = useState(sessionStorage.getItem("producto"));
     const [estado, setEstado] = useState(0);
     const [findProducto, setFindProducto] = useState("");
@@ -78,7 +75,6 @@ const ContratoAdmin = () => {
     const [filtrar, setFiltrar] = useState(false);
     const [asumido, setAsumido] = useState(1);
     const [showSubir, setShowSubir] = useState(false);
-    let tEstado="0";
     // Para el filtro
     const [arrayproductos, setArrayproductos] = useState ([]);
     const arraynoproductos = [{idproducto:999999, nick:"No hay productos"}];
@@ -88,17 +84,17 @@ const ContratoAdmin = () => {
     const [rbutton, setRbutton] = useState(0);
     const [comentario, setComentario] = useState("");
     // Ubicar el cliente en el Mapa
-    const [domicilio, setDomicilio] = useState(false);
     const [cbcontrato, setCbcontrato] = useState([]);
+    let tEstado="0";
         
   async function init() 
   {
-      let resultcliente;
+      /*let resultcliente;*/
       if (tipouser===0)
         {
           // Usuario Gratis puede ver solo sus contratos 
           setArraycliente(arraymycliente);
-          resultcliente = arraymycliente;
+/*          resultcliente = arraymycliente;*/
         }
 
       if (tipouser!== 0)
@@ -106,19 +102,18 @@ const ContratoAdmin = () => {
           let resultcliente1 = await getClientesContratos(sessionStorage.getItem("user"), tipouser, 0);
           if (isValid(resultcliente1)===false || resultcliente1.length === 0) {
              setArraycliente(arraynocliente);
-             resultcliente = arraynocliente;
+/*             resultcliente = arraynocliente;*/
           }
           else
           {
              setArraycliente(resultcliente1);
-             resultcliente = resultcliente1;
+/*             resultcliente = resultcliente1;*/
           }
       }
-
       // Ya tengo los clientes, ahora buscar los contratos
       setCliente(0);
       // Negocios que tienen productos con contratos.
-      const resultnegocios = await getNegociosContratos(sessionStorage.getItem("user"), tipouser );
+      const resultnegocios = await getNegociosContratos(user, tipouser );
       if (isValid(resultnegocios)===false || resultnegocios.length === 0) 
       {
           setArraynegocios(arraynonegocios);
@@ -130,7 +125,7 @@ const ContratoAdmin = () => {
       setNegocio(0);
       // Categorias del negocio.
       let tresultcategorias=[];
-      const resultcategorias = await getCategorias(sessionStorage.getItem("user"), tipouser, resultnegocios[0].idnegocio);
+      const resultcategorias = await getCategorias(user, tipouser, resultnegocios[0].idnegocio);
       if (isValid(resultcategorias)===false || resultcategorias.length === 0) 
       {
           setArraycategorias(arraynocategorias);
@@ -144,7 +139,7 @@ const ContratoAdmin = () => {
       setCategoria(0);
 
       // Productos de la categoria.
-      const resultproductos = await getProductosCategoriaContrato(sessionStorage.getItem("user"), tipouser, tresultcategorias[0].categorianegocio );
+      const resultproductos = await getProductosCategoriaContrato(user, tipouser, tresultcategorias[0].categorianegocio );
       if (isValid(resultproductos)===false || resultproductos.length === 0) 
       {
           setArrayproductos(arraynoproductos);
@@ -166,7 +161,7 @@ const ContratoAdmin = () => {
       }
       setDisponible(tdisponible);
       // Buscar los contratos de cliente.
-      const resultcontrato = await getContratos(sessionStorage.getItem("user"), tipouser, 0, resultproductos[0].idproducto);
+      const resultcontrato = await getContratos(user, tipouser, 0, resultproductos[0].idproducto);
       if (isValid(resultcontrato)===false || resultcontrato.length === 0) 
       {
           setArraycontrato(arraynocontrato);
@@ -184,27 +179,6 @@ const ContratoAdmin = () => {
       setContratoCantidad(resultcontrato.length===0?0:resultcontrato[0].cantidad); 
       setInicia(false);
    } //init 
-
-    async function cambiacontratos(indexuser)
-    {
-        setInicia(true);
-/*        
-        const resultcontrato = await axios.post(
-            "http://localhost:3001/getcontratos",
-            {user: sessionStorage.getItem("user"), tipouser, usercontrato:arraycliente[indexuser].iduser},
-            {}
-        );
-        if (resultcontrato.data.error || resultcontrato.data.length === 0) 
-        {
-            setArraycontrato(arraynocontrato);
-        }
-        else 
-        {
-            setArraycontrato(resultcontrato.data);
-        }
-  */      setContrato(0);
-        setInicia(false);  
-    }
 
    async function handleInput(e) {
     if (e.target.id.includes("contrato-")===true){
@@ -231,7 +205,7 @@ const ContratoAdmin = () => {
                 break;
             case "cliente":
                 setCliente(e.target.value);
-                cambiacontratos(e.target.value);
+                /*cambiacontratos(e.target.value);*/
                 break;
             case "contrato":
                 setContrato(e.target.value);
@@ -268,36 +242,6 @@ const ContratoAdmin = () => {
           */
         }
 
-   const onModalClose = () => {
-        setShow(false)
-    }
-
-    async function confirmarCancelar() 
-    {
-      /*
-    const result = await axios.post(
-      "http://localhost:3001/setcancelarcontrato",
-      { contrato:arraycontrato[contrato].contrato },
-      {}
-    );
-    if (result.data.error)
-    {
-      setContenido(result.data.error);
-      setShow(true); 
-    }
-    else
-    {
-      let tarray=arraycontrato;
-      tarray[contrato].idestado=2;
-      setArraycontrato(tarray);
-      setEstadocontrato(2);
-      setCancelar(false);
-      setContenido("Se canceló el contrato " + contrato);
-      setShow(true);
-    }
-      */
-    } 
-
     function fcancelar()
     {
       if (cancelar===true)
@@ -328,33 +272,13 @@ const ContratoAdmin = () => {
       }
     }
 
-    async function confirmarEvaluar() 
-    {
-      /*
-     const result = await axios.post(
-      "http://localhost:3001/setevalua",
-      { quien: tipouser===0?0:1, contrato, evalua: rbutton, comentario},
-      {}
-    );
-    if (result.data.error){
-      setContenido(result.data.error);
-      setShow(true);
-    }
-    else
-    {
-      setEvaluar(false);
-      setContenido("Se registró la evaluación.");
-      setShow(true);
-    }
-      */
-    } //confirmar evaluar contrato
-
     function fradio(e)
     {
        setRbutton(e.target.value);
     }
+
     async function getContratosEstado(estado, producto){
-      const resultcontrato = await getContratos(sessionStorage.getItem("user"), tipouser,  estado, producto);
+      const resultcontrato = await getContratos(user, tipouser,  estado, producto);
       if (isValid(resultcontrato)===false || resultcontrato.length === 0) 
       {
           setArraycontrato(arraynocontrato);
@@ -442,15 +366,6 @@ const ContratoAdmin = () => {
                             </div>
                           </>
                 })}
-            </Modal>
-
-            <Modal visible={show} onClose={onModalClose} className="cmodal wmodal"  classContainer="modal-contratosadmin">
-                <div className="cerrar-button">
-                    <button className="cerrar" onClick={onModalClose}>X</button>
-                </div>
-                <div className="main-modal">
-                     <label>{contenido}</label>
-                </div>
             </Modal>
 
             <div>
@@ -598,7 +513,7 @@ const ContratoAdmin = () => {
                                             Filtrar
                                         </button>
                                  </Tippy>
-                                {arraycontrato.length>0 && arraycontrato[0].corto!=="No hay contratos"?
+                                {arraycontrato.length>0 && arraycontrato[0].corto!=="No hay contratos" && tipouser!==0?
                                 <>
                                  <Tippy content="Subir">
                                         <button type="button" className="contratosadmin-button1 primary" onClick={fSubir}>
@@ -615,7 +530,7 @@ const ContratoAdmin = () => {
                                 </Tippy>
                                 </>:""
                                 }
-                                {tipouser===1 && arraycontrato[0].corto!=="No hay contratos" && inicia===false && domicilio===true?
+                                {tipouser===1 && arraycontrato[0].corto!=="No hay contratos" && inicia===false?
                                 <>
                                 <Tippy content="Ubicar cliente en el Mapa.">
                                    <Link sx={{
@@ -671,7 +586,7 @@ const ContratoAdmin = () => {
                         </div>
 
                       {/* Evaluar Contrato */}
-                      {inicia===false && evaluar===true && cancelar===false && showMap===false?
+                      {inicia===false && evaluar===true && cancelar===false?
                          <>
                          <div className="evaluar">
                          <div className="container-evaluar"> 
@@ -740,7 +655,7 @@ const ContratoAdmin = () => {
                           </>:""
                         }
                         {/* Cancelar Contrato */}
-                        {inicia===false && cancelar===true && evaluar===false && showMap===false?
+                        {inicia===false && cancelar===true && evaluar===false?
                           <>
                           <div className="cancelar">
                              <div className="container-cancelar"> 

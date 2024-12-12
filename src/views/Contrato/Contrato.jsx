@@ -8,14 +8,11 @@ import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Map from "../../components/Map/MapBox";
 // @mui icons
 import MapIcon from "@mui/icons-material/Map";
-//import AddCircleIcon from "@mui/icons-material/AddCircle";
-//import IconButton from "@mui/material/IconButton";
-//import ArrowBack from "@mui/icons-material/ArrowBack";
-//import CollectionsIcon from "@mui/icons-material/Collections";
 import Add from "@mui/icons-material/Add";
-//import Check from "@mui/icons-material/Check";
-//import Close from "@mui/icons-material/Close";
-//import { useTheme } from "@mui/material";
+import {
+  Collections,
+  ShoppingCartOutlined,
+} from "@mui/icons-material";
 
 import { Box, CircularProgress } from "@mui/material";
 import Encabezado from "../../components/Encabezado/Encabezado";
@@ -64,7 +61,6 @@ const Contrato = () => {
   const [producto, setProducto] = useState("");
   const [desc, setDesc] = useState("");
   const [precio, setPrecio] = useState(0);
-  const [domicilio, setDomicilio] = useState(false);
   const [cantidad, setCantidad] = useState(0);
   const [capacidad, setCapacidad] = useState(0);
   const [disponible, setDisponible] = useState(0);
@@ -74,6 +70,9 @@ const Contrato = () => {
   const [contenidomodal2, setContenidomodal2] = useState("");
   const [inicia, setInicia] = useState(true);
   const [loading, setLoading] = useState(false);
+  const [contenidofoto, setContenidofoto] = useState();
+  const [nombrefoto, setNombrefoto] = useState("");
+
  //Parametros
   const [keyproducto, setKeyproducto] = useState(0);
 
@@ -106,11 +105,8 @@ const Contrato = () => {
     setLat(lngLat.lat);
   };
 
-  async function init(dia, mes, año) {
+  async function init() {
     if (isValid(sessionStorage.getItem("dueño")) === false) {
-      sessionStorage.setItem("filtro", "")
-      sessionStorage.setItem("naturaleza", parsedParams.naturaleza);
-      sessionStorage.setItem("idowner", parsedParams.idowner);
       sessionStorage.setItem("nivel", parsedParams.nivel);
       sessionStorage.setItem("dueño", parsedParams.dueno);
     }
@@ -131,12 +127,13 @@ const Contrato = () => {
     }
 
     let result2 = await getInfoProductoCM(tkeyproducto);
+    let mcantidad=0;
     if (isValid(result2) === true) {
-      setDomicilio(result2[0].domicilio===0?false:true);
+      mcantidad=isValid(result2[0].cantidad)===true?result2[0].cantidad:0
       setProducto(tkeyproducto);
       setDesc(result2[0].producto);
       setPrecio(result2[0].precio);
-      setCapacidad(result2[0].cantidad);
+      setCapacidad(mcantidad);
       setNegocio(result2[0].negocio);
       setLat(result2[0].latitud);
       setLng(result2[0].longitud);
@@ -144,7 +141,7 @@ const Contrato = () => {
     let tdisponible=0;
     let result9 = await getDisponibilidad(tkeyproducto, 1);
     let treservas=isValid(result9[0].reservas)===true?result9[0].reservas:0
-    if (result9.length>0) tdisponible = result2[0].cantidad-treservas;
+    if (result9.length>0) tdisponible = mcantidad-treservas;
     let result10 = await getDisponibilidad(tkeyproducto, 2);
     let tcancela=isValid(result10[0].reservas)===true?result10[0].reservas:0
     if (result10.length>0) tdisponible = tdisponible + tcancela;
@@ -160,22 +157,9 @@ const Contrato = () => {
     if (document.getElementById("cantidad") !== null) document.getElementById("cantidad").focus();
     setShow1(false)
   }
-  const modalbutton1 = () => {
-    setContenidomodal2("Explicar como transferir")
-    setShow2(true);
-  }
-  const modalbutton2 = () => {
-    setContenidomodal2("")
-    setShow2(true);
-  }
-  const modalbutton3 = () => {
-    setContenidomodal2("")
-    setShow2(true);
-  }
   const onModalClose2 = () => {
     setShowCalendario(false)
   }
-
   function handleInput(e) {
     switch (e.target.id) {
       case "cliente":
@@ -237,7 +221,6 @@ const Contrato = () => {
         tuser=tuser+name.substring(0, 1).toLowerCase()
         lng = lng + name.length;
       });      
-      //tuser = nombres[0].substring(0, 1).toLowerCase() + ape1.substring(0, 1).toLowerCase() + ape2.substring(0, 1).toLowerCase();
       tuser=tuser + lng;
       let err =await setUserExpress(tuser, nombre, celular);
       if (isValid(err)===true){
@@ -255,16 +238,24 @@ const Contrato = () => {
         setOpen(true);
       }
       else {
-        setMessage("No. del contrato-> " + result[0].id + ". Esto es una pre-reservación, se hará efectivo cuando pague el contrato." +
-          " En el botón ¿como transferir? se explica como transferir dinero a nuestra cuenta bancaria. Si no se transfiere, dentro de 1 hora esta pre-reservación será elimindada" +
-          " y la capacidad quedará disponible. Otra opción es contactar al dueño y concretar un acuerdo");
-        setSino(true)  ;
-        setOpen(true);
+        let msg = añadir_user===true?", para dar seguimiento al estado de su reservación inicie sesión como " + tuser + " contraseña 1234 y vaya a administrar contrato en la hamburguesa":"";
+        setContenidomodal("Contrato " + result[0].id + ". Esto es una pre-reservación, contacte al dueño por whatsapp para hacer efectiva la reservación," +
+                          " sino lo hace en una hora esta pre-reservación será eliminada, anote el número del contrato" + msg + "."
+        )
+        setShow1(true);
+        setSino(true);
         setContrato(result[0].id)
       }
       setLoading(false)
     }
   } 
+  const cambiaNombreFoto = (valor) => {
+    setNombrefoto(valor);
+  };
+
+  const cambiaFoto = (contenidofoto) => {
+    setContenidofoto(contenidofoto);
+  };
 
   function sumamas() {
     setAñadir_user(!añadir_user);
@@ -305,13 +296,7 @@ const Contrato = () => {
         <div className="main-modal">
           <p className="plabel">{contenidomodal}</p>
         </div>
-        <div className="main-modal-button">
-          <button className="contrato-button primary-contrato modal-button-1" onClick={modalbutton1}>¿Como transferir?</button>
-          <button className="contrato-button primary-contrato modal-button-1" onClick={modalbutton2}>Datos dueño</button>
-          <button className="contrato-button primary-contrato modal-button-1" onClick={modalbutton3}>Notificar dueño</button>
-        </div>
       </Modal>
-
 
       <div>
       <Navbar nivel={1} />
@@ -463,7 +448,6 @@ const Contrato = () => {
                     </div>
                     </>
                     :""}
-
                   {sino ?
                     <>
                       <div className="contrato-input-area">
@@ -482,69 +466,72 @@ const Contrato = () => {
                                                   
                         {((nombre !== "") && (celular.length >= 8)) || (añadir_user === false && sino === false) && (cantidad >0) && (disponible>0) ?
                           <Tippy content="Reservar" >
-                            <button type="button" className="contrato-button primary-contrato" onClick={reservar}>
+                            <button type="button" className="producto-button primary" onClick={reservar}>
                             {loading ? (
                             <CircularProgress color="inherit" size={16} />
                           ) : (
-                            "Reservar"
-                          )}                    
+                            <ShoppingCartOutlined/>)}                    
                             </button>
                           </Tippy> : ""
                         }
                         { (Number(sessionStorage.getItem("tipouser")) === 3 || sessionStorage.getItem("user")==="" || isValid(sessionStorage.getItem("user"))===false) || (Number(sessionStorage.getItem("tipouser")) === 1 && sessionStorage.getItem("dueño") === sessionStorage.getItem("user") && sino === false && (capacidad !== 0)) ?
                           <Tippy content="Añadir un usuario" >
-                            <button className="contrato-button primary-contrato" onClick={sumamas}>
+                            <button className="producto-button primary" onClick={sumamas}>
                               <Add />
                             </button>
                           </Tippy > : ""
                         }
                         <Tippy content="Ver en el mapa ubicación del negocio" >
-                          <button type="button" className="contrato-button primary-contrato" onClick={() => setShowMap(!showMap)}>
+                          <button type="button" className="producto-button primary" onClick={() => setShowMap(!showMap)}>
                             <MapIcon />
                           </button>
                         </Tippy>
+                        <Tippy content={`Galeria de fotos del producto`}>
+                            <button
+                              type="button"
+                              className="producto-button primary"
+                              onClick={() => setShowGalerias(!showGalerias)}
+                            >
+                              <Collections />
+                            </button>
+                          </Tippy>
                       </div>
 
                       {showMap === true ?
-                  <div className="mapa-catalogo">
-                     <Map
-                       sx={{ height: "340px", width: "100%" }}
-                       onMapClick={lngLatSelected}
-                       remoteshowMap={showMap}
-                       lat={lat}
-                       lng={lng}
-                       point={{ lat, lng }}
-                       onChange={onChangeMap}
-                       remoteZoom={zoom}
-                     />
-                  </div>:""
-                }
-
-
+                        <div className="mapa-catalogo">
+                           <p>Ubicación del producto o servicio</p>
+                           <Map
+                              sx={{ height: "340px", width: "100%" }}
+                              onMapClick={lngLatSelected}
+                              remoteshowMap={showMap}
+                              lat={lat}
+                              lng={lng}
+                              point={{ lat, lng }}
+                              onChange={onChangeMap}
+                              remoteZoom={zoom}
+                           />
+                        </div>:""
+                      }
+                        {showGalerias?
+                        <ComGalerias 
+                        deQuien={"Imagenes"}
+                        ruta={"productos/" + keyproducto}
+                        perfil={keyproducto}
+                        permiso={true}
+                        botonCerrar={false}
+                        cambiaNombreFoto={cambiaNombreFoto}
+                        cambiaFoto={cambiaFoto}
+                        idsb={""}
+                        nophoto={""}
+                        tabla={""}
+                        campo={""}
+                         />
+                         : ""
+                      }
                 </div>
-
-
-
               </div>
               {/*Este bloque que termina solo se muestra cuando termina init */}
             </> : ""}
-          {showGalerias?
-            <ComGalerias 
-            deQuien={""}
-            ruta={""}
-            perfil={""}
-            permiso={true}
-            botonCerrar={false}
-            cambiaNombreFoto={""}
-            cambiaFoto={""}
-            idsb={""}
-            nophoto={""}
-            tabla={""}
-            campo={""}
-  />
-            : ""
-          }
-
         </Hero>
       </div>
     </>

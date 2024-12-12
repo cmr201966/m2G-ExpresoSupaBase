@@ -122,9 +122,7 @@ const Navbar = (props) => {
   const [menuTercero] = useState([
     {
       label: "Acerca de",
-      to: "/contrato?keyproducto=57&dueno=" + sessionStorage.getItem("user"),
-      //to: "/contratosadmin",
-      //to: "/acercade",
+      to: "/acercade",
       tooltips: "Acerca de Destodo",
       login: 0,
       inserta: "",

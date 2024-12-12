@@ -42,7 +42,7 @@ export default function NavigationDrawer({
   const [hamburguesa1Nivel] = useState([1, 0, 0, 0, 0, 0, 0]);
   const [hamburguesa2] = useState(["/acercade"]);
   const [hamburguesa3] = useState(["/activarusuarios", "/activarproductos"]);
-
+  const [hamburguesa4] = useState(["/contratosadmin"]);
   const DrawerList = (
     <Box sx={{ width: 250 }} role="presentation" onClick={onClose}>
       <List>
@@ -75,6 +75,20 @@ export default function NavigationDrawer({
           </ListItemButton>
         </ListItem>
       </List>
+      {isValid(Number(sessionStorage.getItem("tipouser"))) === true ? 
+      <>
+      <Divider />
+      <List>
+        {["Administrar contratos"].map((text, i) => (
+          <ListItem key={i} disablePadding>
+            <ListItemButton LinkComponent="a" href={hamburguesa4[i]}>
+              <ListItemText primary={text} />
+            </ListItemButton>
+          </ListItem>
+        ))}
+      </List>
+      </>:""
+      }
       {Number(sessionStorage.getItem("tipouser")) === 3 ? 
       <>
       <Divider />

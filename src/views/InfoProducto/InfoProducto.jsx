@@ -1,6 +1,7 @@
 import { useLocation } from "react-router-dom";
 import { useEffect, useState } from "react";
 import Tippy from "@tippyjs/react";
+import { useNavigate } from "react-router-dom";
 
 // components
 import Map from "../../components/Map/MapBox";
@@ -41,6 +42,7 @@ import config from "../../config";
 import "./styles.css";
 
 const InfoProducto = () => {
+  const navigate = useNavigate();
   const location = useLocation();
   const parsedParams = {};
   const [showcircularProgress, setshowCircularProgress] = useState(true);
@@ -235,30 +237,34 @@ const InfoProducto = () => {
   };
 
   async function shooping() {
-    if (showMap === true) {
-      let tindex = puntos.length;
-      // hay que pasar el user del chofer
-      let latOrigen = tindex < 3 ? 0 : puntos[tindex - 2].lat;
-      let latDestino = tindex < 3 ? 0 : puntos[tindex - 1].lat;
-      let lngOrigen = tindex < 3 ? 0 : puntos[tindex - 2].lng;
-      let lngDestino = tindex < 3 ? 0 : puntos[tindex - 1].lng;
-      setMovimientosNewCM(
-        1,
-        idproducto,
-        latOrigen,
-        latDestino,
-        lngOrigen,
-        lngDestino,
-        carrera * tarifa + costoDomicilio,
-        carrera,
-        usert
-      );
-      setOcupado(true);
-      updateOcupadoCM(idproducto, 1);
+if (sessionStorage.getItem("idapp") === "Expreso"){
+      if (showMap === true) {
+         let tindex = puntos.length;
+         // hay que pasar el user del chofer
+         let latOrigen = tindex < 3 ? 0 : puntos[tindex - 2].lat;
+         let latDestino = tindex < 3 ? 0 : puntos[tindex - 1].lat;
+         let lngOrigen = tindex < 3 ? 0 : puntos[tindex - 2].lng;
+         let lngDestino = tindex < 3 ? 0 : puntos[tindex - 1].lng;
+         setMovimientosNewCM(
+            1,
+            idproducto,
+            latOrigen,
+            latDestino,
+            lngOrigen,
+            lngDestino,
+            carrera * tarifa + costoDomicilio,
+            carrera,
+            usert
+        );
+        setOcupado(true);
+        updateOcupadoCM(idproducto, 1);
+      }
+      setPuntos([]);
+      setPuntosState(0);
     }
-
-    setPuntos([]);
-    setPuntosState(0);
+    else{ 
+      ordenar();
+    }
   }
 
   function viewPhoto(i) {
@@ -267,6 +273,11 @@ const InfoProducto = () => {
 
   function registraws(){
     registraWS("P" + idproducto);
+  }
+
+  function ordenar(){
+    console.log("Hola....")
+    navigate(`/contrato?keyproducto=${idproducto}&dueno=${sessionStorage.getItem("user")}`);
   }
 
   useEffect(() => {
@@ -368,10 +379,33 @@ const InfoProducto = () => {
                               <WhatsApp className="ws-1" />
                             </a>
                           </Tippy>
-                        </div>
+                          {((distancia !== 0 &&
+                          showMap === true &&
+                          puntosState === 2 &&
+                          domicilio === 1) ||
+                          (domicilio === 1 && ocupado === 0)) &&
+                        (sessionStorage.getItem("sgbd").toLocaleUpperCase() ===
+                          "MYSQL") || (ocupado===0) ? (
+                          <>
+                            <Tippy content={`${accion}`}>
+                              <IconButton
+                                sx={{
+                                  padding: 0,
+                                }}
+                                id="tool"
+                                color="inherit"
+                                onClick={shooping}
+                              >
+                                <ShoppingCartOutlined />
+                              </IconButton>
+                            </Tippy>
+                          </>
+                        ) : (
+                          ""
+                        )}
 
+                        </div>                       
                         <span>{negocio}</span>
-
                         {isValid(precio) === true && precio !== 0 ? (
                           <span>{precio}</span>
                         ) : (
@@ -390,41 +424,6 @@ const InfoProducto = () => {
                         )}
                         {isValid(chapa) === true && chapa !== "" ? (
                           <p>{chapa}</p>
-                        ) : (
-                          ""
-                        )}
-{/*
-                        {isValid(celular) === true &&
-                        sessionStorage.getItem("sgbd").toLocaleUpperCase() !==
-                          "MYSQL" ? (
-                          <p>{celular}</p>
-                        ) : (
-                          ""
-                        )}
-*/}                          
-                        {((distancia !== 0 &&
-                          showMap === true &&
-                          puntosState === 2 &&
-                          domicilio === 1) ||
-                          (domicilio === 1 && ocupado === 0)) &&
-                        sessionStorage.getItem("sgbd").toLocaleUpperCase() ===
-                          "MYSQL" ? (
-                          <>
-                            <Tippy content="Ordenar este producto">
-                              <IconButton
-                                sx={{
-                                  padding: 0,
-                                  marginTop: "20px",
-                                  marginLeft: "50px",
-                                }}
-                                id="tool"
-                                color="inherit"
-                                onClick={shooping}
-                              >
-                                <ShoppingCartOutlined />
-                              </IconButton>
-                            </Tippy>
-                          </>
                         ) : (
                           ""
                         )}

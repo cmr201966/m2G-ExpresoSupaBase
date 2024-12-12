@@ -15,7 +15,7 @@ import Hero from "../../layouts/Hero/Hero";
 // @mui/icons
 import { PlaceOutlined, WhatsApp, Close } from "@mui/icons-material";
 // @mui/material
-import { Box, CircularProgress, Checkbox } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 
 // assets
 import libre from "../../assets/images/libre.png";
@@ -624,6 +624,7 @@ const Productos = () => {
               ""
             )}
           </Encabezado>
+          {/*
           {inicia===false && hayAnuncios?
             <BigSlider
               imgsFolder={imgsFolder}
@@ -636,8 +637,8 @@ const Productos = () => {
               sizeClass="chico"
             />
             :""
-            }
-          <div className="gradient-background-producto"></div>
+            }*/}
+          {/*<div className="gradient-background-producto"></div>*/}
           <div className="div-Papa-Productos">
             <div className={"productos-cabeza"}>
               {/*

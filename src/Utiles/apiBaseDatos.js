@@ -150,7 +150,7 @@ async function getProductosCategoriaContrato(user, tipouser, categoria ){
 function crearVistaCategoriasCliente(user, idnegocio){
   return "create or replace view public.getcategoriascliente as SELECT distinct tablacategorias.categorianegocio, tablacategorias.nick from tablamovimientos, tablacatproductos, tablacategorias" +
          " where (tablacategorias.categorianegocio=tablacatproductos.categorianegocio) and (tablacatproductos.idproducto=tablamovimientos.idproducto) and (tablamovimientos.iduser='" + user + "')" +
-         " and (tablacatproductos='" + idnegocio +"')";
+         " and (tablacatproductos.iduser='" + idnegocio +"')";
 }
 
 function crearVistaCategoriasDueño(user){
@@ -341,7 +341,7 @@ async function setUserExpress(user, nombre, celular){
     else{
     const { error} = await supabase
       .from("tablausuarios")
-      .insert({ iduser: user, tipouser: 0, nombre: nombre, celular: celular});
+      .insert({ iduser: user, tipouser: 0, nombre: nombre, celular: celular, activo: true});
     return error;
     }
   }
