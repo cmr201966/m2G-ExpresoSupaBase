@@ -230,7 +230,8 @@
 
 .wmodal {
     height: auto; 
-    width:auto ; 
+    /*width:auto ; */
+    width: 350px;
 }
 
 .modalcalendario {
@@ -372,7 +373,7 @@
     width: 100vw;
     height: 100vh;
     position: fixed;
-    top: 214px;
+    top: 260px;
     left: 5px;
     color:aliceblue;
 } 

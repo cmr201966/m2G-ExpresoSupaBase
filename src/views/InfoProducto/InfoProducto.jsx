@@ -384,7 +384,7 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                           puntosState === 2 &&
                           domicilio === 1) ||
                           (domicilio === 1 && ocupado === 0)) &&
-                        (sessionStorage.getItem("sgbd").toLocaleUpperCase() ===
+                          (sessionStorage.getItem("sgbd").toLocaleUpperCase() ===
                           "MYSQL") || (ocupado===0) ? (
                           <>
                             <Tippy content={`${accion}`}>
@@ -403,7 +403,6 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                         ) : (
                           ""
                         )}
-
                         </div>                       
                         <span>{negocio}</span>
                         {isValid(precio) === true && precio !== 0 ? (

@@ -12,6 +12,7 @@ import Add from "@mui/icons-material/Add";
 import {
   Collections,
   ShoppingCartOutlined,
+  WhatsApp,
 } from "@mui/icons-material";
 
 import { Box, CircularProgress } from "@mui/material";
@@ -55,23 +56,19 @@ const Contrato = () => {
   const [contrato, setContrato] = useState(0);
   const [sino, setSino] = useState(false);
   const [show1, setShow1] = useState(false);
-  const [show2, setShow2] = useState(false);
   const [showGalerias, setShowGalerias] = useState(false);
-  const [negocio, setNegocio] = useState(99999999);
-  const [producto, setProducto] = useState("");
   const [desc, setDesc] = useState("");
-  const [precio, setPrecio] = useState(0);
   const [cantidad, setCantidad] = useState(0);
   const [capacidad, setCapacidad] = useState(0);
   const [disponible, setDisponible] = useState(0);
   const [mdisponible, setMdisponible] = useState(0);
   const [showCalendario, setShowCalendario] = useState(false);
   const [contenidomodal, setContenidomodal] = useState("");
-  const [contenidomodal2, setContenidomodal2] = useState("");
   const [inicia, setInicia] = useState(true);
   const [loading, setLoading] = useState(false);
-  const [contenidofoto, setContenidofoto] = useState();
-  const [nombrefoto, setNombrefoto] = useState("");
+  const [celular, setCelular] = useState("");
+  const url = `https://wa.me/${celular}?text=`;
+  const [accion, setAccion] = useState("");
 
  //Parametros
   const [keyproducto, setKeyproducto] = useState(0);
@@ -81,7 +78,6 @@ const Contrato = () => {
   const [minuto, setMinuto] = useState("");
   //
   const [nombre, setNombre] = useState("");
-  const [celular, setCelular] = useState("");
   const [añadir_user, setAñadir_user] = useState(true);
   const [arrayclientes, setArrayclientes] = useState([]);
   const arraynoclientes = [{ iduser: 99999999, nombre: "No hay clientes" }];
@@ -127,16 +123,16 @@ const Contrato = () => {
     }
 
     let result2 = await getInfoProductoCM(tkeyproducto);
+    console.log(result2);
     let mcantidad=0;
     if (isValid(result2) === true) {
       mcantidad=isValid(result2[0].cantidad)===true?result2[0].cantidad:0
-      setProducto(tkeyproducto);
+      setCelular(result2[0].celular);
       setDesc(result2[0].producto);
-      setPrecio(result2[0].precio);
       setCapacidad(mcantidad);
-      setNegocio(result2[0].negocio);
       setLat(result2[0].latitud);
       setLng(result2[0].longitud);
+      setAccion(result2[0].accion);
     }
     let tdisponible=0;
     let result9 = await getDisponibilidad(tkeyproducto, 1);
@@ -149,7 +145,6 @@ const Contrato = () => {
     setDisponible(tdisponible-tcantidad);
     setMdisponible(tdisponible);
     setAñadir_user(sessionStorage.getItem("user")==="" || isValid(sessionStorage.getItem("user"))===false);
-    setShow2(false);
     setInicia(false);
   } //init
 
@@ -239,8 +234,8 @@ const Contrato = () => {
       }
       else {
         let msg = añadir_user===true?", para dar seguimiento al estado de su reservación inicie sesión como " + tuser + " contraseña 1234 y vaya a administrar contrato en la hamburguesa":"";
-        setContenidomodal("Contrato " + result[0].id + ". Esto es una pre-reservación, contacte al dueño por whatsapp para hacer efectiva la reservación," +
-                          " sino lo hace en una hora esta pre-reservación será eliminada, anote el número del contrato" + msg + "."
+        setContenidomodal("Contrato " + result[0].id + ". Esto es una pre-reservación, contacte al dueño, por whatsapp, para concretar el pago y hacer efectiva la reservación," +
+                          " sino lo hace en 24 hora esta pre-reservación será eliminada, anote el número del contrato" + msg + "."
         )
         setShow1(true);
         setSino(true);
@@ -249,12 +244,10 @@ const Contrato = () => {
       setLoading(false)
     }
   } 
-  const cambiaNombreFoto = (valor) => {
-    setNombrefoto(valor);
+  const cambiaNombreFoto = () => {
   };
 
-  const cambiaFoto = (contenidofoto) => {
-    setContenidofoto(contenidofoto);
+  const cambiaFoto = () => {
   };
 
   function sumamas() {
@@ -321,7 +314,19 @@ const Contrato = () => {
               <Encabezado />
               <div className="contrato">
                 <div className="container-contrato">
-                  <label className="label">CONTRATO{contrato === 0 ? "" : ` (${contrato})`}</label>
+                  <div className="ws">
+                     <label className="label">CONTRATO{contrato === 0 ? "" : ` (${contrato})`}</label>
+                     {celular.length>=8?
+                     <Tippy content={`${accion} via WhatsApp${celular}`}>
+                         <a
+                            href={url}
+                            target="_blank"
+                            rel="noopener noreferrer"
+                         >
+                         <WhatsApp className="ws-1" />
+                        </a>
+                     </Tippy>:""}
+                  </div>
                   <div className="contrato-input-area">
                     <label>Producto:</label>
                     <input
@@ -369,7 +374,8 @@ const Contrato = () => {
                     />
                   </div>
                   { 
-                    Number(sessionStorage.getItem("tipouser")) === 1 && añadir_user === false && sessionStorage.getItem("dueño") === sessionStorage.getItem("user") ?
+                    Number(sessionStorage.getItem("tipouser")) === 1 && añadir_user === false 
+                           && sessionStorage.getItem("dueño") === sessionStorage.getItem("user") ?
                       <div className="input-area-cliente">
                         <label className="label-datos-cliente">Cliente: </label>
                         <select className="contrato-input-area contrato-input-select" id="cliente" onChange={handleInput} value={cliente} >
@@ -464,7 +470,7 @@ const Contrato = () => {
                     </> : ""}
                       <div className="contrato-grupo-button">
                                                   
-                        {((nombre !== "") && (celular.length >= 8)) || (añadir_user === false && sino === false) && (cantidad >0) && (disponible>0) ?
+                        {(((nombre !== "") && (celular.length >= 8) && ((añadir_user === true) || (isValid(sessionStorage.getItem("user"))===false))) || ((isValid(sessionStorage.getItem("user"))===true) && (sino === false))) && (cantidad >0) ?
                           <Tippy content="Reservar" >
                             <button type="button" className="producto-button primary" onClick={reservar}>
                             {loading ? (
