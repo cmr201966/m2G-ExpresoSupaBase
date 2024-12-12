@@ -33,7 +33,6 @@ import "tippy.js/dist/tippy.css";
 import "./index.css";
 sessionStorage.setItem("sgbd", "SUPABASE");
 //sessionStorage.setItem("sgbd","MYSQL");
-console.log("Otra");
 import "@fontsource/poppins";
 
 ReactDOM.createRoot(document.getElementById("root")).render(
