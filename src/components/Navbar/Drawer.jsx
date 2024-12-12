@@ -75,7 +75,7 @@ export default function NavigationDrawer({
           </ListItemButton>
         </ListItem>
       </List>
-      {isValid(Number(sessionStorage.getItem("tipouser"))) === true ? 
+      {isValid(sessionStorage.getItem("tipouser"))===true ? 
       <>
       <Divider />
       <List>
