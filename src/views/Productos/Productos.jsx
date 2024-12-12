@@ -433,7 +433,9 @@ const Productos = () => {
     });
 
     let resultApp = await getanunciosCM("1", sessionStorage.getItem("categoria"));
-    setHayAnuncios(resultApp.length!==0)
+    setHayAnuncios(false);
+    if (isValid(resultApp)===true) setHayAnuncios(resultApp.length!==0)
+      else resultApp=[];
           let imgsFileName1 = [];
           let imgsFolder1 = [];
           let imgsId1 = [];
