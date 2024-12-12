@@ -5,7 +5,6 @@ import PropTypes from "prop-types"
 
 const Hero = (props) => {
     const { children } = props
-
     return (
         <div className="hero-section">
             {children}

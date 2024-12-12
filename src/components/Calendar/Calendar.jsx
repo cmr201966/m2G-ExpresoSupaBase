@@ -122,7 +122,7 @@ const CCalendar = (props) => {
       <SitoContainer>
         {arrayOfDays().length === 7 &&
           arrayOfDays().map((item, i) => (
-            <SitoContainer flexDirection="column">
+            <SitoContainer key={i} flexDirection="column">
               {item.map((jtem, j) => (
                 <CalendarCard
                   disabled={(month === new Date().getMonth() && new Date().getDate() > jtem.day)}

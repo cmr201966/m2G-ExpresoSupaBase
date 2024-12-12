@@ -774,7 +774,6 @@ const CatProductos = () => {
                             required
                           />
                         </div>
-                        {console.log(marca)}
                         <div className="input-area2">
                           <input
                             className="input-cataproducto"
@@ -786,7 +785,6 @@ const CatProductos = () => {
                             required
                           />
                         </div>
-                        {console.log(modelo)}
                         <div className="input-area2">
                           <input
                             className="input-cataproducto"
@@ -798,7 +796,6 @@ const CatProductos = () => {
                             required
                           />
                         </div>
-                        {console.log(precio)}
                         <div className="precio-capacidad-color">
                           <div>
                             <p className="label-datos-catproducto">Precio</p>
@@ -814,7 +811,6 @@ const CatProductos = () => {
                               />
                             </Tippy>
                           </div>
-                          {console.log(talla)}
                           {sessionStorage.getItem("idapp") === "Expreso" ? (
                             <div>
                               <p className="label-datos-catproducto plazas">
@@ -833,7 +829,6 @@ const CatProductos = () => {
                           ) : (
                             ""
                           )}
-                          {console.log(color)}
                           <div>
                             <p className="label-datos-catproducto color">
                               Color
