@@ -75,7 +75,7 @@ export default function NavigationDrawer({
           </ListItemButton>
         </ListItem>
       </List>
-      {isValid(Number(sessionStorage.getItem("tipouser"))) === true ? 
+      {isValid(sessionStorage.getItem("tipouser"))===true ? 
       <>
       <Divider />
       <List>
@@ -126,7 +126,6 @@ export default function NavigationDrawer({
         ) : (
           ""
         )}
-
         {isValid(sessionStorage.getItem("user")) ? (
           <Tippy
             content={`Actualizar datos de ${sessionStorage.getItem("user")}`}
