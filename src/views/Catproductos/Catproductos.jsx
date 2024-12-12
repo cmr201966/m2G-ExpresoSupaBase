@@ -479,7 +479,7 @@ const CatProductos = () => {
       agregarsn ? true : false,
       marca,
       modelo,
-      talla,
+      isValid(talla)===false?0:talla,
       color,
       cbgps === true || domicilio === true ? 1 : 0,
       lat,
@@ -774,7 +774,6 @@ const CatProductos = () => {
                             required
                           />
                         </div>
-                        {console.log(marca)}
                         <div className="input-area2">
                           <input
                             className="input-cataproducto"
@@ -786,7 +785,6 @@ const CatProductos = () => {
                             required
                           />
                         </div>
-                        {console.log(modelo)}
                         <div className="input-area2">
                           <input
                             className="input-cataproducto"
@@ -798,7 +796,6 @@ const CatProductos = () => {
                             required
                           />
                         </div>
-                        {console.log(precio)}
                         <div className="precio-capacidad-color">
                           <div>
                             <p className="label-datos-catproducto">Precio</p>
@@ -814,26 +811,20 @@ const CatProductos = () => {
                               />
                             </Tippy>
                           </div>
-                          {console.log(talla)}
-                          {sessionStorage.getItem("idapp") === "Expreso" ? (
                             <div>
                               <p className="label-datos-catproducto plazas">
-                                Plazas
+                                Cantidad
                               </p>
                               <input
                                 className="input-cataproducto-999"
                                 id="talla"
-                                placeholder="Plazas"
+                                placeholder="Cantidad"
                                 value={talla}
                                 onChange={handleInput}
                                 type="text"
                                 required
                               />
                             </div>
-                          ) : (
-                            ""
-                          )}
-                          {console.log(color)}
                           <div>
                             <p className="label-datos-catproducto color">
                               Color

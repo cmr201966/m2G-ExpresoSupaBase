@@ -243,7 +243,6 @@ async function getJpgFileSB(fileName, directoryMYSQL, directorySUPABASE, id) {
     result = await result.text();
   } else {
     result = await getUrlCM("galerias", directorySUPABASE, fileName, id);
-    //result = await getImagenCM("galerias", directorySUPABASE, fileName);
   }
   return result;
 }

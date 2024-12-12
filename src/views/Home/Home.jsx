@@ -12,7 +12,6 @@ import { ArrowBack } from "@mui/icons-material";
 
 // components
 import Navbar from "../../components/Navbar/Navbar";
-//import QRCode from "react-qr-code";
 import BigSlider from "../../components/BigSlider/BigSlider";
 import MultipleSlider from "../../components/MultipleSlider/MultipleSlider";
 import CardMultipleSlider from "../../components/CardMultipleSlider/CardMultipleSlider";
@@ -74,7 +73,7 @@ const Home = () => {
       parsedParams.nivel === "0"
     ) {
       setNivel(0);
-      let resultApp = await getanunciosCM();
+      let resultApp = await getanunciosCM("0");
 //      let resultApp = await apiBaseDatos("anuncios");
       let imgsFileName1 = [];
       let imgsFolder1 = [];
@@ -88,7 +87,7 @@ const Home = () => {
           ? "./galerias/app_images/aplicaciones"
           : "aplicaciones";
       resultApp.forEach((item) => {
-        let pcMovil=screenWidth<=400?"-movil":"";
+        let pcMovil=screenWidth<=600?"-movil":"";
         imgsFileName1.push(item.id + pcMovil + ".jpg");
         imgsFolder1.push(ruta + "/" + item.id);
         imgsId1.push(item.idsb);
@@ -246,6 +245,7 @@ const Home = () => {
               users={users}
               nombres={nombres}
               links={links}
+              sizeClass="grande"
             />
             <div className="main-grid negative-margin">
               <div className="grid-letf"></div>

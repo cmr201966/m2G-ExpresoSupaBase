@@ -41,11 +41,11 @@ const CalendarCard = (props) => {
     </Paper>
   );
 };
-
+/*
 CalendarCard.defaultProps = {
   background: false,
 };
-
+*/
 CalendarCard.propTypes = {
   children: PropTypes.node.isRequired,
   background: PropTypes.bool,

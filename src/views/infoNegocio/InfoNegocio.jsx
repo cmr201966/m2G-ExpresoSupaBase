@@ -17,7 +17,7 @@ import { Box, CircularProgress } from "@mui/material";
 
 // utils
 import { isValid, getFilesInFolderSB, getJpgFileSB } from "../../Utiles/Utiles";
-import { getInfoNegocioCM } from "../../Utiles/apiBaseDatos";
+import { getInfoNegocioCM, registraWS } from "../../Utiles/apiBaseDatos";
 
 // styles
 import "./styles.css";
@@ -42,6 +42,7 @@ const InfoNegocio = () => {
   const [gps, setGps] = useState(true);
   const [arrayFotos, setArrayFotos] = useState([]);
   const [arrayFotoInfo, setArrayFotoInfo] = useState([]);
+  const [idnegocio, setIdnegocio] = useState("");
   const url = `https://wa.me/${celular}?text=`;
 
   const onChangeMap = (which, value) => {
@@ -56,6 +57,7 @@ const InfoNegocio = () => {
 
   async function init() {
     let result = await getInfoNegocioCM(parsedParams.idnegocio);
+    setIdnegocio(parsedParams.idnegocio);
     //    let result = await getInfoNegocio(parsedParams.idnegocio);
     let resultFiles = await getFilesInFolderSB(
       "./galerias/app_images/usuarios/" + parsedParams.idnegocio,
@@ -121,6 +123,11 @@ const InfoNegocio = () => {
   function viewPhoto(i) {
     setContenidofoto(arrayFotoInfo[i]);
   }
+
+  function registraws(){
+    registraWS("N" + idnegocio);
+  }
+
   useEffect(() => {
     const localParams = location.search.substring(1).split("&");
     localParams.forEach((item) => {
@@ -186,7 +193,7 @@ const InfoNegocio = () => {
                     <div className="ws">
                       <p className="strong font-size1">Datos del negocio</p>
                       <Tippy content={`Contactar via WhatsApp`}>
-                        <a href={url} target="_blank" rel="noopener noreferrer">
+                        <a href={url} onClick={registraws}target="_blank" rel="noopener noreferrer">
                           <WhatsAppIcon className="ws-1" />
                         </a>
                       </Tippy>

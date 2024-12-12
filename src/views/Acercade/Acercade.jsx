@@ -110,7 +110,7 @@ const Acercade = () => {
               href={url}
               target="_blank"
               rel="noopener noreferrer"
-              className="acercade-row"
+              className="acercade-row ws-1"
             >
               <WhatsApp />
             </a>

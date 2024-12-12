@@ -1,6 +1,6 @@
 import {  isValid, uploadBase64Image} from "./Utiles";
 import { getCategoriasNew } from "../servicios/home";
-import { getCategoriasNegocios } from "../servicios/catalogos";
+import { getCategoriasNegocios, setuserexpress } from "../servicios/catalogos";
 import { getAplicaciones, setAplicaciones } from "../servicios/aplicaciones";
 import { login } from "../servicios/login";
 import { getprovincias, getmunicipios } from "../servicios/catalogos";
@@ -10,8 +10,16 @@ import { getParesGpsNaturalezaNew } from "../servicios/naturalezas";
 import { getinfonegocio } from "../servicios/negocios";
 import { getparesgpscategoria, delAnuncio } from "../servicios/catalogos";
 import {getproductos, setMovimientosNew, updateOcupado,getProductoNew,} from "../servicios/productos";
-import { setCategoriasNegocios, delCategoria } from "../servicios/catalogos";
+import { setCategoriasNegocios, delCategoria, getcategorias } from "../servicios/catalogos";
 import { getcategoriasnegociosapp } from "../servicios/negocios";
+import { getcontratoclientes, 
+         getdisponibilidad, 
+         setcontrato, 
+         registraws, 
+         getclientes,
+        getcontratos,
+        getnegocioscontratos,
+      } from "../servicios/contratos";
 import {
   getproductoscategoria,
   setproducto,
@@ -21,19 +29,424 @@ import { getusuarios } from "../servicios/registrarse";
 import { setconfig, getconfig } from "../servicios/config";
 import supabase from "./connection";
 
-async function getanunciosCM() {
+async function setEstadoContrato(estado, id){
+  const { error } = await supabase
+  .from("tablamovimientos")
+  .update({ estado: estado })
+  .eq("id", id);
+  return error;
+  
+}
+
+function crearVistaNegociosCliente(user){
+  return "create or replace view public.getnegocioscliente as SELECT distinct tablausuarios.iduser as idnegocio, tablausuarios.nombre as nick from tablacatproductos, tablamovimientos, tablausuarios" +
+         " where (tablacatproductos.iduser=tablausuarios.iduser) and (tablacatproductos.idproducto=tablamovimientos.idproducto) and (tablamovimientos.iduser='" + user + "')"
+}
+
+function crearVistaNegociosDueño(user){
+  return "create or replace view public.getnegociosdueño as SELECT distinct tablausuarios.iduser as idnegocio, tablausuarios.nombre as nick from tablamovimientos, tablacatproductos, tablausuarios" +
+         " where (tablausuarios.iduser=tablacatproductos.iduser) and (tablacatproductos.idproducto=tablamovimientos.idproducto) and (tablacatproductos.iduser='" + user + "')"
+}
+
+function crearVistaNegociosAdmin(){
+  return "create or replace view public.getnegociosadmin as SELECT distinct tablausuarios.iduser as idnegocio, tablausuarios.nombre as nick from tablamovimientos, tablacatproductos, tablausuarios" +
+         " where (tablausuarios.iduser=tablacatproductos.iduser) and (tablacatproductos.idproducto=tablamovimientos.idproducto)"
+}
+
+async function getNegociosContratos(user, tipouser ){
+  let datos;
+  if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
+    datos = await getnegocioscontratos({user, tipouser});
+    datos = await datos.json();
+    return datos;
+  } else {
+    if (Number(tipouser) === 0) {
+      let sql = crearVistaNegociosCliente(user)
+      let {error:err}=await supabase.rpc("exec_sql", { query: sql });
+      if (isValid(err)===false || err.length>0){
+      const { data } = await supabase.from("getnegocioscliente").select("*");
+      return data;
+      }
+      else return ([]);
+    }
+    if (tipouser === 1 || tipouser === 2) {
+      let sql = crearVistaNegociosDueño(user);
+      let {error:err}=await supabase.rpc("exec_sql", { query: sql });
+      if (isValid(err)===false || err.length>0){
+      const { data } = await supabase.from("getnegociosdueño").select("*");
+      return data;
+      }
+      else return ([]);
+      }
+  
+    if (tipouser === 9 || tipouser === 3) {
+      let sql = crearVistaNegociosAdmin()
+      let {error:err}=await supabase.rpc("exec_sql", { query: sql });
+      if (isValid(err)===false || err.length>0){
+      const { data } = await supabase.from("getnegociosadmin").select("*");
+      return data;
+      }
+      else return ([]);
+    }
+  }
+}
+
+function crearVistaProductosCategoriaCliente(user, categoria){
+  return "create or replace view public.getproductoscategoriacliente as SELECT distinct tablacatproductos.idproducto, tablacatproductos.nick, tablacatproductos.cantidad from tablamovimientos, tablacatproductos, tablacategorias" +
+         " where (tablacategorias.categorianegocio=tablacatproductos.categorianegocio) and (tablacatproductos.idproducto=tablamovimientos.idproducto) and (tablamovimientos.iduser='" + user + "')" +
+         " and (tablacatproductos.categorianegocio=" + categoria + ")";
+}
+
+function crearVistaProductosCategoriaDueño(user, categoria){
+  return "create or replace view public.getproductoscategoriadueño as SELECT distinct tablacatproductos.idproducto, tablacatproductos.nick, tablacatproductos.cantidad from tablamovimientos, tablacatproductos, tablacategorias" +
+         " where (tablacategorias.categorianegocio=tablacatproductos.categorianegocio) and (tablacatproductos.idproducto=tablamovimientos.idproducto) and (tablacatproductos.iduser='" + user + "')" + 
+         " and (tablacategorias.categorianegocio='" + categoria + "')";
+}
+
+function crearVistaProductosCategoriaAdmin(categoria){
+  return "create or replace view public.getproductoscategoriaadmin as SELECT distinct tablacatproductos.idproducto, tablacatproductos.nick, tablacatproductos.cantidad from tablamovimientos, tablacatproductos, tablacategorias" +
+         " where (tablacategorias.categorianegocio=tablacatproductos.categorianegocio) and (tablacatproductos.idproducto=tablamovimientos.idproducto) and (tablacatproductos.categorianegocio=" + 
+         categoria + ")";
+}
+
+async function getProductosCategoriaContrato(user, tipouser, categoria ){
+  let datos;
+  if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
+    datos = await getproductoscategoria({user, tipouser, categoria});
+    datos = await datos.json();
+    return datos;
+  } else {
+    if (Number(tipouser) === 0) {
+      let sql = crearVistaProductosCategoriaCliente(user, categoria)
+      let {error:err}=await supabase.rpc("exec_sql", { query: sql });
+      if (isValid(err)===false || err.length>0){
+      const { data } = await supabase.from("getproductoscategoriacliente").select("*");
+      return data;
+      }
+      else return ([]);
+    }
+    if (tipouser === 1 || tipouser === 2) {
+      let sql = crearVistaProductosCategoriaDueño(user, categoria);
+      let {error:err}=await supabase.rpc("exec_sql", { query: sql });
+      if (isValid(err)===false || err.length>0){
+      const { data } = await supabase.from("getproductoscategoriadueño").select("*");
+      return data;
+      }
+      else return ([]);
+      }
+  
+    if (tipouser === 9 || tipouser === 3) {
+      let sql = crearVistaProductosCategoriaAdmin(categoria)
+      let {error:err}=await supabase.rpc("exec_sql", { query: sql });
+      if (isValid(err)===false || err.length>0){
+      const { data } = await supabase.from("getproductoscategoriaadmin").select("*");
+      return data;
+      }
+      else return ([]);
+    }
+  }
+}
+
+function crearVistaCategoriasCliente(user, idnegocio){
+  return "create or replace view public.getcategoriascliente as SELECT distinct tablacategorias.categorianegocio, tablacategorias.nick from tablamovimientos, tablacatproductos, tablacategorias" +
+         " where (tablacategorias.categorianegocio=tablacatproductos.categorianegocio) and (tablacatproductos.idproducto=tablamovimientos.idproducto) and (tablamovimientos.iduser='" + user + "')" +
+         " and (tablacatproductos.iduser='" + idnegocio +"')";
+}
+
+function crearVistaCategoriasDueño(user){
+  return "create or replace view public.getcategoriasdueño as SELECT distinct tablacategorias.categorianegocio, tablacategorias.nick from tablamovimientos, tablacatproductos, tablacategorias" +
+         " where (tablacategorias.categorianegocio=tablacatproductos.categorianegocio) and (tablacatproductos.idproducto=tablamovimientos.idproducto) and (tablacatproductos.iduser='" + user + "')"
+}
+
+function crearVistaCategoriasAdmin(idnegocio){
+  return "create or replace view public.getcategoriasadmin as SELECT distinct tablacategorias.categorianegocio, tablacategorias.nick from tablamovimientos, tablacatproductos, tablacategorias" +
+         " where (tablacategorias.categorianegocio=tablacatproductos.categorianegocio) and (tablacatproductos.idproducto=tablamovimientos.idproducto) and (tablamovimientos.idproducto=tablacatproductos.idproducto)"+
+         " and (tablacatproductos.iduser='" + idnegocio +"')";
+}
+
+async function getCategorias(user, tipouser, idnegocio){
+  let datos;
+  if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
+    datos = await getcategorias({user, tipouser, idnegocio});
+    datos = await datos.json();
+    return datos;
+  } else {
+    if (Number(tipouser) === 0) {
+      let sql = crearVistaCategoriasCliente(user, idnegocio)
+      let {error:err}=await supabase.rpc("exec_sql", { query: sql });
+      if (isValid(err)===false || err.length>0){
+      const { data } = await supabase.from("getcategoriascliente").select("*");
+      return data;
+      }
+      else return ([]);
+    }
+
+    if (tipouser === 1 || tipouser === 2) {
+      let sql = crearVistaCategoriasDueño(user);
+      let {error:err}=await supabase.rpc("exec_sql", { query: sql });
+      if (isValid(err)===false || err.length>0){
+      const { data } = await supabase.from("getcategoriasdueño").select("*");
+      return data;
+      }
+      else return ([]);
+      }
+  
+    if (tipouser === 9 || tipouser === 3) {
+      let sql = crearVistaCategoriasAdmin(idnegocio)
+      let {error:err}=await supabase.rpc("exec_sql", { query: sql });
+      if (isValid(err)===false || err.length>0){
+      const { data } = await supabase.from("getcategoriasadmin").select("*");
+      return data;
+      }
+      else return ([]);
+    }
+
+  }
+
+}
+
+function crearVistaContratosCliente(user, estado, producto){
+  let mestado=Number(estado)===9?"":" and (tablamovimientos.estado=" + estado + ")"
+  return "create or replace view public.getcontratoscliente as SELECT tablamovimientos.estado as idestado, tablacatproductos.idproducto, tablausuarios.iduser as idnegocio, tablausuarios.nombre as negocio," +
+      "tablamovimientos.id as contrato, fecha, tablacatproductos.nick as corto, tablacatproductos.nick as largo,tablamovimientos.latorigen, tablamovimientos.lngorigen, tablamovimientos.cantidad, tablamovimientos.id as id" +
+      " FROM tablausuarios, tablamovimientos, tablacatproductos, tablacategorias where (tablamovimientos.iduser=tablausuarios.iduser)  and (tablamovimientos.idproducto=tablacatproductos.idproducto)" +
+      " and (tablacatproductos.categorianegocio=tablacategorias.categorianegocio) and (tablamovimientos.iduser='" + user + "') and (tablacatproductos.idproducto=" + producto + ")" + mestado ;
+
+}
+
+function crearVistaContratosDueño(user, estado, producto){
+  let mestado=Number(estado)===9?"":" and (tablamovimientos.estado=" + estado + ")"
+  return "create or replace view public.getcontratosdueño as select tablamovimientos.estado as idestado, tablacatproductos.idproducto, tablausuarios.iduser as idnegocio," +
+        "tablausuarios.nombre as negocio, tablacategorias.nick as categoria,tablamovimientos.id as contrato, fecha, tablacatproductos.nick as corto, tablacatproductos.nick" +
+        " as largo, domicilio, tablamovimientos.latorigen, tablamovimientos.lngorigen, tablamovimientos.cantidad, tablamovimientos.id as id from tablamovimientos, tablacatproductos," +
+        " tablausuarios, tablacategorias where (tablamovimientos.idproducto=tablacatproductos.idproducto) and (tablacatproductos.iduser='" + user + "') " +
+        " and (tablacatproductos.categorianegocio=tablacategorias.categorianegocio) and (tablausuarios.iduser=tablamovimientos.iduser) and (tablacatproductos.idproducto=" + producto + ")" + mestado;
+}
+
+function crearVistaContratosAdmin(estado, producto){
+  let mestado=Number(estado)===9?"":" and (tablamovimientos.estado=" + estado + ")"
+  return "create or replace view public.getcontratosadmin as select tablamovimientos.estado as idestado, tablacatproductos.idproducto, tablausuarios.iduser as idnegocio," +
+        "tablausuarios.nombre as negocio, tablamovimientos.id as contrato, fecha, tablacatproductos.nick as corto, tablamovimientos.id as id, " +
+        "tablacatproductos.desc as largo, domicilio, tablamovimientos.latorigen, tablamovimientos.lngorigen, tablamovimientos.cantidad from tablamovimientos, tablacatproductos, tablausuarios" +
+        " where (tablamovimientos.idproducto=tablacatproductos.idproducto) and (tablamovimientos.iduser=tablausuarios.iduser) and (tablacatproductos.idproducto=" + producto + ")" + mestado;
+}
+
+async function getContratos(user, tipouser, estado, producto){
+  let datos;
+  if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
+    datos = await getcontratos({user, tipouser, estado, producto});
+    datos = await datos.json();
+    return datos;
+  } else {
+    if (Number(tipouser) === 0) {
+      let sql = crearVistaContratosCliente(user, estado, producto)
+      let {error:err}=await supabase.rpc("exec_sql", { query: sql });
+      if (isValid(err)===false || err.length>0){
+      const { data } = await supabase.from("getcontratoscliente").select("*");
+      return data;
+      }
+      else return ([]);
+    }
+
+    if (tipouser === 1 || tipouser === 2) {
+      let sql = crearVistaContratosDueño(user, estado, producto)
+      let {error:err}=await supabase.rpc("exec_sql", { query: sql });
+      if (isValid(err)===false || err.length>0){
+      const { data } = await supabase.from("getcontratosdueño").select("*");
+      return data;
+      }
+      else return ([]);
+      }
+  
+    if (tipouser === 9 || tipouser === 3) {
+      let sql = crearVistaContratosAdmin(estado, producto)
+      let {error:err}=await supabase.rpc("exec_sql", { query: sql });
+      if (isValid(err)===false || err.length>0){
+      const { data } = await supabase.from("getcontratosadmin").select("*");
+      return data;
+      }
+      else return ([]);
+    }
+  }
+}
+function crearVistaGetClientesCliente(user, estado){
+  return "create or replace view public.getclientescliente as SELECT DISTINCT tablausuarios.iduser, nombre from tablausuarios, tablamovimientos, tablacatproductos" +
+  " where (tablamovimientos.iduser='" + user + "') and (tablausuarios.iduser=tablamovimientos.iduser) and (tablamovimientos.idproducto=tablacatproductos.idproducto)" +
+  " and (tablamovimientos.estado=" + estado + ")";
+}
+
+function crearVistaGetClientesDueño(user, estado){
+  return "create or replace view public.getclientesdueño as SELECT DISTINCT tablausuarios.iduser, nombre from tablausuarios, tablamovimientos, tablacatproductos" +
+  " where (tablacatproductos.iduser='" + user + "') and (tablausuarios.iduser=tablamovimientos.iduser) and (tablamovimientos.idproducto=tablacatproductos.idproducto)" +
+  " and (tablamovimientos.estado=" + estado + ")";
+}
+
+function crearVistaGetClientesAdmin(estado){
+  return "create or replace view public.getclientesadmin as SELECT DISTINCT tablausuarios.iduser, nombre from tablausuarios, tablamovimientos, tablacatproductos" +
+         " where (tablausuarios.iduser=tablamovimientos.iduser) and (tablamovimientos.idproducto=tablacatproductos.idproducto) and (tablamovimientos.estado=" + estado + ")";
+}
+
+async function getClientesContratos(user, tipouser, estado){
+  let datos;
+  if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
+    datos = await getclientes({user, tipouser, estado});
+    datos = await datos.json();
+    return datos;
+  } else {
+    if (tipouser === 9 || tipouser === 3) {
+      let sql = crearVistaGetClientesAdmin(estado)
+      let {error:err}=await supabase.rpc("exec_sql", { query: sql });
+      if (isValid(err)===false || err.length>0){
+      const { data } = await supabase.from("getclientesadmin").select("*");
+      return data;
+      }
+      else return ([]);
+    }
+    if (tipouser === 1 || tipouser === 2) {
+      let sql = crearVistaGetClientesDueño(user, estado)
+      let {error:err}=await supabase.rpc("exec_sql", { query: sql });
+      if (isValid(err)===false || err.length>0){
+      const { data } = await supabase.from("getclientesdueño").select("*");
+      return data;
+      }
+      else return ([]);
+      }
+      if (tipouser === 0) {
+        let sql = crearVistaGetClientesCliente(user, estado)
+        let {error:err}=await supabase.rpc("exec_sql", { query: sql });
+        if (isValid(err)===false || err.length>0){
+        const { data } = await supabase.from("getclientescliente").select("*");
+        return data;
+        }
+        else return ([]);
+        }
+  
+  }
+}
+
+async function setUserExpress(user, nombre, celular){
+  let datos;
+  if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
+    datos = await setuserexpress({user, nombre, celular});
+    datos = await datos.json();
+    return datos;
+  } else {
+    const { data } = await supabase
+      .from("tablausuarios")
+      .select("*")
+      .eq("celular", celular);
+    if (data.length!==0){
+      return "Ya existe un usuario con este celular (" + celular + "), abra sesión con ese usuario o cambie el celular";
+    }
+    else{
+    const { error} = await supabase
+      .from("tablausuarios")
+      .insert({ iduser: user, tipouser: 0, nombre: nombre, celular: celular, activo: true});
+    return error;
+    }
+  }
+}
+
+async function registraWS(quien){
+  let datos;
+  if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
+    datos = await registraws({quien});
+    datos = await datos.json();
+    return datos;
+  } else {
+    const { error} = await supabase
+      .from("ws")
+      .insert({ quien});
+    return error;
+  }
+}
+
+async function getContratoClientes(){
+  let datos;
+  if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
+    datos = await getcontratoclientes({});
+    datos = await datos.json();
+    return datos;
+  } else {
+    const { error, data } = await supabase
+      .from("tablausuarios")
+      .select("*")
+      .order("nombre", { ascending: true })
+      .eq("activo", true);
+    return data;
+  }
+}
+
+async function setContratoCM(user, producto, fechat, hora, cantidad, lng, lat){
+  let datos;
+  if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
+    datos = await setcontrato({user, producto, fechat, hora, cantidad, lng, lat});
+    datos = await datos.json();
+    return datos;
+  } else {
+    const { error } = await supabase
+      .from("tablamovimientos")
+      .insert({ idmovimiento: 1, iduser: user, idproducto: producto, fecha: fechat, hora: hora, cantidad, latdestino: lat, lngdestino: lng});
+      if (isValid(error) === false) {
+         const { data, error } = await supabase
+           .from("tablamovimientos")
+           .select("*")
+           .order("id", { ascending: false })
+           .limit(1);
+        if (isValid(error)===false) return data
+        else return [];
+     }
+}
+}
+
+function crearVistaReservar(producto, movimiento){
+  return "CREATE OR REPLACE VIEW getdisponibilidad  AS select sum(tablamovimientos.cantidad) as reservas from tablacatproductos, tablamovimientos where" +
+  " tablacatproductos.idproducto = " + producto + " and tablacatproductos.idproducto = tablamovimientos.idproducto and tablamovimientos.idmovimiento=" + movimiento
+}
+
+async function getDisponibilidad(producto, movimiento){
+  let datos;
+  if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
+    datos = await getdisponibilidad({});
+    datos = await datos.json();
+    return datos;
+  } else {
+    let sql = crearVistaReservar(producto, movimiento)
+    let {error:err}=await supabase.rpc("exec_sql", { query: sql });
+    if (isValid(err)===false || err.length>0){
+    const { data } = await supabase.from("getdisponibilidad").select("*");
+    return data;
+    }
+    else return ([]);
+  }
+}
+
+async function getanunciosCM(frm, categoria) {
   let datos;
   if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL") {
     datos = await getAplicaciones({});
     datos = await datos.json();
     return datos;
   } else {
-    const { data } = await supabase
+    if (frm==="1"){
+      const { error, data } = await supabase
       .from("tablaanuncios")
       .select("*")
       .order("orden", { ascending: true })
-      .eq("activo", true);
-    return data;
+      .eq("idcategoria", categoria)
+      .eq("activo", true)
+      .eq("frm", frm);
+      return data;
+    }
+    else{
+    const { error, data } = await supabase
+      .from("tablaanuncios")
+      .select("*")
+      .order("orden", { ascending: true })
+      .eq("activo", true)
+      .eq("frm", frm);
+      return data;
+    }
   }
 }
 
@@ -107,7 +520,7 @@ async function CategoriasInsertUpdate(
   accion,
   insertar,
   contenidofoto,
-  isBase64ToBlob
+  isBase64ToBlob,
 ) {
   let err;
   if (insertar === true) {
@@ -357,6 +770,7 @@ async function setAplicacionesCM(
   isBase64ToBlob,
   contenidofotomovil,
   isBase64ToBlobMovil,
+  frm,
 ) {
   let err = "";
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
@@ -369,6 +783,7 @@ async function setAplicacionesCM(
       categoria,
       agregarsn,
       contenidofoto,
+      frm,
     });
     result = await result.json();
     err = result.error;
@@ -382,6 +797,7 @@ async function setAplicacionesCM(
         idcategoria: categoria,
         tooltip: tooltip,
         activo: activo,
+        frm: frm,
       });
       if (isValid(error) === true) err = error;
       else {
@@ -418,6 +834,7 @@ async function setAplicacionesCM(
           desc: desc,
           idcategoria: categoria,
           tooltip,
+          frm: frm,
         })
         .eq("id", id);
         if (isValid(error) === false && contenidofoto!=="") { 
@@ -726,7 +1143,7 @@ async function setCategoriasNegociosCM(
   accion,
   inserta,
   contenidofoto,
-  isBase64ToBlob
+  isBase64ToBlob,
 ) {
   let result = [];
   let err = "";
@@ -752,7 +1169,7 @@ async function setCategoriasNegociosCM(
       accion,
       inserta,
       contenidofoto,
-      isBase64ToBlob
+      isBase64ToBlob,
     );
   }
   return err;
@@ -930,7 +1347,7 @@ async function setProductoCM(
         domicilio,
         marca,
         modelo,
-        talla,
+        cantidad: talla,
         color,
         gpssn: gps,
         latitud,
@@ -975,7 +1392,7 @@ async function setProductoCM(
           domicilio: domicilio,
           marca: marca,
           modelo: modelo,
-          talla: talla,
+          cantidad: talla,
           color: color,
           gpssn: gps,
           latitud: latitud,
@@ -1090,6 +1507,13 @@ export {
   getcategoriasnewCM,
   getCategoriasNegociosCM,
   getProductosActivaCM,
+  getContratoClientes,
+  getClientesContratos,
+  getContratos,
+  getDisponibilidad,
+  getCategorias,
+  getProductosCategoriaContrato,
+  getNegociosContratos,
 };
 
 export {
@@ -1101,7 +1525,12 @@ export {
   setActivaUsuarioCM,
   setCategoriasNegociosCM,
   setProductosActivaCM,
+  setContratoCM,
+  registraWS,
+  setUserExpress,
+  setEstadoContrato,
 };
+
 export {
   updateOcupadoCM
 };
