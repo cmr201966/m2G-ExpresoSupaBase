@@ -1,10 +1,18 @@
 .big-slider {
-  width: 100vw;
-  height: 60vh;
   display: flex;
   align-content: center;
   overflow: hidden;
   position: relative;
+}
+
+.big-slider.chico {
+  width: 100vw;
+  height: 50vh;
+}
+
+.big-slider.grande {
+  width: 100vw;
+  height: 60vh;
 }
 
 .big-slider-content {
@@ -16,14 +24,22 @@
 }
 
 .big-slider-item {
-  min-width: 100vw;
-  height: 60vh;
   display: flex;
   justify-content: center;
   align-content: center;
   color: white;
   position: relative;
   width: 100%;
+}
+
+.big-slider-item.grande {
+  min-width: 100vw;
+  height: 60vh;
+}
+
+.big-slider-item.chico {
+  min-width: 100vw;
+  height: 35vh;
 }
 
 .big-slider-nav {
@@ -43,59 +59,8 @@
 .big-slider-nav.left {
   left: 10px;
 }
-.img-slider{
+.img-slider {
   object-fit: cover;
   width: 100%;
   height: auto;
-
 }
-
-/*
-@media (max-width: 1700px) {
-  .img-slider {
-    content: url('https://criatlukgwzzvpdnfwuj.supabase.co/storage/v1/object/public/galerias/aplicaciones/35/35.jpg?cb=04f4a4fc-32e1-46b8-8a19-caff74604394');
-  }
-}
-
-@media (max-width: 1500px) {
-  .img-slider {
-    content: url('https://criatlukgwzzvpdnfwuj.supabase.co/storage/v1/object/public/galerias/aplicaciones/35/35.jpg?cb=04f4a4fc-32e1-46b8-8a19-caff74604394');
-  }
-}
-
-@media (max-width: 1200px) {
-  .img-slider {
-    content: url('https://criatlukgwzzvpdnfwuj.supabase.co/storage/v1/object/public/galerias/aplicaciones/35/35.jpg?cb=04f4a4fc-32e1-46b8-8a19-caff74604394');
-  }
-}
-
-@media (max-width: 1000px) {
-  .img-slider {
-    content: url('https://criatlukgwzzvpdnfwuj.supabase.co/storage/v1/object/public/galerias/aplicaciones/35/35.jpg?cb=04f4a4fc-32e1-46b8-8a19-caff74604394');
-  }
-}
-
-@media (max-width: 790px) {
-  .img-slider {
-    content: url('https://criatlukgwzzvpdnfwuj.supabase.co/storage/v1/object/public/galerias/aplicaciones/35/35.jpg?cb=04f4a4fc-32e1-46b8-8a19-caff74604394');
-  }
-}
-
-@media (max-width: 620px) {
-  .img-slider {
-    content: url('https://criatlukgwzzvpdnfwuj.supabase.co/storage/v1/object/public/galerias/aplicaciones/15/15.jpg?cb=04f4a4fc-32e1-46b8-8a19-caff74604394');
-  }
-}
-
-@media (max-width: 470px) {
-  .img-slider {
-    content: url('https://criatlukgwzzvpdnfwuj.supabase.co/storage/v1/object/public/galerias/aplicaciones/15/15.jpg?cb=2868a0d6-1d4d-4345-bed0-8179460e758b');
-  }
-}
-
-@media (max-width: 330px) {
-  .img-slider {
-    content: url('https://criatlukgwzzvpdnfwuj.supabase.co/storage/v1/object/public/galerias/aplicaciones/15/15.jpg?cb=2868a0d6-1d4d-4345-bed0-8179460e758b');
-  }
-}
-*/

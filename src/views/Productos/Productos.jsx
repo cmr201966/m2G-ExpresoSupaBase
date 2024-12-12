@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 import Tippy from "@tippyjs/react";
+import BigSlider from "../../components/BigSlider/BigSlider";
 
 // components
 import CardRow from "../../components/CardRow/CardRow";
@@ -14,7 +15,7 @@ import Hero from "../../layouts/Hero/Hero";
 // @mui/icons
 import { PlaceOutlined, WhatsApp, Close } from "@mui/icons-material";
 // @mui/material
-import { Box, CircularProgress, Checkbox } from "@mui/material";
+import { Box, CircularProgress } from "@mui/material";
 
 // assets
 import libre from "../../assets/images/libre.png";
@@ -29,6 +30,7 @@ import {
   updateOcupadoCM,
   setMovimientosNewCM,
   getProductosNewCM,
+  getanunciosCM,
 } from "../../Utiles/apiBaseDatos";
 
 // config
@@ -64,7 +66,7 @@ const Productos = () => {
   const [viewCarrito, setViewCarrito] = useState(false);
   const [toFly] = useState(null);
   const url = `https://wa.me/${52675359}?text=`;
-  let users =
+  let user =
     sessionStorage.getItem("user") === null
       ? ""
       : sessionStorage.getItem("user");
@@ -74,6 +76,7 @@ const Productos = () => {
   const [costoDomicilio, setCostoDomicilio] = useState(0);
   const [index, setIndex] = useState(0);
   const [nick, setNick] = useState(0);
+  const [hayAnuncios, setHayAnuncios] = useState(false);
 /*  const [marca, setMarca] = useState(0);
   const [color, setColor] = useState(0);
   const [chapa, setChapa] = useState(0);*/
@@ -86,6 +89,17 @@ const Productos = () => {
   // Estados para la posición GPS del mapa
   const [lng, setLng] = useState();
   const [lat, setLat] = useState();
+
+  // BigSlider
+  const [imgsFileName, setImgsFileName] = useState([]);
+  const [imgsFolder, setImgsFolder] = useState([]);
+  const [imgsId, setImgsId] = useState([]);
+  const [categorys, setCategorys] = useState([]);
+  const [users, setUsers] = useState([]);
+  const [nombres, setNombres] = useState([]);
+  const [links, setLinks] = useState([]);
+  const screenWidth = window.innerWidth;
+
 
   function sessionSet(parsedParams, objeto) {
     objeto.forEach((element) => {
@@ -381,7 +395,6 @@ const Productos = () => {
       setCantidadproductos(result1.length);
       setResult(newResult);
     }
-    // Obtener el contenido de la foto de perfil
     contenidofoto.splice(0, contenidofoto.length);
     for (let i = 0; i < newResult.length; i += 1) {
       let resultado = await getJpgFileSB(
@@ -398,7 +411,6 @@ const Productos = () => {
     let resultgps = await getparesgpscategoriaCM(
       sessionStorage.getItem("categoria")
     );
-    //    let resultgps = await apiBaseDatos("getparesgpscategoria", sessionStorage.getItem("categoria"));
     let paresgps = [];
     let itemst = [];
     resultgps.forEach((item) => {
@@ -419,6 +431,39 @@ const Productos = () => {
       setPuntos(paresgps);
       setItems(itemst);
     });
+
+    let resultApp = await getanunciosCM("1", sessionStorage.getItem("categoria"));
+    setHayAnuncios(resultApp.length!==0)
+          let imgsFileName1 = [];
+          let imgsFolder1 = [];
+          let imgsId1 = [];
+          let category1 = [];
+          let users1 = [];
+          let nombres1 = [];
+          let links1 = [];
+          let ruta =
+            sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL"
+              ? "./galerias/app_images/aplicaciones"
+              : "aplicaciones";
+          resultApp.forEach((item) => {
+            let pcMovil=screenWidth<=600?"-movil":"";
+            imgsFileName1.push(item.id + pcMovil + ".jpg");
+            imgsFolder1.push(ruta + "/" + item.id);
+            imgsId1.push(item.idsb);
+            category1.push(item.idcategoria);
+            users1.push(item.iduser);
+            nombres1.push(item.desc);
+            links1.push(item.link);
+          });
+          setImgsFileName(imgsFileName1);
+          setImgsFolder(imgsFolder1);
+          setImgsId(imgsId1)
+          setCategorys(category1);
+          setUsers(users1);
+          setNombres(nombres1);
+          setLinks(links1);
+    
+
     setViewCarrito(paresgps.length > 0);
     setInicia(false);
     setShow1(false);
@@ -442,7 +487,7 @@ const Productos = () => {
         lngDestino,
         carrera * items[index].tarifa + items[index].costodomicilio,
         carrera,
-        users
+        user
       );
       await updateOcupadoCM(idproductot, 1);
       //      await apiBaseDatos("setmovimientosNew", 1, idproductot, latOrigen, latDestino, lngOrigen, lngDestino, carrera * items[index].tarifa + items[index].costodomicilio, carrera, users)
@@ -579,10 +624,25 @@ const Productos = () => {
               ""
             )}
           </Encabezado>
+          {/*
+          {inicia===false && hayAnuncios?
+            <BigSlider
+              imgsFolder={imgsFolder}
+              imgsFileName={imgsFileName}
+              imgsId={imgsId}
+              categorias={categorys}
+              users={users}
+              nombres={nombres}
+              links={links}
+              sizeClass="chico"
+            />
+            :""
+            }*/}
+          {/*<div className="gradient-background-producto"></div>*/}
           <div className="div-Papa-Productos">
             <div className={"productos-cabeza"}>
               {/*
-            {(((puntosState === 2 && viewCarrito && showMap===true) || (showMap === false && puntos.length !== 0 && viewCarrito))
+             {(((puntosState === 2 && viewCarrito && showMap===true) || (showMap === false && puntos.length !== 0 && viewCarrito))
                && (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL' || (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='SUPABASE' && showMap===false)))?
                 <Tippy content={`Ordenar un producto`}>
                 <button
@@ -593,7 +653,7 @@ const Productos = () => {
                    <ShoppingCartOutlinedIcon />
                 </button>
               </Tippy>
-            :""}
+             :""}
               {((puntosState === 2 && viewCarrito && showMap === true) ||
                 (showMap === false && puntos.length !== 0 && viewCarrito)) &&
               sessionStorage.getItem("sgbd").toLocaleUpperCase() ===
@@ -624,10 +684,10 @@ const Productos = () => {
               ) : (
                 ""
               )}
-*/}
-            </div>
+              */}
+             </div>
 
-            {show1 ? (
+             {show1 ? (
               <Box
                 sx={{
                   width: "100%",
@@ -639,10 +699,10 @@ const Productos = () => {
               >
                 <CircularProgress color="checkbox" />
               </Box>
-            ) : null}
+             ) : null}
 
-            {(showMap === true && mascerca > 0 && mascerca != 999999) ||
-            (verOtraVez === true && mascerca > 0 && mascerca != 999999) ? (
+             {(showMap === true && mascerca > 0 && mascerca != 999999) ||
+             (verOtraVez === true && mascerca > 0 && mascerca != 999999) ? (
               <>
                 <div className="result">
                   {mascerca !== 0 && <span>{nick} está a {mascerca} Kms </span>}
@@ -663,11 +723,11 @@ const Productos = () => {
                   }
                 </div>
               </>
-            ) : (
-              ""
-            )}
-
-            {inicia === false && showMap !== true ? (
+             ) : (
+               ""
+             )}
+ 
+             {inicia === false && showMap !== true ? (
               <div className="product-flex">
                 {result.map((item, i) => (
                   <CardRow
@@ -690,10 +750,10 @@ const Productos = () => {
                   />
                 ))}
               </div>
-            ) : (
+             ) : (
               ""
-            )}
-            {showMap === true ? (
+             )}
+             {showMap === true ? (
               <div className="mapa-productos">
                 <Tippy content={`Cerrar mapa`}>
                   <button
@@ -718,9 +778,9 @@ const Productos = () => {
                   remoteZoom={zoom}
                 />
               </div>
-            ) : (
+             ) : (
               ""
-            )}
+             )}
           </div>
         </Hero>
       </div>
