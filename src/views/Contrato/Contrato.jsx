@@ -136,10 +136,10 @@ const Contrato = () => {
     }
     let tdisponible=0;
     let result9 = await getDisponibilidad(tkeyproducto, 1);
-    let treservas=isValid(result9[0].reservas)===true?result9[0].reservas:0
+    let treservas=result9.length>0?result9[0].reservas:0
     if (result9.length>0) tdisponible = mcantidad-treservas;
     let result10 = await getDisponibilidad(tkeyproducto, 2);
-    let tcancela=isValid(result10[0].reservas)===true?result10[0].reservas:0
+    let tcancela=result10.length>0?result10[0].reservas:0
     if (result10.length>0) tdisponible = tdisponible + tcancela;
     let tcantidad=isValid(cantidad)===true?cantidad:0;
     setDisponible(tdisponible-tcantidad);
@@ -366,7 +366,7 @@ const Contrato = () => {
                     </div>
                     </>:""
                   }
-
+                  {console.log(disponible, capacidad)}
                   <div className="contrato-input-area-cantidad">
                     <label>Cantidad:</label>
                     <input
@@ -375,7 +375,7 @@ const Contrato = () => {
                       onChange={handleInput}
                       type="number"
                       required
-                      disabled={sino || (disponible === 0)}
+                      disabled={sino || ((disponible === 0) && (capacidad>0))}
                     />
                   </div>
                   { 
