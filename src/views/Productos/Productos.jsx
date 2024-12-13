@@ -64,6 +64,7 @@ const Productos = () => {
   const [duracion1, setDuracion1] = useState(0);
   const [verOtraVez] = useState(true);
   const [viewCarrito, setViewCarrito] = useState(false);
+  let pcMovil= window.innerWidth<=600?"movil":"pc";
   const [toFly] = useState(null);
   const url = `https://wa.me/${52675359}?text=`;
   let user =
@@ -640,7 +641,7 @@ const Productos = () => {
             :""
             }
           <div className="div-productos margin-negative-productos">
-               <div className="gradient-background"></div>
+               <div className="gradient-background-producto"></div>
              {show1 ? (
               <Box
                 sx={{
@@ -682,7 +683,7 @@ const Productos = () => {
              )}
  
              {inicia === false && showMap !== true ? (
-              <div className="product-flex">
+              <div className={`product-flex-${pcMovil}`}>
                 {result.map((item, i) => (
                   <CardRow
                     tipouser={sessionStorage.getItem("tipouser")}
