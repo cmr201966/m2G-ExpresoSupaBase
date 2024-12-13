@@ -64,6 +64,7 @@ const Productos = () => {
   const [duracion1, setDuracion1] = useState(0);
   const [verOtraVez] = useState(true);
   const [viewCarrito, setViewCarrito] = useState(false);
+  let pcMovil= window.innerWidth<=600?"movil":"pc";
   const [toFly] = useState(null);
   const url = `https://wa.me/${52675359}?text=`;
   let user =
@@ -626,7 +627,6 @@ const Productos = () => {
               ""
             )}
           </Encabezado>
-          {/*
           {inicia===false && hayAnuncios?
             <BigSlider
               imgsFolder={imgsFolder}
@@ -639,56 +639,10 @@ const Productos = () => {
               sizeClass="chico"
             />
             :""
-            }*/}
-          {/*<div className="gradient-background-producto"></div>*/}
-          <div className="div-Papa-Productos">
-            <div className={"productos-cabeza"}>
-              {/*
-             {(((puntosState === 2 && viewCarrito && showMap===true) || (showMap === false && puntos.length !== 0 && viewCarrito))
-               && (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL' || (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='SUPABASE' && showMap===false)))?
-                <Tippy content={`Ordenar un producto`}>
-                <button
-                   type="button"
-                   className="car negocio-button primary"
-                   onClick={shooping}
-                >
-                   <ShoppingCartOutlinedIcon />
-                </button>
-              </Tippy>
-             :""}
-              {((puntosState === 2 && viewCarrito && showMap === true) ||
-                (showMap === false && puntos.length !== 0 && viewCarrito)) &&
-              sessionStorage.getItem("sgbd").toLocaleUpperCase() ===
-                "SUPABASE" &&
-              showMap === true ? (
-                <Tippy content={`Ordenar via WhatsApp`}>
-                  <a href={url} target="_blank" rel="noopener noreferrer">
-                    <WhatsApp />
-                  </a>
-                </Tippy>
-              ) : (
-                ""
-              )}
-
-              {showMap !== true && mascerca > 0 ? (
-                <div className="verOtraVez">
-                  <label className="label-datos-productos input-productos-12">
-                    Ver otra vez:
-                  </label>
-                  <Checkbox
-                    sx={{ padding: 0 }}
-                    id="verOtraVez"
-                    color="checkbox"
-                    checked={verOtraVez}
-                    onClick={handleInput}
-                  />
-                </div>
-              ) : (
-                ""
-              )}
-              */}
-             </div>
-
+            }
+          <div className="div-productos margin-negative-productos">
+              <div className="grid-letf"></div>
+              <div className="gradient-background-producto"></div>
              {show1 ? (
               <Box
                 sx={{
@@ -730,7 +684,7 @@ const Productos = () => {
              )}
  
              {inicia === false && showMap !== true ? (
-              <div className="product-flex">
+              <div className={`product-flex-${pcMovil}`}>
                 {result.map((item, i) => (
                   <CardRow
                     tipouser={sessionStorage.getItem("tipouser")}
@@ -783,6 +737,7 @@ const Productos = () => {
              ) : (
               ""
              )}
+            <div className="grid-rigth"></div>
           </div>
         </Hero>
       </div>

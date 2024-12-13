@@ -14,10 +14,11 @@ const CardMultipleSlider = (props) => {
     nivel,
     descripcion,
   } = props;
+  let pcMovil= window.innerWidth<=600?"movil":"pc";
   return (
     <>
       {link.toLowerCase().indexOf("https") >= 0 ? (
-        <a className="card-slider" href={link} target="_blank" rel="noopener noreferrer">
+        <a className={`card-slider-${pcMovil}`} href={link} target="_blank" rel="noopener noreferrer">
           <p className="card-slider-titulo">
             <b>{titulo}</b>
           </p>
@@ -30,7 +31,7 @@ const CardMultipleSlider = (props) => {
         </a>
       ) : (
         <Link
-          className="card-slider"
+          className={`card-slider-${pcMovil}`}
           to={`/${link}?nombre=${titulo}&categoria=${categoria}&rutatmp=${rutatmp}&desctmp=${desctmp}&nivel=${nivel}&
               deQuien=${
                 sessionStorage.getItem("user") === null
