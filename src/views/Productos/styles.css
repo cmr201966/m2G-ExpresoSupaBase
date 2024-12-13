@@ -291,12 +291,17 @@
 }
 
 .div-productos {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 60% 1fr;
+  z-index: 10;
+  gap: 10px;
+
+/*  display: flex;
   flex-direction: column;
-  /*margin: 0 auto;*/
+  //margin: 0 auto;//
   width: 70%;
   margin-top: 20px;
-  z-index: 10;
+  z-index: 10;*/
 }
 .margin-negative-productos {
   margin-top: 11px;

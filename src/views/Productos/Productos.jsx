@@ -641,7 +641,8 @@ const Productos = () => {
             :""
             }
           <div className="div-productos margin-negative-productos">
-               <div className="gradient-background-producto"></div>
+              <div className="grid-letf"></div>
+              <div className="gradient-background-producto"></div>
              {show1 ? (
               <Box
                 sx={{
@@ -736,6 +737,7 @@ const Productos = () => {
              ) : (
               ""
              )}
+            <div className="grid-rigth"></div>
           </div>
         </Hero>
       </div>
