@@ -283,13 +283,16 @@
   align-items: center;
 }
 
-.div-Papa-Productos {
+.div-productos {
   display: flex;
   flex-direction: column;
   margin: 0 auto;
   width: 70%;
   margin-top: 20px;
   z-index: 10;
+}
+.margin-negative-productos {
+  margin-top: 11px;
 }
 
 @media (max-width: 1100px) {

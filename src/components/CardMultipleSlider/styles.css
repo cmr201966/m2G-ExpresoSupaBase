@@ -1,4 +1,18 @@
-.card-slider{
+.card-slider-pc{
+    display: flex;
+    flex-direction: column;
+    min-width: 100px;
+    width: 155px;
+    height: 190px;
+    background-color: white;
+    border-radius: 15px;
+    align-items: center;
+    justify-content:space-between;
+    padding: 25px 5px 60px 5px;
+    text-decoration: none;
+    /*100-140*/
+}
+.card-slider-movil{
     display: flex;
     flex-direction: column;
     min-width: 100px;
@@ -10,6 +24,7 @@
     justify-content:space-between;
     padding: 25px 5px 60px 5px;
     text-decoration: none;
+    /*100-140*/
 }
 .card-slider-titulo{
     font-size: 14px;

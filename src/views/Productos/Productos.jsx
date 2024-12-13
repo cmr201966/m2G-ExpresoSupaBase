@@ -626,7 +626,6 @@ const Productos = () => {
               ""
             )}
           </Encabezado>
-          {/*
           {inicia===false && hayAnuncios?
             <BigSlider
               imgsFolder={imgsFolder}
@@ -639,56 +638,9 @@ const Productos = () => {
               sizeClass="chico"
             />
             :""
-            }*/}
-          {/*<div className="gradient-background-producto"></div>*/}
-          <div className="div-Papa-Productos">
-            <div className={"productos-cabeza"}>
-              {/*
-             {(((puntosState === 2 && viewCarrito && showMap===true) || (showMap === false && puntos.length !== 0 && viewCarrito))
-               && (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='MYSQL' || (sessionStorage.getItem("sgbd").toLocaleUpperCase()==='SUPABASE' && showMap===false)))?
-                <Tippy content={`Ordenar un producto`}>
-                <button
-                   type="button"
-                   className="car negocio-button primary"
-                   onClick={shooping}
-                >
-                   <ShoppingCartOutlinedIcon />
-                </button>
-              </Tippy>
-             :""}
-              {((puntosState === 2 && viewCarrito && showMap === true) ||
-                (showMap === false && puntos.length !== 0 && viewCarrito)) &&
-              sessionStorage.getItem("sgbd").toLocaleUpperCase() ===
-                "SUPABASE" &&
-              showMap === true ? (
-                <Tippy content={`Ordenar via WhatsApp`}>
-                  <a href={url} target="_blank" rel="noopener noreferrer">
-                    <WhatsApp />
-                  </a>
-                </Tippy>
-              ) : (
-                ""
-              )}
-
-              {showMap !== true && mascerca > 0 ? (
-                <div className="verOtraVez">
-                  <label className="label-datos-productos input-productos-12">
-                    Ver otra vez:
-                  </label>
-                  <Checkbox
-                    sx={{ padding: 0 }}
-                    id="verOtraVez"
-                    color="checkbox"
-                    checked={verOtraVez}
-                    onClick={handleInput}
-                  />
-                </div>
-              ) : (
-                ""
-              )}
-              */}
-             </div>
-
+            }
+          <div className="div-productos margin-negative-productos">
+               <div className="gradient-background"></div>
              {show1 ? (
               <Box
                 sx={{
