@@ -627,7 +627,7 @@ const Productos = () => {
               ""
             )}
           </Encabezado>
-          {inicia===false && hayAnuncios?
+          {inicia===false && hayAnuncios===true?
             <BigSlider
               imgsFolder={imgsFolder}
               imgsFileName={imgsFileName}
@@ -640,7 +640,7 @@ const Productos = () => {
             />
             :""
             }
-          <div className="div-productos margin-negative-productos">
+          <div className={`div-productos margin-negative-productos-${hayAnuncios===true?'anuncio':'noAnuncio'}`}>
               <div className="grid-letf"></div>
               <div className="gradient-background-producto"></div>
              {show1 ? (
