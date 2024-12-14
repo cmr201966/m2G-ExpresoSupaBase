@@ -138,9 +138,9 @@ const Aplicaciones = () => {
       setIsBase64ToBlobMovil(false);
       setNombrefoto("");
       setNombrefotomovil("");
-      setNombrefoto(await leerFotoAnuncio(resultcategorias, result, 0, "PC"));
+      setNombrefoto(await leerFotoAnuncio(resultcategorias, result, 0, "PC", "home"));
       setNombrefotomovil(
-        await leerFotoAnuncio(resultcategorias, result, 0, "MOVIL")
+        await leerFotoAnuncio(resultcategorias, result, 0, "MOVIL", "home")
       );
     }
 
@@ -148,7 +148,7 @@ const Aplicaciones = () => {
     setInicia(false);
   } // init
 
-  async function leerFotoAnuncio(resultcategorias, result, index, cual) {
+  async function leerFotoAnuncio(resultcategorias, result, index, cual, carpeta) {
     setArrayCategorias(resultcategorias);
     let nombre = "";
     if (result.length > 0) {
@@ -167,7 +167,6 @@ const Aplicaciones = () => {
         "aplicaciones/" + carpeta + "/" + result[index].id,
         result[index].idsb
       );
-      // let resultado = await getJpgFileSB(result[index].id + ".jpg", "./galerias/app_images/aplicaciones/" + result[index].id, "aplicaciones/" + result[index].id);
       if (isValid(resultado) === true) {
         if (cual === "PC") {
           setIsBase64ToBlob(true);
@@ -312,35 +311,41 @@ const Aplicaciones = () => {
     }
   }
 
+  async function cambiaAnuncio(value, folder){
+    setAplicacion(value);
+    recuperardatosproducto(arrayAplicaciones, value);
+    setIsBase64ToBlob(false);
+    setIsBase64ToBlobMovil(false);
+    setNombrefoto("");
+    setNombrefotomovil("");
+    setNombrefoto(
+      await leerFotoAnuncio(
+        arrayCategorias,
+        arrayAplicaciones,
+        value,
+        "PC", 
+        folder
+      )
+    );
+    setNombrefotomovil(
+      await leerFotoAnuncio(
+        arrayCategorias,
+        arrayAplicaciones,
+        value,
+        "MOVIL", 
+        folder
+      )
+    );
+  }
+
   async function handleInput(e) {
-    //let resultado = {};
+    let folder=frm===0?"home":"productos"
     switch (e.target.id) {
       case "nick":
         setNick(e.target.value);
         break;
       case "idapp":
-        setAplicacion(e.target.value);
-        recuperardatosproducto(arrayAplicaciones, e.target.value);
-        setIsBase64ToBlob(false);
-        setIsBase64ToBlobMovil(false);
-        setNombrefoto("");
-        setNombrefotomovil("");
-        setNombrefoto(
-          await leerFotoAnuncio(
-            arrayCategorias,
-            arrayAplicaciones,
-            e.target.value,
-            "PC"
-          )
-        );
-        setNombrefotomovil(
-          await leerFotoAnuncio(
-            arrayCategorias,
-            arrayAplicaciones,
-            e.target.value,
-            "MOVIL"
-          )
-        );
+        cambiaAnuncio(e.target.value, folder);
         break;
       case "desc":
         setDesc(e.target.value);
@@ -356,7 +361,6 @@ const Aplicaciones = () => {
         break;
       case "frm":
         setFrm(e.target.value);
-        console.log(e.target.value);
         break  
       default:
         break;
