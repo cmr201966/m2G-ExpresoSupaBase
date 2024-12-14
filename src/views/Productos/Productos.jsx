@@ -446,8 +446,8 @@ const Productos = () => {
           let links1 = [];
           let ruta =
             sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL"
-              ? "./galerias/app_images/aplicaciones"
-              : "aplicaciones";
+              ? "./galerias/app_images/aplicaciones/productos"
+              : "aplicaciones/productos";
           resultApp.forEach((item) => {
             let pcMovil=screenWidth<=600?"-movil":"";
             imgsFileName1.push(item.id + pcMovil + ".jpg");

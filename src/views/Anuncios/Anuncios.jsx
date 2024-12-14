@@ -164,7 +164,7 @@ const Aplicaciones = () => {
       let resultado = await getJpgFileSB(
         result[index].id + este + ".jpg",
         "./galerias/app_images/aplicaciones/" + result[index].id,
-        "aplicaciones/" + result[index].id,
+        "aplicaciones/home/" + result[index].id,
         result[index].idsb
       );
       // let resultado = await getJpgFileSB(result[index].id + ".jpg", "./galerias/app_images/aplicaciones/" + result[index].id, "aplicaciones/" + result[index].id);
