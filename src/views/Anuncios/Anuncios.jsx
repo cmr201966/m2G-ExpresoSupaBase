@@ -168,7 +168,6 @@ const Aplicaciones = () => {
         result[index].idsb
       );
       // let resultado = await getJpgFileSB(result[index].id + ".jpg", "./galerias/app_images/aplicaciones/" + result[index].id, "aplicaciones/" + result[index].id);
-      console.log(resultado);
       if (isValid(resultado) === true) {
         if (cual === "PC") {
           setIsBase64ToBlob(true);
