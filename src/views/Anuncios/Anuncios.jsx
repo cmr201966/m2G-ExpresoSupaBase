@@ -338,11 +338,6 @@ const Aplicaciones = () => {
       )
     );
   }
-  async function cambiaAnuncio(value, folder){
-    setAplicacion(value);
-    recuperardatosproducto(arrayAplicaciones, value);
-    cambiaFotoAnuncio(value, folder)
-  }
 
   async function handleInput(e) {
     let folder;
@@ -352,7 +347,12 @@ const Aplicaciones = () => {
         setNick(e.target.value);
         break;
       case "idapp":
-        cambiaAnuncio(e.target.value, folder);
+        frmNumber=Number(frm);
+        if (frmNumber===0) folder="home"
+        else folder="productos";
+        setAplicacion(e.target.value);
+        recuperardatosproducto(arrayAplicaciones, e.target.value);
+        cambiaFotoAnuncio(e.target.value, folder)
         break;
       case "desc":
         setDesc(e.target.value);
@@ -368,10 +368,8 @@ const Aplicaciones = () => {
         break;
       case "frm":
         frmNumber=Number(e.target.value);
-        if (frmNumber===0)
-           folder="home"
-        else 
-           folder="productos";
+        if (frmNumber===0) folder="home"
+        else folder="productos";
         setFrm(e.target.value);
         cambiaFotoAnuncio(aplicacion, folder)
         break  
