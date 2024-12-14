@@ -276,6 +276,11 @@ const Aplicaciones = () => {
   };
 
   async function confirmar() {
+    let carpeta;
+    if (Number(frm)===0)
+      carpeta="home"
+   else 
+      carpeta="productos";
     setLoading(true);
     let result = await setAplicacionesCM(
       arrayAplicaciones[aplicacion].id,
@@ -290,6 +295,7 @@ const Aplicaciones = () => {
       contenidofotomovil,
       isBase64ToBlobMovil,
       frm,
+      carpeta,
     );
 
     if (isValid(result) === true) {

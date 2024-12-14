@@ -771,6 +771,7 @@ async function setAplicacionesCM(
   contenidofotomovil,
   isBase64ToBlobMovil,
   frm,
+  carpeta,
 ) {
   let err = "";
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
@@ -784,6 +785,7 @@ async function setAplicacionesCM(
       agregarsn,
       contenidofoto,
       frm,
+      carpeta,
     });
     result = await result.json();
     err = result.error;
@@ -810,7 +812,7 @@ async function setAplicacionesCM(
             await uploadBase64Image(
             contenidofoto,
             "galerias",
-            "aplicaciones/" + data[0].id + "/" + data[0].id + ".jpg",
+            "aplicaciones/" + carpeta + "/" + data[0].id + "/" + data[0].id + ".jpg",
             isBase64ToBlob, "tablaanuncios","id",data[0].id
             );
             err = error;
@@ -819,7 +821,7 @@ async function setAplicacionesCM(
           await uploadBase64Image(
           contenidofotomovil,
           "galerias",
-          "aplicaciones/" + data[0].id + "/" + data[0].id + "-movil.jpg",
+          "aplicaciones/" + carpeta + "/" + data[0].id + "/" + data[0].id + "-movil.jpg",
           isBase64ToBlobMovil, "tablaanuncios","id",data[0].id
           );
           err = error;
@@ -841,7 +843,7 @@ async function setAplicacionesCM(
           uploadBase64Image(
           contenidofoto,
           "galerias",
-          "aplicaciones/" + id + "/" + id + ".jpg", 
+          "aplicaciones/" + carpeta + "/" + id + "/" + id + ".jpg", 
           isBase64ToBlob, "tablaanuncios","id", id
         );
       }
@@ -849,7 +851,7 @@ async function setAplicacionesCM(
         await uploadBase64Image(
         contenidofotomovil,
         "galerias",
-        "aplicaciones/" + id + "/" + id + "-movil.jpg",
+        "aplicaciones/" + carpeta + "/" + id + "/" + id + "-movil.jpg",
         isBase64ToBlobMovil, "tablaanuncios","id", id
         );
         err = error;
