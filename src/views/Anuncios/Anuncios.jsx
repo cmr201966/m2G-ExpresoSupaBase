@@ -151,6 +151,7 @@ const Aplicaciones = () => {
     setArrayCategorias(resultcategorias);
     let nombre = "";
     if (result.length > 0) {
+      setCategoria(buscarEnArreglo(resultcategorias, result[buscarEnArreglo(result, result[index].id, "id")].idcategoria, "categorianegocio"));
       setIsBase64ToBlob(true);
       let este = cual === "PC" ? "" : "-movil";
       let resultado = await getJpgFileSB(result[index].id + este + ".jpg", "./galerias/app_images/aplicaciones/" + result[index].id, "aplicaciones/" + carpeta + "/" + result[index].id,
@@ -343,7 +344,7 @@ const Aplicaciones = () => {
         if (frmNumber===0) folder="home"
         else folder="productos";
         setFrm(e.target.value);
-        cambiaFotoAnuncio(aplicacion, folder)
+        //cambiaFotoAnuncio(aplicacion, folder)
         break  
       default:
         break;
