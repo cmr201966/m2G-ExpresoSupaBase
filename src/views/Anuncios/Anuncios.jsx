@@ -312,6 +312,34 @@ const Aplicaciones = () => {
     }
   }
 
+  async function cambiaAnuncio(value, folder){
+    setAplicacion(value);
+    recuperardatosproducto(arrayAplicaciones, value);
+    setIsBase64ToBlob(false);
+    setIsBase64ToBlobMovil(false);
+    setNombrefoto("");
+    setNombrefotomovil("");
+    setNombrefoto(
+      await leerFotoAnuncio(
+        arrayCategorias,
+        arrayAplicaciones,
+        value,
+        "PC", 
+        folder
+      )
+    );
+    setNombrefotomovil(
+      await leerFotoAnuncio(
+        arrayCategorias,
+        arrayAplicaciones,
+        value,
+        "MOVIL", 
+        folder
+      )
+    );
+  }
+
+
   async function handleInput(e) {
     //let resultado = {};
     switch (e.target.id) {
