@@ -291,8 +291,6 @@ const Aplicaciones = () => {
       isBase64ToBlobMovil,
       frm,
     );
-    //    let result= await apiBaseDatos("setAplicaciones", arrayAplicaciones[aplicacion].id, sessionStorage.getItem("user"), nick, desc,
-    //                                    ttip, arrayCategorias[categoria].categorianegocio, agregarsn, contenidofoto, isBase64ToBlob);
 
     if (isValid(result) === true) {
       setLoading(false);
