@@ -140,7 +140,7 @@ const Aplicaciones = () => {
       setNombrefotomovil("");
       setNombrefoto(await leerFotoAnuncio(resultcategorias, result, 0, "PC", "home"));
       setNombrefotomovil(
-        await leerFotoAnuncio(resultcategorias, result, 0, "MOVIL")
+        await leerFotoAnuncio(resultcategorias, result, 0, "MOVIL", "home")
       );
     }
 
