@@ -148,7 +148,7 @@ const Aplicaciones = () => {
     setInicia(false);
   } // init
 
-  async function leerFotoAnuncio(resultcategorias, result, index, cual) {
+  async function leerFotoAnuncio(resultcategorias, result, index, cual, carpeta) {
     setArrayCategorias(resultcategorias);
     let nombre = "";
     if (result.length > 0) {
