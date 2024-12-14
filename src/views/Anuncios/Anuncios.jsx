@@ -311,9 +311,8 @@ const Aplicaciones = () => {
     }
   }
 
-  async function cambiaAnuncio(value, folder){
-    setAplicacion(value);
-    recuperardatosproducto(arrayAplicaciones, value);
+  async function cambiaFotoAnuncio(value, folder){
+    console.log(value, folder);
     setIsBase64ToBlob(false);
     setIsBase64ToBlobMovil(false);
     setNombrefoto("");
@@ -337,9 +336,15 @@ const Aplicaciones = () => {
       )
     );
   }
+  async function cambiaAnuncio(value, folder){
+    console.log(value, folder);
+    setAplicacion(value);
+    recuperardatosproducto(arrayAplicaciones, value);
+    cambiaFotoAnuncio(value, folder)
+  }
 
   async function handleInput(e) {
-    let folder=frm===0?"home":"productos"
+    let folder;
     switch (e.target.id) {
       case "nick":
         setNick(e.target.value);
@@ -360,8 +365,14 @@ const Aplicaciones = () => {
         setCbvista(e.target.checked);
         break;
       case "frm":
+        console.log(e.target.value===0);
+        if (e.target.value===0)
+           folder="home"
+        else 
+           folder="productos";
+        console.log(folder);
         setFrm(e.target.value);
-        console.log(e.target.value);
+        cambiaFotoAnuncio(e.target.value, folder)
         break  
       default:
         break;
