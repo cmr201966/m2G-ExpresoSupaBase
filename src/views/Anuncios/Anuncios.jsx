@@ -82,7 +82,7 @@ const Aplicaciones = () => {
   const [buttonPc, setButtonPc] = useState(true);
   const [frm, setFrm] = useState(0);
   const arrayfrm = [{desc: "Home"}, {desc: "Productos"}];
-
+  let carpeta=sessionStorage.getItem("deDonde")==="Home"?"Home":"Productos";
 
   async function init() {
     for (let prop in parsedParams) {
@@ -164,11 +164,10 @@ const Aplicaciones = () => {
       let resultado = await getJpgFileSB(
         result[index].id + este + ".jpg",
         "./galerias/app_images/aplicaciones/" + result[index].id,
-        "aplicaciones/home/" + result[index].id,
+        "aplicaciones/" + carpeta + "/" + result[index].id,
         result[index].idsb
       );
       // let resultado = await getJpgFileSB(result[index].id + ".jpg", "./galerias/app_images/aplicaciones/" + result[index].id, "aplicaciones/" + result[index].id);
-      console.log(resultado);
       if (isValid(resultado) === true) {
         if (cual === "PC") {
           setIsBase64ToBlob(true);
@@ -292,6 +291,7 @@ const Aplicaciones = () => {
       contenidofotomovil,
       isBase64ToBlobMovil,
       frm,
+      carpeta,
     );
     //    let result= await apiBaseDatos("setAplicaciones", arrayAplicaciones[aplicacion].id, sessionStorage.getItem("user"), nick, desc,
     //                                    ttip, arrayCategorias[categoria].categorianegocio, agregarsn, contenidofoto, isBase64ToBlob);
