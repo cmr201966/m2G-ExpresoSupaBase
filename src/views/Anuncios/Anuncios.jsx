@@ -138,7 +138,7 @@ const Aplicaciones = () => {
       setIsBase64ToBlobMovil(false);
       setNombrefoto("");
       setNombrefotomovil("");
-      setNombrefoto(await leerFotoAnuncio(resultcategorias, result, 0, "PC"));
+      setNombrefoto(await leerFotoAnuncio(resultcategorias, result, 0, "PC", "home"));
       setNombrefotomovil(
         await leerFotoAnuncio(resultcategorias, result, 0, "MOVIL")
       );
