@@ -139,8 +139,7 @@ const Aplicaciones = () => {
       setNombrefoto("");
       setNombrefotomovil("");
       setNombrefoto(await leerFotoAnuncio(resultcategorias, result, 0, "PC", "home"));
-      setNombrefotomovil(
-        await leerFotoAnuncio(resultcategorias, result, 0, "MOVIL", "home")
+      setNombrefotomovil(await leerFotoAnuncio(resultcategorias, result, 0, "MOVIL", "home")
       );
     }
 
@@ -152,19 +151,9 @@ const Aplicaciones = () => {
     setArrayCategorias(resultcategorias);
     let nombre = "";
     if (result.length > 0) {
-      setCategoria(
-        buscarEnArreglo(
-          resultcategorias,
-          result[buscarEnArreglo(result, result[index].id, "id")].idcategoria,
-          "categorianegocio"
-        )
-      );
       setIsBase64ToBlob(true);
       let este = cual === "PC" ? "" : "-movil";
-      let resultado = await getJpgFileSB(
-        result[index].id + este + ".jpg",
-        "./galerias/app_images/aplicaciones/" + result[index].id,
-        "aplicaciones/" + carpeta + "/" + result[index].id,
+      let resultado = await getJpgFileSB(result[index].id + este + ".jpg", "./galerias/app_images/aplicaciones/" + result[index].id, "aplicaciones/" + carpeta + "/" + result[index].id,
         result[index].idsb
       );
       if (isValid(resultado) === true) {
@@ -277,10 +266,8 @@ const Aplicaciones = () => {
 
   async function confirmar() {
     let carpeta;
-    if (Number(frm)===0)
-      carpeta="home"
-   else 
-      carpeta="productos";
+    if (Number(frm)===0) carpeta="home"
+    else carpeta="productos";
     setLoading(true);
     let result = await setAplicacionesCM(
       arrayAplicaciones[aplicacion].id,
@@ -319,24 +306,9 @@ const Aplicaciones = () => {
     setIsBase64ToBlobMovil(false);
     setNombrefoto("");
     setNombrefotomovil("");
-    setNombrefoto(
-      await leerFotoAnuncio(
-        arrayCategorias,
-        arrayAplicaciones,
-        value,
-        "PC", 
-        folder
-      )
-    );
-    setNombrefotomovil(
-      await leerFotoAnuncio(
-        arrayCategorias,
-        arrayAplicaciones,
-        value,
-        "MOVIL", 
-        folder
-      )
-    );
+    setNombrefoto(await leerFotoAnuncio(arrayCategorias, arrayAplicaciones, value, "PC", folder));
+    setNombrefotomovil(await leerFotoAnuncio(arrayCategorias, arrayAplicaciones, value, "MOVIL", folder));
+
   }
 
   async function handleInput(e) {
