@@ -149,7 +149,6 @@ const Aplicaciones = () => {
   } // init
 
   async function leerFotoAnuncio(resultcategorias, result, index, cual, carpeta) {
-    console.log(resultcategorias, result, index, cual, carpeta);
     setArrayCategorias(resultcategorias);
     let nombre = "";
     if (result.length > 0) {
@@ -312,7 +311,6 @@ const Aplicaciones = () => {
   }
 
   async function cambiaFotoAnuncio(value, folder){
-    console.log(value, folder);
     setIsBase64ToBlob(false);
     setIsBase64ToBlobMovil(false);
     setNombrefoto("");
@@ -337,7 +335,6 @@ const Aplicaciones = () => {
     );
   }
   async function cambiaAnuncio(value, folder){
-    console.log(value, folder);
     setAplicacion(value);
     recuperardatosproducto(arrayAplicaciones, value);
     cambiaFotoAnuncio(value, folder)
@@ -345,6 +342,7 @@ const Aplicaciones = () => {
 
   async function handleInput(e) {
     let folder;
+    let frmNumber;
     switch (e.target.id) {
       case "nick":
         setNick(e.target.value);
@@ -365,14 +363,13 @@ const Aplicaciones = () => {
         setCbvista(e.target.checked);
         break;
       case "frm":
-        console.log(e.target.value===0);
-        if (e.target.value===0)
+        frmNumber=Number(e.target.value);
+        if (frmNumber===0)
            folder="home"
         else 
            folder="productos";
-        console.log(folder);
         setFrm(e.target.value);
-        cambiaFotoAnuncio(e.target.value, folder)
+        cambiaFotoAnuncio(aplicacion, folder)
         break  
       default:
         break;
