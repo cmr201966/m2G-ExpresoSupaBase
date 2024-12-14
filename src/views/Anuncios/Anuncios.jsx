@@ -339,36 +339,14 @@ const Aplicaciones = () => {
     );
   }
 
-
   async function handleInput(e) {
-    //let resultado = {};
+    let folder=frm===0?"home":"productos"
     switch (e.target.id) {
       case "nick":
         setNick(e.target.value);
         break;
       case "idapp":
-        setAplicacion(e.target.value);
-        recuperardatosproducto(arrayAplicaciones, e.target.value);
-        setIsBase64ToBlob(false);
-        setIsBase64ToBlobMovil(false);
-        setNombrefoto("");
-        setNombrefotomovil("");
-        setNombrefoto(
-          await leerFotoAnuncio(
-            arrayCategorias,
-            arrayAplicaciones,
-            e.target.value,
-            "PC"
-          )
-        );
-        setNombrefotomovil(
-          await leerFotoAnuncio(
-            arrayCategorias,
-            arrayAplicaciones,
-            e.target.value,
-            "MOVIL"
-          )
-        );
+        cambiaAnuncio(e.target.value, folder);
         break;
       case "desc":
         setDesc(e.target.value);
