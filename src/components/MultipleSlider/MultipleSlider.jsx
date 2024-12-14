@@ -7,12 +7,13 @@ const BigSlider = (props) => {
   const { imgs = [] } = props;
   const [currentIndex, setCurrentIndex] = useState(0);
   const [transition] = useState(true);
-  const [movil] = useState(window.innerWidth < 768);
+  const [movil] = useState(window.innerWidth <= 600);
   const [cantidad, setCantidad] = useState(
-    window.innerWidth <= 768 ? imgs.length - 2 : imgs.length - 6
+    window.innerWidth <= 600 ? imgs.length - 2 : imgs.length - 6
   );
 
   const toLeft = useCallback(() => {
+    console.log(cantidad);
     setCantidad(cantidad - 1);
     if (currentIndex < imgs.length) {
       setCurrentIndex(currentIndex + 1);
@@ -20,6 +21,7 @@ const BigSlider = (props) => {
   }, [currentIndex, imgs.length]);
 
   const toRight = useCallback(() => {
+    console.log(cantidad);
     setCantidad(cantidad+1);
     currentIndex > 0 ? setCurrentIndex(currentIndex - 1) : null;
   }, [currentIndex]);
@@ -39,8 +41,7 @@ const BigSlider = (props) => {
              ))}
           </div>
 
-          {movil===false && ((window.innerWidth <= 768 && imgs.length >= 3) ||
-          (window.innerWidth > 768 && imgs.length > 6)) && cantidad>0? (
+          {movil===false && imgs.length > 7 && cantidad>0? (
             <button onClick={() => toLeft()} className="multiple-slider-nav right">
                {">"}
             </button>):("")}
