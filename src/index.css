@@ -129,6 +129,7 @@ code {
 
 .encabezado {
   display: flex;
+  background-color: rgb(2, 114, 226);
   align-items: center;
   width: 67%;
   margin: 0 auto;
@@ -329,6 +330,7 @@ h6 {
 
 .grip-flecha {
   display: grid;
+  
   justify-content: flex-start;
   grid-template-columns: 0% 33% 33%;
 }

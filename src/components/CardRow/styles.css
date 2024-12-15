@@ -5,6 +5,7 @@
   border-radius: 18px;
   flex-direction: column;
   justify-content: space-between;
+  background: linear-gradient(to top, rgb(20, 96, 172), #ffffff)  
 }
 
 .card-image-button {
@@ -168,10 +169,12 @@
 }
 
 .texto-1 {
-  font-size: 12px;
+  font-size: 13px;
   color: rgb(255, 255, 255);
   width: 100%;
   display: flex;
+  font-weight: bold;
+  font-stretch: expanded;
 }
 
 .irA {
