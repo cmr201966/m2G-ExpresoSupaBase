@@ -85,7 +85,7 @@ const Home = () => {
       let ruta =
         sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL"
           ? "./galerias/app_images/aplicaciones"
-          : "aplicaciones";
+          : "aplicaciones/home";
       resultApp.forEach((item) => {
         let pcMovil=screenWidth<=600?"-movil":"";
         imgsFileName1.push(item.id + pcMovil + ".jpg");

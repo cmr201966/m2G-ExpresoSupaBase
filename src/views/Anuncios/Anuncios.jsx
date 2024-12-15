@@ -138,9 +138,8 @@ const Aplicaciones = () => {
       setIsBase64ToBlobMovil(false);
       setNombrefoto("");
       setNombrefotomovil("");
-      setNombrefoto(await leerFotoAnuncio(resultcategorias, result, 0, "PC"));
-      setNombrefotomovil(
-        await leerFotoAnuncio(resultcategorias, result, 0, "MOVIL")
+      setNombrefoto(await leerFotoAnuncio(resultcategorias, result, 0, "PC", "home"));
+      setNombrefotomovil(await leerFotoAnuncio(resultcategorias, result, 0, "MOVIL", "home")
       );
     }
 
@@ -148,27 +147,16 @@ const Aplicaciones = () => {
     setInicia(false);
   } // init
 
-  async function leerFotoAnuncio(resultcategorias, result, index, cual) {
+  async function leerFotoAnuncio(resultcategorias, result, index, cual, carpeta) {
     setArrayCategorias(resultcategorias);
     let nombre = "";
     if (result.length > 0) {
-      setCategoria(
-        buscarEnArreglo(
-          resultcategorias,
-          result[buscarEnArreglo(result, result[index].id, "id")].idcategoria,
-          "categorianegocio"
-        )
-      );
+      setCategoria(buscarEnArreglo(resultcategorias, result[buscarEnArreglo(result, result[index].id, "id")].idcategoria, "categorianegocio"));
       setIsBase64ToBlob(true);
       let este = cual === "PC" ? "" : "-movil";
-      let resultado = await getJpgFileSB(
-        result[index].id + este + ".jpg",
-        "./galerias/app_images/aplicaciones/" + result[index].id,
-        "aplicaciones/" + result[index].id,
+      let resultado = await getJpgFileSB(result[index].id + este + ".jpg", "./galerias/app_images/aplicaciones/" + result[index].id, "aplicaciones/" + carpeta + "/" + result[index].id,
         result[index].idsb
       );
-      // let resultado = await getJpgFileSB(result[index].id + ".jpg", "./galerias/app_images/aplicaciones/" + result[index].id, "aplicaciones/" + result[index].id);
-      console.log(resultado);
       if (isValid(resultado) === true) {
         if (cual === "PC") {
           setIsBase64ToBlob(true);
@@ -278,6 +266,9 @@ const Aplicaciones = () => {
   };
 
   async function confirmar() {
+    let carpeta;
+    if (Number(frm)===0) carpeta="home"
+    else carpeta="productos";
     setLoading(true);
     let result = await setAplicacionesCM(
       arrayAplicaciones[aplicacion].id,
@@ -292,9 +283,8 @@ const Aplicaciones = () => {
       contenidofotomovil,
       isBase64ToBlobMovil,
       frm,
+      carpeta,
     );
-    //    let result= await apiBaseDatos("setAplicaciones", arrayAplicaciones[aplicacion].id, sessionStorage.getItem("user"), nick, desc,
-    //                                    ttip, arrayCategorias[categoria].categorianegocio, agregarsn, contenidofoto, isBase64ToBlob);
 
     if (isValid(result) === true) {
       setLoading(false);
@@ -312,35 +302,30 @@ const Aplicaciones = () => {
     }
   }
 
+  async function cambiaFotoAnuncio(value, folder){
+    setIsBase64ToBlob(false);
+    setIsBase64ToBlobMovil(false);
+    setNombrefoto("");
+    setNombrefotomovil("");
+    setNombrefoto(await leerFotoAnuncio(arrayCategorias, arrayAplicaciones, value, "PC", folder));
+    setNombrefotomovil(await leerFotoAnuncio(arrayCategorias, arrayAplicaciones, value, "MOVIL", folder));
+
+  }
+
   async function handleInput(e) {
-    //let resultado = {};
+    let folder;
+    let frmNumber;
     switch (e.target.id) {
       case "nick":
         setNick(e.target.value);
         break;
       case "idapp":
+        frmNumber=Number(frm);
+        if (frmNumber===0) folder="home"
+        else folder="productos";
         setAplicacion(e.target.value);
         recuperardatosproducto(arrayAplicaciones, e.target.value);
-        setIsBase64ToBlob(false);
-        setIsBase64ToBlobMovil(false);
-        setNombrefoto("");
-        setNombrefotomovil("");
-        setNombrefoto(
-          await leerFotoAnuncio(
-            arrayCategorias,
-            arrayAplicaciones,
-            e.target.value,
-            "PC"
-          )
-        );
-        setNombrefotomovil(
-          await leerFotoAnuncio(
-            arrayCategorias,
-            arrayAplicaciones,
-            e.target.value,
-            "MOVIL"
-          )
-        );
+        cambiaFotoAnuncio(e.target.value, folder)
         break;
       case "desc":
         setDesc(e.target.value);
@@ -355,8 +340,11 @@ const Aplicaciones = () => {
         setCbvista(e.target.checked);
         break;
       case "frm":
+        frmNumber=Number(e.target.value);
+        if (frmNumber===0) folder="home"
+        else folder="productos";
         setFrm(e.target.value);
-        console.log(e.target.value);
+        //cambiaFotoAnuncio(aplicacion, folder)
         break  
       default:
         break;
