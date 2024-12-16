@@ -25,7 +25,6 @@ const BigSlider = (props) => {
 //    console.log(window.innerWidth <=600 ? imgs.length - 2 : (imgs.length-Math.ceil(window.innerWidth/180))+1)
 //  console.log(window.innerWidth <= 600 ? imgs.length - 2 : imgs.length - 6);
   const toLeft = useCallback(() => {
-    console.log(cantidad, currentIndex);
     setCantidad(cantidad - 1);
     if (currentIndex < imgs.length) {
       setCurrentIndex(currentIndex + 1);
@@ -33,7 +32,6 @@ const BigSlider = (props) => {
   }, [currentIndex, imgs.length]);
 
   const toRight = useCallback(() => {
-    console.log(cantidad, currentIndex);
     setCantidad(cantidad+1);
     currentIndex > 0 ? setCurrentIndex(currentIndex - 1) : null;
   }, [currentIndex]);
