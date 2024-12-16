@@ -350,7 +350,6 @@ const Productos = () => {
       sessionStorage.getItem("userAnuncio"),
       sessionStorage.getItem("buscar")
     );
-    console.log(result1);
     const newResult = [];
     if (isValid(result1) === false || result1.length === 0) {
       newResult.push({
@@ -382,7 +381,8 @@ const Productos = () => {
           domicilio: item.domicilio,
           idsb: item.idsb,
           link: item.link,
-          estado: item.estado
+          estado: item.estado,
+          info: item.info
         };
         if (result1[0].idnaturaleza === 62) {
           obj.Habilidades = item.adicional;
