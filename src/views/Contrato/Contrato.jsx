@@ -311,7 +311,7 @@ const Contrato = () => {
            )}
           {inicia === false ?
             <>
-              <Encabezado />
+              <Encabezado   clase={"encabezado"}/>
               <div className="contrato">
                 <div className="container-contrato">
                   <div className="ws">

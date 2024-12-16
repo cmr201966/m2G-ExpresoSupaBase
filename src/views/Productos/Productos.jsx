@@ -350,9 +350,6 @@ const Productos = () => {
       sessionStorage.getItem("userAnuncio"),
       sessionStorage.getItem("buscar")
     );
-    //    let result1 = await apiBaseDatos("getProductos", sessionStorage.getItem("categoria"),
-    //                                     sessionStorage.getItem("userAnuncio"),
-    //                                     sessionStorage.getItem("buscar"));
     const newResult = [];
     if (isValid(result1) === false || result1.length === 0) {
       newResult.push({
@@ -384,7 +381,8 @@ const Productos = () => {
           domicilio: item.domicilio,
           idsb: item.idsb,
           link: item.link,
-          estado: item.estado
+          estado: item.estado,
+          info: item.info
         };
         if (result1[0].idnaturaleza === 62) {
           obj.Habilidades = item.adicional;
@@ -606,27 +604,28 @@ const Productos = () => {
 
   return (
     <>
-      <div>
+      <div className="global-background">
         <Navbar nivel={1} />
-        <Hero>
-          <Encabezado>
+        <div className="une-head">
+            <Encabezado clase={"encabezado-une-head"}/>
             {inicia === false ? (
               <div className="productos-nombre">
-                <p className="p-productos-nombre">
-                  ({cantidadproductos}) - {nombre}
-                </p>
-                <button
-                  type="button"
-                  className="placeoutlined"
-                  onClick={shooping}
-                >
-                  <PlaceOutlined />
-                </button>
+                 <p className="p-productos-nombre">
+                    ({cantidadproductos}) - {nombre}
+                 </p>
+                 <button
+                   type="button"
+                   className="placeoutlined"
+                   onClick={shooping}
+                 >
+                   <PlaceOutlined />
+                 </button>
               </div>
             ) : (
               ""
             )}
-          </Encabezado>
+            </div>
+        <Hero>
           {inicia===false && hayAnuncios===true?
             <BigSlider
               imgsFolder={imgsFolder}
