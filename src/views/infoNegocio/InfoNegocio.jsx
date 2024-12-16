@@ -157,7 +157,7 @@ const InfoNegocio = () => {
             <CircularProgress color="checkbox" />
           </Box>
         ) : (
-          <Encabezado />
+          <Encabezado   clase={"encabezado"}/>
         )}
 
         {inicio === false ? (
