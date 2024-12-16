@@ -92,7 +92,7 @@ const Categorias = () => {
             <CircularProgress color="checkbox" />
           </Box>
         ) : null}
-        <Encabezado />
+        <Encabezado   clase={"encabezado"}/>
         {inicio === false ? (
           <div className="div-papa-categorias-1">
             <section className="main-info-producto">

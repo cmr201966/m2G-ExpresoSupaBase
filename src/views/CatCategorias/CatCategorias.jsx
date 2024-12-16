@@ -341,7 +341,7 @@ const CatCategorias = () => {
           )}
           {inicia === false ? (
             <div className="div-papa-categorias">
-              <Encabezado />
+              <Encabezado   clase={"encabezado"}/>
               <div className="categorias">
                 <p className="strong margen-catnegocio">
                   {" "}

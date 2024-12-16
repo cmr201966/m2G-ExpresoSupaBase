@@ -340,10 +340,24 @@
   font-size: 5px;
 }
 .gradient-background-producto {
-  background: linear-gradient(to top, white 49%, transparent 57%);
+  background: linear-gradient(to top, white 51%, transparent 59%);
   position: absolute;
   top: 0;
   height: 100vh; /* Para que ocupe toda la altura de la pantalla */
   width: 100vw;
   pointer-events: none;
+}
+.une-head{
+  display: flex;
+  width: 70%;
+  margin: 0 auto;
+  background-color: rgb(2, 114, 226)  
+}
+
+.encabezado-une-head {
+  display: flex;
+  background-color: rgb(2, 114, 226);
+}
+.global-background{
+  background-color: rgb(2, 114, 226)
 }

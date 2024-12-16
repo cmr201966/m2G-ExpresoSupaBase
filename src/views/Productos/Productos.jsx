@@ -604,27 +604,28 @@ const Productos = () => {
 
   return (
     <>
-      <div>
+      <div className="global-background">
         <Navbar nivel={1} />
-        <Hero>
-          <Encabezado>
+        <div className="une-head">
+            <Encabezado clase={"encabezado-une-head"}/>
             {inicia === false ? (
               <div className="productos-nombre">
-                <p className="p-productos-nombre">
-                  ({cantidadproductos}) - {nombre}
-                </p>
-                <button
-                  type="button"
-                  className="placeoutlined"
-                  onClick={shooping}
-                >
-                  <PlaceOutlined />
-                </button>
+                 <p className="p-productos-nombre">
+                    ({cantidadproductos}) - {nombre}
+                 </p>
+                 <button
+                   type="button"
+                   className="placeoutlined"
+                   onClick={shooping}
+                 >
+                   <PlaceOutlined />
+                 </button>
               </div>
             ) : (
               ""
             )}
-          </Encabezado>
+            </div>
+        <Hero>
           {inicia===false && hayAnuncios===true?
             <BigSlider
               imgsFolder={imgsFolder}

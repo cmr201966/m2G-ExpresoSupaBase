@@ -11,8 +11,7 @@ import { useEffect, useState } from "react";
 import axios from "axios";
 import Hero from "../../layouts/Hero/Hero"
 // @mui/material
-import { IconButton } from "@mui/material"
-import ArrowBack from "@mui/icons-material/ArrowBack";
+import { Box, CircularProgress } from "@mui/material";
 
 const Identificalo = () => {
  
@@ -27,10 +26,10 @@ const Identificalo = () => {
     const [nombre, setNombre] = useState("");
     const [contenidofotos, setContenidoFotos] = useState([]);
     const [respuestas, setRespuestas] = useState(1);
+    const [inicia, setInicia] = useState(true);
     //
     async function init() 
     {
-        sessionStorage.setItem("filtro", "")
         sessionStorage.setItem("lnaturaleza", parsedParams.naturaleza);
         sessionStorage.setItem("lidowner", parsedParams.idowner);
         sessionStorage.setItem("lnivel", parsedParams.nivel);
@@ -74,11 +73,13 @@ const Identificalo = () => {
             {
               const resultado = await axios.post(
                 "http://localhost:3001/getjpg-file",
-                { file: "./galerias/app_images/entretenimiento/" +  resultjuegoitems.data[w].idcategoria1 +"/" + resultjuegoitems.data[w].idcategoria2 + "/" + resultjuegoitems.data[w].idcategoria3  + "/" + resultjuegoitems.data[w].idjuego + "/" + resultjuegoitems.data[w].id + ".jpg" },
+                { file: "./galerias/app_images/entretenimiento/" +  resultjuegoitems.data[w].idcategoria1 +"/" + resultjuegoitems.data[w].idcategoria2 + 
+                        "/" + resultjuegoitems.data[w].idcategoria3  + "/" + resultjuegoitems.data[w].idjuego + "/" + resultjuegoitems.data[w].id + ".jpg" },
                 {}
               );
               contenidofotos.push(resultado.data);
-              ficherojpg[w]="./galerias/app_images/entretenimiento/" +  resultjuegoitems.data[w].idcategoria1 +"/" + resultjuegoitems.data[w].idcategoria2 + "/" + resultjuegoitems.data[w].idcategoria3  + "/" + resultjuegoitems.data[w].idjuego + "/" + resultjuegoitems.data[w].id + ".jpg";
+              ficherojpg[w]= "./galerias/app_images/entretenimiento/" +  resultjuegoitems.data[w].idcategoria1 +"/" + resultjuegoitems.data[w].idcategoria2 + 
+                             "/" + resultjuegoitems.data[w].idcategoria3  + "/" + resultjuegoitems.data[w].idjuego + "/" + resultjuegoitems.data[w].id + ".jpg";
             }
             resultjuegoitems.data.forEach((item, i) => {
                 let juegositems=[...resultjuegoitems.data];
@@ -98,12 +99,12 @@ const Identificalo = () => {
                        a[k+1]=juegositems[j].Lugar;
                     juegositems.splice(j,1);
                 }
-//                newResult.push({ respuesta1: trespuesta[0], respuesta2: trespuesta[1], respuesta3: trespuesta[2] , respuesta4: trespuesta[3], respuesta5: trespuesta[4], photo: contenidofotos[i], answer: item.Lugar  });
-                newResult.push({ respuesta1: trespuesta[0], respuesta2: trespuesta[1], respuesta3: trespuesta[2] , respuesta4: trespuesta[3], respuesta5: trespuesta[4], photo: ficherojpg[i], answer: item.Lugar, idApp:sessionStorage.getItem("idApp"), info: item.info  });
+                newResult.push({ respuesta1: trespuesta[0], respuesta2: trespuesta[1], respuesta3: trespuesta[2] , respuesta4: trespuesta[3], respuesta5: trespuesta[4], 
+                                 photo: ficherojpg[i], answer: item.Lugar, idApp:sessionStorage.getItem("idApp"), info: item.info  });
             })
-            console.log(trespuesta);
             setResult(newResult);
-        } 
+        }
+        setInicia(false);
     }
  
     useEffect(() => {
@@ -118,29 +119,28 @@ const Identificalo = () => {
     return (
 
         <div>
-            <Navbar
-                links={[
-                    { label: "Inicio", to: "/",tooltips: "Ir a la página principal" },
-                    { label: sessionStorage.getItem("user") === null ? "Iniciar sesión" : "Cerrar sesión", to: sessionStorage.getItem("user") === null ? "/login" : "/cerrarsesion", tooltips: sessionStorage.getItem("user") === null ? "Abrir sesión" : "/Cerrar la sesión de " + sessionStorage.getItem("usernombre") },
-                    { label: "Registrarse", to: "/registrarse?inserta=true", tooltips: "Crear una cuenta de usuario" },
-                    { label: "Acerca de", to: "/Acercade", tooltips: "Acerca de Destodo.cu" },
-                          ]} 
-            />
-            <Hero>
-                <div className="cabeza1">
-                  <IconButton color="primary" onClick={() => {
-                     navigate(`/?naturaleza=${sessionStorage.getItem("lnaturaleza")}&idowner=${sessionStorage.getItem("lidowner")}&nivel=${sessionStorage.getItem("lnivel")}`);
-                     }}>
-                  <ArrowBack />
-                  </IconButton>
-                <h2 className="h1-cabeza">Destodo.cu</h2>
-                <h5 className="h3-1-cabeza-lugares" > - {nombre}</h5>
-                <h5 className="h3-2-cabeza-lugares"> - Puntos: ({score}/{puntos})</h5>
-                </div>
+           <Navbar nivel={1} />
+           <Hero>
+              {inicia === true ? (
+               <Box
+                  sx={{
+                  width: "100%",
+                  height: "300px",
+                  display: "flex",
+                  alignItems: "center",
+                  justifyContent: "center",
+                 }}
+               >
+              <CircularProgress color="checkbox" />
+            </Box>) : ("")}
+
+                <h5 className="" > - {nombre}</h5>
+                <h5 className=""> - Puntos: ({score}/{puntos})</h5>
+
                 {<div className="card-container scroll">
                     {result.map((item, i) => (
-                        <CardIdentificalo index={i} key={i} item={item} mal={() => {puntos > 0 ? setPuntos(puntos - 1): setPuntos(0);setRespuestas(respuestas+1)}} bien={() => {setPuntos(puntos + 2);setRespuestas(respuestas+1)}} categoria = {categoria} respuestas={respuestas} puntos={puntos} />
-//                        <CardIdentificalo index={i} key={i} item={item} mal={() => {puntos > 0 ? puntos=puntos - 1:puntos=0;setRespuestas(respuestas+1)}} bien={() => {puntos=puntos + 2;setRespuestas(respuestas+1)}} categoria = {categoria} respuestas={respuestas} puntos={puntos} />
+                        <CardIdentificalo index={i} key={i} item={item} mal={() => {puntos > 0 ? setPuntos(puntos - 1): setPuntos(0);setRespuestas(respuestas+1)}} 
+                                          bien={() => {setPuntos(puntos + 2);setRespuestas(respuestas+1)}} categoria = {categoria} respuestas={respuestas} puntos={puntos} />
                     ))}
                 </div>}
             </Hero>
