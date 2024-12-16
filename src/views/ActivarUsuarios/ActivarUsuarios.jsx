@@ -45,7 +45,7 @@ const Activar = () => {
             <CircularProgress color="checkbox" />
           </Box>
         ) : null}
-        <Encabezado />
+        <Encabezado   clase={"encabezado"}/>
         {inicio === false ? (
           <div className="div-papa-categorias-1">
             <main className="main-info-producto">

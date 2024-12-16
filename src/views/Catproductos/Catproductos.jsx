@@ -639,7 +639,7 @@ const CatProductos = () => {
           ) : null}
           {inicia === false ? (
             <>
-              <Encabezado />
+              <Encabezado   clase={"encabezado"}/>
               <div className="div-papa-catProductos">
                 <form className="catalogo-producto">
                   <p className="strong">Publicar un producto</p>
