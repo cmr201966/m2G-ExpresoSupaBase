@@ -303,11 +303,11 @@
   margin-top: 20px;
   z-index: 10;
 }
-.margin-negative-productos-pc {
-  margin-top: -70px;
+.margin-negative-productos-anuncio {
+  margin-top: -90px;
 }
 
-.margin-negative-productos-movil {
+.margin-negative-productos-noAnuncio {
   margin-top: 20px;
 }
 
