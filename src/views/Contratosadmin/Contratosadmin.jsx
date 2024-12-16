@@ -388,7 +388,7 @@ const ContratoAdmin = () => {
               )}
                { inicia === false ? 
                     <>
-                    <Encabezado />
+                    <Encabezado   clase={"encabezado"}/>
                     <div className="contratosadmin">
                            <div className="container-contratosadmin">
                               {inicia === false?
