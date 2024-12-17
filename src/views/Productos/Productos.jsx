@@ -382,7 +382,8 @@ const Productos = () => {
           idsb: item.idsb,
           link: item.link,
           estado: item.estado,
-          info: item.info
+          info: item.info,
+          isinfo: item.isinfo
         };
         if (result1[0].idnaturaleza === 62) {
           obj.Habilidades = item.adicional;
@@ -491,8 +492,6 @@ const Productos = () => {
         user
       );
       await updateOcupadoCM(idproductot, 1);
-      //      await apiBaseDatos("setmovimientosNew", 1, idproductot, latOrigen, latDestino, lngOrigen, lngDestino, carrera * items[index].tarifa + items[index].costodomicilio, carrera, users)
-      //      await apiBaseDatos("updateOcupado", idproductot, 1)
       init1();
     }
     setPuntosState(0);
@@ -585,7 +584,6 @@ const Productos = () => {
 
   useEffect(() => {
     if (puntos.length !== 0) {
-//      if ((puntosState===1) && sessionStorage.getItem("idapp")==="Expreso") otroPunto();
       if ((puntosState===1)) otroPunto();
     }
   }, [lng]);

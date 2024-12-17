@@ -68,6 +68,7 @@ const InfoProducto = () => {
   const [distancia, setDistancia] = useState(0);
   const [tarifa, setTarifa] = useState(1);
   const [info, setInfo] = useState("");
+  const [isinfo, setIsinfo] = useState("");
   const [costoDomicilio, setCostoDomicilio] = useState(50);
   const [domicilio, setDomicilio] = useState(50);
   const [puntosState, setPuntosState] = useState(0);
@@ -100,6 +101,7 @@ const InfoProducto = () => {
       setLat(result[0].latitud);
       setLng(result[0].longitud);
       setInfo(result[0].info);
+      setIsinfo(result[0].isinfo);
       idsb = result[0].idsb;
     }
     result = await getParesGpsProductoCM(
@@ -386,7 +388,7 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                           domicilio === 1) ||
                           (domicilio === 1 && ocupado === 0)) &&
                           (sessionStorage.getItem("sgbd").toLocaleUpperCase() ===
-                          "MYSQL") || (ocupado===0 && info===false)  ? (
+                          "MYSQL") || (ocupado===0 && info===false && isinfo===false)  ? (
                           <>
                             <Tippy content={`${accion}`}>
                               <IconButton
