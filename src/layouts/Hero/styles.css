@@ -1,6 +1,6 @@
 .hero-section {
-  /*background-color: rgb(2, 114, 226);*/
-  background-color: white;
+  background-color: rgb(2, 114, 226);
+  /*  background-color: white;*/
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 114px);
