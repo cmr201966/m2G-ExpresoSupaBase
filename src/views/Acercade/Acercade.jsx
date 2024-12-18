@@ -85,7 +85,7 @@ const Acercade = () => {
           </div>
           <p>{sessionStorage.getItem("idapp")} Versión 1.0</p>
           <div className="acercade-flex-1">
-             <p>Desarrollado por</p>
+             <p>Esta aplicación web fue desarrollada por</p>
              {sessionStorage.getItem("idapp")==="m2G-Software"?"m2G-Software":
              <a href="https://m2g-software-stgo.web.app" target='_blank' rel='noopener noreferrer' className='acercade-row'>
                 <span>m2G-Software </span>
@@ -95,14 +95,14 @@ const Acercade = () => {
           <div className="acercade-flex">
             <a href="tel:+5352675359" className="acercade-row">
               <PhoneAndroid />
-              <span> +(53)52675359 </span>
+              {/*<span> +(53)52675359 </span>*/}
             </a>
             <a href="tel:+5322657241" className="acercade-row">
               <Phone />
-              <span>+(53)22657241</span>
+              {/*<span>+(53)22657241</span>*/}
             </a>
-          </div>
-          <div className="acercade-flex">
+          {/*</div>
+          <div className="acercade-flex">*/}
             <a href="mailto:cmr201966@gmail.com" className="acercade-row">
               <Email />
             </a>
@@ -116,7 +116,7 @@ const Acercade = () => {
             </a>
           </div>
 
-          <p>Santiago de Cuba.</p>
+          <p> En Santiago de Cuba.</p>
           <p className="text-center">Todos los derechos reservados. 2024</p>
         </div>
       </Hero>
