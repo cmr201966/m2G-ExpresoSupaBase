@@ -9,9 +9,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: dodgerblue;
-  background-color: rgb(128, 128, 247) !important;
-}
+  background-color: #0272e2}
 
 * {
   font-family: "Poppins", sans-serif;
