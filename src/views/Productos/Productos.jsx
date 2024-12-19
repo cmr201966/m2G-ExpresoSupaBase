@@ -637,7 +637,7 @@ const Productos = () => {
             />
             :""
             }
-          <div className={`div-productos margin-negative-productos-${hayAnuncios===true?'anuncio':'noAnuncio'}`}>
+          <div className={`div-productos margin-negative-productos-${hayAnuncios===true?'anuncio':'noAnuncio'}-${pcMovil==='pc'?'pc':'movil'}`}>
               <div className="grid-letf"></div>
               <div className="gradient-background-producto"></div>
              {show1 ? (
