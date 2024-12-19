@@ -138,6 +138,15 @@ code {
   margin: 0 auto;
 }
 
+.encabezado-acercade{
+  display: flex;
+/*  background: rgb(63, 153, 244);*/
+  background-color: rgb(2, 114, 226);
+  align-items: center;
+  width: 67%;
+  margin: 0 auto;
+}
+
 @media (max-width: 1100px) {
   .encabezado {
     width: 90%;

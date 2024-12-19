@@ -60,7 +60,7 @@ const Acercade = () => {
     <div>
       <Navbar nivel={1} />
       <Hero clase={"hero-section"}>
-        <div className="encabezado">
+        <div className="encabezado-acercade">
           {parsedParams.nivel === 0 ? (
             ""
           ) : (
