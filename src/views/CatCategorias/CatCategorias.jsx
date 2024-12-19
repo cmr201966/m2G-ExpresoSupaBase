@@ -321,8 +321,9 @@ const CatCategorias = () => {
         </div>
       </Modal>
 
-      <div>
+      <div className="info-catcategorias">
         <Navbar nivel={1} />
+        <Encabezado clase={"encabezado"}/>
         <Hero clase={"hero-section"}>
         {inicia === true ? (
             <Box
@@ -341,7 +342,6 @@ const CatCategorias = () => {
           )}
           {inicia === false ? (
             <>
-              <Encabezado clase={"encabezado"}/>
               <div className="div-papa-categorias">
               <div className="categorias">
                 <p className="strong margen-catnegocio">

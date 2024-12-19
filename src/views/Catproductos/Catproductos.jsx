@@ -96,6 +96,8 @@ const CatProductos = () => {
   const [cbsCiudad, setCbsCiudad] = useState(0);
   const [producto, setProducto] = useState(null);
   const [tnegocio, setTnegocio] = useState(0);
+  const [informativo, setInformativo] = useState(false);
+  const [informativot, setInformativot] = useState(false);
   const [cbvista, setCbvista] = useState(false);
   const [domicilio, setDomicilio] = useState(false);
   const [cbgps, setCbgps] = useState(false);
@@ -317,6 +319,9 @@ const CatProductos = () => {
 
   function handleInput(e) {
     switch (e.target.id) {
+      case "informativo":
+        setInformativo(e.target.checked)
+        break;
       case "usuario":
         setUsuario(e.target.value);
         break;
@@ -398,6 +403,7 @@ const CatProductos = () => {
     setDomiciliot(data[i].domicilio === 0 ? false : true);
     setOcupadot(data[i].ocupado === 0 ? false : true);
     setGpst(data[i].gpssn === 1 ? true : false);
+    setInformativot(data[i].info);
     setCbgps(data[i].gpssn === 1 ? true : false);
     setLatt(data[i].latitud === 0 ? null : data[i].latitud);
     setLngt(data[i].longitud === 0 ? null : data[i].longitud);
@@ -420,6 +426,7 @@ const CatProductos = () => {
     setDomicilio(data[posicion].domicilio === 0 ? false : true);
     setOcupado(data[posicion].ocupado === 0 ? false : true);
     setCbgps(data[posicion].gpssn === 1 ? true : false);
+    setInformativo(data[posicion].info);
     setLat(data[posicion].latitud === 0 ? null : data[posicion].latitud);
     setLng(data[posicion].longitud === 0 ? null : data[posicion].longitud);
     setCbsCiudad(data[posicion].sciudad === 1 ? true : false);
@@ -440,6 +447,7 @@ const CatProductos = () => {
     setDomicilio(domiciliot);
     setCbsCiudad(tcbsCiudad);
     setCbgps(gpst);
+    setInformativo(informativot);
     setLat(latt);
     setLng(lngt);
   }
@@ -483,6 +491,7 @@ const CatProductos = () => {
       mtalla,
       color,
       cbgps === true || domicilio === true ? 1 : 0,
+      informativo,
       lat,
       lng,
       cbsCiudad === true ? 1 : 0,
@@ -621,9 +630,10 @@ const CatProductos = () => {
         </div>
       </Modal>
 
-      <div>
+      <div className="info-catproductos">
         <Navbar />
-           <Hero clase={"hero-section"}>
+        <Encabezado clase={"encabezado"}/>
+        <Hero clase={"hero-section"}>
           {show ? (
             <Box
               sx={{
@@ -639,7 +649,6 @@ const CatProductos = () => {
           ) : null}
           {inicia === false ? (
             <>
-              <Encabezado clase={"encabezado"}/>
               <div className="div-papa-catProductos">
                 <form className="catalogo-producto">
                   <p className="strong">Publicar un producto</p>
@@ -851,10 +860,10 @@ const CatProductos = () => {
                               }}
                               checked={domicilio}
                               onClick={handleInput}
-                            />
-                            <label className="label-datos-catproducto input-cataproducto-12 domicilio">
-                              Domicilio
-                            </label>
+                             />
+                             <label className="label-datos-catproducto input-cataproducto-12 domicilio">
+                               Domicilio
+                             </label>
                           </div>
                           {sessionStorage.getItem("idapp") === "Expreso" ? (
                             <div className="input-area4">
@@ -895,6 +904,21 @@ const CatProductos = () => {
                             ""
                           )}
                         </div>
+                        <div className="input-area4">
+                            <Checkbox
+                              id="informativo"
+                              sx={{
+                                color: "white",
+                                "&.Mui-checked": { color: "white" },
+                              }}
+                              checked={informativo}
+                              onClick={handleInput}
+                             />
+                             <label className="label-datos-catproducto input-cataproducto-12 informativo">
+                               Informativo
+                             </label>
+                          </div>
+
                         {domicilio === true &&
                         sessionStorage.getItem("idapp") === "Expreso" ? (
                           <>
