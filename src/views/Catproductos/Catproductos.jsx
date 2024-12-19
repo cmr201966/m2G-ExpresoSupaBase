@@ -623,7 +623,7 @@ const CatProductos = () => {
 
       <div>
         <Navbar />
-        <Hero>
+           <Hero clase={"hero-section"}>
           {show ? (
             <Box
               sx={{
@@ -639,7 +639,7 @@ const CatProductos = () => {
           ) : null}
           {inicia === false ? (
             <>
-              <Encabezado   clase={"encabezado"}/>
+              <Encabezado clase={"encabezado"}/>
               <div className="div-papa-catProductos">
                 <form className="catalogo-producto">
                   <p className="strong">Publicar un producto</p>

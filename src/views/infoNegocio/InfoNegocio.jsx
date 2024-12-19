@@ -143,7 +143,8 @@ const InfoNegocio = () => {
   return (
     <div className="Info-Negocios">
       <Navbar nivel={1} />
-      <Hero>
+      <Encabezado   clase={"encabezado"}/>
+      <Hero clase={"hero-section-productos"}>
         {showcircularProgress ? (
           <Box
             sx={{
@@ -156,9 +157,7 @@ const InfoNegocio = () => {
           >
             <CircularProgress color="checkbox" />
           </Box>
-        ) : (
-          <Encabezado   clase={"encabezado"}/>
-        )}
+        ) : ("")}
 
         {inicio === false ? (
           <div className="div-papa-info">

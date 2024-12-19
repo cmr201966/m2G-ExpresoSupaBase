@@ -420,7 +420,7 @@ const Aplicaciones = () => {
 
       <div>
         <Navbar nivel={1} />
-        <Hero>
+        <Hero clase={"hero-section"}>
           {inicia === true ? (
             <Box
               sx={{
@@ -437,7 +437,7 @@ const Aplicaciones = () => {
             ""
           )}
 
-          {inicia === false ? <Encabezado />:""}
+          {inicia === false ?<Encabezado clase={"encabezado"}/>:""}
           {inicia === false ? (
             <div className="div-papa-aplicaciones">
               <div className="aplicaciones">

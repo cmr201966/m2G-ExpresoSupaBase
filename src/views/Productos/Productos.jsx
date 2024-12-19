@@ -604,26 +604,26 @@ const Productos = () => {
     <>
       <div className="global-background">
         <Navbar nivel={1} />
-        <div className="une-head">
-            <Encabezado clase={"encabezado-une-head"}/>
-            {inicia === false ? (
-              <div className="productos-nombre">
-                 <p className="p-productos-nombre">
+        <div className="head-productos">
+           <div className="une-head">
+              <Encabezado clase={"encabezado-une-head"}/>
+              {inicia === false ? (
+                <div className="productos-nombre">
+                   <p className="p-productos-nombre">
                     ({cantidadproductos}) - {nombre}
-                 </p>
-                 <button
-                   type="button"
-                   className="placeoutlined"
-                   onClick={shooping}
-                 >
-                   <PlaceOutlined />
-                 </button>
-              </div>
-            ) : (
-              ""
-            )}
-            </div>
-        <Hero>
+                   </p>
+                   <button
+                     type="button"
+                     className="placeoutlined"
+                     onClick={shooping}
+                   >
+                    <PlaceOutlined />
+                   </button>
+                </div>
+              ) : ("")}
+           </div>
+        </div>
+          <Hero clase={"hero-section-productos"}>
           {inicia===false && hayAnuncios===true?
             <BigSlider
               imgsFolder={imgsFolder}

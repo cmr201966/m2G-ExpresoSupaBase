@@ -120,7 +120,7 @@ const Identificalo = () => {
 
         <div>
            <Navbar nivel={1} />
-           <Hero>
+              <Hero clase={"hero-section"}>
               {inicia === true ? (
                <Box
                   sx={{

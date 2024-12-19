@@ -309,8 +309,9 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
   return (
     <div className="Info-Productos">
       <Navbar nivel={1} />
-      <Hero>
-        {showcircularProgress ? (
+      <Encabezado   clase={"encabezado"}/>
+      <Hero clase={"hero-section-productos"}>
+      {showcircularProgress ? (
           <Box
             sx={{
               width: "100%",
@@ -322,9 +323,7 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
           >
             <CircularProgress color="checkbox" />
           </Box>
-        ) : (
-          <Encabezado   clase={"encabezado"}/>
-        )}
+        ) : ("")}
 
         {inicio === false ? (
           <div className="div-papa-info">

@@ -99,7 +99,7 @@ const Login = () => {
   return (
     <div>
       <Navbar nivel={1} />
-      <Hero>
+      <Hero clase={"hero-section"}>
         <div className="login">
           <form onSubmit={confirma} className="container-login">
             <h4 className="title-1">Iniciar sesión</h4>

@@ -351,13 +351,18 @@
   display: flex;
   width: 70%;
   margin: 0 auto;
-  background-color: rgb(2, 114, 226)  
+  /*background-color: rgb(2, 114, 226)  */
 }
 
 .encabezado-une-head {
   display: flex;
-  background-color: rgb(2, 114, 226);
+  background-color: rgbrgb(63, 153, 244);
 }
 .global-background{
   background-color: rgb(2, 114, 226)
+}
+.head-productos{
+  display:flex;
+  width: 100%;
+  background: rgb(63, 153, 244);
 }

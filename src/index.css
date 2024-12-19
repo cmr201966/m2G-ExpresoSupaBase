@@ -131,7 +131,8 @@ code {
 
 .encabezado {
   display: flex;
-  background-color: rgb(2, 114, 226);
+  background: rgb(63, 153, 244);
+/*  background-color: rgb(2, 114, 226);*/
   align-items: center;
   width: 67%;
   margin: 0 auto;
