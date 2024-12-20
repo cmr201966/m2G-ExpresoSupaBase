@@ -38,6 +38,7 @@ async function setVisitas(){
      if (data.length!==0){
         await supabase
           .from("ws")
+/*          .update({ visitas: 0 })*/
           .update({ visitas: data[0].visitas+1 })
           .eq("id", data[0].id);
         return data[0].visitas+1

@@ -74,7 +74,7 @@ const Home = () => {
     ) {
       setNivel(0);
       let visitas = await setVisitas();
-      console.log(visitas);
+      console.log("Visitas: ", visitas);
       let resultApp = await getanunciosCM("0");
 //      let resultApp = await apiBaseDatos("anuncios");
       let imgsFileName1 = [];
