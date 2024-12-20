@@ -651,7 +651,7 @@ const CatProductos = () => {
             <>
               <div className="div-papa-catProductos">
                 <form className="catalogo-producto">
-                  <p className="strong">Publicar un producto</p>
+                  <p className="strong catproductos-color">Publicar un producto</p>
                   {showMap === true || showMap === false ? (
                     <>
                       <div className="container-producto-select">
