@@ -546,7 +546,7 @@ const Registrarse = () => {
     <>
       <div>
         <Navbar />
-        <Hero>
+          <Hero clase={"hero-section"}>
           <Encabezado   clase={"encabezado"}/>
           <div className="div-papa">
             {inicia === true && show1 === true ? (

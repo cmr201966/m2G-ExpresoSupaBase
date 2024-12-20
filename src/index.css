@@ -2,6 +2,10 @@
 @tailwind components;
 @tailwind utilities;
 
+html{
+  background-color: white;
+}
+
 body {
   margin: 0;
   font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Roboto", "Oxygen",
@@ -9,9 +13,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: dodgerblue;
-  background-color: rgb(128, 128, 247) !important;
-}
+  background-color: #0272e2}
 
 * {
   font-family: "Poppins", sans-serif;
@@ -129,6 +131,16 @@ code {
 
 .encabezado {
   display: flex;
+  background: rgb(63, 153, 244);
+/*  background-color: rgb(2, 114, 226);*/
+  align-items: center;
+  width: 67%;
+  margin: 0 auto;
+}
+
+.encabezado-acercade{
+  display: flex;
+/*  background: rgb(63, 153, 244);*/
   background-color: rgb(2, 114, 226);
   align-items: center;
   width: 67%;

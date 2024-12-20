@@ -162,7 +162,6 @@ const Navbar = (props) => {
 
     if (!config?.length) setShowDialog(true);
 
-    //    let resultado = await getJpgFileCM("logo.jpg", "./galerias/app_images/destodo", "destodo");
     let resultado = await getJpgFileSB(
       "logo.jpg",
       "./galerias/app_images/destodo",
