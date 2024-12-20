@@ -13,10 +13,10 @@
 
 .perfil-info-1 {
   display: flex;
-  flex-direction: column;
-  background: rgb(20, 96, 172);
-  max-width: 360px;
+  flex-direction: row;
+  background: rgb(246, 244, 236);
   width: 100%;
+  gap: 50px;
 }
 
 .img-class-info {
@@ -30,7 +30,15 @@
   border-radius: 15px;
 }
 
-.info-1 {
+.info-1-pc {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  color: white;
+  width: 60%;
+  position: relative;
+}
+.info-1-movil {
   display: flex;
   flex-direction: column;
   align-items: flex-start;
@@ -44,20 +52,23 @@
   height: 100vh;
 }
 
-.parrafo {
+.parrafo-info-producto {
   display: flex;
   flex-direction: row;
+  margin-bottom: 5px;
+  color: black !important;
 }
 
 p {
   margin: 1px;
+  color:black;
 }
 
 .img-info {
-  height: 280px;
+  height: 350px;
   width: 100%;
-  max-width: 360px;
-  object-fit: contain;
+  /*max-width: 360px;*/
+  object-fit: cover;
 }
 
 .info-image {
@@ -110,7 +121,7 @@ p {
 .div-papa-info {
   display: flex;
   flex-direction: column;
-  background: rgb(20, 96, 172);
+  background: rgb(237, 237, 231);
   margin: 0 auto;
   width: 70%;
   padding: 10px;
@@ -127,6 +138,7 @@ p {
 .font-size1 {
   font-size: 18px;
   text-decoration: none;
+  color:black;
 }
 
 .car-info {
@@ -136,7 +148,7 @@ p {
 
 .agrupa-info {
   display: flex;
-  justify-content: center;
+  width: 100%;
 }
 
 .mapa-1 {
@@ -169,7 +181,7 @@ p {
 }
 
 .encabezado-info {
-  color: aliceblue;
+  color: black;
 }
 
 .ws-1 {
@@ -182,14 +194,16 @@ p {
 
 .sliderVertical {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   justify-content: center;
 }
 
 .info-content {
   display: flex;
-  gap: 15px;
-}
+  align-items: center;
+  gap: 50px;
+  width: 100%;
+  background: rgb(246, 244, 236)}
 
 @media (max-width: 715px) {
   .info-content {

@@ -77,6 +77,7 @@ const InfoProducto = () => {
   const [arrayFotos, setArrayFotos] = useState([]);
   const [arrayFotoInfo, setArrayFotoInfo] = useState([]);
   const url = `https://wa.me/${celular}?text=`;
+  let pcMovil= window.innerWidth<=600?"movil":"pc";
   //  const [duracion, setDuracion] = useState(0);
 
   async function init() {
@@ -310,7 +311,7 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
     <div className="Info-Productos">
       <Navbar nivel={1} />
       <Encabezado   clase={"encabezado"}/>
-      <Hero clase={"hero-section-productos"}>
+      <Hero clase={"hero-section-info-productos"}>
       {showcircularProgress ? (
           <Box
             sx={{
@@ -333,7 +334,21 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                   <span className="encabezado-info">{producto}</span>
                   <div className="info-content">
                     <div className="perfil-info-1">
-                      <div className="img-class-info">
+
+                       <div className="sliderVertical">
+                        {arrayFotos.map((item, i) => (
+                          <div key={i} className="producto-fotos">
+                            <img
+                              className="img-info-lateral"
+                              src={arrayFotoInfo[i]}
+                              alt="Imagen del producto"
+                              onClick={() => viewPhoto(i)}
+                            />
+                          </div>
+                        ))}
+                       </div>
+
+                     <div className="img-class-info">
                         <img
                           className="img-info"
                           src={contenidofoto}
@@ -349,24 +364,11 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                             <PowerSettingsNew />
                           </button>
                         </Tippy>
-                      </div>
-
-                      <div className="sliderVertical">
-                        {arrayFotos.map((item, i) => (
-                          <div key={i} className="producto-fotos">
-                            <img
-                              className="img-info-lateral"
-                              src={arrayFotoInfo[i]}
-                              alt="Imagen del producto"
-                              onClick={() => viewPhoto(i)}
-                            />
-                          </div>
-                        ))}
-                      </div>
+                      </div>                    
                     </div>
 
                     <div className="agrupa-info">
-                      <div className="info-1">
+                      <div className={`info-1-${pcMovil==='pc'?'pc':'movil'}`}>
                         <div className="ws">
                           <span className="strong font-size1">
                             Datos del producto
@@ -395,7 +397,7 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                                   padding: 0,
                                 }}
                                 id="tool"
-                                color="inherit"
+                                color="black"
                                 onClick={shooping}
                               >
                                 <ShoppingCartOutlined />
@@ -405,29 +407,40 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                         ) : (
                           ""
                         )}
-                        </div>                       
-                        <span>{negocio}</span>
+                        </div>
+                        <div className="parrafo-info-producto">
+                           <p>{negocio}</p>
+                        </div>
+
                         {isValid(precio) === true && precio !== 0 ? (
-                          <span>{precio}</span>
-                        ) : (
-                          ""
-                        )}
+                          <div className="parrafo-info-producto">
+                            <p>{precio}</p>
+                         </div>
+                         ) : (
+                           ""
+                         )}
                         {isValid(marca) === true && marca !== "" ? (
-                          <span>{marca}</span>
-                        ) : (
+                          <div className="parrafo-info-producto">
+                            <p>{marca}</p>
+                         </div>
+                         ) : (
                           ""
-                        )}
+                         )}
 
                         {isValid(color) === true && color !== "" ? (
-                          <p>{color}</p>
-                        ) : (
-                          ""
-                        )}
+                          <div className="parrafo-info-producto">
+                            <p>{color}</p>
+                          </div>
+                           ) : (
+                           ""
+                           )}
                         {isValid(chapa) === true && chapa !== "" ? (
-                          <p>{chapa}</p>
-                        ) : (
+                          <div className="parrafo-info-producto">
+                             <p>{chapa}</p>
+                          </div>
+                          ) : (
                           ""
-                        )}
+                          )}
                       </div>
                     </div>
                   </div>

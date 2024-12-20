@@ -144,7 +144,7 @@ const InfoNegocio = () => {
     <div className="Info-Negocios">
       <Navbar nivel={1} />
       <Encabezado   clase={"encabezado"}/>
-      <Hero clase={"hero-section-productos"}>
+      <Hero clase={"hero-section-info-productos"}>
         {showcircularProgress ? (
           <Box
             sx={{
