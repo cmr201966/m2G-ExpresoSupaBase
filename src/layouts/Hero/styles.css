@@ -1,7 +1,24 @@
 .hero-section {
-  background-color: rgb(2, 114, 226);
+  /*background-color: rgb(2, 114, 226);*/
+  background-color: white;
   display: flex;
   flex-direction: column;
   min-height: calc(100vh - 114px);
   /*height: 100vh;*/
+}
+.hero-section-productos {
+  background-color: white;
+  /*  background-color: white;*/
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 114px);
+  /*height: 100vh;*/
+}
+
+.hero-section-info-productos {
+  background-color: white;
+  display: flex;
+  flex-direction: column;
+  min-height: calc(100vh - 114px);
+  background: linear-gradient(to top, white 82%, transparent 100%);
 }

@@ -320,8 +320,8 @@ const Aplicaciones = () => {
         setNick(e.target.value);
         break;
       case "idapp":
-        frmNumber=Number(frm);
-        if (frmNumber===0) folder="home"
+       frmNumber=Number(frm);
+       if (frmNumber===0) folder="home"
         else folder="productos";
         setAplicacion(e.target.value);
         recuperardatosproducto(arrayAplicaciones, e.target.value);
@@ -344,7 +344,7 @@ const Aplicaciones = () => {
         if (frmNumber===0) folder="home"
         else folder="productos";
         setFrm(e.target.value);
-        //cambiaFotoAnuncio(aplicacion, folder)
+        cambiaFotoAnuncio(aplicacion, folder)
         break  
       default:
         break;
@@ -418,9 +418,10 @@ const Aplicaciones = () => {
         </div>
       </Modal>
 
-      <div>
+      <div className="info-anuncios">
         <Navbar nivel={1} />
-        <Hero>
+        {inicia === false ?<Encabezado clase={"encabezado"}/>:""}
+        <Hero clase={"hero-section"}>
           {inicia === true ? (
             <Box
               sx={{
@@ -437,7 +438,6 @@ const Aplicaciones = () => {
             ""
           )}
 
-          {inicia === false ? <Encabezado />:""}
           {inicia === false ? (
             <div className="div-papa-aplicaciones">
               <div className="aplicaciones">
@@ -537,7 +537,7 @@ const Aplicaciones = () => {
                       )}
                     </div>
                     {nombrefoto !== "" && cbvista ? (
-                      <img className="img-producto" src={contenidofotoView} />
+                      <img className="img-producto-anuncio" src={contenidofotoView} />
                     ) : (
                       ""
                     )}

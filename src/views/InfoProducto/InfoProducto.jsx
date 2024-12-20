@@ -67,6 +67,8 @@ const InfoProducto = () => {
   const [puntos, setPuntos] = useState([]);
   const [distancia, setDistancia] = useState(0);
   const [tarifa, setTarifa] = useState(1);
+  const [info, setInfo] = useState("");
+  const [isinfo, setIsinfo] = useState("");
   const [costoDomicilio, setCostoDomicilio] = useState(50);
   const [domicilio, setDomicilio] = useState(50);
   const [puntosState, setPuntosState] = useState(0);
@@ -75,6 +77,7 @@ const InfoProducto = () => {
   const [arrayFotos, setArrayFotos] = useState([]);
   const [arrayFotoInfo, setArrayFotoInfo] = useState([]);
   const url = `https://wa.me/${celular}?text=`;
+  let pcMovil= window.innerWidth<=600?"movil":"pc";
   //  const [duracion, setDuracion] = useState(0);
 
   async function init() {
@@ -98,6 +101,8 @@ const InfoProducto = () => {
       setAccion(result[0].accion);
       setLat(result[0].latitud);
       setLng(result[0].longitud);
+      setInfo(result[0].info);
+      setIsinfo(result[0].isinfo);
       idsb = result[0].idsb;
     }
     result = await getParesGpsProductoCM(
@@ -276,7 +281,6 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
   }
 
   function ordenar(){
-    console.log("Hola....")
     navigate(`/contrato?keyproducto=${idproducto}&dueno=${sessionStorage.getItem("user")}`);
   }
 
@@ -306,8 +310,9 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
   return (
     <div className="Info-Productos">
       <Navbar nivel={1} />
-      <Hero>
-        {showcircularProgress ? (
+      <Encabezado   clase={"encabezado"}/>
+      <Hero clase={"hero-section-info-productos"}>
+      {showcircularProgress ? (
           <Box
             sx={{
               width: "100%",
@@ -319,9 +324,7 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
           >
             <CircularProgress color="checkbox" />
           </Box>
-        ) : (
-          <Encabezado />
-        )}
+        ) : ("")}
 
         {inicio === false ? (
           <div className="div-papa-info">
@@ -331,7 +334,21 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                   <span className="encabezado-info">{producto}</span>
                   <div className="info-content">
                     <div className="perfil-info-1">
-                      <div className="img-class-info">
+
+                       <div className="sliderVertical">
+                        {arrayFotos.map((item, i) => (
+                          <div key={i} className="producto-fotos">
+                            <img
+                              className="img-info-lateral"
+                              src={arrayFotoInfo[i]}
+                              alt="Imagen del producto"
+                              onClick={() => viewPhoto(i)}
+                            />
+                          </div>
+                        ))}
+                       </div>
+
+                     <div className="img-class-info">
                         <img
                           className="img-info"
                           src={contenidofoto}
@@ -347,24 +364,11 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                             <PowerSettingsNew />
                           </button>
                         </Tippy>
-                      </div>
-
-                      <div className="sliderVertical">
-                        {arrayFotos.map((item, i) => (
-                          <div key={i} className="producto-fotos">
-                            <img
-                              className="img-info-lateral"
-                              src={arrayFotoInfo[i]}
-                              alt="Imagen del producto"
-                              onClick={() => viewPhoto(i)}
-                            />
-                          </div>
-                        ))}
-                      </div>
+                      </div>                    
                     </div>
 
                     <div className="agrupa-info">
-                      <div className="info-1">
+                      <div className={`info-1-${pcMovil==='pc'?'pc':'movil'}`}>
                         <div className="ws">
                           <span className="strong font-size1">
                             Datos del producto
@@ -385,7 +389,7 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                           domicilio === 1) ||
                           (domicilio === 1 && ocupado === 0)) &&
                           (sessionStorage.getItem("sgbd").toLocaleUpperCase() ===
-                          "MYSQL") || (ocupado===0) ? (
+                          "MYSQL") || (ocupado===0 && info===false && isinfo===false)  ? (
                           <>
                             <Tippy content={`${accion}`}>
                               <IconButton
@@ -393,7 +397,7 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                                   padding: 0,
                                 }}
                                 id="tool"
-                                color="inherit"
+                                color="black"
                                 onClick={shooping}
                               >
                                 <ShoppingCartOutlined />
@@ -403,29 +407,40 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                         ) : (
                           ""
                         )}
-                        </div>                       
-                        <span>{negocio}</span>
+                        </div>
+                        <div className="parrafo-info-producto">
+                           <p className="info-productos-color">{negocio}</p>
+                        </div>
+
                         {isValid(precio) === true && precio !== 0 ? (
-                          <span>{precio}</span>
-                        ) : (
-                          ""
-                        )}
+                          <div className="parrafo-info-producto">
+                            <p className="info-productos-color">{precio}</p>
+                         </div>
+                         ) : (
+                           ""
+                         )}
                         {isValid(marca) === true && marca !== "" ? (
-                          <span>{marca}</span>
-                        ) : (
+                          <div className="parrafo-info-producto">
+                            <p className="info-productos-color">{marca}</p>
+                         </div>
+                         ) : (
                           ""
-                        )}
+                         )}
 
                         {isValid(color) === true && color !== "" ? (
-                          <p>{color}</p>
-                        ) : (
-                          ""
-                        )}
+                          <div className="parrafo-info-producto">
+                            <p className="info-productos-color">{color}</p>
+                          </div>
+                           ) : (
+                           ""
+                           )}
                         {isValid(chapa) === true && chapa !== "" ? (
-                          <p>{chapa}</p>
-                        ) : (
+                          <div className="parrafo-info-producto">
+                             <p className="info-productos-color">{chapa}</p>
+                          </div>
+                          ) : (
                           ""
-                        )}
+                          )}
                       </div>
                     </div>
                   </div>

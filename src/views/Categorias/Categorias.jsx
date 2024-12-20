@@ -78,7 +78,7 @@ const Categorias = () => {
   return (
     <div className="Info-Productos">
       <Navbar nivel={1} />
-      <Hero>
+      <Hero clase={"hero-section"}>
         {inicio === true ? (
           <Box
             sx={{
@@ -92,8 +92,9 @@ const Categorias = () => {
             <CircularProgress color="checkbox" />
           </Box>
         ) : null}
-        <Encabezado />
         {inicio === false ? (
+          <>
+           <Encabezado clase={"encabezado"}/>
           <div className="div-papa-categorias-1">
             <section className="main-info-producto">
               <label className="strong margen-catnegocio">Ir a categoria</label>
@@ -126,6 +127,7 @@ const Categorias = () => {
               </div>
             </section>
           </div>
+          </>
         ) : (
           ""
         )}

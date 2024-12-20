@@ -31,7 +31,7 @@ const Activar = () => {
   return (
     <div className="Info-Productos">
       <Navbar nivel={1} />
-      <Hero>
+      <Hero clase={"hero-section"}>
         {inicio === true ? (
           <Box
             sx={{
@@ -45,7 +45,7 @@ const Activar = () => {
             <CircularProgress color="checkbox" />
           </Box>
         ) : null}
-        <Encabezado />
+        <Encabezado   clase={"encabezado"}/>
         {inicio === false ? (
           <div className="div-papa-categorias-1">
             <main className="main-info-producto">

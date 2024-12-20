@@ -370,7 +370,7 @@ const ContratoAdmin = () => {
 
             <div>
              <Navbar nivel={1} />
-             <Hero>
+              <Hero clase={"hero-section"}>
               {inicia === true ? (
               <Box
                 sx={{
@@ -388,7 +388,7 @@ const ContratoAdmin = () => {
               )}
                { inicia === false ? 
                     <>
-                    <Encabezado />
+                    <Encabezado   clase={"encabezado"}/>
                     <div className="contratosadmin">
                            <div className="container-contratosadmin">
                               {inicia === false?

@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { IconButton } from "@mui/material";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
@@ -6,8 +7,7 @@ import { useNavigate } from "react-router-dom";
 import "./styles.css";
 
 const Encabezado = (props) => {
-  const { children } = props;
-
+  const { children, clase } = props;
   let donde = sessionStorage.getItem("deDonde");
   const navigate = useNavigate();
 
@@ -22,7 +22,7 @@ const Encabezado = (props) => {
   }
 
   return (
-    <div className="encabezado">
+    <div className={`${clase}`}>
       <IconButton color="primary" onClick={regresa}>
         <ArrowBack className="color-flecha" />
       </IconButton>

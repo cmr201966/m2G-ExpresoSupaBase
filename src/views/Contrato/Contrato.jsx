@@ -293,7 +293,7 @@ const Contrato = () => {
 
       <div>
       <Navbar nivel={1} />
-      <Hero>
+          <Hero clase={"hero-section"}>
           {inicia === true ? (
             <Box
               sx={{
@@ -311,7 +311,7 @@ const Contrato = () => {
            )}
           {inicia === false ?
             <>
-              <Encabezado />
+              <Encabezado   clase={"encabezado"}/>
               <div className="contrato">
                 <div className="container-contrato">
                   <div className="ws">

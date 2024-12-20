@@ -43,7 +43,6 @@ const CardRow = (props) => {
       setOcupado(ocupado === 0 ? 1 : 0);
     }
     updateOcupadoCM(item.idproducto, ocupado === 0 ? 1 : 0);
-    //    apiBaseDatos("updateOcupado", item.idproducto, ocupado===0?1:0)
     paresGps();
   }
 
@@ -93,13 +92,15 @@ const CardRow = (props) => {
       </div>
       <div className="button-container" id={`boton${i}`}>
         {noproducto === false ? (
-          <>              
+          <>
+            {item.info===false && item.isinfo===false?
               <Tippy content={`${"Ordenar el producto"}`}>
                  <button onClick={() => ordenar()}>
                     <ShoppingCartOutlined/>
                  </button>
-              </Tippy>
-              <Tippy
+              </Tippy>:""
+            }
+            <Tippy
               content={`${
                 ocupado === 0
                   ? "Datos del producto y ordenar"
@@ -107,7 +108,7 @@ const CardRow = (props) => {
               }`}
             >
               <button onClick={() => verproducto(i, item)}>
-{/*                <ShoppingCartCheckoutOutlined />*/}
+               {/*                <ShoppingCartCheckoutOutlined />*/}
                 <InfoIcon/>
               </button>
             </Tippy>

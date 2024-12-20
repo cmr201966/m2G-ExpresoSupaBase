@@ -37,7 +37,7 @@ const ActivarProductos = () => {
       <Navbar
          nivel={1}
       />
-      <Hero>
+      <Hero clase={"hero-section"}>
       {inicio===true ? (
             <Box
               sx={{
@@ -54,7 +54,7 @@ const ActivarProductos = () => {
       }
       {inicio===false?
         <div className="div-papa-categorias-1">
-          <Encabezado/>
+          <Encabezado  clase={"encabezado"}/>
           <main className="main-info-producto">
              <p className="strong margen-catnegocio">Productos Pendientes de Activación</p>
              <div className="activar-usuarios">
