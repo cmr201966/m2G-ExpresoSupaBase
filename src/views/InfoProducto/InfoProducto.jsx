@@ -409,19 +409,19 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                         )}
                         </div>
                         <div className="parrafo-info-producto">
-                           <p>{negocio}</p>
+                           <p className="info-productos-color">{negocio}</p>
                         </div>
 
                         {isValid(precio) === true && precio !== 0 ? (
                           <div className="parrafo-info-producto">
-                            <p>{precio}</p>
+                            <p className="info-productos-color">{precio}</p>
                          </div>
                          ) : (
                            ""
                          )}
                         {isValid(marca) === true && marca !== "" ? (
                           <div className="parrafo-info-producto">
-                            <p>{marca}</p>
+                            <p className="info-productos-color">{marca}</p>
                          </div>
                          ) : (
                           ""
@@ -429,14 +429,14 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
 
                         {isValid(color) === true && color !== "" ? (
                           <div className="parrafo-info-producto">
-                            <p>{color}</p>
+                            <p className="info-productos-color">{color}</p>
                           </div>
                            ) : (
                            ""
                            )}
                         {isValid(chapa) === true && chapa !== "" ? (
                           <div className="parrafo-info-producto">
-                             <p>{chapa}</p>
+                             <p className="info-productos-color">{chapa}</p>
                           </div>
                           ) : (
                           ""
