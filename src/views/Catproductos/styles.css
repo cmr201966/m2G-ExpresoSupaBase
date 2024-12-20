@@ -596,3 +596,7 @@ p {
 .info-catproductos{
   background: rgb(63, 153, 244);
 }
+
+.catproductos-color{
+  color: white;
+}
