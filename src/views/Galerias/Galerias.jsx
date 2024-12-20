@@ -75,7 +75,7 @@ const Galerias = () => {
           },
         ]}
       />
-      <Hero>
+        <Hero clase={"hero-section"}>
         <div className="cabeza-galerias">
           {parsedParams.nivel === 0 ? (
             ""

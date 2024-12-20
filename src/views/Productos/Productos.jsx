@@ -382,7 +382,8 @@ const Productos = () => {
           idsb: item.idsb,
           link: item.link,
           estado: item.estado,
-          info: item.info
+          info: item.info,
+          isinfo: item.isinfo
         };
         if (result1[0].idnaturaleza === 62) {
           obj.Habilidades = item.adicional;
@@ -491,8 +492,6 @@ const Productos = () => {
         user
       );
       await updateOcupadoCM(idproductot, 1);
-      //      await apiBaseDatos("setmovimientosNew", 1, idproductot, latOrigen, latDestino, lngOrigen, lngDestino, carrera * items[index].tarifa + items[index].costodomicilio, carrera, users)
-      //      await apiBaseDatos("updateOcupado", idproductot, 1)
       init1();
     }
     setPuntosState(0);
@@ -585,7 +584,6 @@ const Productos = () => {
 
   useEffect(() => {
     if (puntos.length !== 0) {
-//      if ((puntosState===1) && sessionStorage.getItem("idapp")==="Expreso") otroPunto();
       if ((puntosState===1)) otroPunto();
     }
   }, [lng]);
@@ -606,26 +604,26 @@ const Productos = () => {
     <>
       <div className="global-background">
         <Navbar nivel={1} />
-        <div className="une-head">
-            <Encabezado clase={"encabezado-une-head"}/>
-            {inicia === false ? (
-              <div className="productos-nombre">
-                 <p className="p-productos-nombre">
+        <div className="head-productos">
+           <div className="une-head">
+              <Encabezado clase={"encabezado-une-head"}/>
+              {inicia === false ? (
+                <div className="productos-nombre">
+                   <p className="p-productos-nombre">
                     ({cantidadproductos}) - {nombre}
-                 </p>
-                 <button
-                   type="button"
-                   className="placeoutlined"
-                   onClick={shooping}
-                 >
-                   <PlaceOutlined />
-                 </button>
-              </div>
-            ) : (
-              ""
-            )}
-            </div>
-        <Hero>
+                   </p>
+                   <button
+                     type="button"
+                     className="placeoutlined"
+                     onClick={shooping}
+                   >
+                    <PlaceOutlined />
+                   </button>
+                </div>
+              ) : ("")}
+           </div>
+        </div>
+          <Hero clase={"hero-section-productos"}>
           {inicia===false && hayAnuncios===true?
             <BigSlider
               imgsFolder={imgsFolder}
@@ -639,7 +637,7 @@ const Productos = () => {
             />
             :""
             }
-          <div className={`div-productos margin-negative-productos-${hayAnuncios===true?'anuncio':'noAnuncio'}`}>
+          <div className={`div-productos margin-negative-productos-${hayAnuncios===true?'anuncio':'noAnuncio'}-${pcMovil==='pc'?'pc':'movil'}`}>
               <div className="grid-letf"></div>
               <div className="gradient-background-producto"></div>
              {show1 ? (

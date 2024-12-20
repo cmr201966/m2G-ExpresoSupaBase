@@ -303,8 +303,11 @@
   margin-top: 20px;
   z-index: 10;
 }
-.margin-negative-productos-anuncio {
-  margin-top: -90px;
+.margin-negative-productos-anuncio-pc {
+  margin-top: -60px;
+}
+.margin-negative-productos-anuncio-movil {
+  margin-top: -60px;
 }
 
 .margin-negative-productos-noAnuncio {
@@ -314,6 +317,7 @@
 @media (max-width: 1100px) {
   .div-productos {
     width: 90%;
+    margin-top: -27px;
   }
 }
 
@@ -340,7 +344,7 @@
   font-size: 5px;
 }
 .gradient-background-producto {
-  background: linear-gradient(to top, white 51%, transparent 59%);
+  background: linear-gradient(to top, white 49%, transparent 59%);
   position: absolute;
   top: 0;
   height: 100vh; /* Para que ocupe toda la altura de la pantalla */
@@ -351,13 +355,18 @@
   display: flex;
   width: 70%;
   margin: 0 auto;
-  background-color: rgb(2, 114, 226)  
+  /*background-color: rgb(2, 114, 226)  */
 }
 
 .encabezado-une-head {
   display: flex;
-  background-color: rgb(2, 114, 226);
+  background-color: rgbrgb(63, 153, 244);
 }
 .global-background{
   background-color: rgb(2, 114, 226)
+}
+.head-productos{
+  display:flex;
+  width: 100%;
+  background: rgb(63, 153, 244);
 }

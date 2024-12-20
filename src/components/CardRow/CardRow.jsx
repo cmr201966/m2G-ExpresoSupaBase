@@ -93,7 +93,7 @@ const CardRow = (props) => {
       <div className="button-container" id={`boton${i}`}>
         {noproducto === false ? (
           <>
-            {item.info===false?
+            {item.info===false && item.isinfo===false?
               <Tippy content={`${"Ordenar el producto"}`}>
                  <button onClick={() => ordenar()}>
                     <ShoppingCartOutlined/>

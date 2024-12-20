@@ -37,7 +37,7 @@ const ActivarProductos = () => {
       <Navbar
          nivel={1}
       />
-      <Hero>
+      <Hero clase={"hero-section"}>
       {inicio===true ? (
             <Box
               sx={{
