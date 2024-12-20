@@ -1068,7 +1068,7 @@ async function GeneraVistaGetProductos(categoria, userAnuncio, buscar) {
   let sql =
     "CREATE OR REPLACE VIEW getProductos AS SELECT DISTINCT tablacatproductos.idproducto as idproducto,tablacatproductos.nick as producto, " +
     "tablacatproductos.desc as descripcion, tablausuarios.nombre as negocio, tablausuarios.iduser as idnegocio, ocupado, tipouser, " + 
-    "tablausuarios.iduser, tarifa, costoDomicilio, domicilio, tablacatproductos.idsb, tablacatproductos.link, tablacategorias.estado, info FROM tablacatproductos, tablausuarios, " + 
+    "tablausuarios.iduser, tarifa, costoDomicilio, domicilio, tablacatproductos.idsb, tablacatproductos.link, tablacategorias.estado, tablacategorias.info, tablacatproductos.info as isinfo FROM tablacatproductos, tablausuarios, " + 
     "tablacatprovincias, tablacatmunicipios, tablacategorias WHERE (tablacatproductos.iduser=tablausuarios.iduser) and (tablacatprovincias.provincia=tablausuarios.provincia)" +
     " and (tablacatmunicipios.provincia=tablausuarios.provincia) and (tablacatmunicipios.municipio=tablausuarios.municipio) and (tablausuarios.activo=true)" +
     " and (tablacatproductos.activo=true) and (tablacategorias.categorianegocio=tablacatproductos.categorianegocio) " + condicion1 + condicion2 + condicion3;
@@ -1308,6 +1308,7 @@ async function setProductoCM(
   talla,
   color,
   gps,
+  informativo,
   latitud,
   longitud,
   sciudad,
@@ -1329,6 +1330,7 @@ async function setProductoCM(
       talla,
       color,
       gps,
+      informativo,
       latitud,
       longitud,
       ocupado,
@@ -1352,9 +1354,10 @@ async function setProductoCM(
         cantidad: talla,
         color,
         gpssn: gps,
+        info: informativo,
         latitud,
         longitud,
-        ocupado,
+        ocupado: 0,
         distanciamax,
         sciudad,
         activo: activo,
@@ -1397,6 +1400,7 @@ async function setProductoCM(
           cantidad: talla,
           color: color,
           gpssn: gps,
+          info: informativo,
           latitud: latitud,
           longitud: longitud,
           ocupado: ocupado,

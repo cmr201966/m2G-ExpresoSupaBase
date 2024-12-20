@@ -11,8 +11,8 @@ const Ubicacion = () => {
   
     return (
       <div>   
-      <Navbar nivel={1}/>
-      <Hero>
+        <Navbar nivel={1}/>
+        <Hero clase={"hero-section"}>
         <div className="cabeza">
               <IconButton color="primary" onClick={() => {
                 navigate(`/?nivel=0`);

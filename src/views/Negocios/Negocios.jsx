@@ -552,7 +552,7 @@ function handleInput(e) {
             { label: "Acerca de", to: "/Acercade", tooltips: "Acerca de M2G-Destodo" },
           ]}
         />
-        <Hero>
+          <Hero clase={"hero-section"}>
           <div className="cabeza">
             <IconButton color="primary" onClick={() => {
               navigate(`/?naturaleza=${naturaleza}&idowner=${idowner}&nivel=${nivel}`);

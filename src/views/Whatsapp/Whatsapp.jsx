@@ -193,8 +193,7 @@ const Whatsapp = () => {
     <div className="whatsapp-container">
       <Navbar
       />
-      <Hero>
-
+       <Hero clase={"hero-section"}>
        <div className="div-papa"> 
        <div className="cabeza">
             <IconButton color="primary" onClick={() => {

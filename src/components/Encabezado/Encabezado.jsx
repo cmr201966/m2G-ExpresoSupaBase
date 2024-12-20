@@ -1,3 +1,4 @@
+/* eslint-disable react/prop-types */
 import { IconButton } from "@mui/material";
 import ArrowBack from "@mui/icons-material/ArrowBack";
 import { useNavigate } from "react-router-dom";
@@ -7,7 +8,6 @@ import "./styles.css";
 
 const Encabezado = (props) => {
   const { children, clase } = props;
-
   let donde = sessionStorage.getItem("deDonde");
   const navigate = useNavigate();
 
