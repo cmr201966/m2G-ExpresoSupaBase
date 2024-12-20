@@ -194,7 +194,7 @@ const Home = () => {
   return (
     <div>
       <Navbar nivel={0} />
-      <Hero>
+      <Hero clase={"hero-section"}>
       <div className="grip-flecha">
         <div></div>
         <div className="encabezado">

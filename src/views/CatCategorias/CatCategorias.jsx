@@ -321,10 +321,11 @@ const CatCategorias = () => {
         </div>
       </Modal>
 
-      <div>
+      <div className="info-catcategorias">
         <Navbar nivel={1} />
-        <Hero>
-          {inicia === true ? (
+        <Encabezado clase={"encabezado"}/>
+        <Hero clase={"hero-section"}>
+        {inicia === true ? (
             <Box
               sx={{
                 width: "100%",
@@ -340,8 +341,8 @@ const CatCategorias = () => {
             ""
           )}
           {inicia === false ? (
-            <div className="div-papa-categorias">
-              <Encabezado   clase={"encabezado"}/>
+            <>
+              <div className="div-papa-categorias">
               <div className="categorias">
                 <p className="strong margen-catnegocio">
                   {" "}
@@ -554,6 +555,7 @@ const CatCategorias = () => {
                 </div>
               </div>
             </div>
+            </>
           ) : (
             ""
           )}
