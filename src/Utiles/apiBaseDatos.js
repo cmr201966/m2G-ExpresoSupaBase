@@ -29,6 +29,27 @@ import { getusuarios } from "../servicios/registrarse";
 import { setconfig, getconfig } from "../servicios/config";
 import supabase from "./connection";
 
+async function setVisitas(){
+  const { data } = await supabase
+     .from("ws")
+     .select("*")
+     .not('visitas', 'eq', 0)
+     .limit(1);
+     if (data.length!==0){
+        await supabase
+          .from("ws")
+          .update({ visitas: data[0].visitas+1 })
+          .eq("id", data[0].id);
+        return data[0].visitas+1
+      }
+      else{
+        await supabase
+        .from("ws")
+        .insert({ visitas: 1});
+        return 1
+      }
+}
+
 async function setEstadoContrato(estado, id){
   const { error } = await supabase
   .from("tablamovimientos")
@@ -1535,6 +1556,7 @@ export {
   registraWS,
   setUserExpress,
   setEstadoContrato,
+  setVisitas,
 };
 
 export {
