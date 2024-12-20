@@ -71,7 +71,7 @@ p {
   height: 350px;
   width: 100%;
   /*max-width: 360px;*/
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .info-image {
@@ -128,7 +128,7 @@ p {
   margin: 0 auto;
   width: 70%;
   padding: 10px;
-  /*border-radius: 16px;*/
+  border-radius: 16px;
   gap: 16px;
 }
 
@@ -204,9 +204,11 @@ p {
 .info-content {
   display: flex;
   align-items: center;
-  gap: 50px;
+  background: rgb(246, 244, 236);
+  border-radius: 16px;
   width: 100%;
-  background: rgb(246, 244, 236)}
+  gap: 50px;
+}
 
 @media (max-width: 715px) {
   .info-content {
