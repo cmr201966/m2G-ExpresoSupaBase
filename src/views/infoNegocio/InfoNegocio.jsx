@@ -58,7 +58,6 @@ const InfoNegocio = () => {
   async function init() {
     let result = await getInfoNegocioCM(parsedParams.idnegocio);
     setIdnegocio(parsedParams.idnegocio);
-    //    let result = await getInfoNegocio(parsedParams.idnegocio);
     let resultFiles = await getFilesInFolderSB(
       "./galerias/app_images/usuarios/" + parsedParams.idnegocio,
       "usuarios/" + parsedParams.idnegocio,
@@ -73,7 +72,7 @@ const InfoNegocio = () => {
       }
     }
     let index = indexPerfil(tarrayfotos, parsedParams.idnegocio);
-    let este = tarrayfotos.splice(index)[0];
+    let este = tarrayfotos.splice(index,1)[0];
     tarrayfotos = [este, ...tarrayfotos];
     setArrayFotos(tarrayfotos);
     let tarray = [];
