@@ -27,7 +27,7 @@ import {
   getJpgFileSB,
 } from "../../Utiles/Utiles";
 import {
-  getanunciosCM, getcategoriasnewCM, 
+  getanunciosCM, getcategoriasnewCM, setVisitas,
 } from "../../Utiles/apiBaseDatos";
 
 // contexts
@@ -73,6 +73,8 @@ const Home = () => {
       parsedParams.nivel === "0"
     ) {
       setNivel(0);
+      let visitas = await setVisitas();
+      console.log("Visitas: ", visitas);
       let resultApp = await getanunciosCM("0");
 //      let resultApp = await apiBaseDatos("anuncios");
       let imgsFileName1 = [];
