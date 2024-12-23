@@ -66,6 +66,7 @@ const BigSlider = (props) => {
 
   useEffect(() => {
     if (currentIndex === imgsFileName.length) {
+      if (imgsFileName.length===1) return
       setTimeout(() => {
         setTransition(false);
         setCurrentIndex(0);
@@ -77,6 +78,7 @@ const BigSlider = (props) => {
   }, [currentIndex, imgsFileName.length]);
 
   useEffect(() => {
+    if (imgsFileName.length===1) return
     setTimeout(() => {
       toLeft();
     }, 6000);
