@@ -58,7 +58,6 @@ const InfoNegocio = () => {
   async function init() {
     let result = await getInfoNegocioCM(parsedParams.idnegocio);
     setIdnegocio(parsedParams.idnegocio);
-    //    let result = await getInfoNegocio(parsedParams.idnegocio);
     let resultFiles = await getFilesInFolderSB(
       "./galerias/app_images/usuarios/" + parsedParams.idnegocio,
       "usuarios/" + parsedParams.idnegocio,
@@ -73,7 +72,7 @@ const InfoNegocio = () => {
       }
     }
     let index = indexPerfil(tarrayfotos, parsedParams.idnegocio);
-    let este = tarrayfotos.splice(index)[0];
+    let este = tarrayfotos.splice(index,1)[0];
     tarrayfotos = [este, ...tarrayfotos];
     setArrayFotos(tarrayfotos);
     let tarray = [];
@@ -165,15 +164,7 @@ const InfoNegocio = () => {
               <span className="encabezado-info">{negocio}</span>
               <div className="info-content">
                 <div className="perfil-info-1">
-                  <div className="img-class-info">
-                    <img
-                      className="img-info"
-                      src={contenidofoto}
-                      alt="Imagen del negocio"
-                    />
-                  </div>
-
-                  <div className="sliderVertical">
+                <div className="sliderVertical">
                     {arrayFotos.map((item, i) => (
                       <div key={i} className="producto-fotos">
                         <img
@@ -185,6 +176,15 @@ const InfoNegocio = () => {
                       </div>
                     ))}
                   </div>
+
+                  <div className="img-class-info">
+                    <img
+                      className="img-info"
+                      src={contenidofoto}
+                      alt="Imagen del negocio"
+                    />
+                  </div>
+
                 </div>
 
                 <div className="agrupa-info">
