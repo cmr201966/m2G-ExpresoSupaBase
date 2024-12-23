@@ -61,7 +61,7 @@ const Acercade = () => {
     <div  className="info-anuncios">
       <Navbar nivel={1} />
       <Encabezado clase={"encabezado"}/>
-      <Hero clase={"hero-section"}>
+      <Hero clase={"hero-section-about"}>
         <div className="acercade">
           <div className="logo-acerca">
             <Link to="/">
