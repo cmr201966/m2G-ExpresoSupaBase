@@ -4,6 +4,7 @@ import Tippy from "@tippyjs/react";
 
 // components
 import Navbar from "../../components/Navbar/Navbar";
+import Encabezado from "../../components/Encabezado/Encabezado";
 
 // layouts
 import Hero from "../../layouts/Hero/Hero";
@@ -57,23 +58,10 @@ const Acercade = () => {
   }, []);
 
   return (
-    <div>
+    <div  className="info-anuncios">
       <Navbar nivel={1} />
+      <Encabezado clase={"encabezado"}/>
       <Hero clase={"hero-section"}>
-        <div className="encabezado-acercade">
-          {parsedParams.nivel === 0 ? (
-            ""
-          ) : (
-            <IconButton
-              color="primary"
-              onClick={() => {
-                navigate(`/?nivel=${sessionStorage.getItem("nivel")}`);
-              }}
-            >
-              <ArrowBack className="color-flecha" />
-            </IconButton>
-          )}
-        </div>
         <div className="acercade">
           <div className="logo-acerca">
             <Link to="/">
@@ -81,7 +69,7 @@ const Acercade = () => {
                 <img className="logo-acerca-img" src={contenidofoto} />
               </Tippy>
             </Link>
-            <h3>Acerca de</h3>
+            <h3 className="about-1">Acerca de</h3>
           </div>
           <p>{sessionStorage.getItem("idapp")} Versión 1.0</p>
           <div className="acercade-flex-1">

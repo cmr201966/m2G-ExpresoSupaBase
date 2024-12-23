@@ -5,8 +5,9 @@
   flex-direction: column;
   /*justify-content: center;*/
   align-items: center;
-  color: aliceblue;
+  color: white;
   gap: 5px;
+  margin-top: 20px;
 }
 
 .logo-acerca {
@@ -78,4 +79,7 @@
 
 .text-center {
   text-align: center;
+}
+.about-1{
+  color: white;
 }
