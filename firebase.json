@@ -1,7 +1,7 @@
 {
   "hosting": {
     "public": "dist",
-    "site": "m2g-marketing",
+    "site": "m2g-marketing-stgo",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "frameworksBackend": {
       "region": "us-central1"
