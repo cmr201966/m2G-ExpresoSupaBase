@@ -14,16 +14,6 @@ const BigSlider = (props) => {
   let w3=imgs.length-(w2);
   const [cantidad, setCantidad] = useState(
     window.innerWidth <= 600 ? imgs.length - 2 : w3);
-//    console.log(window.innerWidth);
-//    console.log(w1);
-//    console.log(w2);
-//    console.log(w3);
-    /*alert(window.innerWidth);
-    alert(w1);
-    alert(w2);
-    alert(w3);*/
-//    console.log(window.innerWidth <=600 ? imgs.length - 2 : (imgs.length-Math.ceil(window.innerWidth/180))+1)
-//  console.log(window.innerWidth <= 600 ? imgs.length - 2 : imgs.length - 6);
   const toLeft = useCallback(() => {
     setCantidad(cantidad - 1);
     if (currentIndex < imgs.length) {
@@ -40,9 +30,10 @@ const BigSlider = (props) => {
     <div className="sacar-flecha">
         <div className={`multiple-slider`}>
           {movil===false && imgs.length >= 3 ? (
-          <button onClick={() => toRight()} className="multiple-slider-nav left">
-             {"<"}
-          </button>):("")}
+            <button onClick={() => toRight()} className="multiple-slider-nav left">
+               {"<"}
+            </button>):("")
+          }
           <div className={`${movil?"multi-slider-movil":""} multiple-slider-content ${transition ? "transition" : ""} ${css({transform: `translateX(${currentIndex * -1 * 179}px)`,})}`}>
              {imgs?.map((item, i) => (
              <div key={i} className={"multiple-slider-item"}>
@@ -50,11 +41,11 @@ const BigSlider = (props) => {
              </div>
              ))}
           </div>
-
-          {movil===false && imgs.length > 7 && cantidad>0? (
+          {movil===false && imgs.length > (w3-1) && cantidad>0? (
             <button onClick={() => toLeft()} className="multiple-slider-nav right">
                {">"}
-            </button>):("")}
+            </button>):("")
+          }
         </div>
     </div>
   );
