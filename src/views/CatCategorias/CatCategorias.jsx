@@ -345,7 +345,6 @@ const CatCategorias = () => {
               <div className="div-papa-categorias">
               <div className="categorias">
                 <p className="strong margen-catnegocio">
-                  {" "}
                   Categorias de Negocios
                 </p>
                 <div className="container-categorias">

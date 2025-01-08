@@ -37,6 +37,7 @@ const CardRow = (props) => {
   const [inicia, setInicia] = useState(true);
   const linkRef = useRef(null);
   const navigate = useNavigate();
+  let answer=false;
 
   async function powerSettings() {
     if (user !== "" && isValid(user) === true) {
@@ -93,7 +94,7 @@ const CardRow = (props) => {
       <div className="button-container" id={`boton${i}`}>
         {noproducto === false ? (
           <>
-            {item.info===false && item.isinfo===false?
+            {item.info===false && item.isinfo===false && answer?
               <Tippy content={`${"Ordenar el producto"}`}>
                  <button onClick={() => ordenar()}>
                     <ShoppingCartOutlined/>

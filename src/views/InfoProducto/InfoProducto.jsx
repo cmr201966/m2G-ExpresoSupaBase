@@ -78,6 +78,7 @@ const InfoProducto = () => {
   const [arrayFotoInfo, setArrayFotoInfo] = useState([]);
   const url = `https://wa.me/${celular}?text=`;
   let pcMovil= window.innerWidth<=600?"movil":"pc";
+  let answer=false;
   //  const [duracion, setDuracion] = useState(0);
 
   async function init() {
@@ -389,7 +390,7 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                           domicilio === 1) ||
                           (domicilio === 1 && ocupado === 0)) &&
                           (sessionStorage.getItem("sgbd").toLocaleUpperCase() ===
-                          "MYSQL") || (ocupado===0 && info===false && isinfo===false)  ? (
+                          "MYSQL") || (ocupado===0 && info===false && isinfo===false && answer)  ? (
                           <>
                             <Tippy content={`${accion}`}>
                               <IconButton
