@@ -72,6 +72,18 @@ const Acercade = () => {
             <h3 className="about-1">Acerca de</h3>
           </div>
           <p>{sessionStorage.getItem("idapp")} Versión 1.0</p>
+          <div className="texto-acercade">
+            <p>
+               DesTodo es tu plataforma 'todo en uno', donde puedes encontrar servicios y productos variados en
+               Santiago de Cuba, incluye transporte, fotografía, ventas, fiestas, restaurantes, clubes, bares, discotecas y mucho más. 
+               Conecta con los servicios y productos que necesitas de manera rápida y fácil.
+            </p>
+            <p>
+               Tiene como misión facilitar la vida de las personas en Santiago de Cuba, 
+               conectando a clientes y proveedores de servicios y productos de manera eficiente y confiable,
+               fomentando el crecimiento de la economía local y la colaboración comunitaria.            
+            </p>
+          </div>
           <div className="acercade-flex-1">
              <p>Esta aplicación web fue desarrollada por</p>
              {sessionStorage.getItem("idapp")==="m2G-Software"?"m2G-Software":
