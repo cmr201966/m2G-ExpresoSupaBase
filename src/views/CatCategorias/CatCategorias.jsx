@@ -206,7 +206,6 @@ const CatCategorias = () => {
       contenidofoto,
       isBase64ToBlob,
     );
-    //    let err= await apiBaseDatos("setCategoriasNegocios", arrayCategorias[categoria].categorianegocio, desc, descold, "productos", nick, accion,  agregarsn, contenidofoto, isBase64ToBlob );
     setLoading(false);
     if (isValid(err) === true && isValid(err.length) === true) {
       setMessage("Ocurrido un error al registrar la categoria");
