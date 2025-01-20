@@ -51,6 +51,7 @@ const Aplicaciones = () => {
   const { setOpen, setMessage } = useNotification();
   const [nick, setNick] = useState("");
   const [desc, setDesc] = useState("");
+  const [orden, setOrden] = useState("");
   const [ttip, setTtip] = useState("");
   const [arrayCategorias, setArrayCategorias] = useState([]);
   const arraynoCategorias = [{ categorianegocio: 8, desc: "Desconocida" }];
@@ -284,6 +285,7 @@ const Aplicaciones = () => {
       isBase64ToBlobMovil,
       frm,
       carpeta,
+      orden,
     );
 
     if (isValid(result) === true) {
@@ -338,6 +340,9 @@ const Aplicaciones = () => {
         break;
       case "vista":
         setCbvista(e.target.checked);
+        break;
+      case "orden":
+        setOrden(e.target.value);
         break;
       case "frm":
         frmNumber=Number(e.target.value);
@@ -496,6 +501,7 @@ const Aplicaciones = () => {
                               required
                             />
                           </div>
+
                           <div className="form-control">
                             <label>Categoria </label>
                             <select
@@ -531,6 +537,19 @@ const Aplicaciones = () => {
                               })}
                             </select>
                           </div>
+                          <div className="form-control">
+                            <label>Orden</label>
+                            <input
+                              className="app-input-area"
+                              id="orden"
+                              value={orden}
+                              placeholder="Orden"
+                              onChange={handleInput}
+                              type="text"
+                              required
+                            />
+                          </div>
+
                         </>
                       ) : (
                         ""
