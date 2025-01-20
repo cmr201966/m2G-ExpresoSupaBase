@@ -794,6 +794,7 @@ async function setAplicacionesCM(
   isBase64ToBlobMovil,
   frm,
   carpeta,
+  orden,
 ) {
   let err = "";
   if (sessionStorage.getItem("sgbd").toUpperCase() === "MYSQL") {
@@ -808,6 +809,7 @@ async function setAplicacionesCM(
       contenidofoto,
       frm,
       carpeta,
+      orden,
     });
     result = await result.json();
     err = result.error;
@@ -822,6 +824,7 @@ async function setAplicacionesCM(
         tooltip: tooltip,
         activo: activo,
         frm: frm,
+        orden: orden,
       });
       if (isValid(error) === true) err = error;
       else {
@@ -859,6 +862,7 @@ async function setAplicacionesCM(
           idcategoria: categoria,
           tooltip,
           frm: frm,
+          orden: orden,
         })
         .eq("id", id);
         if (isValid(error) === false && contenidofoto!=="") { 
