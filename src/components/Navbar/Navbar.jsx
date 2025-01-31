@@ -150,6 +150,7 @@ const Navbar = (props) => {
   const onModalClose = useCallback(() => cierraDialogo(), [setShowDialog]);
 
   async function init() {
+    console.log(nivel)
     setInicia(true)
     if (
       sessionStorage.getItem("deDonde") !== "infoProducto" &&
@@ -350,13 +351,13 @@ const Navbar = (props) => {
                   <Fragment key={i}>
                     {item.tooltips !== "" ? (
                       <Tippy content={item.tooltips}>
-                        {(item.depende === 1 && nivel === 0) ||
+                        {((item.depende === 1 && nivel === 0) ||
                         (item.depende === 2 &&
                           isValid(sessionStorage.getItem("user")) === true) ||
                         (item.depende === 4 &&
                           sessionStorage.getItem("tipouser") !== "1" &&
                           sessionStorage.getItem("tipouser") !== "2" &&
-                          sessionStorage.getItem("tipouser") !== "3") ? (
+                          sessionStorage.getItem("tipouser") !== "3")) ||  (item.label==="Inicio sesión" && Number(nivel)===9999) ? (
                           ""
                         ) : (
                           <Link
@@ -375,13 +376,13 @@ const Navbar = (props) => {
                       </Tippy>
                     ) : (
                       <>
-                        {(item.depende === 1 && nivel === 0) ||
+                        {((item.depende === 1 && nivel === 0) ||
                         (item.depende === 2 &&
                           isValid(sessionStorage.getItem("user")) === true) ||
                         (item.depende === 4 &&
                           sessionStorage.getItem("tipouser") !== "1" &&
                           sessionStorage.getItem("tipouser") !== "2" &&
-                          sessionStorage.getItem("tipouser") !== "3") ? (
+                          sessionStorage.getItem("tipouser") !== "3"))  ||  (item.label==="Inicio sesión" && Number(nivel)===9999) ? (
                           ""
                         ) : (
                           <Link

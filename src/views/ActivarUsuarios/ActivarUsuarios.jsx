@@ -49,7 +49,7 @@ const Activar = () => {
         {inicio === false ? (
           <div className="div-papa-categorias-1">
             <main className="main-info-producto">
-              <p className="strong margen-catnegocio">
+              <p className="strong margen-catnegocio activar-usuarios">
                 Usuarios Pendientes de Activación
               </p>
               <div className="activar-usuarios">
