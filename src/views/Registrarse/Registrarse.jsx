@@ -17,6 +17,7 @@ import {
   AddPhotoAlternate,
   Visibility,
   PlaceOutlined,
+  PlayLessonRounded,
 } from "@mui/icons-material";
 
 // contexts
@@ -66,8 +67,8 @@ const Registrarse = () => {
     { provincia: 99, municipio: 99, desc: "Desconocido" },
   ];
   const arrayplan = [
-    { plan: 0, desc: "Gratis", tip: "(Comprar y reservar)" },
-    { plan: 1, desc: "Estandar", tip: "Negocio estandar" },
+    { plan: 0, desc: "Cliente", tip: "(Comprar y reservar)" },
+    { plan: 1, desc: "Negocios", tip: "Negocio estandar" },
     { plan: 2, desc: "Premiun", tip: "Negocio Plus" },
     { plan: 3, desc: "Administrador", tip: "Administrador" },
   ];
@@ -671,16 +672,21 @@ const Registrarse = () => {
                         {resultado}
                       </label>
                     )}
+                    {Number(plan)===0?
                     <label className="label-grupo label-datos-size strong">
-                      Datos del negocio
+                       Datos de personales
+                    </label>:
+                    <label className="label-grupo label-datos-size strong">
+                       Datos del negocio
                     </label>
+                    }
                     <div className="input-area-registrarse">
                       <label htmlFor="nombre">Nombre:</label>
                       <input
                         id="nombre"
                         value={nombre}
                         onChange={handleInput}
-                        placeholder="Nombre del negocio"
+                        placeholder="Nombre"
                         type="text"
                         required
                       />
@@ -692,7 +698,7 @@ const Registrarse = () => {
                         id="datos"
                         value={datos}
                         onChange={handleInput}
-                        placeholder="Descripción del negocio"
+                        placeholder="Descripción"
                         type="text"
                         required
                       />
@@ -703,7 +709,7 @@ const Registrarse = () => {
                         id="otrosdatos"
                         value={otrosDatos}
                         onChange={handleInput}
-                        placeholder="Más datos del negocio"
+                        placeholder="Más datos"
                         type="text"
                         required
                       />
