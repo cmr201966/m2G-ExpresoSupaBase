@@ -56,7 +56,7 @@ const ActivarProductos = () => {
         <div className="div-papa-categorias-1">
           <Encabezado  clase={"encabezado"}/>
           <main className="main-info-producto">
-             <p className="strong margen-catnegocio">Productos Pendientes de Activación</p>
+             <p className="strong margen-catnegocio activar-usuarios">Productos Pendientes de Activación</p>
              <div className="activar-usuarios">
                <table>
                 <thead>
