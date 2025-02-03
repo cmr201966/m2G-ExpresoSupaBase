@@ -692,6 +692,9 @@ const Registrarse = () => {
                       />
                     </div>
 
+                    
+                    {Number(plan)!==0?
+                    <>
                     <div className="input-area-registrarse">
                       <label htmlFor="datos">Datos:</label>
                       <input
@@ -714,6 +717,8 @@ const Registrarse = () => {
                         required
                       />
                     </div>
+                    </>:""}
+
 
                     <div className="input-area-registrarse">
                       <label htmlFor="provincia">Provincia:</label>
