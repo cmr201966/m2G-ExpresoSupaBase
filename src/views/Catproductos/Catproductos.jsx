@@ -51,6 +51,10 @@ import Navbar from "../../components/Navbar/Navbar";
 import ComGalerias from "../../components/ComGalerias/ComGalerias";
 import Encabezado from "../../components/Encabezado/Encabezado";
 
+// emailjs
+import emailjs from '@emailjs/browser';
+import config from "../config";
+
 // styles
 import "./styles.css";
 
@@ -126,6 +130,16 @@ const CatProductos = () => {
   const [colort, setColort] = useState("");
   const [idsb, setIdsb] = useState("");
   const [nophoto, setNophoto] = useState("");
+
+
+  async function enviarProducto(){
+    const result = await emailjs.send(config.vite_servicioID, config.vite_template_productoID, {
+      from_name: "destodo", to_name: "Administrador", message: ""
+    }, {
+      publicKey: config.vite_emailjs_public_key
+    })
+    return result
+    }
 
   async function init() {
     setShow(true);

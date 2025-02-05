@@ -12,6 +12,7 @@
     "deploy-destodo": "firebase deploy --only hosting:destodo"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@emotion/css": "^11.11.2",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
