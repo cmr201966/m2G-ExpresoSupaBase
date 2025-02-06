@@ -720,6 +720,7 @@ async function setregistrarseCM(
       });
       err = error;
       if (isValid(error) === false) {
+        
         const { error, data } = await supabase
           .from("tablausuarios")
           .select("*")
