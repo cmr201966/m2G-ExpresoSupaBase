@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Tippy from "@tippyjs/react";
 import emailjs from '@emailjs/browser';
-import config from "../config";
+import config from "../../config";
 
 // components
 import Map from "../../components/Map/MapBox";
@@ -101,7 +101,7 @@ const Registrarse = () => {
 
   async function enviarUsuario(){
   const result = await emailjs.send(config.vite_servicioID, config.vite_template_usuarioID, {
-    from_name: "destodo", to_name: "Administrador", message: ""
+    from_name: sessionStorage.getItem("idapp"), to_name: "Administrador", message: ""
   }, {
     publicKey: config.vite_emailjs_public_key
   })
@@ -506,9 +506,6 @@ const Registrarse = () => {
         datos,
         otrosDatos
       );
-      //      let response = await apiBaseDatos("setregistrarse", user.toLowerCase(), nombre, password, celular,
-      //                                                          provincia, municipio, contenidofoto, modifica,
-      //                                                          plan, latT, lngT, isBase64ToBlob);
       let isOk = true;
       if (isValid(response) === true)
         if (isValid(response.length) === true) isOk = false;
@@ -516,6 +513,7 @@ const Registrarse = () => {
         setMessage("Ocurrio un error mientras se registraba el usuario.");
         setOpen(true);
       } else {
+        enviarUsuario()
         setMessage("El usuario se registró correctamente.");
         setOpen(true);
         tcancelar();

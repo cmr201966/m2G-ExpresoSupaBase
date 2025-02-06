@@ -53,7 +53,7 @@ import Encabezado from "../../components/Encabezado/Encabezado";
 
 // emailjs
 import emailjs from '@emailjs/browser';
-import config from "../config";
+import config from "../../config";
 
 // styles
 import "./styles.css";
@@ -134,7 +134,7 @@ const CatProductos = () => {
 
   async function enviarProducto(){
     const result = await emailjs.send(config.vite_servicioID, config.vite_template_productoID, {
-      from_name: "destodo", to_name: "Administrador", message: ""
+      from_name: sessionStorage.getItem("idapp"), to_name: "Administrador", message: ""
     }, {
       publicKey: config.vite_emailjs_public_key
     })
@@ -547,6 +547,7 @@ const CatProductos = () => {
         editar: editarsn ? true : false,
       });
     }
+    enviarProducto()
     setMessage("El producto '" + nombrecorto + "' se registró correctamente.");
     setOpen(true);
     setShowMap(false);
