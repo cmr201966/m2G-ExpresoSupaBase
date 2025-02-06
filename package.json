@@ -11,6 +11,7 @@
     "deploy": "firebase deploy --only hosting:expreso-stgo",
     "deploy-software": "firebase deploy --only hosting:m2g-software-stgo"  },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@emotion/css": "^11.11.2",
     "@emotion/react": "^11.11.4",
     "@emotion/styled": "^11.11.5",
