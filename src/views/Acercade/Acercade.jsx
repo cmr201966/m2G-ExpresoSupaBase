@@ -117,7 +117,7 @@ const Acercade = () => {
           </div>
 
           <p> En Santiago de Cuba.</p>
-          <p className="text-center">Todos los derechos reservados. 2024</p>
+          <p className="text-center">Todos los derechos reservados. 2025</p>
         </div>
       </Hero>
     </div>
