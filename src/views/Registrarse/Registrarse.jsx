@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import Tippy from "@tippyjs/react";
+import emailjs from '@emailjs/browser';
+import config from "../../config";
 
 // components
 import Map from "../../components/Map/MapBox";
@@ -17,7 +19,6 @@ import {
   AddPhotoAlternate,
   Visibility,
   PlaceOutlined,
-  PlayLessonRounded,
 } from "@mui/icons-material";
 
 // contexts
@@ -66,6 +67,7 @@ const Registrarse = () => {
   const arraydesconocido = [
     { provincia: 99, municipio: 99, desc: "Desconocido" },
   ];
+
   const arrayplan = [
     { plan: 0, desc: "Cliente", tip: "(Comprar y reservar)" },
     { plan: 1, desc: "Negocios", tip: "Negocio estandar" },
@@ -97,6 +99,15 @@ const Registrarse = () => {
   // Otros estados
   const navigate = useNavigate();
 
+  async function enviarUsuario(){
+  const result = await emailjs.send(config.vite_servicioID, config.vite_template_usuarioID, {
+    from_name: sessionStorage.getItem("idapp"), to_name: "Administrador", message: ""
+  }, {
+    publicKey: config.vite_emailjs_public_key
+  })
+  return result
+  }
+   
   async function init() {
     setShow1(true);
     setInicia(true);
@@ -496,10 +507,6 @@ const Registrarse = () => {
         datos,
         otrosDatos
       );
-      //      let response = await apiBaseDatos("setregistrarse", user.toLowerCase(), nombre, password, celular,
-      //                                                          provincia, municipio, contenidofoto, modifica,
-      //                                                          plan, latT, lngT, isBase64ToBlob);
-      setLoading(false);
       let isOk = true;
       if (isValid(response) === true)
         if (isValid(response.length) === true) isOk = false;
@@ -507,6 +514,7 @@ const Registrarse = () => {
         setMessage("Ocurrio un error mientras se registraba el usuario.");
         setOpen(true);
       } else {
+        enviarUsuario()
         setMessage("El usuario se registró correctamente.");
         setOpen(true);
         tcancelar();
@@ -694,6 +702,9 @@ const Registrarse = () => {
                       />
                     </div>
 
+                    
+                    {Number(plan)!==0?
+                    <>
                     <div className="input-area-registrarse">
                       <label htmlFor="datos">Datos:</label>
                       <input
@@ -716,6 +727,8 @@ const Registrarse = () => {
                         required
                       />
                     </div>
+                    </>:""}
+
 
                     <div className="input-area-registrarse">
                       <label htmlFor="provincia">Provincia:</label>
