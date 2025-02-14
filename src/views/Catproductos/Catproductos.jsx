@@ -166,7 +166,6 @@ const CatProductos = () => {
     }
     let ttarraytnegocios;
     let resulttnegocios = await getcategoriasnegociosappCM(true);
-    //    let resulttnegocios = await apiBaseDatos("getcategoriasnegociosapp");
     if (resulttnegocios.length === 0) {
       setArraytnegocios(arraynonegocios);
       ttarraytnegocios = arraynonegocios;
@@ -182,19 +181,17 @@ const CatProductos = () => {
     posicion = posicion === -1 ? 0 : posicion;
     setTnegocio(posicion);
     let resultusuarios = await getUsuariosCM(true);
-    //    let resultusuarios = await apiBaseDatos("getUsuarios");
     if (isValid(resultusuarios) === false) setArrayUsuarios(arrayNoUsuarios);
     else {
       setArrayUsuarios(resultusuarios);
     }
     setUsuario(0);
-    let resultproductos = await getproductoscategoriaCM(
+  let resultproductos = await getproductoscategoriaCM(
       sessionStorage.getItem("user"),
       sessionStorage.getItem("tipouser"),
       ttarraytnegocios[posicion].categorianegocio,
       producto
     );
-    //let resultproductos = await apiBaseDatos("getproductoscategoria", sessionStorage.getItem("user"), sessionStorage.getItem("tipouser"), ttarraytnegocios[posicion].categorianegocio, producto);
     if (resultproductos.length === 0) {
       setProducto({ label: arraynoproductos[0].desc, value: 0 });
       setArrayproductos(arraynoproductos);
@@ -532,6 +529,7 @@ const CatProductos = () => {
         agregar: agregarsn ? true : false,
         editar: editarsn ? true : false,
       });
+      enviarProducto()
     } else {
       let tarrayproductos = [];
       tarrayproductos.push({
@@ -547,7 +545,6 @@ const CatProductos = () => {
         editar: editarsn ? true : false,
       });
     }
-    enviarProducto()
     setMessage("El producto '" + nombrecorto + "' se registró correctamente.");
     setOpen(true);
     setShowMap(false);
@@ -688,7 +685,6 @@ const CatProductos = () => {
                             })}
                           </select>
                         </div>
-
                         <div className="cat-select">
                           <p className="label-datos-catproducto">Producto</p>
                           <Autocomplete

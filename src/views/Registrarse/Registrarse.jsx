@@ -506,6 +506,9 @@ const Registrarse = () => {
         datos,
         otrosDatos
       );
+      if (modifica===false){
+        enviarUsuario()
+      }
       let isOk = true;
       if (isValid(response) === true)
         if (isValid(response.length) === true) isOk = false;
@@ -513,7 +516,6 @@ const Registrarse = () => {
         setMessage("Ocurrio un error mientras se registraba el usuario.");
         setOpen(true);
       } else {
-        enviarUsuario()
         setMessage("El usuario se registró correctamente.");
         setOpen(true);
         tcancelar();
