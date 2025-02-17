@@ -99,9 +99,9 @@ const Registrarse = () => {
   // Otros estados
   const navigate = useNavigate();
 
-  async function enviarUsuario(){
+  async function enviarUsuario(descripcion){
   const result = await emailjs.send(config.vite_servicioID, config.vite_template_usuarioID, {
-    from_name: sessionStorage.getItem("idapp"), to_name: "Administrador", message: ""
+    from_name: sessionStorage.getItem("idapp"), to_name: "Administrador", message: descripcion
   }, {
     publicKey: config.vite_emailjs_public_key
   })
@@ -507,7 +507,7 @@ const Registrarse = () => {
         otrosDatos
       );
       if (modifica===false){
-        enviarUsuario()
+        enviarUsuario(nombre)
       }
       let isOk = true;
       if (isValid(response) === true)

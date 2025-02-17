@@ -132,9 +132,9 @@ const CatProductos = () => {
   const [nophoto, setNophoto] = useState("");
 
 
-  async function enviarProducto(){
+  async function enviarProducto(descripcion){
     const result = await emailjs.send(config.vite_servicioID, config.vite_template_productoID, {
-      from_name: sessionStorage.getItem("idapp"), to_name: "Administrador", message: ""
+      from_name: sessionStorage.getItem("idapp"), to_name: "Administrador", message: descripcion
     }, {
       publicKey: config.vite_emailjs_public_key
     })
@@ -529,7 +529,7 @@ const CatProductos = () => {
         agregar: agregarsn ? true : false,
         editar: editarsn ? true : false,
       });
-      enviarProducto()
+      enviarProducto(nombrecorto)
     } else {
       let tarrayproductos = [];
       tarrayproductos.push({

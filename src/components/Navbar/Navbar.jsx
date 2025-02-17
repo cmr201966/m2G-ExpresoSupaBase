@@ -150,7 +150,6 @@ const Navbar = (props) => {
   const onModalClose = useCallback(() => cierraDialogo(), [setShowDialog]);
 
   async function init() {
-    console.log(nivel)
     setInicia(true)
     if (
       sessionStorage.getItem("deDonde") !== "infoProducto" &&
