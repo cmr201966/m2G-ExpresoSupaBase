@@ -1313,7 +1313,7 @@ async function getproductoscategoriaCM(user, tipouser, categoria, producto) {
     );
     await supabase.rpc("exec_sql", { query: sql });
     // Ejecutar VISTA
-    const { data } = await supabase.from("getproductoscategoria").select("*");
+    const { data, error } = await supabase.from("getproductoscategoria").select("*");
     resultproductos = data;
   }
   return resultproductos;
