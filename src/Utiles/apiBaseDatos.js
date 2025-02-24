@@ -1109,7 +1109,9 @@ async function getProductosCM(categoria, userAnuncio, buscar) {
     result1 = await result1.json();
   } else {
     // Generar VISTA con API en SUPABASE
+    console.log(categoria, userAnuncio, buscar)
     let sql = await GeneraVistaGetProductos(categoria, userAnuncio, buscar);
+    console.log(sql)
     let error = await supabase.rpc("exec_sql", { query: sql });
     // Ejecutar VISTA
     const { data } = await supabase.from("getproductos").select("*");
