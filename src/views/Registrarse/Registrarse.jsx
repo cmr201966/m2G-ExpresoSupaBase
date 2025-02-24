@@ -226,6 +226,7 @@ const Registrarse = () => {
         ttmunicipios[buscarEnArreglo(ttmunicipios, 6, "municipio")].longitud
       );
     }
+    console.log(parsedParams.inserta, parsedParams.where)
     if (parsedParams.inserta === "false" && parsedParams.where === "true") {
       /* Traer usuarios y poner select con ellos*/
       /*Poner los datos del primer user y en handleselect poner el que cojan*/
@@ -236,6 +237,7 @@ const Registrarse = () => {
         setArrayUsuarios(arrayNoUsuarios);
       else {
         setArrayUsuarios(resultusuarios);
+        console.log(resultusuarios)
         setUser(resultusuarios[0].iduser);
         setPassword(resultusuarios[0].pw);
         setNombre(resultusuarios[0].nombre);
@@ -597,7 +599,7 @@ const Registrarse = () => {
                           {arrayUsuarios.map((item, i) => {
                             return (
                               <option key={i} value={item.iduser}>
-                                {item.nombre}
+                                {item.iduser}
                               </option>
                             );
                           })}
