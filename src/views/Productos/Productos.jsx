@@ -350,6 +350,7 @@ const Productos = () => {
       sessionStorage.getItem("userAnuncio"),
       sessionStorage.getItem("buscar")
     );
+    console.log(result1)
     const newResult = [];
     if (isValid(result1) === false || result1.length === 0) {
       newResult.push({
