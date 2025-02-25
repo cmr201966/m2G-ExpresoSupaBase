@@ -1,7 +1,7 @@
 {
   "hosting": {
     "public": "dist",
-    "site": "destodo",
+    "site": "m2G-cursos",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "frameworksBackend": {
       "region": "us-central1"
