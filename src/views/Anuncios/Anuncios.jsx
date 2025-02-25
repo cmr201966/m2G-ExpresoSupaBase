@@ -194,6 +194,7 @@ const Aplicaciones = () => {
     setNick(data[i].idapp);
     setDesc(data[i].desc);
     setTtip(data[i].tooltip);
+    setOrden(data[i].orden)
     setCategoria(
       buscarEnArreglo(arrayCategorias, data[i].idcategoria, "categorianegocio")
     );
@@ -212,6 +213,7 @@ const Aplicaciones = () => {
     setNickt(data[i].idapp);
     setDesct(data[i].desc);
     setTtipt(data[i].tooltip);
+    setOrden(data[i].orden)
   }
 
   function restaurardatosproductos() {
