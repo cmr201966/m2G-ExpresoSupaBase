@@ -59,6 +59,7 @@ const Registrarse = () => {
   const [rpassword, setRpassword] = useState("");
   const [nombre, setNombre] = useState("");
   const [celular, setCelular] = useState("");
+  const [email, setEmail] = useState("");
   const [foto] = useState();
   const [nombrefoto, setNombrefoto] = useState("");
   const [contenidofoto, setContenidofoto] = useState();
@@ -176,6 +177,7 @@ const Registrarse = () => {
       setNombre(result[0].nombre);
       setPlan(result[0].tipouser);
       setCelular(result[0].celular);
+      setEmail(result[0].email);
       setNophoto(result[0].nophoto);
       setDatos(result[0].datos);
       setOtrosDatos(result[0].otrosdatos);
@@ -226,7 +228,6 @@ const Registrarse = () => {
         ttmunicipios[buscarEnArreglo(ttmunicipios, 6, "municipio")].longitud
       );
     }
-    console.log(parsedParams.inserta, parsedParams.where)
     if (parsedParams.inserta === "false" && parsedParams.where === "true") {
       /* Traer usuarios y poner select con ellos*/
       /*Poner los datos del primer user y en handleselect poner el que cojan*/
@@ -243,6 +244,7 @@ const Registrarse = () => {
         setNombre(resultusuarios[0].nombre);
         setPlan(resultusuarios[0].tipouser);
         setCelular(resultusuarios[0].celular);
+        setEmail(resultusuarios[0].email);
         setNophoto(resultusuarios[0].nophoto);
         setDatos(resultusuarios[0].datos);
         setOtrosDatos(resultusuarios[0].otrosdatos);
@@ -334,6 +336,7 @@ const Registrarse = () => {
     setRpassword("");
     setNombre("");
     setCelular("");
+    setEmail("");
     setDatos("");
     setOtrosDatos("");
   }
@@ -364,6 +367,7 @@ const Registrarse = () => {
         setNombre(arrayUsuarios[index].nombre);
         setPlan(arrayUsuarios[index].tipouser);
         setCelular(arrayUsuarios[index].celular);
+        setEmail(arrayUsuarios[index].email);
         setNophoto(arrayUsuarios[index].nophoto);
         setDatos(arrayUsuarios[index].datos);
         setOtrosDatos(arrayUsuarios[index].otrosdatos);
@@ -467,6 +471,9 @@ const Registrarse = () => {
       case "celular":
         setCelular(e.target.value);
         break;
+      case "email":
+        setEmail(e.target.value);
+        break;
       case "datos":
         setDatos(e.target.value);
         break;
@@ -498,6 +505,7 @@ const Registrarse = () => {
         nombre,
         password,
         celular,
+        email,
         provincia,
         municipio,
         contenidofoto,
@@ -663,6 +671,18 @@ const Registrarse = () => {
                         required
                       />
                     </div>
+
+                    <div className="input-area-registrarse email-registrarse">
+                      <label htmlFor="email"> Email:</label>
+                      <input
+                        id="email"
+                        value={email}
+                        onChange={handleInput}
+                        placeholder="email opcional"
+                        required
+                      />
+                    </div>
+
                     <div className="input-area-registrarse">
                       <label htmlFor="plan">* Plan:</label>
                       <select id="plan" onChange={handleselect} value={plan}>
