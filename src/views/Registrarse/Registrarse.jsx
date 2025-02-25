@@ -504,6 +504,7 @@ const Registrarse = () => {
         nombre,
         password,
         celular,
+        email,
         provincia,
         municipio,
         contenidofoto,
@@ -670,7 +671,7 @@ const Registrarse = () => {
                       />
                     </div>
 
-                    <div className="input-area-registrarse">
+                    <div className="input-area-registrarse email-registrarse">
                       <label htmlFor="email"> Email:</label>
                       <input
                         id="email"
