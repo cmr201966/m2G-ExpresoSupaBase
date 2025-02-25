@@ -9,7 +9,7 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "deploy": "firebase deploy --only hosting:m2g-cursos",
-    "deploy-destodo": "firebase deploy --only hosting:m2gcursos"
+    "deploy-m2gcursos": "firebase deploy --only hosting:m2g-cursos"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
