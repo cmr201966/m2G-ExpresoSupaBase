@@ -540,6 +540,7 @@ async function CategoriasInsertUpdate(
   link,
   nick,
   accion,
+  orden,
   insertar,
   contenidofoto,
   isBase64ToBlob,
@@ -554,7 +555,7 @@ async function CategoriasInsertUpdate(
     if (isValid(datos)===false || datos.length===0){
       const { error } = await supabase
       .from("tablacategorias")
-      .insert({ desc: desc, link: link, accion: accion, nick: nick, activo: true, anuncio: true, app: true });
+      .insert({ desc: desc, link: link, accion: accion, nick: nick, activo: true, anuncio: true, app: true, destodo: orden });
       if (isValid(error) === false) {
       const { data, error: err1 } = await supabase
         .from("tablacategorias")
@@ -576,7 +577,7 @@ async function CategoriasInsertUpdate(
   } else {
     const { error } = await supabase
       .from("tablacategorias")
-      .update({ desc: desc, accion: accion, nick: nick })
+      .update({ desc: desc, accion: accion, nick: nick, destodo: orden })
       .eq("categorianegocio", categorianegocio);
       err = error;
     if (isValid(error) === false) {
@@ -1174,6 +1175,7 @@ async function setCategoriasNegociosCM(
   link,
   nick,
   accion,
+  orden,
   inserta,
   contenidofoto,
   isBase64ToBlob,
@@ -1188,6 +1190,7 @@ async function setCategoriasNegociosCM(
       link,
       nick,
       accion,
+      orden,
       inserta,
       contenidofoto,
     });
@@ -1200,6 +1203,7 @@ async function setCategoriasNegociosCM(
       "productos",
       nick,
       accion,
+      orden,
       inserta,
       contenidofoto,
       isBase64ToBlob,
