@@ -56,6 +56,7 @@ const Login = () => {
   async function confirma(e) {
     setLoading(true);
     e.preventDefault();
+    console.log(user, password)
     let result = await loginCM(user, password);
     //    let result = await apiBaseDatos("login", user, password);
     setLoading(false);
