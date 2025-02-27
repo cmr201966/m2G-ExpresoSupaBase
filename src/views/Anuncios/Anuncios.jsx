@@ -448,12 +448,12 @@ const Aplicaciones = () => {
           {inicia === false ? (
             <div className="div-papa-aplicaciones">
               <div className="aplicaciones">
-                <h3 className="strong">Publicar anuncio</h3>
                 <div className="container-aplicaciones">
                   <div className="form-main">
                     <div className="app-flex">
                       <div className="form-control">
-                        <label>Anuncio:</label>
+                      <h3 className="strong">Publicar anuncio</h3>
+                      <label>Anuncio:</label>
                         {agregarsn === true ? (
                           <input
                             className="app-input-area"
@@ -539,7 +539,7 @@ const Aplicaciones = () => {
                               })}
                             </select>
                           </div>
-                          
+
                           <div className="form-control">
                             <label>Orden</label>
                             <input
