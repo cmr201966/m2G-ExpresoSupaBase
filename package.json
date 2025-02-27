@@ -8,8 +8,8 @@
     "build": "vite build",
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
-    "deploy": "firebase deploy --only hosting:m2g-ocio",
-    "deploy-ocio": "firebase deploy --only hosting:m2g-ocio"
+    "deploy": "firebase deploy --only hosting:m2g-gastronomia",
+    "deploy-gastronomia": "firebase deploy --only hosting:m2g-gastronomia"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
