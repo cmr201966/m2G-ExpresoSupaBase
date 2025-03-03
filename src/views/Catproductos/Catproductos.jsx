@@ -191,8 +191,12 @@ const CatProductos = () => {
       sessionStorage.getItem("tipouser"),
       ttarraytnegocios[posicion].categorianegocio,
       producto
-    );
-    if (resultproductos.length === 0) {
+    );    
+    let algunProducto=false
+    if (isValid(resultproductos)){
+      if (resultproductos.length > 0) algunProducto=true
+    }
+    if (algunProducto===false) {
       setProducto({ label: arraynoproductos[0].desc, value: 0 });
       setArrayproductos(arraynoproductos);
       recuperardatosproducto(arraynoproductos, 0);
