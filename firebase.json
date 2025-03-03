@@ -1,7 +1,7 @@
 {
   "hosting": {
     "public": "dist",
-    "site": "m2g-gastronomia",
+    "site": "m2g-ocio",
     "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
     "frameworksBackend": {
       "region": "us-central1"
