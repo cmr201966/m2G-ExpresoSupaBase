@@ -32,9 +32,11 @@ const CatCategorias = () => {
   const [show, setShow] = useState(false);
   const [nick, setNick] = useState("");
   const [accion, setAccion] = useState("");
+  const [orden, setOrden] = useState("");
   const [desc, setDesc] = useState("");
   const [nickt, setNickt] = useState("");
   const [acciont, setAcciont] = useState("");
+  const [ordent, setOrdent] = useState("");
   const [desct, setDesct] = useState("");
   const [descold, setDescold] = useState("");
   const [inicia, setInicia] = useState(true);
@@ -119,6 +121,7 @@ const CatCategorias = () => {
     setNickt(data[i].nick);
     setAcciont(data[i].accion);
     setDesct(data[i].desc);
+    setOrdent(data[i].destodo)
   }
 
   useEffect(() => {
@@ -144,6 +147,7 @@ const CatCategorias = () => {
     setDescold(desct);
     setNick(nickt);
     setAccion(acciont);
+    setOrden(ordent)
   }
 
   function tcancelar() {
@@ -152,7 +156,9 @@ const CatCategorias = () => {
     setEditarsn(false);
     setDesc("");
     setNick("");
+    setOrden("")
     setAccion("");
+    setOrden("")
   }
 
   function limpiardatosCategoria() {
@@ -202,6 +208,7 @@ const CatCategorias = () => {
       "productos",
       nick,
       accion,
+      orden,
       agregarsn,
       contenidofoto,
       isBase64ToBlob,
@@ -250,6 +257,9 @@ const CatCategorias = () => {
         break;
       case "accion":
         setAccion(e.target.value);
+        break;
+      case "orden":
+        setOrden(e.target.value)
         break;
       case "desc":
         setDesc(e.target.value);
@@ -380,6 +390,19 @@ const CatCategorias = () => {
                             type="text"
                             required
                           />
+                          
+                          <div className="form-control">
+                            <label>Orden</label>
+                            <input
+                              className="app-input-area"
+                              id="orden"
+                              value={orden}
+                              placeholder="Orden"
+                              onChange={handleInput}
+                              type="text"
+                              required
+                            />
+                          </div>
 
                         </>
                       ) : (
