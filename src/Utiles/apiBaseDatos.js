@@ -923,7 +923,7 @@ async function getInfoNegocioCM(idnegocio) {
     result = await getinfonegocio({ idnegocio });
     result = await result.json();
   } else {
-    const { data } = await supabase
+    const { data, error} = await supabase
       .from("getinfonegocio")
       .select("*")
       .eq("idnegocio", idnegocio);
