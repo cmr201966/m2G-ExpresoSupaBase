@@ -791,7 +791,7 @@ const CatProductos = () => {
                           <input
                             className="input-cataproducto"
                             id="descripcion"
-                            placeholder="Descripción"
+                            placeholder="Palabras claves para busquedas"
                             value={descripcion}
                             onChange={handleInput}
                             type="text"
@@ -800,11 +800,11 @@ const CatProductos = () => {
                         </div>
                         <div className="input-area2">
                           <textarea
-                            className="input-cataproducto textarea-producto"
+                            className="textarea-producto"
                             id="marca"
                              value={marca} 
                              onChange={handleInput} 
-                             placeholder="Más datos (ejemplo: marca, horario)"
+                             placeholder="Descripción"
                           />                        
                         </div>
 {/*                        <div className="input-area2">
@@ -817,7 +817,7 @@ const CatProductos = () => {
                             type="text"
                             required
                           />
-                        </div>*/}
+                        </div>
                         <div className="input-area2">
                           <textarea
                             className="input-cataproducto"
@@ -828,7 +828,7 @@ const CatProductos = () => {
                             type="text"
                             required
                           />
-                        </div>
+                        </div>*/}
                         <div className="precio-capacidad-color">
                           <div>
                             <p className="label-datos-catproducto">Precio</p>

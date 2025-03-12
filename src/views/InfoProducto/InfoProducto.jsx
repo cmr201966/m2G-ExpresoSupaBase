@@ -348,13 +348,13 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                           </div>
                         ))}
                        </div>
-
                      <div className="img-class-info">
                         <img
                           className="img-info"
                           src={contenidofoto}
                           alt="Imagen del producto"
                         />
+{/*
                         <Tippy content={`Libre/Ocupado`}>
                           <button
                             className={`info-image ${
@@ -365,7 +365,8 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                             <PowerSettingsNew />
                           </button>
                         </Tippy>
-                      </div>                    
+*/}
+                      </div>
                     </div>
 
                     <div className="agrupa-info">
@@ -436,6 +437,7 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                            ) : (
                            ""
                            )}
+{/*
                         {isValid(chapa) === true && chapa !== "" ? (
                           <div className="parrafo-info-producto">
                              <p className="info-productos-color">{chapa}</p>
@@ -443,6 +445,7 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                           ) : (
                           ""
                           )}
+*/}
                       </div>
                     </div>
                   </div>
