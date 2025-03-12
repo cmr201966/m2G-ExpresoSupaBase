@@ -773,9 +773,8 @@ const CatProductos = () => {
                         ) : (
                           ""
                         )}
-
                         <div className="label-datos-catproducto-1 strong">
-                          Datos del nuevo producto{" "}
+                            {editarsn ? "Datos del producto" : "Datos del nuevo producto"}
                         </div>
                         <div className="input-area2">
                           <input
@@ -800,6 +799,15 @@ const CatProductos = () => {
                           />
                         </div>
                         <div className="input-area2">
+                          <textarea
+                            className="input-cataproducto textarea-producto"
+                            id="marca"
+                             value={marca} 
+                             onChange={handleInput} 
+                             placeholder="Más datos (ejemplo: marca, horario)"
+                          />                        
+                        </div>
+{/*                        <div className="input-area2">
                           <input
                             className="input-cataproducto"
                             id="marca"
@@ -809,9 +817,9 @@ const CatProductos = () => {
                             type="text"
                             required
                           />
-                        </div>
+                        </div>*/}
                         <div className="input-area2">
-                          <input
+                          <textarea
                             className="input-cataproducto"
                             id="modelo"
                             placeholder="Otros datos (ejemplo: modelo, chapa, fechas)"

@@ -409,6 +409,7 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                           ""
                         )}
                         </div>
+
                         <div className="parrafo-info-producto">
                            <p className="info-productos-color">{negocio}</p>
                         </div>
