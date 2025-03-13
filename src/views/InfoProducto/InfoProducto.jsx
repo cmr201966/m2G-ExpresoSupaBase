@@ -18,6 +18,8 @@ import {
   WhatsApp,
   ShoppingCartOutlined,
   PowerSettingsNew,
+  PlaceOutlined,
+
 } from "@mui/icons-material";
 
 // assets
@@ -47,6 +49,7 @@ const InfoProducto = () => {
   const parsedParams = {};
   const [showcircularProgress, setshowCircularProgress] = useState(true);
   const [showMap] = useState(true);
+  const [showMapSi, setShowMapSi] = useState(true);
   // Estados para la posición GPS del mapa
   const [lng, setLng] = useState(-75.829090519);
   const [lat, setLat] = useState(20.0217583);
@@ -385,6 +388,15 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                               <WhatsApp className="ws-1" />
                             </a>
                           </Tippy>
+                          <Tippy content={`Ubicar en el mapa`}>
+                          <button
+                            className="producto-button-1"
+                            onClick={() => setShowMapSi(!showMapSi)}
+                          >
+                            <PlaceOutlined />
+                          </button>
+                          </Tippy>
+
                           {((distancia !== 0 &&
                           showMap === true &&
                           puntosState === 2 &&
@@ -476,6 +488,7 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                   ) : (
                     ""
                   )}
+                  {showMapSi==true?
                   <Map
                     points={puntos}
                     sx={{ height: "340px", width: "100%" }}
@@ -485,8 +498,7 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                     lng={lng}
                     onChange={onChangeMap}
                     remoteZoom={zoom}
-                  />
-                  :
+                  />:""}
                 </section>
               ) : (
                 ""
