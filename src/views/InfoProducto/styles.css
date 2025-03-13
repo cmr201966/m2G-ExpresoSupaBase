@@ -218,3 +218,16 @@ p {
     flex-direction: column;
   }
 }
+
+.producto-button-1 {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: black;
+    border-radius: 15px;
+    height: 30px;
+    width: 45px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+  }
