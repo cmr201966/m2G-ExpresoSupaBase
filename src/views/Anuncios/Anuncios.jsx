@@ -452,7 +452,7 @@ const Aplicaciones = () => {
                   <div className="form-main">
                     <div className="app-flex">
                       <div className="form-control">
-                      <h3 className="strong">Publicar anuncio</h3>
+                      <h3 className="strong">Publicar anuncios</h3>
                       <label>Anuncio:</label>
                         {agregarsn === true ? (
                           <input

@@ -225,8 +225,8 @@ p {
     cursor: pointer;
     color: black;
     border-radius: 15px;
-    height: 30px;
-    width: 45px;
+    /*height: 30px;
+    width: 45px;*/
     display: flex;
     justify-content: center;
     align-items: center;

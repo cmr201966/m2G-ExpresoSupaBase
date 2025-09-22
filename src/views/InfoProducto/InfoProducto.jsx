@@ -393,7 +393,8 @@ if (sessionStorage.getItem("idapp") === "Expreso"){
                             className="producto-button-1"
                             onClick={() => setShowMapSi(!showMapSi)}
                           >
-                            <PlaceOutlined />
+                            <PlaceOutlined sx={{ fontSize: "28px" }}
+                            />
                           </button>
                           </Tippy>
 
