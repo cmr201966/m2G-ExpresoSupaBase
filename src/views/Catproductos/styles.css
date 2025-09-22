@@ -282,6 +282,16 @@
   padding-left: 7px;
 }
 
+.textarea-producto{
+  width: 100%;
+  height: 50px;
+  margin-top: 8px;
+  border-radius: 15px;
+  border: 1px solid aliceblue;
+  padding-left: 7px;
+
+}
+
 .input-cataproducto-999 {
   width: 44px;
   margin-bottom: 4px;

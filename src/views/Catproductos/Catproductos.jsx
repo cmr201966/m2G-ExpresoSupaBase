@@ -773,9 +773,8 @@ const CatProductos = () => {
                         ) : (
                           ""
                         )}
-
                         <div className="label-datos-catproducto-1 strong">
-                          Datos del nuevo producto{" "}
+                            {editarsn ? "Datos del producto" : "Datos del nuevo producto"}
                         </div>
                         <div className="input-area2">
                           <input
@@ -792,7 +791,7 @@ const CatProductos = () => {
                           <input
                             className="input-cataproducto"
                             id="descripcion"
-                            placeholder="Descripción"
+                            placeholder="Palabras claves para busquedas"
                             value={descripcion}
                             onChange={handleInput}
                             type="text"
@@ -800,6 +799,15 @@ const CatProductos = () => {
                           />
                         </div>
                         <div className="input-area2">
+                          <textarea
+                            className="textarea-producto"
+                            id="marca"
+                             value={marca} 
+                             onChange={handleInput} 
+                             placeholder="Descripción"
+                          />                        
+                        </div>
+{/*                        <div className="input-area2">
                           <input
                             className="input-cataproducto"
                             id="marca"
@@ -811,7 +819,7 @@ const CatProductos = () => {
                           />
                         </div>
                         <div className="input-area2">
-                          <input
+                          <textarea
                             className="input-cataproducto"
                             id="modelo"
                             placeholder="Otros datos (ejemplo: modelo, chapa, fechas)"
@@ -820,7 +828,7 @@ const CatProductos = () => {
                             type="text"
                             required
                           />
-                        </div>
+                        </div>*/}
                         <div className="precio-capacidad-color">
                           <div>
                             <p className="label-datos-catproducto">Precio</p>
