@@ -121,7 +121,7 @@ const Navbar = (props) => {
 
   const [menuTercero] = useState([
     {
-      label: "Acerca de",
+      label: "Conócenos",
       to: "/acercade",
       tooltips: "Acerca de Destodo",
       login: 0,
