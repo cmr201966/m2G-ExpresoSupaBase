@@ -33,12 +33,12 @@ function SearchWrapper() {
           <input
             className="buscar-input"
             id="buscar"
-            placeholder="Buscar productos"
+            placeholder=" Buscar productos ..."
             value={buscar}
             onChange={handleInput}
             type="text"
           />
-          <IconButton className="lupa" id="lupa" color="primary" type="submit">
+          <IconButton className="lupa" id="lupa" color="rgb(202, 94, 228)" type="submit">
             <Search />
           </IconButton>
         </form>

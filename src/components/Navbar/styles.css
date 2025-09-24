@@ -1,9 +1,10 @@
 .navbar-row {
   display: flex;
   flex-direction: column;
-  justify-content: center;
+  justify-content: flex-start;
+  /*justify-content: center;*/
   align-items: center;
-  background-color: rgb(2, 114, 226);
+  background-color: rgb(202, 94, 228);
 }
 
 .logo-img {
@@ -15,10 +16,11 @@
 
 .logo-img-one {
   object-fit: contain;
-  width: 40px;
-  height: 40px;
-  border-radius: 100px;
-  padding: 5px;
+  margin-left: -150px;
+  width: 200px;
+  height: 80px;
+  /*border-radius: 100px;
+  padding: 5px;*/
 }
 
 .link-logo {
@@ -103,9 +105,11 @@
 }
 
 .buscar-input {
-  height: 25px;
-  flex: 1;
-  padding-left: 5px;
+  height: 35px;
+  width: 20px;
+  flex: 0.7;
+  padding-left: 3px;
+  border-radius: 10px;
 }
 
 .input-lupa {
@@ -122,7 +126,7 @@
   position: absolute !important;
   top: 50%;
   transform: translateY(-50%);
-  right: -8px;
+  right: 240px;
 }
 
 .agrupa-menu {

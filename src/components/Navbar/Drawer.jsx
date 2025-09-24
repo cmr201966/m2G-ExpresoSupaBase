@@ -69,13 +69,13 @@ export default function NavigationDrawer({
             )}
           </ListItem>
         ))}
-        <ListItem disablePadding>
-          <ListItemButton LinkComponent="button" onClick={openLocation}>
-            <ListItemText primary="Ubicación" />
-          </ListItemButton>
-        </ListItem>
+        //<ListItem disablePadding>
+        //  <ListItemButton LinkComponent="button" onClick={openLocation}>
+        //    <ListItemText primary="Ubicación" />
+        //  </ListItemButton>
+       // </ListItem>
       </List>
-      {isValid(sessionStorage.getItem("tipouser"))===true ? 
+      {isValid(sessionStorage.getItem("tipouser"))===true ?
       <>
       <Divider />
       <List>
@@ -89,7 +89,7 @@ export default function NavigationDrawer({
       </List>
       </>:""
       }
-      {Number(sessionStorage.getItem("tipouser")) === 3 ? 
+      {Number(sessionStorage.getItem("tipouser")) === 3 ?
       <>
       <Divider />
       <List>

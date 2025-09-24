@@ -7,6 +7,7 @@ import Tippy from "@tippyjs/react";
 import NavigationDrawer from "./Drawer";
 import Location from "./Location";
 import SearchWrapper from "./SearchWrapper";
+import { ShoppingCart } from "@mui/icons-material";
 
 // @mui/material
 import { Box, IconButton } from "@mui/material";
@@ -123,7 +124,7 @@ const Navbar = (props) => {
     {
       label: "Conócenos",
       to: "/acercade",
-      tooltips: "Acerca de Destodo",
+      tooltips: "Acerca de Habun",
       login: 0,
       inserta: "",
       tipo: 0,
@@ -265,6 +266,15 @@ const Navbar = (props) => {
               </IconButton>
               {/*</Link>*/}
 
+                <IconButton
+                  sx={{ padding: 0 }}
+                  id="carrito"
+                  color="inherit"
+                  onClick={() => console.log("Ir al carrito")} // aquí pones tu función
+                >
+                  <ShoppingCart className="icono-carrito" />
+                </IconButton>
+
               <IconButton
                 sx={{ padding: 0 }}
                 id="toggle-b"
@@ -286,6 +296,7 @@ const Navbar = (props) => {
                 sx={{ display: { xs: "none", md: "flex" } }}
                 className="links"
               >
+                {/*
                 <Tippy content={"Su ubicación actual"}>
                   <IconButton
                     sx={{ padding: 0 }}
@@ -303,6 +314,7 @@ const Navbar = (props) => {
                   onModalClose={onModalClose}
                   whereIs={whereIs}
                 />
+                */}
                 {menuPrimero.map((item, i) => (
                   <Fragment key={i}>
                     <Tippy content={item.tooltips}>
@@ -329,7 +341,7 @@ const Navbar = (props) => {
                           ) : (
                             ""
                           )}
-                          <span className="ubicacion">{item.label}</span>
+                        <span className="ubicacion">{item.label}</span>
                         </IconButton>
                       )}
                     </Tippy>
@@ -337,6 +349,7 @@ const Navbar = (props) => {
                 ))}
               </Box>
             </div>
+
           ) : (
             ""
           )}
