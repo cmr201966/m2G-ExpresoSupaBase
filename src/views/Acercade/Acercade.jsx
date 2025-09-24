@@ -69,19 +69,25 @@ const Acercade = () => {
                 <img className="logo-acerca-img" src={contenidofoto} />
               </Tippy>
             </Link>
-            <h3 className="about-1">Acerca de</h3>
+            <h3 className="about-1">Habon</h3>
           </div>
-          <p>{sessionStorage.getItem("idapp")} Versión 1.0</p>
+          {/*<p>{sessionStorage.getItem("idapp")}Amor a tu piel</p>*/}
           <div className="texto-acercade">
             <p>
-               DesTodo es tu plataforma 'todo en uno', donde puedes encontrar servicios y productos variados en
-               Santiago de Cuba, incluye transporte, fotografía, ventas, fiestas, restaurantes, clubes, bares, discotecas y mucho más. 
-               Conecta con los servicios y productos que necesitas de manera rápida y fácil.
+                Hace unos meses, en la Ciudad de México, nació nuestro emprendimiento con un propósito sencillo pero profundo:
+                transformar lo cotidiano en algo especial. Descubrimos que el cuidado personal puede ser más que una rutina;
+                puede ser un momento de conexión, frescura y bienestar.
+
+                Cada jabón artesanal que elaboramos es único, hecho a mano con dedicación, paciencia y amor. Usamos ingredientes naturales,
+                cuidamos cada detalle y buscamos que cada pieza no solo limpie, sino que también nutra tu piel y despierte tus sentidos.
             </p>
             <p>
-               Tiene como misión facilitar la vida de las personas en Santiago de Cuba, 
-               conectando a clientes y proveedores de servicios y productos de manera eficiente y confiable,
-               fomentando el crecimiento de la economía local y la colaboración comunitaria.            
+                Somos un equipo joven que, desde hace 4 meses, trabaja para ofrecerte productos auténticos y diferentes a lo convencional.
+                Nuestros jabones son ideales para consentirte todos los días o para regalar un detalle especial lleno de aroma, suavidad y naturaleza.
+
+                En pocas palabras: jabones hechos a mano, con ingredientes naturales y con un propósito claro… regalarte pequeños instantes de frescura y bienestar.
+
+                ✨ Amor a tu piel ✨
             </p>
           </div>
           <div className="acercade-flex-1">

@@ -19,15 +19,17 @@ const CardMultipleSlider = (props) => {
     <>
       {link.toLowerCase().indexOf("https") >= 0 ? (
         <a className={`card-slider-${pcMovil}`} href={link} target="_blank" rel="noopener noreferrer">
-          <p className="card-slider-titulo">
+          {/*<p className="card-slider-titulo">
             <b>{titulo}</b>
-          </p>
+          </p>*/}
           <img
             className="card-slider-img"
             src={imagen}
             alt={`Foto de ${titulo}`}
           />
+          {/*}
           <p className="card-slider-descripcion">{descripcion}</p>
+          */}
         </a>
       ) : (
         <Link
@@ -39,15 +41,17 @@ const CardMultipleSlider = (props) => {
                   : sessionStorage.getItem("usernombre")
               }&user=${sessionStorage.getItem("user")}`}
         >
-          <p className="card-slider-titulo">
+          {/*<p className="card-slider-titulo">
             <b>{titulo}</b>
-          </p>
+          </p>*/}
           <img
             className="card-slider-img"
             src={imagen}
             alt={`Foto de ${titulo}`}
           />
+          {/*}
           <p className="card-slider-descripcion">{descripcion}</p>
+          */}
         </Link>
       )}
     </>
