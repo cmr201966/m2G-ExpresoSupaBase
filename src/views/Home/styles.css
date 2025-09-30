@@ -89,19 +89,31 @@
 
 .main-grid {
   display: grid;
-  grid-template-columns: 1fr 60% 1fr;
+  grid-template-columns: 1fr 80% 1fr; /* antes 60% */
   z-index: 10;
   gap: 10px;
 }
 @media screen and (max-width: 1100px) {
   .main-grid {
-    grid-template-columns: 1fr 80% 1fr;
+    z-index: 1;
+    grid-template-columns: 1fr 90% 1fr; /* más ancho en pantallas pequeñas */
   }
 }
 
 .negative-margin {
-  margin-top: -110px;
+  margin-top: -40px;      /* lo sube un poco */
+  margin-bottom: 40px;    /* separación con el siguiente */
+  margin-left: 10px;     /* lo corre a la izquierda */
+  z-index: 2;
 }
+
+.negative-margin2 {
+  margin-top: 0;          /* normal */
+  margin-bottom: 40px;    /* separación hacia abajo */
+  margin-left: 10px;     /* también lo corre a la izquierda */
+  z-index: 1;
+}
+
 
 .gridCentral {
   display: grid;
@@ -167,10 +179,12 @@
 .gradient-background {
   background: linear-gradient(to top, white 30%, transparent 50%);
   position: absolute;
+  left: -10px;
   top: 0;
   height: 100vh; /* Para que ocupe toda la altura de la pantalla */
-  width: 100vw;
+  width: 120vw;
   pointer-events: none;
+  z-index: 0;
 }
 
 .modal-provincia {

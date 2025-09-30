@@ -27,7 +27,9 @@ import {
   getJpgFileSB,
 } from "../../Utiles/Utiles";
 import {
-  getanunciosCM, getcategoriasnewCM, setVisitas,
+  getanunciosCM,
+  getcategoriasnewCM,
+  setVisitas,
 } from "../../Utiles/apiBaseDatos";
 
 // contexts
@@ -59,13 +61,18 @@ const Home = () => {
   async function init() {
     setInicia(true);
     setShow(true);
-    if (isValid(parsedParams.categoria)===true && parsedParams.categoria!=="" && isValid(sessionStorage.getItem("directo"))===false){
+    if (
+      isValid(parsedParams.categoria) === true &&
+      parsedParams.categoria !== "" &&
+      isValid(sessionStorage.getItem("directo")) === false
+    ) {
       navigate(`/productos?categoria=${parsedParams.categoria}`);
     }
-    sessionStorage.setItem("directo","1")
-    sessionStorage.setItem("deDonde", "Home")
-    if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "SUPABASE") creaBucket("galerias");
-    borraSessionStorage(["categoria",]);
+    sessionStorage.setItem("directo", "1");
+    sessionStorage.setItem("deDonde", "Home");
+    if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "SUPABASE")
+      creaBucket("galerias");
+    borraSessionStorage(["categoria"]);
     const newResult = [];
     if (
       parsedParams.nivel === undefined ||
@@ -76,7 +83,7 @@ const Home = () => {
       let visitas = await setVisitas();
       console.log("Visitas: ", visitas);
       let resultApp = await getanunciosCM("0");
-      if (resultApp===null) resultApp=[];
+      if (resultApp === null) resultApp = [];
       let imgsFileName1 = [];
       let imgsFolder1 = [];
       let imgsId1 = [];
@@ -89,7 +96,7 @@ const Home = () => {
           ? "./galerias/app_images/aplicaciones"
           : "aplicaciones/home";
       resultApp.forEach((item) => {
-        let pcMovil=screenWidth<=600?"-movil":"";
+        let pcMovil = screenWidth <= 600 ? "-movil" : "";
         imgsFileName1.push(item.id + pcMovil + ".jpg");
         imgsFolder1.push(ruta + "/" + item.id);
         imgsId1.push(item.idsb);
@@ -100,13 +107,12 @@ const Home = () => {
       });
       setImgsFileName(imgsFileName1);
       setImgsFolder(imgsFolder1);
-      setImgsId(imgsId1)
+      setImgsId(imgsId1);
       setCategorys(category1);
       setUsers(users1);
       setNombres(nombres1);
       setLinks(links1);
       let result = await getcategoriasnewCM(true);
-//      let result = await apiBaseDatos("getcategoriasnew");
       let longitug = isValid(result) === true ? result.length : 0;
       let arrayContenidoFoto = [];
       let resultado = [];
@@ -115,7 +121,8 @@ const Home = () => {
           result[i].idcategoria + ".jpg",
           "./galerias/app_images/categorias_de_negocios/" +
             result[i].idcategoria,
-          "categorias_de_negocios/" + result[i].idcategoria, result[i].idsb
+          "categorias_de_negocios/" + result[i].idcategoria,
+          result[i].idsb
         );
         if (
           isValid(resultado) === true &&
@@ -129,24 +136,26 @@ const Home = () => {
         }
       }
       if (longitug !== 0) {
-         if (sessionStorage.getItem("sgbd").toLocaleUpperCase() !== "MYSQL")
-            result.forEach((item, i) => {
-              newResult.push({
-                 categoria: item.idcategoria,
-                 name: item.nick,
-                 link: item.link,
-                 photo: arrayContenidoFoto[i],
-                 tooltip: item.categoria,});
-            })
-            else
-            result.forEach((item, i) => {
-              newResult.push({
-                 categoria: item.idcategoria,
-                 name: item.nick,
-                 link: item.link,
-                 photo: arrayContenidoFoto[i],
-                 tooltip: item.categoria,});
-            })
+        if (sessionStorage.getItem("sgbd").toLocaleUpperCase() !== "MYSQL")
+          result.forEach((item, i) => {
+            newResult.push({
+              categoria: item.idcategoria,
+              name: item.nick,
+              link: item.link,
+              photo: arrayContenidoFoto[i],
+              tooltip: item.categoria,
+            });
+          });
+        else
+          result.forEach((item, i) => {
+            newResult.push({
+              categoria: item.idcategoria,
+              name: item.nick,
+              link: item.link,
+              photo: arrayContenidoFoto[i],
+              tooltip: item.categoria,
+            });
+          });
         setResult(newResult);
       }
     }
@@ -181,6 +190,27 @@ const Home = () => {
     return resultOfCards;
   }, [result]);
 
+  // 🔹 Segundo carrusel
+  const arrayOfCards2 = useMemo(() => {
+    const resultOfCards = [];
+    result.forEach((prop, i) =>
+      resultOfCards.push(
+        <CardMultipleSlider
+          key={`second-${i}`}
+          link={prop.link}
+          titulo={prop.name}
+          categoria={prop.categoria}
+          imagen={prop.photo}
+          descripcion={prop.tooltip}
+          rutatmp={rutatmp}
+          desctmp={desctmp}
+          nivel={nivel}
+        />
+      )
+    );
+    return resultOfCards;
+  }, [result]);
+
   useEffect(() => {
     const localParams = location.search.substring(1).split("&");
     localParams.forEach((item) => {
@@ -197,33 +227,33 @@ const Home = () => {
     <div>
       <Navbar nivel={0} />
       <Hero clase={"hero-section"}>
-      <div className="grip-flecha">
-        <div></div>
-        <div className="encabezado">
-          {nivel === 0 ? (
-            ""
-          ) : (
-            <>
-              <IconButton
-                color="primary"
-                onClick={() => {
-                  navigate(
-                    `/?naturaleza=${sessionStorage.getItem(
-                      "naturaleza"
-                    )}&owner=${sessionStorage.getItem(
-                      "idowner"
-                    )}&nivel=${sessionStorage.getItem("nivel")}`
-                  );
-                }}
-              >
-                <ArrowBack className="color-flecha" />
-              </IconButton>
-              <h3 className="color-encabezado">Atrás</h3>
-            </>
-          )}
+        <div className="grip-flecha">
+          <div></div>
+          <div className="encabezado">
+            {nivel === 0 ? (
+              ""
+            ) : (
+              <>
+                <IconButton
+                  color="primary"
+                  onClick={() => {
+                    navigate(
+                      `/?naturaleza=${sessionStorage.getItem(
+                        "naturaleza"
+                      )}&owner=${sessionStorage.getItem(
+                        "idowner"
+                      )}&nivel=${sessionStorage.getItem("nivel")}`
+                    );
+                  }}
+                >
+                  <ArrowBack className="color-flecha" />
+                </IconButton>
+                <h3 className="color-encabezado">Atrás</h3>
+              </>
+            )}
+          </div>
+          <div></div>
         </div>
-        <div></div>
-      </div>        
         {show ? (
           <Box
             sx={{
@@ -239,6 +269,7 @@ const Home = () => {
         ) : null}
         {inicia === false ? (
           <>
+            {/* 🔹 Slider grande */}
             <BigSlider
               imgsFolder={imgsFolder}
               imgsFileName={imgsFileName}
@@ -249,12 +280,27 @@ const Home = () => {
               links={links}
               sizeClass="grande"
             />
+
+            {/* 🔹 Primer carrusel */}
             <div className="main-grid negative-margin">
               <div className="grid-letf"></div>
               <div className="gradient-background"></div>
+
               <MultipleSlider imgs={arrayOfCards} />
+
               <div className="grid-rigth"></div>
             </div>
+
+            {/* 🔹 Segundo carrusel debajo
+            <div className="main-grid negative-margin2">
+              <div className="grid-letf"></div>
+              <div className="gradient-background"></div>
+
+              <MultipleSlider imgs={arrayOfCards2} />
+
+              <div className="grid-rigth"></div>
+            </div>
+            */}
           </>
         ) : (
           ""

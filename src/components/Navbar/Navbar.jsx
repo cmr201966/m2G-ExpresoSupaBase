@@ -1,6 +1,6 @@
 /* eslint-disable react/prop-types */
 import { Fragment, useState, useEffect, useCallback } from "react";
-import { Link, useLocation } from "react-router-dom";
+import { Link, useLocation, useNavigate } from "react-router-dom";
 import Tippy from "@tippyjs/react";
 
 // components
@@ -17,10 +17,11 @@ import {
   Search,
   Settings,
   Person,
-  PlaceOutlined,
   PersonAddAlt1,
+  Logout,
 } from "@mui/icons-material";
-import ManageAccountsOutlinedIcon from '@mui/icons-material/ManageAccountsOutlined';
+import ManageAccountsOutlinedIcon from "@mui/icons-material/ManageAccountsOutlined";
+
 // utils
 import {
   isValid,
@@ -31,9 +32,7 @@ import {
 // services
 import { getConfigCM } from "../../Utiles/apiBaseDatos";
 
-// config
-//import config from "../../config";
-
+// context
 import { useNotification } from "../../context/NotificationProvider";
 
 // styles
@@ -44,79 +43,49 @@ const Navbar = (props) => {
   const { nivel } = props;
 
   const location = useLocation();
+  const navigate = useNavigate();
   const { setOpen, setMessage } = useNotification();
   const [showMenu, setShowMenu] = useState(false);
   const [whereIs, setWhereIs] = useState("");
-
   const [inicia, setInicia] = useState(true);
 
+  // 👇 Estado que maneja el usuario actual
+  const [user, setUser] = useState(sessionStorage.getItem("user"));
+  const [tipouser, setTipouser] = useState(
+    Number(sessionStorage.getItem("tipouser"))
+  );
+
   const [menuPrimero] = useState([]);
-  {
-    /* depende=0->no depende de nada, 1->nivel, 2-> no autentificado, 3-> superAdmin, 4-> dueño de negocio*/
-  }
   const [menuSegundo] = useState([
     {
       label: "Inicio",
       to: "/",
       tooltips: "",
-      depende: 1,
-      login: 0,
-      inserta: "",
-      tipo: 0,
     },
     {
-      label:
-        isValid(sessionStorage.getItem("user")) === false
-          ? "Inicio sesión"
-          : "Cerrar sesión",
-      to:
-        isValid(sessionStorage.getItem("user")) === false
-          ? "/login"
-          : "/cerrarsesion",
-      tooltips:
-        isValid(sessionStorage.getItem("user")) === false ? "Abrir sesión" : "",
-      depende: 0,
-      login: 0,
-      inserta: "",
-      tipo: 0,
+      label: "Inicio sesión",
+      to: "/login",
+      tooltips: "Abrir sesión",
     },
-
     {
       label: "Registrarse",
       to: "/registrarse",
       tooltips: "Agregar un negocio",
-      depende: 2,
-      login: 0,
-      inserta: "inserta=true&where=false",
-      tipo: 0,
     },
     {
       label: "Ir a categoria",
       to: "/categorias",
       tooltips: "Ir a los productos de una categoria",
-      depende: 0,
-      login: 0,
-      inserta: "",
-      tipo: 0,
     },
     {
       label: "Publicar",
       to: "/catproductos",
       tooltips: "Publicar productos",
-      depende: 4,
-      login: 1,
-      inserta: "",
-      tipo: 0,
     },
     {
       label: "Anuncios",
       to: "/anuncios",
       tooltips: "Publicar anuncios",
-      depende: 4,
-      categoria: "",
-      login: 1,
-      inserta: "",
-      tipo: 0,
     },
   ]);
 
@@ -125,9 +94,6 @@ const Navbar = (props) => {
       label: "Conócenos",
       to: "/acercade",
       tooltips: "Acerca de Habun",
-      login: 0,
-      inserta: "",
-      tipo: 0,
     },
   ]);
 
@@ -142,31 +108,30 @@ const Navbar = (props) => {
 
   function cierraDialogo() {
     setShowDialog(false);
-    /*if (whereIs==="movil") navigate(`/productos?buscar=${buscar}&user=${sessionStorage.getItem("user")}&nombre=Filtro: '${buscar}'`);*/
-    init;
   }
 
   const [showDialog, setShowDialog] = useState(false);
-
   const onModalClose = useCallback(() => cierraDialogo(), [setShowDialog]);
 
   async function init() {
-    setInicia(true)
+    setInicia(true);
     if (
       sessionStorage.getItem("deDonde") !== "infoProducto" &&
       sessionStorage.getItem("deDonde") !== "infoNegocio"
-    ) {borraSessionStorage(["categoria", "login", "idproducto"])}
+    ) {
+      borraSessionStorage(["categoria", "login", "idproducto"]);
+    }
 
     const config = await getConfigCM();
-    sessionStorage.setItem("idapp", config[0].idapp)
-    //    const config = await apiBaseDatos("getConfig");
+    sessionStorage.setItem("idapp", config[0].idapp);
 
     if (!config?.length) setShowDialog(true);
 
     let resultado = await getJpgFileSB(
       "logo.jpg",
       "./galerias/app_images/destodo",
-      "destodo", Date.now()
+      "destodo",
+      Date.now()
     );
     if (isValid(resultado) === true) {
       setContenidofoto(resultado);
@@ -174,9 +139,16 @@ const Navbar = (props) => {
       setMessage("Error al recuperar la imagen de " + config[0].idapp);
       setOpen(true);
     }
-
-    //cambiaWhereIs("ubica");
     setInicia(false);
+
+    // 👇 actualizamos estado al montar
+    setUser(sessionStorage.getItem("user"));
+    setTipouser(Number(sessionStorage.getItem("tipouser")));
+
+    // 🔍 DEBUG
+    console.log("🔄 INIT ejecutado");
+    console.log("Session user:", sessionStorage.getItem("user"));
+    console.log("Session tipouser:", sessionStorage.getItem("tipouser"));
   }
 
   function goToUbica() {
@@ -190,254 +162,204 @@ const Navbar = (props) => {
 
   return (
     <>
-    {inicia===false?
-    <>
-      <div className="navbar-row">
-        <div className="navbar-main">
-          <Link className="link-logo" to="/">
-            <img className="logo-img-one" src={contenidofoto} />
-            {sessionStorage.getItem("idapp")}
-          </Link>
+      {inicia === false ? (
+        <>
+          <div className="navbar-row">
+            <div className="navbar-main">
+              <Link className="link-logo" to="/">
+                <img className="logo-img-one" src={contenidofoto} />
+                {sessionStorage.getItem("idapp")}
+              </Link>
 
-          <SearchWrapper />
+              <SearchWrapper />
 
-          {inicia === false ? (
-            <div className="menuTercero">
-              <div className="optional-buttons">
-                {Number(sessionStorage.getItem("tipouser")) === 3 ? (
-                  <Tippy content={"Categorias de negocios"}>
-                    <Link to="/catcategorias?login=1&regreso=/catcategorias">
-                      <IconButton sx={{ color: "aliceblue" }} id="categorias">
-                        <Settings />
+              <div className="menuTercero">
+                <div className="optional-buttons">
+                  {/* ⚙️ Solo admin */}
+                  {tipouser === 3 && (
+                    <Tippy content={"Categorias de negocios"}>
+                      <Link to="/catcategorias?login=1&regreso=/catcategorias">
+                        <IconButton sx={{ color: "aliceblue" }} id="categorias">
+                          <Settings />
+                        </IconButton>
+                      </Link>
+                    </Tippy>
+                  )}
+
+                  {/* 👤 Usuario logueado */}
+                  {isValid(user) && (
+                    <Tippy
+                      content={`Actualizar datos de ${sessionStorage.getItem(
+                        "user"
+                      )}`}
+                    >
+                      <Link to="/registrarse?inserta=false&where=false">
+                        <IconButton sx={{ color: "aliceblue" }} id="user">
+                          <Person id="user" />
+                        </IconButton>
+                      </Link>
+                    </Tippy>
+                  )}
+
+                  {/* 🔑 Login (solo si NO hay usuario) */}
+                  {!isValid(user) && (
+                    <Tippy content="Iniciar sesión">
+                      <IconButton
+                        sx={{ padding: 0, color: "aliceblue" }}
+                        id="login"
+                        onClick={() => navigate("/login")}
+                      >
+                        <Person />
                       </IconButton>
-                    </Link>
-                  </Tippy>
-                ) : (
-                  ""
-                )}
+                    </Tippy>
+                  )}
 
-                {isValid(sessionStorage.getItem("user")) ? (
-                  <Tippy
-                    content={`Actualizar datos de ${sessionStorage.getItem(
-                      "user"
-                    )}`}
-                  >
-                    <Link to="/registrarse?inserta=false&where=false">
-                      <IconButton sx={{ color: "aliceblue" }} id="user">
-                        <Person id="user" />
-                      </IconButton>
-                    </Link>
-                  </Tippy>
-                ) : (
-                  ""
-                )}
-
-                {Number(sessionStorage.getItem("tipouser")) === 3 ? (
-                  <>
-                  <Tippy content={"Agregar un usuario"}>
-                    <Link to="/registrarse?inserta=true&where=true">
-                      <IconButton sx={{ color: "aliceblue" }} id="user">
+                  {/* 🆕 Registrarse (solo si NO hay usuario) */}
+                  {!isValid(user) && (
+                    <Tippy content="Registrarse">
+                      <IconButton
+                        sx={{ padding: 0, color: "aliceblue", ml: 1 }}
+                        id="registrarse"
+                        onClick={() => navigate("/registrarse")}
+                      >
                         <PersonAddAlt1 />
                       </IconButton>
-                    </Link>
-                  </Tippy>
-                  <Tippy content={"Editar un usuario"}>
-                  <Link to="/registrarse?inserta=false&where=true">
-                    <IconButton sx={{ color: "aliceblue" }} id="user">
-                      <ManageAccountsOutlinedIcon />
-                    </IconButton>
-                  </Link>
-                </Tippy>
-                </>
-              ) : (
-                  ""
-                )}
-              </div>
+                    </Tippy>
+                  )}
 
-              {/*<Link to="/productos">*/}
-              <IconButton
-                className="responsive-lupa"
-                id="lupa"
-                color="inherit"
-                onClick={() => BuscarMovil()}
-                /*                  type="submit"*/
-              >
-                <Search />
-              </IconButton>
-              {/*</Link>*/}
+                  {/* 👥 Solo admin */}
+                  {tipouser === 3 && (
+                    <>
+                      <Tippy content={"Agregar un usuario"}>
+                        <Link to="/registrarse?inserta=true&where=true">
+                          <IconButton sx={{ color: "aliceblue" }} id="user">
+                            <PersonAddAlt1 />
+                          </IconButton>
+                        </Link>
+                      </Tippy>
+                      <Tippy content={"Editar un usuario"}>
+                        <Link to="/registrarse?inserta=false&where=true">
+                          <IconButton sx={{ color: "aliceblue" }} id="user">
+                            <ManageAccountsOutlinedIcon />
+                          </IconButton>
+                        </Link>
+                      </Tippy>
+                    </>
+                  )}
+                </div>
 
+                {/* 🔎 Lupa móvil */}
+                <IconButton
+                  className="responsive-lupa"
+                  id="lupa"
+                  color="inherit"
+                  onClick={() => BuscarMovil()}
+                >
+                  <Search />
+                </IconButton>
+
+                {/* 🛒 Carrito */}
                 <IconButton
                   sx={{ padding: 0 }}
                   id="carrito"
                   color="inherit"
-                  onClick={() => console.log("Ir al carrito")} // aquí pones tu función
+                  onClick={() => console.log("Ir al carrito")}
                 >
                   <ShoppingCart className="icono-carrito" />
                 </IconButton>
 
-              <IconButton
-                sx={{ padding: 0 }}
-                id="toggle-b"
-                color="inherit"
-                onClick={toggleMenu}
-              >
-                <Menu className="hamburguesa" id="toggle-i" />
-              </IconButton>
-            </div>
-          ) : (
-            ""
-          )}
-        </div>
+                {/* 🚪 Logout (solo si hay usuario) */}
+                {isValid(user) && (
+                  <Tippy content="Cerrar sesión">
+                    <IconButton
+                      sx={{ padding: 0, color: "aliceblue" }}
+                      id="logout"
+                      onClick={() => {
+                        sessionStorage.clear();
+                        setUser(null);
+                        setTipouser(0);
+                        navigate("/");
+                        init();
+                      }}
+                    >
+                      <Logout />
+                    </IconButton>
+                  </Tippy>
+                )}
 
-        <div className="agrupa-menu">
-          {inicia === false ? (
-            <div className="menuPrimero">
-              <Box
-                sx={{ display: { xs: "none", md: "flex" } }}
-                className="links"
-              >
-                {/*
-                <Tippy content={"Su ubicación actual"}>
-                  <IconButton
-                    sx={{ padding: 0 }}
-                    color="inherit"
-                    onClick={() => goToUbica()}
+                {/* 🍔 Menú hamburguesa */}
+                <IconButton
+                  sx={{ padding: 0 }}
+                  id="toggle-b"
+                  color="inherit"
+                  onClick={toggleMenu}
+                >
+                  <Menu className="hamburguesa" id="toggle-i" />
+                </IconButton>
+              </div>
+            </div>
+
+            {/* Menús SOLO admin */}
+            {tipouser === 3 && (
+              <div className="agrupa-menu">
+                <div className="menuPrimero">
+                  <Box
+                    sx={{ display: { xs: "none", md: "flex" } }}
+                    className="links"
                   >
-                    <PlaceOutlined
-                      sx={{ color: "aliceblue", fontSize: "28px" }}
-                    />
-                    <span className="ubicacion">Ubicación</span>
-                  </IconButton>
-                </Tippy>
-                <Location
-                  open={showDialog}
-                  onModalClose={onModalClose}
-                  whereIs={whereIs}
-                />
-                */}
-                {menuPrimero.map((item, i) => (
-                  <Fragment key={i}>
-                    <Tippy content={item.tooltips}>
-                      {item.tipo === 0 ? (
-                        <Link className="place" key={item.label} to={item.to}>
-                          {item.img === 1 ? (
-                            <PlaceOutlined sx={{ fontSize: "28px" }} />
-                          ) : (
-                            ""
-                          )}
+                    {menuPrimero.map((item, i) => (
+                      <Fragment key={i}>
+                        <Tippy content={item.tooltips}>
+                          <Link className="place" key={item.label} to={item.to}>
+                            {item.label}
+                          </Link>
+                        </Tippy>
+                      </Fragment>
+                    ))}
+                  </Box>
+                </div>
+
+                <div className="menuSegundo">
+                  <Box
+                    sx={{ display: { xs: "none", md: "flex" }, gap: "20px" }}
+                    className="links"
+                  >
+                    {menuSegundo.map((item, i) => (
+                      <Fragment key={i}>
+                        <Link className="menu-nav" key={item.label} to={item.to}>
                           {item.label}
                         </Link>
-                      ) : (
-                        <IconButton
-                          sx={{ padding: 0 }}
-                          id={i}
-                          color="inherit"
-                          onClick={() => item.funcion()}
-                        >
-                          {item.img === 1 ? (
-                            <PlaceOutlined
-                              sx={{ color: "aliceblue", fontSize: "28px" }}
-                            />
-                          ) : (
-                            ""
-                          )}
-                        <span className="ubicacion">{item.label}</span>
-                        </IconButton>
-                      )}
-                    </Tippy>
-                  </Fragment>
-                ))}
-              </Box>
-            </div>
+                      </Fragment>
+                    ))}
+                  </Box>
+                </div>
 
-          ) : (
-            ""
-          )}
-          {inicia === false ? (
-            <div className="menuSegundo">
-              <Box
-                sx={{ display: { xs: "none", md: "flex" }, gap: "20px" }}
-                className="links"
-              >
-                {menuSegundo.map((item, i) => (
-                  <Fragment key={i}>
-                    {item.tooltips !== "" ? (
-                      <Tippy content={item.tooltips}>
-                        {((item.depende === 1 && nivel === 0) ||
-                        (item.depende === 2 &&
-                          isValid(sessionStorage.getItem("user")) === true) ||
-                        (item.depende === 4 &&
-                          sessionStorage.getItem("tipouser") !== "1" &&
-                          sessionStorage.getItem("tipouser") !== "2" &&
-                          sessionStorage.getItem("tipouser") !== "3")) ||  (item.label==="Inicio sesión" && Number(nivel)===9999) ? (
-                          ""
-                        ) : (
-                          <Link
-                            className="menu-nav"
-                            key={item.label}
-                            to={
-                              isValid(item.anuncio) === false
-                                ? `${item.to}?categoria=0&login=${item.login}&regreso=${item.to}&${item.inserta}`
-                                : `${item.to}?anuncio=${item.anuncio}&${item.inserta}
-                            &categoria=0&login=${item.login}&regreso=${item.to}`
-                            }
-                          >
-                            {item.label}
-                          </Link>
-                        )}
-                      </Tippy>
-                    ) : (
-                      <>
-                        {((item.depende === 1 && nivel === 0) ||
-                        (item.depende === 2 &&
-                          isValid(sessionStorage.getItem("user")) === true) ||
-                        (item.depende === 4 &&
-                          sessionStorage.getItem("tipouser") !== "1" &&
-                          sessionStorage.getItem("tipouser") !== "2" &&
-                          sessionStorage.getItem("tipouser") !== "3"))  ||  (item.label==="Inicio sesión" && Number(nivel)===9999) ? (
-                          ""
-                        ) : (
-                          <Link
-                            className="menu-nav"
-                            key={item.label}
-                            to={
-                              isValid(item.anuncio) === false
-                                ? `${item.to}?categoria=0&login=${item.login}&regreso=${item.to}&${item.inserta}`
-                                : `${item.to}?anuncio=${item.anuncio}&${item.inserta}
-                            &categoria=0&login=${item.login}&regreso=${item.to}`
-                            }
-                          >
-                            {item.label}
-                          </Link>
-                        )}
-                      </>
-                    )}
-                  </Fragment>
-                ))}
-              </Box>
-            </div>
-          ) : (
-            ""
-          )}
-          <Box sx={{ display: { xs: "none", md: "flex" } }} className="links">
-            {menuTercero.map((item, i) => (
-              <Fragment key={i}>
-                <Link className="menu-nav" key={item.label} to={item.to}>
-                  {item.label}
-                </Link>
-              </Fragment>
-            ))}
-          </Box>
-        </div>
-      </div>
-      <NavigationDrawer
-        nivel={nivel}
-        open={showMenu}
-        onClose={() => setShowMenu(false)}
-        openLocation={() => goToUbica()}
-      />
-      </>
-      :""}
+                <Box
+                  sx={{ display: { xs: "none", md: "flex" } }}
+                  className="links"
+                >
+                  {menuTercero.map((item, i) => (
+                    <Fragment key={i}>
+                      <Link className="menu-nav" key={item.label} to={item.to}>
+                        {item.label}
+                      </Link>
+                    </Fragment>
+                  ))}
+                </Box>
+              </div>
+            )}
+          </div>
+
+          <NavigationDrawer
+            nivel={nivel}
+            open={showMenu}
+            onClose={() => setShowMenu(false)}
+            openLocation={() => goToUbica()}
+          />
+        </>
+      ) : (
+        ""
+      )}
     </>
   );
 };
