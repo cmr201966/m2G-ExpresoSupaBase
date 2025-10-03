@@ -13,21 +13,19 @@ import Hero from "../../layouts/Hero/Hero";
 import "./styles.css";
 
 // @mui/icons
-import {
-  WhatsApp,
-  Email,
-  PhoneAndroid,
-  Phone,
-} from "@mui/icons-material";
-
-// @mui/material
-import { IconButton } from "@mui/material";
+import { WhatsApp, Email, PhoneAndroid, Phone } from "@mui/icons-material";
 
 // utiles
 import { isValid, getJpgFileSB } from "../../Utiles/Utiles";
 
 // contexts
 import { useNotification } from "../../context/NotificationProvider";
+
+// 🔹 Importar imágenes locales
+import almendra from "../../assets/images/almendra.png";
+import jabon2 from "../../assets/images/jabon2.jpg";
+import jabon3 from "../../assets/images/jabon3.jpg";
+import jabon4 from "../../assets/images/jabon4.jpg";
 
 const Acercade = () => {
   const [contenidofoto, setContenidofoto] = useState();
@@ -57,10 +55,12 @@ const Acercade = () => {
   return (
     <div className="info-anuncios fondo-claro">
       <Navbar nivel={1} />
-      <Encabezado clase={"encabezado"} />
+
+      {/* Encabezado */}
+      <Encabezado clase={"encabezado sin-borde"} />
+
       <Hero clase={"hero-section-about"}>
         <div className="acercade">
-
           {/* LOGO PRINCIPAL */}
           <div className="logo-acerca">
             <Link to="/">
@@ -77,30 +77,34 @@ const Acercade = () => {
 
           {/* BLOQUES DE TEXTO + IMAGEN */}
           <div className="acercade-bloques">
-
             {/* BLOQUE 1 */}
             <div className="bloque">
               <div className="bloque-img">
-                <img src="/images/jabon1.jpg" alt="Jabón artesanal 1" />
+                <img src={almendra} alt="Jabón artesanal 1" />
               </div>
               <div className="bloque-texto">
                 <p>
-                  Hace unos meses, en la Ciudad de México, nació nuestro emprendimiento con un propósito sencillo pero profundo:
-                  transformar lo cotidiano en algo especial. Descubrimos que el cuidado personal puede ser más que una rutina;
-                  puede ser un momento de conexión, frescura y bienestar.
+                  Hace unos meses, en la Ciudad de México, nació nuestro
+                  emprendimiento con un propósito sencillo pero profundo:
+                  transformar lo cotidiano en algo especial. Descubrimos que el
+                  cuidado personal puede ser más que una rutina; puede ser un
+                  momento de conexión, frescura y bienestar.
                 </p>
               </div>
             </div>
 
-            {/* BLOQUE 2 (invertido) */}
+            {/* BLOQUE 2 */}
             <div className="bloque bloque-invertido">
               <div className="bloque-img">
-                <img src="/images/jabon2.jpg" alt="Jabón artesanal 2" />
+                <img src={jabon2} alt="Jabón artesanal 2" />
               </div>
               <div className="bloque-texto">
                 <p>
-                  Cada jabón artesanal que elaboramos es único, hecho a mano con dedicación, paciencia y amor. Usamos ingredientes naturales,
-                  cuidamos cada detalle y buscamos que cada pieza no solo limpie, sino que también nutra tu piel y despierte tus sentidos.
+                  Cada jabón artesanal que elaboramos es único, hecho a mano con
+                  dedicación, paciencia y amor. Usamos ingredientes naturales,
+                  cuidamos cada detalle y buscamos que cada pieza no solo
+                  limpie, sino que también nutra tu piel y despierte tus
+                  sentidos.
                 </p>
               </div>
             </div>
@@ -108,32 +112,36 @@ const Acercade = () => {
             {/* BLOQUE 3 */}
             <div className="bloque">
               <div className="bloque-img">
-                <img src="/images/jabon3.jpg" alt="Jabón artesanal 3" />
+                <img src={jabon3} alt="Jabón artesanal 3" />
               </div>
               <div className="bloque-texto">
                 <p>
-                  Somos un equipo joven que, desde hace 4 meses, trabaja para ofrecerte productos auténticos y diferentes a lo convencional.
-                  Nuestros jabones son ideales para consentirte todos los días o para regalar un detalle especial lleno de aroma, suavidad y naturaleza.
+                  Somos un equipo joven que, desde hace 4 meses, trabaja para
+                  ofrecerte productos auténticos y diferentes a lo convencional.
+                  Nuestros jabones son ideales para consentirte todos los días o
+                  para regalar un detalle especial lleno de aroma, suavidad y
+                  naturaleza.
                 </p>
               </div>
             </div>
 
-            {/* BLOQUE 4 (invertido) */}
+            {/* BLOQUE 4 */}
             <div className="bloque bloque-invertido">
               <div className="bloque-img">
-                <img src="/images/jabon4.jpg" alt="Jabón artesanal 4" />
+                <img src={jabon4} alt="Jabón artesanal 4" />
               </div>
               <div className="bloque-texto">
                 <p>
-                  En pocas palabras: jabones hechos a mano, con ingredientes naturales y con un propósito claro… regalarte pequeños instantes de frescura y bienestar.
+                  En pocas palabras: jabones hechos a mano,
+                  con ingredientes naturales y con un propósito claro…
+                  regalarte pequeños instantes de frescura y bienestar.
                 </p>
                 <p className="slogan">✨ Amor a tu piel ✨</p>
               </div>
             </div>
-
           </div>
 
-          {/* CREDITOS */}
+          {/* CREDITOS
           <div className="acercade-flex-1">
             <p>Esta aplicación web fue desarrollada por</p>
             {sessionStorage.getItem("idapp") === "m2G-Software" ? (
@@ -150,7 +158,7 @@ const Acercade = () => {
             )}
           </div>
 
-          {/* CONTACTOS */}
+          {/* CONTACTOS
           <div className="acercade-flex">
             <a href="tel:+5352675359" className="acercade-row">
               <PhoneAndroid />
@@ -172,7 +180,7 @@ const Acercade = () => {
           </div>
 
           <p>En Santiago de Cuba.</p>
-          <p className="text-center">Todos los derechos reservados. 2025</p>
+          <p className="text-center">Todos los derechos reservados. 2025</p>*/}
         </div>
       </Hero>
     </div>

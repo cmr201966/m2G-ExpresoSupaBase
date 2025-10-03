@@ -219,6 +219,19 @@ const Home = () => {
               sizeClass="grande"
             />
 
+            {/* 🔹 Texto de bienvenida adaptado */}
+            <section className="welcome-section">
+              <div className="container">
+                <h2>Bienvenido a HABUN</h2>
+                <p>
+                  Descubre el mundo de los jabones artesanales: hechos a mano,
+                  con ingredientes naturales y diseñados para cuidar tu piel con
+                  suavidad, frescura y bienestar.
+                </p>
+              </div>
+            </section>
+
+            {/* 🔹 Degradado y sliders van DESPUÉS */}
             <div className="main-grid negative-margin">
               <div className="grid-letf"></div>
               <div className="gradient-background"></div>
@@ -228,7 +241,7 @@ const Home = () => {
           </>
         )}
       </Hero>
-      <Footer /> {/* 🔹 Agregado aquí */}
+      <Footer /> {/* 🔹 Footer fijo */}
     </div>
   );
 };

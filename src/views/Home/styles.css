@@ -213,3 +213,35 @@
   margin-top: 10px;
   margin-right: auto;
 }
+
+.welcome-section {
+  position: relative;
+  z-index: 5; /* 🔹 Se muestra por encima */
+  background: #fff;
+  padding: 2.5rem 1.5rem;
+  margin: 2rem auto;
+  text-align: center;
+  border-radius: 16px;
+  box-shadow: 0 6px 16px rgba(0, 0, 0, 0.1);
+  max-width: 900px;
+}
+
+.welcome-section h2 {
+  font-size: 2rem;
+  margin-bottom: 1rem;
+  color: #0d47a1; /* azul principal */
+  font-weight: bold;
+}
+
+.welcome-section p {
+  font-size: 1.0rem;
+  color: #444;
+  max-width: 700px;
+  margin: 0 auto;
+  line-height: 1.6;
+}
+
+.welcome-section .container {
+  max-width: 1000px;         /* 🔹 Aquí le das el ancho máximo */
+  margin: 0 auto;            /* Centra horizontalmente */
+}
