@@ -1,5 +1,5 @@
 {
-  "name": "expreso",
+  "name": "marketing",
   "private": true,
   "version": "0.0.0",
   "type": "module",
@@ -9,7 +9,7 @@
     "lint": "eslint . --ext js,jsx --report-unused-disable-directives --max-warnings 0",
     "preview": "vite preview",
     "deploy": "firebase deploy --only hosting:expreso-stgo",
-    "deploy-destodo": "firebase deploy --only hosting:destodo"
+    "deploy-marketing": "firebase deploy --only hosting:m2g-marketing-stgo"
   },
   "dependencies": {
     "@emailjs/browser": "^4.4.1",
