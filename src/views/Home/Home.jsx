@@ -1,7 +1,3 @@
-{
-  /*QRCode value="TRANSFERMOVIL_ETECSA, TRANSFERENCIA,9224069991525391,56174215" />
-  <QRCode value="https://expreso-cb7f2.web.app/" />*/
-}
 import { useEffect, useMemo, useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
 
@@ -15,24 +11,16 @@ import Navbar from "../../components/Navbar/Navbar";
 import BigSlider from "../../components/BigSlider/BigSlider";
 import MultipleSlider from "../../components/MultipleSlider/MultipleSlider";
 import CardMultipleSlider from "../../components/CardMultipleSlider/CardMultipleSlider";
+import Footer from "../../components/Footer/Footer"; // 🔹 Importamos el footer
 
 // layouts
 import Hero from "../../layouts/Hero/Hero";
 
 // utils
-import {
-  isValid,
-  creaBucket,
-  borraSessionStorage,
-  getJpgFileSB,
-} from "../../Utiles/Utiles";
-import {
-  getanunciosCM,
-  getcategoriasnewCM,
-  setVisitas,
-} from "../../Utiles/apiBaseDatos";
+import { isValid, creaBucket, borraSessionStorage, getJpgFileSB } from "../../Utiles/Utiles";
+import { getanunciosCM, getcategoriasnewCM, setVisitas } from "../../Utiles/apiBaseDatos";
 
-// contexts
+// context
 import { useNotification } from "../../context/NotificationProvider";
 
 // styles
@@ -61,154 +49,107 @@ const Home = () => {
   async function init() {
     setInicia(true);
     setShow(true);
-    if (
-      isValid(parsedParams.categoria) === true &&
-      parsedParams.categoria !== "" &&
-      isValid(sessionStorage.getItem("directo")) === false
-    ) {
-      navigate(`/productos?categoria=${parsedParams.categoria}`);
-    }
+
     sessionStorage.setItem("directo", "1");
     sessionStorage.setItem("deDonde", "Home");
-    if (sessionStorage.getItem("sgbd").toLocaleUpperCase() === "SUPABASE")
+
+    if (sessionStorage.getItem("sgbd")?.toLocaleUpperCase() === "SUPABASE")
       creaBucket("galerias");
+
     borraSessionStorage(["categoria"]);
-    const newResult = [];
-    if (
-      parsedParams.nivel === undefined ||
-      parsedParams.idowner === undefined ||
-      parsedParams.nivel === "0"
-    ) {
-      setNivel(0);
-      let visitas = await setVisitas();
-      console.log("Visitas: ", visitas);
-      let resultApp = await getanunciosCM("0");
-      if (resultApp === null) resultApp = [];
-      let imgsFileName1 = [];
-      let imgsFolder1 = [];
-      let imgsId1 = [];
-      let category1 = [];
-      let users1 = [];
-      let nombres1 = [];
-      let links1 = [];
-      let ruta =
-        sessionStorage.getItem("sgbd").toLocaleUpperCase() === "MYSQL"
-          ? "./galerias/app_images/aplicaciones"
-          : "aplicaciones/home";
-      resultApp.forEach((item) => {
-        let pcMovil = screenWidth <= 600 ? "-movil" : "";
-        imgsFileName1.push(item.id + pcMovil + ".jpg");
-        imgsFolder1.push(ruta + "/" + item.id);
-        imgsId1.push(item.idsb);
-        category1.push(item.idcategoria);
-        users1.push(item.iduser);
-        nombres1.push(item.desc);
-        links1.push(item.link);
-      });
-      setImgsFileName(imgsFileName1);
-      setImgsFolder(imgsFolder1);
-      setImgsId(imgsId1);
-      setCategorys(category1);
-      setUsers(users1);
-      setNombres(nombres1);
-      setLinks(links1);
-      let result = await getcategoriasnewCM(true);
-      let longitug = isValid(result) === true ? result.length : 0;
-      let arrayContenidoFoto = [];
-      let resultado = [];
-      for (let i = 0; i < longitug; i += 1) {
-        resultado = await getJpgFileSB(
-          result[i].idcategoria + ".jpg",
-          "./galerias/app_images/categorias_de_negocios/" +
-            result[i].idcategoria,
-          "categorias_de_negocios/" + result[i].idcategoria,
-          result[i].idsb
+
+    // 🔹 Mostrar carrusel para todos
+    setNivel(0);
+    await setVisitas();
+
+    // BigSlider
+    let resultApp = await getanunciosCM("0");
+    if (resultApp === null) resultApp = [];
+
+    let imgsFileName1 = [];
+    let imgsFolder1 = [];
+    let imgsId1 = [];
+    let category1 = [];
+    let users1 = [];
+    let nombres1 = [];
+    let links1 = [];
+
+    let ruta =
+      sessionStorage.getItem("sgbd")?.toLocaleUpperCase() === "MYSQL"
+        ? "./galerias/app_images/aplicaciones"
+        : "aplicaciones/home";
+
+    resultApp.forEach((item) => {
+      let pcMovil = screenWidth <= 600 ? "-movil" : "";
+      imgsFileName1.push(item.id + pcMovil + ".jpg");
+      imgsFolder1.push(ruta + "/" + item.id);
+      imgsId1.push(item.idsb);
+      category1.push(item.idcategoria);
+      users1.push(item.iduser);
+      nombres1.push(item.desc);
+      links1.push(item.link);
+    });
+
+    setImgsFileName(imgsFileName1);
+    setImgsFolder(imgsFolder1);
+    setImgsId(imgsId1);
+    setCategorys(category1);
+    setUsers(users1);
+    setNombres(nombres1);
+    setLinks(links1);
+
+    // MultipleSlider
+    let categoriesResult = await getcategoriasnewCM(true);
+    let arrayContenidoFoto = [];
+
+    if (isValid(categoriesResult)) {
+      for (let i = 0; i < categoriesResult.length; i++) {
+        let foto = await getJpgFileSB(
+          categoriesResult[i].idcategoria + ".jpg",
+          "./galerias/app_images/categorias_de_negocios/" + categoriesResult[i].idcategoria,
+          "categorias_de_negocios/" + categoriesResult[i].idcategoria,
+          categoriesResult[i].idsb
         );
-        if (
-          isValid(resultado) === true &&
-          resultado !== "" &&
-          isValid(resultado.length) === true
-        )
-          arrayContenidoFoto.push(resultado);
-        else {
-          setMessage("Error al recuperar la imagen del usuario");
-          setOpen(true);
-        }
+        arrayContenidoFoto.push(foto || "");
       }
-      if (longitug !== 0) {
-        if (sessionStorage.getItem("sgbd").toLocaleUpperCase() !== "MYSQL")
-          result.forEach((item, i) => {
-            newResult.push({
-              categoria: item.idcategoria,
-              name: item.nick,
-              link: item.link,
-              photo: arrayContenidoFoto[i],
-              tooltip: item.categoria,
-            });
-          });
-        else
-          result.forEach((item, i) => {
-            newResult.push({
-              categoria: item.idcategoria,
-              name: item.nick,
-              link: item.link,
-              photo: arrayContenidoFoto[i],
-              tooltip: item.categoria,
-            });
-          });
-        setResult(newResult);
-      }
+
+      const newResult = categoriesResult.map((item, i) => ({
+        categoria: item.idcategoria,
+        name: item.nick,
+        link: item.link,
+        photo: arrayContenidoFoto[i],
+        tooltip: item.categoria,
+      }));
+
+      setResult(newResult);
     }
 
+    // Detecta invitado o usuario
     sessionStorage.getItem("user") === null
       ? setRutatmp("usuarios/invitado")
       : setRutatmp(`usuarios/${sessionStorage.getItem("user")}`);
     sessionStorage.getItem("user") === null
       ? setDesctmp("invitado")
       : setDesctmp(`${sessionStorage.getItem("usernombre")}`);
+
     setInicia(false);
     setShow(false);
   }
 
   const arrayOfCards = useMemo(() => {
-    const resultOfCards = [];
-    result.forEach((prop, i) =>
-      resultOfCards.push(
-        <CardMultipleSlider
-          key={i}
-          link={prop.link}
-          titulo={prop.name}
-          categoria={prop.categoria}
-          imagen={prop.photo}
-          descripcion={prop.tooltip}
-          rutatmp={rutatmp}
-          desctmp={desctmp}
-          nivel={nivel}
-        />
-      )
-    );
-    return resultOfCards;
-  }, [result]);
-
-  // 🔹 Segundo carrusel
-  const arrayOfCards2 = useMemo(() => {
-    const resultOfCards = [];
-    result.forEach((prop, i) =>
-      resultOfCards.push(
-        <CardMultipleSlider
-          key={`second-${i}`}
-          link={prop.link}
-          titulo={prop.name}
-          categoria={prop.categoria}
-          imagen={prop.photo}
-          descripcion={prop.tooltip}
-          rutatmp={rutatmp}
-          desctmp={desctmp}
-          nivel={nivel}
-        />
-      )
-    );
-    return resultOfCards;
+    return result.map((prop, i) => (
+      <CardMultipleSlider
+        key={i}
+        link={prop.link}
+        titulo={prop.name}
+        categoria={prop.categoria}
+        imagen={prop.photo}
+        descripcion={prop.tooltip}
+        rutatmp={rutatmp}
+        desctmp={desctmp}
+        nivel={nivel}
+      />
+    ));
   }, [result]);
 
   useEffect(() => {
@@ -230,17 +171,13 @@ const Home = () => {
         <div className="grip-flecha">
           <div></div>
           <div className="encabezado">
-            {nivel === 0 ? (
-              ""
-            ) : (
+            {nivel !== 0 && (
               <>
                 <IconButton
                   color="primary"
                   onClick={() => {
                     navigate(
-                      `/?naturaleza=${sessionStorage.getItem(
-                        "naturaleza"
-                      )}&owner=${sessionStorage.getItem(
+                      `/?naturaleza=${sessionStorage.getItem("naturaleza")}&owner=${sessionStorage.getItem(
                         "idowner"
                       )}&nivel=${sessionStorage.getItem("nivel")}`
                     );
@@ -254,7 +191,8 @@ const Home = () => {
           </div>
           <div></div>
         </div>
-        {show ? (
+
+        {show && (
           <Box
             sx={{
               width: "100%",
@@ -266,10 +204,10 @@ const Home = () => {
           >
             <CircularProgress color="checkbox" />
           </Box>
-        ) : null}
-        {inicia === false ? (
+        )}
+
+        {!inicia && (
           <>
-            {/* 🔹 Slider grande */}
             <BigSlider
               imgsFolder={imgsFolder}
               imgsFileName={imgsFileName}
@@ -281,31 +219,16 @@ const Home = () => {
               sizeClass="grande"
             />
 
-            {/* 🔹 Primer carrusel */}
             <div className="main-grid negative-margin">
               <div className="grid-letf"></div>
               <div className="gradient-background"></div>
-
               <MultipleSlider imgs={arrayOfCards} />
-
               <div className="grid-rigth"></div>
             </div>
-
-            {/* 🔹 Segundo carrusel debajo
-            <div className="main-grid negative-margin2">
-              <div className="grid-letf"></div>
-              <div className="gradient-background"></div>
-
-              <MultipleSlider imgs={arrayOfCards2} />
-
-              <div className="grid-rigth"></div>
-            </div>
-            */}
           </>
-        ) : (
-          ""
         )}
       </Hero>
+      <Footer /> {/* 🔹 Agregado aquí */}
     </div>
   );
 };

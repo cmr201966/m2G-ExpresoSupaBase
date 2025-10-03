@@ -1,0 +1,13 @@
+.footer {
+  background-color: rgb(202, 94, 228); /* mismo color que .navbar-row */
+  color: aliceblue;
+  padding: 10px 0;
+  text-align: center;
+  width: 100%;
+}
+
+.footer-text {
+  margin: 0;
+  font-size: 14px;
+  font-weight: bold;
+}

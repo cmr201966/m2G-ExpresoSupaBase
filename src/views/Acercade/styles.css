@@ -5,7 +5,7 @@
   flex-direction: column;
   /*justify-content: center;*/
   align-items: center;
-  color: white;
+  color: rgb(1, 1, 1);
   gap: 5px;
   margin-top: 20px;
 }
@@ -26,14 +26,18 @@
   border-radius: 10px;
 }
 .acercade-title {
-  color: aliceblue;
+  color: rgb(2, 2, 2);
+}
+
+.hero-section-about {
+  background-color: #ffffff; /* fondo blanco */
 }
 
 .acercade-button {
   background: dodgerblue;
   border: none;
   padding: 7px 15px;
-  color: rgb(242 245 247);
+  color: rgb(7, 7, 7);
   cursor: pointer;
   margin-top: 3px;
   margin-bottom: 2px;
@@ -55,7 +59,7 @@
 
 .acercade-row {
   display: flex;
-  color: aliceblue;
+  color: rgb(1, 2, 3);
   text-decoration: none;
   align-items: center;
   gap: 5px;
@@ -81,8 +85,64 @@
   text-align: center;
 }
 .about-1{
-  color: white;
+  color: rgb(163, 169, 249);
 }
 .texto-acercade{
   width: 60%;
+}
+
+.acercade-bloques {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+  margin: 2rem 0;
+}
+
+.bloque {
+  display: flex;
+  align-items: center;
+  gap: 2rem;
+}
+
+.bloque-invertido {
+  flex-direction: row-reverse; /* alterna izquierda/derecha */
+}
+
+.bloque-img img {
+  width: 250px;
+  height: auto;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+.bloque-texto {
+  flex: 1;
+  font-size: 1.1rem;
+  line-height: 1.6;
+}
+
+.slogan {
+  font-weight: bold;
+  font-size: 1.2rem;
+  color: #5a2d82;
+  margin-top: 1rem;
+  text-align: left;
+}
+
+/* 📱 Responsive para móvil */
+@media (max-width: 768px) {
+  .bloque,
+  .bloque-invertido {
+    flex-direction: column; /* imagen arriba, texto abajo */
+    text-align: center;
+  }
+
+  .bloque-img img {
+    width: 100%;
+    max-width: 350px;
+  }
+
+  .bloque-texto {
+    font-size: 1rem;
+  }
 }

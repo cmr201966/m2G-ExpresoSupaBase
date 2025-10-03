@@ -8,6 +8,8 @@ import NavigationDrawer from "./Drawer";
 import Location from "./Location";
 import SearchWrapper from "./SearchWrapper";
 import { ShoppingCart } from "@mui/icons-material";
+import LanguageIcon from "@mui/icons-material/Language";
+import GroupsIcon from "@mui/icons-material/Groups";
 
 // @mui/material
 import { Box, IconButton } from "@mui/material";
@@ -49,52 +51,25 @@ const Navbar = (props) => {
   const [whereIs, setWhereIs] = useState("");
   const [inicia, setInicia] = useState(true);
 
-  // 👇 Estado que maneja el usuario actual
+  // Estado de usuario
   const [user, setUser] = useState(sessionStorage.getItem("user"));
   const [tipouser, setTipouser] = useState(
     Number(sessionStorage.getItem("tipouser"))
   );
 
+  // Menús
   const [menuPrimero] = useState([]);
   const [menuSegundo] = useState([
-    {
-      label: "Inicio",
-      to: "/",
-      tooltips: "",
-    },
-    {
-      label: "Inicio sesión",
-      to: "/login",
-      tooltips: "Abrir sesión",
-    },
-    {
-      label: "Registrarse",
-      to: "/registrarse",
-      tooltips: "Agregar un negocio",
-    },
+    { label: "Inicio", to: "/", tooltips: "" },
+    { label: "Inicio sesión", to: "/login", tooltips: "Abrir sesión" },
+    { label: "Registrarse", to: "/registrarse", tooltips: "Agregar un negocio" },
     {
       label: "Ir a categoria",
       to: "/categorias",
       tooltips: "Ir a los productos de una categoria",
     },
-    {
-      label: "Publicar",
-      to: "/catproductos",
-      tooltips: "Publicar productos",
-    },
-    {
-      label: "Anuncios",
-      to: "/anuncios",
-      tooltips: "Publicar anuncios",
-    },
-  ]);
-
-  const [menuTercero] = useState([
-    {
-      label: "Conócenos",
-      to: "/acercade",
-      tooltips: "Acerca de Habun",
-    },
+    { label: "Publicar", to: "/catproductos", tooltips: "Publicar productos" },
+    { label: "Anuncios", to: "/anuncios", tooltips: "Publicar anuncios" },
   ]);
 
   function toggleMenu() {
@@ -115,6 +90,7 @@ const Navbar = (props) => {
 
   async function init() {
     setInicia(true);
+
     if (
       sessionStorage.getItem("deDonde") !== "infoProducto" &&
       sessionStorage.getItem("deDonde") !== "infoNegocio"
@@ -133,22 +109,19 @@ const Navbar = (props) => {
       "destodo",
       Date.now()
     );
+
     if (isValid(resultado) === true) {
       setContenidofoto(resultado);
     } else {
       setMessage("Error al recuperar la imagen de " + config[0].idapp);
       setOpen(true);
     }
+
     setInicia(false);
 
-    // 👇 actualizamos estado al montar
+    // Actualizamos estado usuario
     setUser(sessionStorage.getItem("user"));
     setTipouser(Number(sessionStorage.getItem("tipouser")));
-
-    // 🔍 DEBUG
-    console.log("🔄 INIT ejecutado");
-    console.log("Session user:", sessionStorage.getItem("user"));
-    console.log("Session tipouser:", sessionStorage.getItem("tipouser"));
   }
 
   function goToUbica() {
@@ -159,6 +132,12 @@ const Navbar = (props) => {
   useEffect(() => {
     init();
   }, [location]);
+
+  // 🔹 Manejo del logout con recarga completa
+  const handleLogout = () => {
+    sessionStorage.clear();   // limpiar sessionStorage
+    window.location.reload(); // 🔹 Recarga toda la app como si fuese F5
+  };
 
   return (
     <>
@@ -258,34 +237,54 @@ const Navbar = (props) => {
                   <Search />
                 </IconButton>
 
-                {/* 🛒 Carrito */}
-                <IconButton
-                  sx={{ padding: 0 }}
-                  id="carrito"
-                  color="inherit"
-                  onClick={() => console.log("Ir al carrito")}
-                >
-                  <ShoppingCart className="icono-carrito" />
-                </IconButton>
+                {/* Idioma */}
+                <Tippy content={"Idioma"}>
+                  <IconButton
+                    sx={{ padding: 0 }}
+                    id="idioma"
+                    color="inherit"
+                    onClick={() => console.log("Cambiar idioma")}
+                  >
+                    <LanguageIcon className="icono-idioma" />
+                  </IconButton>
+                </Tippy>
 
-                {/* 🚪 Logout (solo si hay usuario) */}
+                {/* 🛒 Carrito */}
+                <Tippy content={"Comprar"}>
+                  <IconButton
+                    sx={{ padding: 0 }}
+                    id="carrito"
+                    color="inherit"
+                    onClick={() => console.log("Ir al carrito")}
+                  >
+                    <ShoppingCart className="icono-carrito" />
+                  </IconButton>
+                </Tippy>
+
+                {/* 🚪 Logout */}
                 {isValid(user) && (
                   <Tippy content="Cerrar sesión">
                     <IconButton
                       sx={{ padding: 0, color: "aliceblue" }}
                       id="logout"
-                      onClick={() => {
-                        sessionStorage.clear();
-                        setUser(null);
-                        setTipouser(0);
-                        navigate("/");
-                        init();
-                      }}
+                      onClick={handleLogout}
                     >
                       <Logout />
                     </IconButton>
                   </Tippy>
                 )}
+
+                {/* Nosotros (solo icono) */}
+                <Tippy content={"Nosotros"}>
+                  <IconButton
+                    sx={{ padding: 0 }}
+                    id="nosotros"
+                    color="inherit"
+                    onClick={() => navigate("/acercade")}
+                  >
+                    <GroupsIcon className="icono-nosotros" />
+                  </IconButton>
+                </Tippy>
 
                 {/* 🍔 Menú hamburguesa */}
                 <IconButton
@@ -299,55 +298,44 @@ const Navbar = (props) => {
               </div>
             </div>
 
-            {/* Menús SOLO admin */}
-            {tipouser === 3 && (
-              <div className="agrupa-menu">
-                <div className="menuPrimero">
-                  <Box
-                    sx={{ display: { xs: "none", md: "flex" } }}
-                    className="links"
-                  >
-                    {menuPrimero.map((item, i) => (
-                      <Fragment key={i}>
-                        <Tippy content={item.tooltips}>
-                          <Link className="place" key={item.label} to={item.to}>
+            <div className="agrupa-menu">
+              {/* Menús solo admin */}
+              {tipouser === 3 && (
+                <>
+                  <div className="menuPrimero">
+                    <Box
+                      sx={{ display: { xs: "none", md: "flex" } }}
+                      className="links"
+                    >
+                      {menuPrimero.map((item, i) => (
+                        <Fragment key={i}>
+                          <Tippy content={item.tooltips}>
+                            <Link className="place" key={item.label} to={item.to}>
+                              {item.label}
+                            </Link>
+                          </Tippy>
+                        </Fragment>
+                      ))}
+                    </Box>
+                  </div>
+
+                  <div className="menuSegundo">
+                    <Box
+                      sx={{ display: { xs: "none", md: "flex" }, gap: "20px" }}
+                      className="links"
+                    >
+                      {menuSegundo.map((item, i) => (
+                        <Fragment key={i}>
+                          <Link className="menu-nav" key={item.label} to={item.to}>
                             {item.label}
                           </Link>
-                        </Tippy>
-                      </Fragment>
-                    ))}
-                  </Box>
-                </div>
-
-                <div className="menuSegundo">
-                  <Box
-                    sx={{ display: { xs: "none", md: "flex" }, gap: "20px" }}
-                    className="links"
-                  >
-                    {menuSegundo.map((item, i) => (
-                      <Fragment key={i}>
-                        <Link className="menu-nav" key={item.label} to={item.to}>
-                          {item.label}
-                        </Link>
-                      </Fragment>
-                    ))}
-                  </Box>
-                </div>
-
-                <Box
-                  sx={{ display: { xs: "none", md: "flex" } }}
-                  className="links"
-                >
-                  {menuTercero.map((item, i) => (
-                    <Fragment key={i}>
-                      <Link className="menu-nav" key={item.label} to={item.to}>
-                        {item.label}
-                      </Link>
-                    </Fragment>
-                  ))}
-                </Box>
-              </div>
-            )}
+                        </Fragment>
+                      ))}
+                    </Box>
+                  </div>
+                </>
+              )}
+            </div>
           </div>
 
           <NavigationDrawer

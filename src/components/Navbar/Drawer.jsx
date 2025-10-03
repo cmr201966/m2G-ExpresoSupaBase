@@ -69,11 +69,11 @@ export default function NavigationDrawer({
             )}
           </ListItem>
         ))}
-        //<ListItem disablePadding>
-        //  <ListItemButton LinkComponent="button" onClick={openLocation}>
-        //    <ListItemText primary="Ubicación" />
-        //  </ListItemButton>
-       // </ListItem>
+         <ListItem disablePadding>
+          <ListItemButton LinkComponent="button" onClick={openLocation}>
+           <ListItemText primary="Ubicación" />
+         </ListItemButton>
+        </ListItem>
       </List>
       {isValid(sessionStorage.getItem("tipouser"))===true ?
       <>

@@ -1,56 +1,51 @@
 .multiple-slider {
-    width: 100%;
-    display: flex;
-    align-content: center;
-    overflow: hidden;
-  }
+  width: 100%;
+  display: flex;
+  align-content: center;
+  overflow: hidden; /* sin scroll */
+  position: relative;
+}
 
-  .sacar-flecha{
-    position: relative;
-  }
-  .multi-slider-movil {
-    overflow-x: auto;
-  }
-  
-  .multiple-slider-content {
-    display: flex;
-    /*justify-content: center;*/
-    align-items: center;
-    gap: 20px;
-  }
-  
-  .multiple-slider-content.transition {
-    transition: transform 500ms ease-in-out;
-  }
-  
-  .multiple-slider-item {
-/*    min-width: 100%;*/
-    height: 100%;
-    display: flex;
-    justify-content: center;
-    align-content: center;
-    color: white;
-  }
-  
-  .multiple-slider-nav {
-    background-color: transparent;
-    border: none;
-    z-index: 50;
-    width: 40px;
-    height: 40px;
-    border-radius: 100%;
-    position: absolute;
-    top: 42%;
-    transform: translateY(-50%);
-  }
-  
-  .multiple-slider-nav.right {
-    right: -30px;
-    font-size: 35px;
-  }
-  
-  .multiple-slider-nav.left {
-    left: -28px;
-    font-size: 35px;
-  }
-  
+.sacar-flecha {
+  position: relative;
+}
+
+/* contenedor de items (se traslada con translateX) */
+.multiple-slider-content {
+  display: flex;
+  align-items: center;
+  gap: 17.5px; /* si cambias este gap, actualiza tambien el gap usado en measure() */
+  transition: transform 0.5s ease-in-out;
+}
+
+.multiple-slider-item {
+  flex: 0 0 auto; /* no se estira, ancho controlado inline desde React */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;
+}
+
+/* flechas */
+.multiple-slider-nav {
+  background: transparent;
+  border: none;
+  cursor: pointer;
+  z-index: 20;
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 30px;
+  width: 44px;
+  height: 44px;
+  display: grid;
+  place-items: center;
+}
+
+.multiple-slider-nav.left {
+  left: -32px;
+}
+
+.multiple-slider-nav.right {
+  right: -32px;
+}
