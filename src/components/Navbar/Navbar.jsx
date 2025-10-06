@@ -5,7 +5,6 @@ import Tippy from "@tippyjs/react";
 
 // components
 import NavigationDrawer from "./Drawer";
-import Location from "./Location";
 import SearchWrapper from "./SearchWrapper";
 import { ShoppingCart } from "@mui/icons-material";
 import LanguageIcon from "@mui/icons-material/Language";
@@ -143,6 +142,7 @@ const Navbar = (props) => {
     <>
       {inicia === false ? (
         <>
+          {/* 🔹 Navbar fijo */}
           <div className="navbar-row">
             <div className="navbar-main">
               <Link className="link-logo" to="/">
@@ -180,7 +180,7 @@ const Navbar = (props) => {
                     </Tippy>
                   )}
 
-                  {/* 🔑 Login (solo si NO hay usuario) */}
+                  {/* 🔑 Login */}
                   {!isValid(user) && (
                     <Tippy content="Iniciar sesión">
                       <IconButton
@@ -193,7 +193,7 @@ const Navbar = (props) => {
                     </Tippy>
                   )}
 
-                  {/* 🆕 Registrarse (solo si NO hay usuario) */}
+                  {/* 🆕 Registrarse */}
                   {!isValid(user) && (
                     <Tippy content="Registrarse">
                       <IconButton
@@ -274,7 +274,7 @@ const Navbar = (props) => {
                   </Tippy>
                 )}
 
-                {/* Nosotros (solo icono) */}
+                {/* Nosotros */}
                 <Tippy content={"Nosotros"}>
                   <IconButton
                     sx={{ padding: 0 }}
@@ -299,7 +299,6 @@ const Navbar = (props) => {
             </div>
 
             <div className="agrupa-menu">
-              {/* Menús solo admin */}
               {tipouser === 3 && (
                 <>
                   <div className="menuPrimero">
@@ -337,6 +336,9 @@ const Navbar = (props) => {
               )}
             </div>
           </div>
+
+          {/* 🔹 Este div empuja el contenido hacia abajo */}
+          <div className="navbar-spacer"></div>
 
           <NavigationDrawer
             nivel={nivel}

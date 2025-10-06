@@ -13,7 +13,7 @@ body {
     sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
-  background-color: #0272e2}
+ 
 
 * {
   font-family: "Poppins", sans-serif;
@@ -342,7 +342,7 @@ h6 {
 
 .grip-flecha {
   display: grid;
-  
+
   justify-content: flex-start;
   grid-template-columns: 0% 33% 33%;
 }

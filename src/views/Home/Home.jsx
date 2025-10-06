@@ -17,8 +17,17 @@ import Footer from "../../components/Footer/Footer"; // 🔹 Importamos el foote
 import Hero from "../../layouts/Hero/Hero";
 
 // utils
-import { isValid, creaBucket, borraSessionStorage, getJpgFileSB } from "../../Utiles/Utiles";
-import { getanunciosCM, getcategoriasnewCM, setVisitas } from "../../Utiles/apiBaseDatos";
+import {
+  isValid,
+  creaBucket,
+  borraSessionStorage,
+  getJpgFileSB,
+} from "../../Utiles/Utiles";
+import {
+  getanunciosCM,
+  getcategoriasnewCM,
+  setVisitas,
+} from "../../Utiles/apiBaseDatos";
 
 // context
 import { useNotification } from "../../context/NotificationProvider";
@@ -106,7 +115,8 @@ const Home = () => {
       for (let i = 0; i < categoriesResult.length; i++) {
         let foto = await getJpgFileSB(
           categoriesResult[i].idcategoria + ".jpg",
-          "./galerias/app_images/categorias_de_negocios/" + categoriesResult[i].idcategoria,
+          "./galerias/app_images/categorias_de_negocios/" +
+            categoriesResult[i].idcategoria,
           "categorias_de_negocios/" + categoriesResult[i].idcategoria,
           categoriesResult[i].idsb
         );
@@ -177,7 +187,9 @@ const Home = () => {
                   color="primary"
                   onClick={() => {
                     navigate(
-                      `/?naturaleza=${sessionStorage.getItem("naturaleza")}&owner=${sessionStorage.getItem(
+                      `/?naturaleza=${sessionStorage.getItem(
+                        "naturaleza"
+                      )}&owner=${sessionStorage.getItem(
                         "idowner"
                       )}&nivel=${sessionStorage.getItem("nivel")}`
                     );
@@ -219,7 +231,7 @@ const Home = () => {
               sizeClass="grande"
             />
 
-            {/* 🔹 Texto de bienvenida adaptado */}
+            {/* 🔹 Texto de bienvenida */}
             <section className="welcome-section">
               <div className="container">
                 <h2>Bienvenido a HABUN</h2>
@@ -231,17 +243,55 @@ const Home = () => {
               </div>
             </section>
 
-            {/* 🔹 Degradado y sliders van DESPUÉS */}
+            {/* 🔹 Carrusel pequeño */}
             <div className="main-grid negative-margin">
               <div className="grid-letf"></div>
               <div className="gradient-background"></div>
               <MultipleSlider imgs={arrayOfCards} />
               <div className="grid-rigth"></div>
             </div>
+
+            {/* 🔹 Bloques informativos debajo del carrusel */}
+            <section className="info-blocks">
+              <div className="info-block">
+                <h2>¿Por qué elegir un jabón artesanal?</h2>
+                <p>
+                  Los jabones artesanales no son sólo un producto de limpieza, son una experiencia para tu piel.
+                  Cada pieza está hecha a mano con ingredientes naturales que respetan tu cuerpo y al medio ambiente.
+                </p>
+                <ul>
+                  <li> <b>Suavidad y nutrición:</b> hidratan y protegen tu piel sin químicos agresivos.</li>
+                  <li> <b>Aromas naturales:</b> despiertan tus sentidos y convierten tu rutina en un momento de bienestar.</li>
+                  <li> <b>Cuidado responsable:</b> libres de parabenos y plásticos, amigables con la naturaleza.</li>
+                  <li> <b>Exclusividad:</b> cada jabón es único, pensado para consentirte o regalar un detalle especial.</li>
+                </ul>
+                <p>💜 Un pequeño lujo cotidiano que tu piel agradece.</p>
+              </div>
+
+              <div className="info-block">
+                <h2>Descubre lo natural, siente la diferencia </h2>
+                <p>
+                  Nuestros jabones artesanales no son simples jabones: son pequeños detalles hechos a mano
+                  para cuidar tu piel y el planeta.
+                </p>
+                <h3> Beneficios para ti:</h3>
+                <ul>
+                  <li>Hidratación y suavidad gracias a ingredientes 100% naturales.</li>
+                  <li>Aromas frescos que transforman tu rutina en un momento de relax.</li>
+                  <li>Fórmulas libres de químicos agresivos, ideales para todo tipo de piel.</li>
+                </ul>
+                <h3> Beneficios para todos:</h3>
+                <ul>
+                  <li>Productos responsables y amigables con el medio ambiente.</li>
+                  <li>Cada jabón es único, como tú.</li>
+                </ul>
+                <p>💜 Regálale a tu piel un cuidado auténtico, natural y consciente.</p>
+              </div>
+            </section>
           </>
         )}
       </Hero>
-      <Footer /> {/* 🔹 Footer fijo */}
+      <Footer />
     </div>
   );
 };
