@@ -243,6 +243,9 @@ const Home = () => {
               </div>
             </section>
 
+            {/* 🔹 ESPACIO entre bienvenida y carrusel */}
+            <div className="spacing-section" style={{ marginTop: "60px" }}></div>
+
             {/* 🔹 Carrusel pequeño */}
             <div className="main-grid negative-margin">
               <div className="grid-letf"></div>
